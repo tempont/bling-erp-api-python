@@ -22,5 +22,5 @@ repos:
         entry: uv run basedpyright
         language: system
         types: [python]
-        pass_filenames: false
+        pass_filenames: true
         require_serial: true
