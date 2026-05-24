@@ -63,3 +63,4 @@ docs/_references/
 .cursor/
 .codegraph/
 AGENTS.md
+scripts/dev_test*

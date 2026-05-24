@@ -82,6 +82,7 @@ task-tags = ["TODO", "FIXME", "XXX", "HACK"]
 
 [tool.ruff.lint.per-file-ignores]
 "examples/**" = ["T201"]
+"scripts/**" = ["INP001"]
 "tests/**" = [
     "ANN001",
     "ANN201",
