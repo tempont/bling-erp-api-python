@@ -24,7 +24,7 @@ Repository = "https://github.com/tempont/bling-erp-api-python"
 Issues = "https://github.com/tempont/bling-erp-api-python/issues"
 
 [project.scripts]
-bling-erp-api = "bling_erp_api:main"
+bling-erp-api = "bling_erp_api.cli:main"
 
 [build-system]
 requires = ["uv_build>=0.9.9,<0.10.0"]
@@ -37,6 +37,13 @@ dev = [
     "pytest>=9.0.3",
     "pytest-httpx>=0.36.2",
     "ruff>=0.15.14",
+]
+docs = [
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.6.23",
+]
+codegen = [
+    "datamodel-code-generator>=0.36.0",
 ]
 
 # Lint, testing and formatting
