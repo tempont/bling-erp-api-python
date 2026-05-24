@@ -1,13 +1,65 @@
-# Python-generated files
+# Byte-compiled / cache
 __pycache__/
-*.py[oc]
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Distribution / packaging
 build/
 dist/
 wheels/
-*.egg-info
+*.egg-info/
+*.egg
+pip-wheel-metadata/
+share/python-wheels/
+*.manifest
+*.spec
 
 # Virtual environments
-.venv
+.venv/
+venv/
+ENV/
+env/
 
-# Project files
+# Test / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Type checkers / linters
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+.ruff_cache/
+.basedpyright/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project-specific
 docs/_references/
+.cursor/
+.codegraph/
+AGENTS.md

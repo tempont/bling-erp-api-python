@@ -1,13 +1,27 @@
 [project]
 name = "bling-erp-api"
 version = "0.1.0"
-description = "Add your description here"
+description = "Python SDK for the Bling ERP API with auth, pagination, and helpers."
 readme = "README.md"
+license = "MIT"
 authors = [
-    { name = "TempoNaoTenho", email = "bragaramonsantana@gmail.com" }
+    { name = "tempont", email = "bragaramonsantana@gmail.com" }
 ]
+keywords = ["bling", "erp", "api", "python", "sdk"]
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "bling-jwt-auth>=0.3.0",
+    "httpx>=0.28.1",
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.14.1",
+    "python-dotenv>=1.2.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/tempont/bling-erp-api-python"
+Documentation = "https://github.com/tempont/bling-erp-api-python#readme"
+Repository = "https://github.com/tempont/bling-erp-api-python"
+Issues = "https://github.com/tempont/bling-erp-api-python/issues"
 
 [project.scripts]
 bling-erp-api = "bling_erp_api:main"
@@ -15,3 +29,86 @@ bling-erp-api = "bling_erp_api:main"
 [build-system]
 requires = ["uv_build>=0.9.9,<0.10.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.39.6",
+    "pre-commit>=4.6.0",
+    "pytest>=9.0.3",
+    "pytest-httpx>=0.36.2",
+    "ruff>=0.15.14",
+]
+
+# Lint, testing and formatting
+
+################# Ruff #################
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+indent-width = 4
+exclude = [".git", ".ruff_cache", ".venv"]
+show-fixes = true
+
+[tool.ruff.format]
+indent-style = "space"
+line-ending = "lf"
+quote-style = "double"
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "YTT",
+    "CPY",
+    "FA",
+    "TD",
+    "C90",
+    "PGH",
+    "COM812",
+    "COM819",
+    "D206",
+    "D300",
+    "E111",
+    "E114",
+    "E117",
+    "E501",
+    "Q000",
+    "Q001",
+    "Q002",
+    "Q003",
+    "W191",
+]
+task-tags = ["TODO", "FIXME", "XXX", "HACK"]
+
+[tool.ruff.lint.per-file-ignores]
+"examples/**" = ["T201"]
+"tests/**" = [
+    "ANN001",
+    "ANN201",
+    "INP001",
+    "PLR2004",
+    "S101",
+    "S105",
+    "S106",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+################# Test #################
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+
+################# Pyright #################
+[tool.pyright]
+pythonVersion = "3.14"
+typeCheckingMode = "strict"
+failOnWarnings = true
+venvPath = "."
+venv = ".venv"
+extraPaths = ["src"]
+exclude = [
+    "**/.venv",
+    ".venv",
+]
