@@ -19,12 +19,13 @@ def list_orders() -> None:
         print(json.dumps(obj=response, indent=2, ensure_ascii=False))
 
 
-def order_details() -> None:
+def order_details(id_pedido_venda: int) -> None:
     """Busca detalhes de um pedido de venda."""
     with BlingClient.from_env() as client:
-        response = client.pedidos_vendas.obter(id_pedido_venda=25903217773)
+        response = client.pedidos_vendas.obter(id_pedido_venda=id_pedido_venda)
         print(json.dumps(obj=response, indent=2, ensure_ascii=False))
 
 
 if __name__ == "__main__":
     list_orders()
+    # order_details(id_pedido_venda=1) # noqa: ERA001
