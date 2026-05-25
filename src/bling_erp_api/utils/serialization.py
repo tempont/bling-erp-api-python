@@ -13,5 +13,5 @@ if TYPE_CHECKING:
 def to_json_object(value: BaseModel | JsonObject) -> JsonObject:
     """Convert supported SDK payloads into JSON objects."""
     if isinstance(value, BaseModel):
-        return cast("JsonObject", value.model_dump(mode="json", exclude_none=True))
+        return cast("JsonObject", value.model_dump(mode="json", by_alias=True, exclude_none=True))
     return value

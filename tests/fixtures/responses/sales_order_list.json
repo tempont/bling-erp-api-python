@@ -1,0 +1,66 @@
+{
+  "data": [
+    {
+      "id": 12345678,
+      "numero": 42,
+      "numeroLoja": "WEB-42",
+      "data": "2024-01-10",
+      "dataSaida": "2024-01-10",
+      "dataPrevista": "2024-01-12",
+      "totalProdutos": 21,
+      "total": 23.5,
+      "contato": {
+        "id": 87654321,
+        "nome": "Cliente Teste",
+        "tipoPessoa": "J",
+        "numeroDocumento": "30188025000121"
+      },
+      "situacao": {
+        "id": 111,
+        "valor": 1
+      },
+      "loja": {
+        "id": 222
+      },
+      "numeroPedidoCompra": "PO-123",
+      "outrasDespesas": 2.5,
+      "observacoes": "Observacoes do pedido",
+      "observacoesInternas": "Observacoes internas",
+      "itens": [
+        {
+          "id": 333,
+          "codigo": "SKU-1",
+          "unidade": "UN",
+          "quantidade": 2,
+          "desconto": 0,
+          "valor": 10.5,
+          "aliquotaIPI": 0,
+          "descricao": "Produto Teste",
+          "produto": {
+            "id": 444
+          }
+        }
+      ],
+      "parcelas": [
+        {
+          "id": 555,
+          "dataVencimento": "2024-01-20",
+          "valor": 23.5,
+          "formaPagamento": {
+            "id": 666
+          }
+        }
+      ],
+      "campoNovoBling": "mantido"
+    },
+    {
+      "id": 12345679,
+      "numero": 43,
+      "data": "2024-01-11",
+      "contato": {
+        "id": 87654322,
+        "nome": "Cliente Opcional"
+      }
+    }
+  ]
+}

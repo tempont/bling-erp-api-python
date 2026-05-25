@@ -1,0 +1,1 @@
+"""Generated OpenAPI operation contracts."""

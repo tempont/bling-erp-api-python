@@ -36,9 +36,9 @@ class BaseResource:
         """Send a PATCH request."""
         return self._transport.request("PATCH", path, json=json)
 
-    def _delete(self, path: str) -> JsonObject:
+    def _delete(self, path: str, *, params: QueryParams | None = None) -> JsonObject:
         """Send a DELETE request."""
-        return self._transport.request("DELETE", path)
+        return self._transport.request("DELETE", path, params=params)
 
     def _iterate(
         self,
