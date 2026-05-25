@@ -4,6 +4,21 @@ import json
 from typing import TYPE_CHECKING
 
 from bling_erp_api import BlingClient
+from bling_erp_api.config import (
+    DEFAULT_API_BASE_URL,
+    DEFAULT_RATE_LIMIT_MAX_REQUESTS,
+    DEFAULT_RATE_LIMIT_MAX_RETRIES,
+    DEFAULT_RATE_LIMIT_PERIOD_SECONDS,
+    DEFAULT_TIMEOUT_SECONDS,
+)
+
+bling_client: BlingClient = BlingClient(
+    base_url=DEFAULT_API_BASE_URL,
+    timeout=DEFAULT_TIMEOUT_SECONDS,
+    rate_limit_max_requests=DEFAULT_RATE_LIMIT_MAX_REQUESTS,
+    rate_limit_period_seconds=DEFAULT_RATE_LIMIT_PERIOD_SECONDS,
+    rate_limit_max_retries=DEFAULT_RATE_LIMIT_MAX_RETRIES,
+)
 
 if TYPE_CHECKING:
     from bling_erp_api.types import JsonObject
@@ -11,11 +26,8 @@ if TYPE_CHECKING:
 
 def list_orders() -> None:
     """Busca a primeira página de pedidos de venda."""
-    with BlingClient.from_env() as client:
-        response: JsonObject = client.pedidos_vendas.listar(
-            pagina=1,
-            limite=10,
-        )
+    with bling_client as client:
+        response: JsonObject = client.pedidos_vendas.listar()
         print(json.dumps(obj=response, indent=2, ensure_ascii=False))
 
 
@@ -27,5 +39,6 @@ def order_details(id_pedido_venda: int) -> None:
 
 
 if __name__ == "__main__":
-    list_orders()
-    # order_details(id_pedido_venda=1) # noqa: ERA001
+    # list_orders() # noqa: ERA001
+    # order_details(id_pedido_venda=1)  # noqa: ERA001
+    print("Done.")

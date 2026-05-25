@@ -2,9 +2,21 @@
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 
-DEFAULT_API_BASE_URL = "https://api.bling.com.br/Api/v3"
+from dotenv import load_dotenv
+
+load_dotenv()
+
+is_dev: str | None = os.environ.get("BLING_ENV")
+
+if is_dev and is_dev == "dev":
+    base_url = "https://api.bling.com.br/Api/v3/homologacao"
+else:
+    base_url = "https://api.bling.com.br/Api/v3"
+
+DEFAULT_API_BASE_URL = base_url
 DEFAULT_TIMEOUT_SECONDS = 30.0
 DEFAULT_RATE_LIMIT_MAX_REQUESTS = 3
 DEFAULT_RATE_LIMIT_PERIOD_SECONDS = 1.0

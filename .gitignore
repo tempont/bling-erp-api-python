@@ -64,3 +64,4 @@ docs/_references/
 .codegraph/
 AGENTS.md
 scripts/dev_test*
+examples/dev/
