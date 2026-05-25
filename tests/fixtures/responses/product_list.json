@@ -1,0 +1,21 @@
+{
+  "data": [
+    {
+      "id": 12345678,
+      "idProdutoPai": 87654321,
+      "nome": "Produto Teste",
+      "codigo": "SKU-1",
+      "preco": 19.9,
+      "precoCusto": 12.5,
+      "tipo": "P",
+      "situacao": "A",
+      "formato": "S",
+      "descricaoCurta": "Descricao curta",
+      "imagemURL": "https://example.test/produto.jpg",
+      "estoque": {
+        "saldoVirtualTotal": 5
+      },
+      "campoNovoBling": "mantido"
+    }
+  ]
+}

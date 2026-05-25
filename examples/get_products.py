@@ -1,12 +1,12 @@
-"""Example that lists products using the SDK resource API."""
+"""Exemplo que lista produtos usando a API de recursos do SDK."""
 
 from bling_erp_api import BlingClient
 
 
 def main() -> None:
-    """Fetch the first page of products."""
+    """Busca a primeira página de produtos."""
     with BlingClient.from_env() as client:
-        response = client.products.list(limit=10)
+        response = client.produtos.listar(limite=10, nome="Camiseta")
         print(response)
 
 

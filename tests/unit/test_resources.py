@@ -5,8 +5,10 @@ from __future__ import annotations
 from datetime import UTC, date, datetime
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.products import ProductCreateRequest, ProductPatchRequest
 from bling_erp_api.models.generated.sales_orders import SalesOrderCreateRequest
 from bling_erp_api.resources.contacts import ContactsResource
+from bling_erp_api.resources.products import ProductsResource
 from bling_erp_api.resources.sales_orders import SalesOrdersResource
 
 if TYPE_CHECKING:
@@ -43,6 +45,99 @@ def test_contacts_list_maps_to_bling_endpoint() -> None:
     assert response == {"data": []}
     assert transport.calls == [
         ("GET", "/contatos", {"pagina": 2, "limite": 50, "name": "Ana"}, None)
+    ]
+
+
+def test_products_list_maps_to_bling_endpoint() -> None:
+    """Product listing should use Portuguese SDK names and Bling query names."""
+    transport = RecordingTransport()
+    resource = ProductsResource(transport)
+
+    response = resource.listar(
+        pagina=2,
+        limite=50,
+        criterio=2,
+        tipo="P",
+        ids_produtos=[123, 456],
+        codigos=["SKU-1"],
+        data_alteracao_inicial=datetime(2024, 1, 2, 10, 30, 45, tzinfo=UTC),
+    )
+
+    assert response == {"data": []}
+    assert transport.calls == [
+        (
+            "GET",
+            "/produtos",
+            {
+                "pagina": 2,
+                "limite": 50,
+                "criterio": 2,
+                "tipo": "P",
+                "dataAlteracaoInicial": "2024-01-02 10:30:45",
+                "idsProdutos[]": [123, 456],
+                "codigos[]": ["SKU-1"],
+            },
+            None,
+        )
+    ]
+
+
+def test_products_create_and_patch_serialize_model_with_api_aliases() -> None:
+    """Product write operations should serialize Pydantic payloads using Bling aliases."""
+    transport = RecordingTransport()
+    resource = ProductsResource(transport)
+    product = ProductCreateRequest.model_validate(
+        {
+            "nome": "Produto Teste",
+            "codigo": "SKU-1",
+            "preco": 19.9,
+            "tipo": "P",
+            "situacao": "A",
+            "formato": "S",
+        }
+    )
+    patch = ProductPatchRequest.model_validate({"preco": 21.9, "situacao": "A"})
+
+    resource.criar(product)
+    resource.alterar_parcialmente(123, patch)
+
+    assert transport.calls == [
+        (
+            "POST",
+            "/produtos",
+            None,
+            {
+                "nome": "Produto Teste",
+                "codigo": "SKU-1",
+                "preco": 19.9,
+                "tipo": "P",
+                "situacao": "A",
+                "formato": "S",
+            },
+        ),
+        ("PATCH", "/produtos/123", None, {"preco": 21.9, "situacao": "A"}),
+    ]
+
+
+def test_products_write_operations_map_to_bling_endpoints() -> None:
+    """Product write operations should map to expected Bling paths."""
+    transport = RecordingTransport()
+    resource = ProductsResource(transport)
+
+    resource.obter(123)
+    resource.alterar(123, {"nome": "Produto"})
+    resource.remover(123)
+    resource.remover_varios([123, 456])
+    resource.alterar_situacao(123, "I")
+    resource.alterar_situacao_varios([123, 456], "A")
+
+    assert transport.calls == [
+        ("GET", "/produtos/123", None, None),
+        ("PUT", "/produtos/123", None, {"nome": "Produto"}),
+        ("DELETE", "/produtos/123", None, None),
+        ("DELETE", "/produtos", {"idsProdutos[]": [123, 456]}, None),
+        ("PATCH", "/produtos/123/situacoes", None, {"situacao": "I"}),
+        ("POST", "/produtos/situacoes", None, {"idsProdutos": [123, 456], "situacao": "A"}),
     ]
 
 

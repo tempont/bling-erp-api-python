@@ -57,6 +57,7 @@ class BlingClient:
 
         self.contacts = ContactsResource(self._transport)
         self.products = ProductsResource(self._transport)
+        self.produtos = self.products
         self.sales_orders = SalesOrdersResource(self._transport)
         self.pedidos_vendas = self.sales_orders
         self.invoices = InvoicesResource(self._transport)

@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from pprint import pformat
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, TypedDict, cast
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -14,6 +14,17 @@ SPEC_PATH = Path("specs/bling-openapi-reference.json")
 CONTRACTS_DIR = Path("src/bling_erp_api/contracts/generated")
 DOCS_DIR = Path("docs/resources")
 
+
+class ResourceConfig(TypedDict):
+    """Resource generation settings."""
+
+    openapi_resource: str
+    module: str
+    constant: str
+    title: str
+    example: list[str]
+
+
 ACTION_TO_SDK_METHOD = {
     "ObterMultiplos": "listar",
     "Obter": "obter",
@@ -21,7 +32,9 @@ ACTION_TO_SDK_METHOD = {
     "Alterar": "alterar",
     "Remover": "remover",
     "RemoverMultiplos": "remover_varios",
+    "CriarMultiplos": "criar_varios",
     "AlterarSituacao": "alterar_situacao",
+    "AlterarSituacaoMultiplos": "alterar_situacao_varios",
     "LancarEstoqueDeposito": "lancar_estoque",
     "LancarEstoque": "lancar_estoque",
     "EstornarEstoque": "estornar_estoque",
@@ -29,6 +42,13 @@ ACTION_TO_SDK_METHOD = {
     "EstornarContas": "estornar_contas",
     "GerarNotaFiscal": "gerar_nota_fiscal",
     "GerarNotaFiscalConsumidor": "gerar_nota_fiscal_consumidor",
+    "VincularComponenteMultiplos": "vincular_componentes",
+    "RemoverComponenteMultiplos": "remover_componentes",
+    "AlterarComponente": "alterar_componente",
+    "GerarCombinacoes": "gerar_combinacoes",
+    "AlterarAtributo": "alterar_atributo",
+    "ObterSaldosLote": "obter_saldos",
+    "ObterMultiplosProdutoControlaLote": "listar_produtos_controlam_lote",
 }
 
 PARAMETER_TO_SDK_NAME = {
@@ -52,19 +72,127 @@ PARAMETER_TO_SDK_NAME = {
     "numerosLojas[]": "numeros_lojas",
     "idUnidadeNegocio": "id_unidade_negocio",
     "idsPedidosVendas[]": "ids_pedidos_vendas",
+    "idProduto": "id_produto",
+    "idProdutoPai": "id_produto_pai",
+    "idProdutoEstrutura": "id_produto_estrutura",
+    "idProdutoFornecedor": "id_produto_fornecedor",
+    "idProdutoLoja": "id_produto_loja",
+    "idComponente": "id_componente",
+    "idsComponentes[]": "ids_componentes",
+    "idsProdutos[]": "ids_produtos",
+    "codigos[]": "codigos",
+    "gtins[]": "gtins",
+    "criterio": "criterio",
+    "tipo": "tipo",
+    "idCategoria": "id_categoria",
+    "idCategoriaProduto": "id_categoria_produto",
+    "dataInclusaoInicial": "data_inclusao_inicial",
+    "dataInclusaoFinal": "data_inclusao_final",
+    "filtroSaldoEstoque": "filtro_saldo_estoque",
+    "filtroSaldoEstoqueDeposito": "filtro_saldo_estoque_deposito",
+    "idFornecedor": "id_fornecedor",
+    "idLote": "id_lote",
+    "idsLotes[]": "ids_lotes",
+    "idsDepositos[]": "ids_depositos",
+    "codigosLotes[]": "codigos_lotes",
+    "status": "status",
+    "dataValidadeInicial": "data_validade_inicial",
+    "dataValidadeFinal": "data_validade_final",
+    "dataFabricacaoInicial": "data_fabricacao_inicial",
+    "dataFabricacaoFinal": "data_fabricacao_final",
+    "dataCriacaoInicial": "data_criacao_inicial",
+    "dataCriacaoFinal": "data_criacao_final",
+    "idLancamento": "id_lancamento",
 }
+
+RESOURCES: list[ResourceConfig] = [
+    {
+        "openapi_resource": "PedidosVenda",
+        "module": "sales_orders",
+        "constant": "SALES_ORDER_OPERATIONS",
+        "title": "Pedidos de venda",
+        "example": [
+            "pedidos = client.pedidos_vendas.listar(",
+            '    data_inicial="2024-01-01",',
+            "    ids_situacoes=[123456],",
+            ")",
+            "pedido = client.pedidos_vendas.obter(123456)",
+        ],
+    },
+    {
+        "openapi_resource": "Produtos",
+        "module": "products",
+        "constant": "PRODUCT_OPERATIONS",
+        "title": "Produtos",
+        "example": [
+            "produtos = client.produtos.listar(",
+            '    nome="Camiseta",',
+            "    ids_produtos=[123456],",
+            ")",
+            "produto = client.produtos.obter(123456)",
+        ],
+    },
+    {
+        "openapi_resource": "ProdutosEstruturas",
+        "module": "product_structures",
+        "constant": "PRODUCT_STRUCTURE_OPERATIONS",
+        "title": "Produtos - Estruturas",
+        "example": [],
+    },
+    {
+        "openapi_resource": "ProdutosFornecedores",
+        "module": "product_suppliers",
+        "constant": "PRODUCT_SUPPLIER_OPERATIONS",
+        "title": "Produtos - Fornecedores",
+        "example": [],
+    },
+    {
+        "openapi_resource": "ProdutosLojas",
+        "module": "product_stores",
+        "constant": "PRODUCT_STORE_OPERATIONS",
+        "title": "Produtos - Lojas",
+        "example": [],
+    },
+    {
+        "openapi_resource": "Lotes",
+        "module": "product_batches",
+        "constant": "PRODUCT_BATCH_OPERATIONS",
+        "title": "Produtos - Lotes",
+        "example": [],
+    },
+    {
+        "openapi_resource": "LotesLancamentos",
+        "module": "product_batch_entries",
+        "constant": "PRODUCT_BATCH_ENTRY_OPERATIONS",
+        "title": "Produtos - Lotes Lancamentos",
+        "example": [],
+    },
+    {
+        "openapi_resource": "ProdutosVariacoes",
+        "module": "product_variations",
+        "constant": "PRODUCT_VARIATION_OPERATIONS",
+        "title": "Produtos - Variacoes",
+        "example": [],
+    },
+]
 
 
 def main() -> None:
     """Generate supported resource contracts."""
     payload = cast("dict[str, object]", json.loads(SPEC_PATH.read_text(encoding="utf-8")))
-    contracts = _resource_contracts(payload, resource="PedidosVenda")
-    _write_contract_module(
-        "sales_orders",
-        "SALES_ORDER_OPERATIONS",
-        contracts,
-    )
-    _write_resource_docs("sales_orders", "Pedidos de venda", contracts)
+    for resource in RESOURCES:
+        contracts = _resource_contracts(payload, resource=resource["openapi_resource"])
+        _write_contract_module(
+            resource["module"],
+            resource["constant"],
+            contracts,
+        )
+        _write_resource_docs(
+            resource["module"],
+            resource["title"],
+            contracts,
+            resource["example"],
+        )
 
 
 def _resource_contracts(payload: Mapping[str, object], *, resource: str) -> list[dict[str, object]]:
@@ -81,7 +209,7 @@ def _resource_contracts(payload: Mapping[str, object], *, resource: str) -> list
                 continue
 
             action = str(operation.get("x-api-action") or raw_method)
-            sdk_method = ACTION_TO_SDK_METHOD[action]
+            sdk_method = _sdk_method_for_operation(action=action, method=str(raw_method).upper())
             contracts.append(
                 {
                     "sdk_method": sdk_method,
@@ -121,6 +249,12 @@ def _operation_parameters(
             }
         )
     return result
+
+
+def _sdk_method_for_operation(*, action: str, method: str) -> str:
+    if action == "Alterar" and method == "PATCH":
+        return "alterar_parcialmente"
+    return ACTION_TO_SDK_METHOD[action]
 
 
 def _resolve_parameter(
@@ -211,6 +345,7 @@ def _write_resource_docs(
     resource_slug: str,
     title: str,
     contracts: list[dict[str, object]],
+    example: list[str],
 ) -> None:
     DOCS_DIR.mkdir(parents=True, exist_ok=True)
     lines = [
@@ -222,11 +357,7 @@ def _write_resource_docs(
         "## Exemplo",
         "",
         "```python",
-        "pedidos = client.pedidos_vendas.listar(",
-        '    data_inicial="2024-01-01",',
-        "    ids_situacoes=[123456],",
-        ")",
-        "pedido = client.pedidos_vendas.obter(123456)",
+        *(example or ["# Veja as operacoes geradas abaixo."]),
         "```",
         "",
         "## Operações",
