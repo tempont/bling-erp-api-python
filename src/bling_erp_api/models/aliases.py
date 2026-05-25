@@ -1,6 +1,54 @@
 """Model aliases for public SDK compatibility."""
 
 from bling_erp_api.models.generated.contacts import Contact
+from bling_erp_api.models.generated.product_batch_entries import (
+    BalancePerLotWarehouse,
+    BalanceSumAllWarehouses,
+    BalanceSumPerWarehouse,
+    ProductBatchEntry,
+    ProductBatchEntryObservationPatch,
+)
+from bling_erp_api.models.generated.product_batches import (
+    ProductBatch,
+    ProductBatchControlsLotInfo,
+    ProductBatchProductRef,
+    ProductBatchSaveResponse,
+    ProductBatchSaveResponseLot,
+    ProductBatchStatusRequest,
+    ProductBatchUpdateRequest,
+    ProductBatchWarehouseRef,
+)
+from bling_erp_api.models.generated.product_stores import (
+    ProductStoreBrandRef,
+    ProductStoreCategoryRef,
+    ProductStoreLink,
+    ProductStoreLinkCreate,
+    ProductStoreMutationResponse,
+    ProductStoreProductRef,
+    ProductStoreShopRef,
+    ProductStoreVendorRef,
+)
+from bling_erp_api.models.generated.product_structures import (
+    ProductStructure,
+    ProductStructureComponent,
+    ProductStructureComponentProduct,
+    ProductStructureResponse,
+    ProductStructureUpdateRequest,
+)
+from bling_erp_api.models.generated.product_suppliers import (
+    ProductSupplier,
+    ProductSupplierCreateRequest,
+    ProductSupplierListResponse,
+    ProductSupplierProductRef,
+    ProductSupplierUpdateRequest,
+    ProductSupplierVendorRef,
+)
+from bling_erp_api.models.generated.product_variations import (
+    ProductVariationAttributeOption,
+    ProductVariationAttributeRenameRequest,
+    ProductVariationCombinationRequest,
+    ProductVariationParentDTO,
+)
 from bling_erp_api.models.generated.products import (
     Product,
     ProductCreateRequest,
@@ -21,14 +69,50 @@ from bling_erp_api.models.generated.sales_orders import (
 )
 
 __all__ = [
+    "BalancePerLotWarehouse",
+    "BalanceSumAllWarehouses",
+    "BalanceSumPerWarehouse",
     "Contact",
     "Product",
+    "ProductBatch",
+    "ProductBatchControlsLotInfo",
+    "ProductBatchEntry",
+    "ProductBatchEntryObservationPatch",
+    "ProductBatchProductRef",
+    "ProductBatchSaveResponse",
+    "ProductBatchSaveResponseLot",
+    "ProductBatchStatusRequest",
+    "ProductBatchUpdateRequest",
+    "ProductBatchWarehouseRef",
     "ProductCreateRequest",
     "ProductListResponse",
     "ProductMutationResponse",
     "ProductPatchRequest",
     "ProductResponse",
+    "ProductStoreBrandRef",
+    "ProductStoreCategoryRef",
+    "ProductStoreLink",
+    "ProductStoreLinkCreate",
+    "ProductStoreMutationResponse",
+    "ProductStoreProductRef",
+    "ProductStoreShopRef",
+    "ProductStoreVendorRef",
+    "ProductStructure",
+    "ProductStructureComponent",
+    "ProductStructureComponentProduct",
+    "ProductStructureResponse",
+    "ProductStructureUpdateRequest",
+    "ProductSupplier",
+    "ProductSupplierCreateRequest",
+    "ProductSupplierListResponse",
+    "ProductSupplierProductRef",
+    "ProductSupplierUpdateRequest",
+    "ProductSupplierVendorRef",
     "ProductUpdateRequest",
+    "ProductVariationAttributeOption",
+    "ProductVariationAttributeRenameRequest",
+    "ProductVariationCombinationRequest",
+    "ProductVariationParentDTO",
     "SalesOrder",
     "SalesOrderCreateRequest",
     "SalesOrderInvoiceResponse",

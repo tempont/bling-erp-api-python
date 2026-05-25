@@ -1,0 +1,11 @@
+{
+  "data": [
+    {
+      "id": 444333222,
+      "idLote": 876543210,
+      "quantidade": 5,
+      "tipoLancamento": 1,
+      "observacao": "Entrada inicial"
+    }
+  ]
+}

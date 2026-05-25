@@ -1,0 +1,11 @@
+{
+  "data": [
+    {
+      "id": 555667788,
+      "codigo": "LOJA-X",
+      "preco": 19.95,
+      "produto": { "id": 111 },
+      "loja": { "id": 9 }
+    }
+  ]
+}

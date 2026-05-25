@@ -137,42 +137,65 @@ RESOURCES: list[ResourceConfig] = [
         "module": "product_structures",
         "constant": "PRODUCT_STRUCTURE_OPERATIONS",
         "title": "Produtos - Estruturas",
-        "example": [],
+        "example": [
+            "estrutura = client.produtos_estruturas.obter(123456789)",
+        ],
     },
     {
         "openapi_resource": "ProdutosFornecedores",
         "module": "product_suppliers",
         "constant": "PRODUCT_SUPPLIER_OPERATIONS",
         "title": "Produtos - Fornecedores",
-        "example": [],
+        "example": [
+            "fornecedores = client.produtos_fornecedores.listar(",
+            "    limite=10, id_produto=123456789",
+            ")",
+            "um = client.produtos_fornecedores.obter(123456789)",
+        ],
     },
     {
         "openapi_resource": "ProdutosLojas",
         "module": "product_stores",
         "constant": "PRODUCT_STORE_OPERATIONS",
         "title": "Produtos - Lojas",
-        "example": [],
+        "example": [
+            "lojas = client.produtos_lojas.listar(limite=10, id_produto=123456789)",
+            "vinculo = client.produtos_lojas.obter(123456789)",
+        ],
     },
     {
         "openapi_resource": "Lotes",
         "module": "product_batches",
         "constant": "PRODUCT_BATCH_OPERATIONS",
         "title": "Produtos - Lotes",
-        "example": [],
+        "example": [
+            "lotes = client.lotes.listar(ids_produtos=[123456789], limite=10)",
+            "lote = client.lotes.obter(123456789)",
+            "controle = client.lotes.listar_produtos_controlam_lote(ids_produtos=[123456789])",
+        ],
     },
     {
         "openapi_resource": "LotesLancamentos",
         "module": "product_batch_entries",
         "constant": "PRODUCT_BATCH_ENTRY_OPERATIONS",
         "title": "Produtos - Lotes Lancamentos",
-        "example": [],
+        "example": [
+            "lancs = client.lotes_lancamentos.listar(id_lote=123456789)",
+            "saldo_total = client.lotes_lancamentos.obter_saldos_soma(id_produto=123456789)",
+            (
+                "soma_dep = client.lotes_lancamentos.obter_saldos_soma_deposito("
+                "id_produto=123456789, id_deposito=987654321)"
+            ),
+        ],
     },
     {
         "openapi_resource": "ProdutosVariacoes",
         "module": "product_variations",
         "constant": "PRODUCT_VARIATION_OPERATIONS",
         "title": "Produtos - Variacoes",
-        "example": [],
+        "example": [
+            "variacoes = client.produtos_variacoes.listar(id_produto_pai=123456789)",
+        ],
     },
 ]
 
@@ -209,7 +232,11 @@ def _resource_contracts(payload: Mapping[str, object], *, resource: str) -> list
                 continue
 
             action = str(operation.get("x-api-action") or raw_method)
-            sdk_method = _sdk_method_for_operation(action=action, method=str(raw_method).upper())
+            sdk_method = _sdk_method_for_operation(
+                action=action,
+                method=str(raw_method).upper(),
+                path=path,
+            )
             contracts.append(
                 {
                     "sdk_method": sdk_method,
@@ -251,9 +278,19 @@ def _operation_parameters(
     return result
 
 
-def _sdk_method_for_operation(*, action: str, method: str) -> str:
+def _sdk_method_for_operation(*, action: str, method: str, path: str) -> str:
     if action == "Alterar" and method == "PATCH":
         return "alterar_parcialmente"
+    if action == "ObterSaldosLote" and method == "GET":
+        # Four distinct paths share the same Bling action; keep stable sdk_method keys.
+        if path == "/produtos/{idProduto}/lotes/depositos/{idDeposito}/saldo":
+            return "obter_saldos"
+        if path == "/produtos/{idProduto}/lotes/saldo/soma":
+            return "obter_saldos_soma"
+        if path == "/produtos/{idProduto}/lotes/{idLote}/depositos/{idDeposito}/saldo":
+            return "obter_saldos_saldo"
+        if path == "/produtos/{idProduto}/lotes/depositos/{idDeposito}/saldo/soma":
+            return "obter_saldos_soma_deposito"
     return ACTION_TO_SDK_METHOD[action]
 
 

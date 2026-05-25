@@ -6,7 +6,7 @@ A documentação oficial é usada como contrato para paths, métodos e parâmetr
 ## Exemplo
 
 ```python
-# Veja as operacoes geradas abaixo.
+variacoes = client.produtos_variacoes.listar(id_produto_pai=123456789)
 ```
 
 ## Operações

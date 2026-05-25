@@ -11,7 +11,7 @@ from bling_erp_api.exceptions import BlingTransportError, raise_for_error_respon
 from bling_erp_api.response import response_json_object
 
 if TYPE_CHECKING:
-    from bling_erp_api.types import JsonObject, QueryParams
+    from bling_erp_api.types import JsonObject, JsonPayload, QueryParams
 
 
 class AsyncTransport:
@@ -36,7 +36,7 @@ class AsyncTransport:
         path: str,
         *,
         params: QueryParams | None = None,
-        json: JsonObject | None = None,
+        json: JsonPayload | None = None,
     ) -> JsonObject:
         """Send an async request and return a decoded JSON object."""
         try:

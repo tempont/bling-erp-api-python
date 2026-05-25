@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
-    from bling_erp_api.types import JsonObject, QueryParams
+    from bling_erp_api.types import JsonObject, JsonPayload, QueryParams
 
 
 class Transport(Protocol):
@@ -17,7 +17,7 @@ class Transport(Protocol):
         path: str,
         *,
         params: QueryParams | None = None,
-        json: JsonObject | None = None,
+        json: JsonPayload | None = None,
     ) -> JsonObject:
         """Send an HTTP request and return the decoded JSON object."""
         ...

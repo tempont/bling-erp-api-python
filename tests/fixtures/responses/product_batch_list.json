@@ -1,0 +1,13 @@
+{
+  "data": [
+    {
+      "idLote": 876543210,
+      "codigoLote": "LOTE-DEMO",
+      "produto": { "id": 111 },
+      "deposito": { "id": 3 },
+      "dataFabricacao": "2025-01-01",
+      "dataValidade": "2027-01-01",
+      "status": 1
+    }
+  ]
+}

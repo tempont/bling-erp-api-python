@@ -6,7 +6,9 @@ A documentação oficial é usada como contrato para paths, métodos e parâmetr
 ## Exemplo
 
 ```python
-# Veja as operacoes geradas abaixo.
+lancs = client.lotes_lancamentos.listar(id_lote=123456789)
+saldo_total = client.lotes_lancamentos.obter_saldos_soma(id_produto=123456789)
+soma_dep = client.lotes_lancamentos.obter_saldos_soma_deposito(id_produto=123456789, id_deposito=987654321)
 ```
 
 ## Operações
@@ -70,6 +72,19 @@ A documentação oficial é usada como contrato para paths, métodos e parâmetr
 | `id_deposito` | `idDeposito` | `path` | sim |
 
 - Schemas de response: 200: SaldoLoteDTO, 404: ErrorResponse, 400: ErrorResponse
+
+### `obter_saldos_soma_deposito`
+
+- Bling: `GET /produtos/{idProduto}/lotes/depositos/{idDeposito}/saldo/soma`
+- Ação oficial: `ObterSaldosLote`
+- Resumo oficial: Obtém a soma dos saldos dos lotes de um produto em um depósito
+
+| Argumento SDK | Parâmetro Bling | Local | Obrigatório |
+| --- | --- | --- | --- |
+| `id_produto` | `idProduto` | `path` | sim |
+| `id_deposito` | `idDeposito` | `path` | sim |
+
+- Schemas de response: 200: SaldoSomaLotesDTO, 404: ErrorResponse, 400: ErrorResponse
 
 ### `obter_saldos_soma`
 

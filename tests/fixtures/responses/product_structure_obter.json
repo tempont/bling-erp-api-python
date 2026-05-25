@@ -1,0 +1,12 @@
+{
+  "data": {
+    "tipoEstoque": "F",
+    "lancamentoEstoque": "A",
+    "componentes": [
+      {
+        "produto": { "id": 987654321 },
+        "quantidade": 3.25
+      }
+    ]
+  }
+}

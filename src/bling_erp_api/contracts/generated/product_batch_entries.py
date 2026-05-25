@@ -150,6 +150,43 @@ PRODUCT_BATCH_ENTRY_OPERATIONS: dict[str, OperationContract] = {
             "summary": "Obtém os saldos dos lotes de um produto por depósito",
         }
     ),
+    "obter_saldos_soma_deposito": OperationContract.model_validate(
+        {
+            "action": "ObterSaldosLote",
+            "description": "Obtém a soma dos saldos dos lotes de um produto em um depósito.",
+            "method": "GET",
+            "parameters": [
+                {
+                    "description": "ID do produto",
+                    "location": "path",
+                    "name": "idProduto",
+                    "required": True,
+                    "schema_format": None,
+                    "schema_type": "integer",
+                    "sdk_name": "id_produto",
+                },
+                {
+                    "description": "ID do depósito",
+                    "location": "path",
+                    "name": "idDeposito",
+                    "required": True,
+                    "schema_format": None,
+                    "schema_type": "integer",
+                    "sdk_name": "id_deposito",
+                },
+            ],
+            "path": "/produtos/{idProduto}/lotes/depositos/{idDeposito}/saldo/soma",
+            "request_schema_refs": [],
+            "resource": "LotesLancamentos",
+            "response_schema_refs": {
+                "200": ["SaldoSomaLotesDTO"],
+                "400": ["ErrorResponse"],
+                "404": ["ErrorResponse"],
+            },
+            "sdk_method": "obter_saldos_soma_deposito",
+            "summary": "Obtém a soma dos saldos dos lotes de um produto em um depósito",
+        }
+    ),
     "obter_saldos_soma": OperationContract.model_validate(
         {
             "action": "ObterSaldosLote",
@@ -173,7 +210,7 @@ PRODUCT_BATCH_ENTRY_OPERATIONS: dict[str, OperationContract] = {
                 "200": ["SaldoSomaLotesTodosDepositosDTO"],
                 "404": ["ErrorResponse"],
             },
-            "sdk_method": "obter_saldos",
+            "sdk_method": "obter_saldos_soma",
             "summary": "Obtém o saldo total dos lotes de um produto",
         }
     ),
@@ -215,7 +252,7 @@ PRODUCT_BATCH_ENTRY_OPERATIONS: dict[str, OperationContract] = {
             "request_schema_refs": [],
             "resource": "LotesLancamentos",
             "response_schema_refs": {"200": ["SaldoLoteDTO"], "404": ["ErrorResponse"]},
-            "sdk_method": "obter_saldos",
+            "sdk_method": "obter_saldos_saldo",
             "summary": "Obtém o saldo de um lote de produto",
         }
     ),

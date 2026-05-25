@@ -1,0 +1,11 @@
+{
+  "data": [
+    {
+      "id": 123456789,
+      "codigo": "SKU-FORN",
+      "precoCompra": 42.75,
+      "produto": { "id": 111 },
+      "fornecedor": { "id": 222 }
+    }
+  ]
+}

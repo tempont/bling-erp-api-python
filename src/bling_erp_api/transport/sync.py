@@ -24,7 +24,7 @@ from bling_erp_api.rate_limit import RateLimiter
 from bling_erp_api.response import response_json_object
 
 if TYPE_CHECKING:
-    from bling_erp_api.types import JsonObject, QueryParams
+    from bling_erp_api.types import JsonObject, JsonPayload, QueryParams
 
 
 class SyncTransport:
@@ -58,7 +58,7 @@ class SyncTransport:
         path: str,
         *,
         params: QueryParams | None = None,
-        json: JsonObject | None = None,
+        json: JsonPayload | None = None,
     ) -> JsonObject:
         """Send a request and return a decoded JSON object."""
         attempts = 0
@@ -84,7 +84,7 @@ class SyncTransport:
         path: str,
         *,
         params: QueryParams | None = None,
-        json: JsonObject | None = None,
+        json: JsonPayload | None = None,
     ) -> httpx.Response:
         """Send one HTTP request."""
         try:

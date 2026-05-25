@@ -1,0 +1,12 @@
+{
+  "data": {
+    "id": 998877665,
+    "nome": "Produto pai exemplo",
+    "variacoes": [
+      {
+        "id": 112233445,
+        "nome": "Variacao exemplo"
+      }
+    ]
+  }
+}

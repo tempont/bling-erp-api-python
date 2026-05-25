@@ -3,16 +3,19 @@
 from __future__ import annotations
 
 from datetime import UTC, date, datetime
-from typing import TYPE_CHECKING
 
 from bling_erp_api.models.generated.products import ProductCreateRequest, ProductPatchRequest
 from bling_erp_api.models.generated.sales_orders import SalesOrderCreateRequest
 from bling_erp_api.resources.contacts import ContactsResource
+from bling_erp_api.resources.product_batch_entries import ProductBatchEntriesResource
+from bling_erp_api.resources.product_batches import ProductBatchesResource
+from bling_erp_api.resources.product_stores import ProductStoresResource
+from bling_erp_api.resources.product_structures import ProductStructuresResource
+from bling_erp_api.resources.product_suppliers import ProductSuppliersResource
+from bling_erp_api.resources.product_variations import ProductVariationsResource
 from bling_erp_api.resources.products import ProductsResource
 from bling_erp_api.resources.sales_orders import SalesOrdersResource
-
-if TYPE_CHECKING:
-    from bling_erp_api.types import JsonObject, QueryParams
+from bling_erp_api.types import JsonObject, JsonPayload, QueryParams
 
 
 class RecordingTransport:
@@ -20,7 +23,7 @@ class RecordingTransport:
 
     def __init__(self) -> None:
         """Create an empty recorder."""
-        self.calls: list[tuple[str, str, QueryParams | None, JsonObject | None]] = []
+        self.calls: list[tuple[str, str, QueryParams | None, JsonPayload | None]] = []
 
     def request(
         self,
@@ -28,10 +31,11 @@ class RecordingTransport:
         path: str,
         *,
         params: QueryParams | None = None,
-        json: JsonObject | None = None,
+        json: JsonPayload | None = None,
     ) -> JsonObject:
         """Record a request and return a simple response."""
         self.calls.append((method, path, params, json))
+
         return {"data": []}
 
 
@@ -289,4 +293,272 @@ def test_sales_orders_posting_operations_map_to_bling_endpoints() -> None:
         ("POST", "/pedidos/vendas/123/estornar-contas", None, None),
         ("POST", "/pedidos/vendas/123/gerar-nfe", None, None),
         ("POST", "/pedidos/vendas/123/gerar-nfce", None, None),
+    ]
+
+
+def test_product_structures_map_requests_to_bling() -> None:
+    """Structures resource should serialize paths, params, and payloads."""
+    transport = RecordingTransport()
+    resource = ProductStructuresResource(transport)
+
+    resource.remover_varios([1, 2])
+    resource.obter(3)
+    resource.alterar(4, {"tipoEstoque": "F", "lancamentoEstoque": "A", "componentes": []})
+    resource.remover_componentes(5, ids_componentes=[9])
+    resource.vincular_componentes(
+        6,
+        [{"produto": {"id": 42}, "quantidade": 1.5}],
+    )
+    resource.alterar_componente(
+        7,
+        id_componente=8,
+        dados={"produto": {"id": 99}, "quantidade": 2.0},
+    )
+
+    assert transport.calls == [
+        ("DELETE", "/produtos/estruturas", {"idsProdutos[]": [1, 2]}, None),
+        ("GET", "/produtos/estruturas/3", None, None),
+        (
+            "PUT",
+            "/produtos/estruturas/4",
+            None,
+            {"tipoEstoque": "F", "lancamentoEstoque": "A", "componentes": []},
+        ),
+        (
+            "DELETE",
+            "/produtos/estruturas/5/componentes",
+            {"idsComponentes[]": [9]},
+            None,
+        ),
+        (
+            "POST",
+            "/produtos/estruturas/6/componentes",
+            None,
+            [{"produto": {"id": 42}, "quantidade": 1.5}],
+        ),
+        (
+            "PATCH",
+            "/produtos/estruturas/7/componentes/8",
+            None,
+            {"produto": {"id": 99}, "quantidade": 2.0},
+        ),
+    ]
+
+
+def test_product_suppliers_map_requests_to_bling() -> None:
+    """Supplier links should mirror Bling query and path conventions."""
+    transport = RecordingTransport()
+    resource = ProductSuppliersResource(transport)
+
+    resource.listar(pagina=2, limite=40, id_produto=111, id_fornecedor=222)
+    resource.criar(
+        {"produto": {"id": 1}, "fornecedor": {"id": 2}, "codigo": "SKU-F", "garantia": 3}
+    )
+    resource.obter(77)
+    resource.alterar(77, {"produto": {"id": 1}, "garantia": 12})
+    resource.remover(88)
+
+    assert transport.calls == [
+        (
+            "GET",
+            "/produtos/fornecedores",
+            {"pagina": 2, "limite": 40, "idProduto": 111, "idFornecedor": 222},
+            None,
+        ),
+        (
+            "POST",
+            "/produtos/fornecedores",
+            None,
+            {
+                "produto": {"id": 1},
+                "fornecedor": {"id": 2},
+                "codigo": "SKU-F",
+                "garantia": 3,
+            },
+        ),
+        ("GET", "/produtos/fornecedores/77", None, None),
+        (
+            "PUT",
+            "/produtos/fornecedores/77",
+            None,
+            {"produto": {"id": 1}, "garantia": 12},
+        ),
+        ("DELETE", "/produtos/fornecedores/88", None, None),
+    ]
+
+
+def test_product_stores_map_requests_to_bling() -> None:
+    """Filtros de loja devem espelhar parâmetros Bling camelCase."""
+    transport = RecordingTransport()
+    resource = ProductStoresResource(transport)
+
+    resource.listar(
+        pagina=1,
+        limite=50,
+        id_produto=1,
+        id_loja=9,
+        data_alteracao_inicial=datetime(2024, 2, 1, 14, 0, tzinfo=UTC),
+        data_alteracao_final="2024-03-02 09:01:03",
+    )
+    resource.obter(55)
+
+    assert transport.calls == [
+        (
+            "GET",
+            "/produtos/lojas",
+            {
+                "pagina": 1,
+                "limite": 50,
+                "idProduto": 1,
+                "idLoja": 9,
+                "dataAlteracaoInicial": "2024-02-01 14:00:00",
+                "dataAlteracaoFinal": "2024-03-02 09:01:03",
+            },
+            None,
+        ),
+        ("GET", "/produtos/lojas/55", None, None),
+    ]
+
+
+def test_product_batches_map_requests_to_bling() -> None:
+    """Lotes enviam arrays obrigatórios, corpo em lista e endpoints de status."""
+    transport = RecordingTransport()
+    resource = ProductBatchesResource(transport)
+
+    resource.remover_varios([1, 9])
+    resource.listar(
+        pagina=2,
+        limite=33,
+        ids_produtos=[5, 6],
+        ids_lotes=[7],
+        data_validade_inicial=date(2024, 1, 1),
+        data_criacao_final=datetime(2024, 4, 1, 14, tzinfo=UTC),
+        status="1",
+        codigos_lotes=["ABC"],
+    )
+    resource.criar_varios(
+        [
+            {
+                "idLote": 1,
+                "produto": {"id": 11},
+                "deposito": {"id": 22},
+                "dataFabricacao": "2024-01-01",
+                "dataValidade": "2024-06-01",
+            }
+        ]
+    )
+    resource.listar_produtos_controlam_lote([111])
+    resource.obter(999)
+    resource.alterar(999, {"codigoLote": "L"})
+    resource.alterar_situacao(999, {"status": 2})
+    resource.alterar_situacao_desativar(4321)
+
+    assert transport.calls[:2] == [
+        ("DELETE", "/produtos/lotes", {"idsLotes[]": [1, 9]}, None),
+        (
+            "GET",
+            "/produtos/lotes",
+            {
+                "pagina": 2,
+                "limite": 33,
+                "idsProdutos[]": [5, 6],
+                "idsLotes[]": [7],
+                "codigosLotes[]": ["ABC"],
+                "status": "1",
+                "dataValidadeInicial": "2024-01-01",
+                "dataCriacaoFinal": "2024-04-01 14:00:00",
+            },
+            None,
+        ),
+    ]
+    batch_put = transport.calls[2]
+    assert batch_put[:2] == ("PUT", "/produtos/lotes")
+    assert batch_put[3] == [
+        {
+            "idLote": 1,
+            "produto": {"id": 11},
+            "deposito": {"id": 22},
+            "dataFabricacao": "2024-01-01",
+            "dataValidade": "2024-06-01",
+        }
+    ]
+
+    assert transport.calls[3:] == [
+        ("GET", "/produtos/lotes/controla-lote", {"idsProdutos[]": [111]}, None),
+        ("GET", "/produtos/lotes/999", None, None),
+        ("PUT", "/produtos/lotes/999", None, {"codigoLote": "L"}),
+        ("PATCH", "/produtos/lotes/999/status", None, {"status": 2}),
+        ("POST", "/produtos/4321/lotes/controla-lote/desativar", None, None),
+    ]
+
+
+def test_product_batch_entries_map_requests_to_bling() -> None:
+    """Lancamentos usam paths aninhados e query idsLotes[]."""
+    transport = RecordingTransport()
+    resource = ProductBatchEntriesResource(transport)
+
+    resource.obter(1001)
+    resource.alterar_atributo(1001, {"observacao": "ajuste"})
+    resource.listar(2002)
+    resource.criar(2002, {"idLote": 2002, "observacao": "novo"})
+    resource.obter_saldos(id_produto=303, id_deposito=404, ids_lotes=[505, 506])
+    resource.obter_saldos_soma(id_produto=303)
+    resource.obter_saldos_soma_deposito(id_produto=303, id_deposito=404)
+    resource.obter_saldos_saldo(id_produto=303, id_lote=505, id_deposito=404)
+
+    assert transport.calls == [
+        ("GET", "/produtos/lotes/lancamentos/1001", None, None),
+        ("PATCH", "/produtos/lotes/lancamentos/1001", None, {"observacao": "ajuste"}),
+        ("GET", "/produtos/lotes/2002/lancamentos", None, None),
+        (
+            "POST",
+            "/produtos/lotes/2002/lancamentos",
+            None,
+            {"idLote": 2002, "observacao": "novo"},
+        ),
+        (
+            "GET",
+            "/produtos/303/lotes/depositos/404/saldo",
+            {"idsLotes[]": [505, 506]},
+            None,
+        ),
+        ("GET", "/produtos/303/lotes/saldo/soma", None, None),
+        ("GET", "/produtos/303/lotes/depositos/404/saldo/soma", None, None),
+        (
+            "GET",
+            "/produtos/303/lotes/505/depositos/404/saldo",
+            None,
+            None,
+        ),
+    ]
+
+
+def test_product_variations_map_requests_to_bling() -> None:
+    """Gerar combinacoes e atributos usam payloads aliasados."""
+    transport = RecordingTransport()
+    resource = ProductVariationsResource(transport)
+
+    resource.gerar_combinacoes(
+        {"produtoPai": {"id": 9}, "atributos": [{"nome": "Cor", "opcoes": ["Azul"]}]}
+    )
+    resource.listar(10)
+    resource.alterar_atributo(10, {"atributoAntigo": "Cor", "atributoNovo": "Coloração"})
+
+    assert transport.calls == [
+        (
+            "POST",
+            "/produtos/variacoes/atributos/gerar-combinacoes",
+            None,
+            {
+                "produtoPai": {"id": 9},
+                "atributos": [{"nome": "Cor", "opcoes": ["Azul"]}],
+            },
+        ),
+        ("GET", "/produtos/variacoes/10", None, None),
+        (
+            "PATCH",
+            "/produtos/variacoes/10/atributos",
+            None,
+            {"atributoAntigo": "Cor", "atributoNovo": "Coloração"},
+        ),
     ]

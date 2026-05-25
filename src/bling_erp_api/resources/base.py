@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterator
 
     from bling_erp_api.transport.base import Transport
-    from bling_erp_api.types import JsonObject, QueryParams
+    from bling_erp_api.types import JsonObject, JsonPayload, QueryParams
 
 
 class BaseResource:
@@ -24,15 +24,15 @@ class BaseResource:
         """Send a GET request."""
         return self._transport.request("GET", path, params=params)
 
-    def _post(self, path: str, *, json: JsonObject | None = None) -> JsonObject:
+    def _post(self, path: str, *, json: JsonPayload | None = None) -> JsonObject:
         """Send a POST request."""
         return self._transport.request("POST", path, json=json)
 
-    def _put(self, path: str, *, json: JsonObject | None = None) -> JsonObject:
+    def _put(self, path: str, *, json: JsonPayload | None = None) -> JsonObject:
         """Send a PUT request."""
         return self._transport.request("PUT", path, json=json)
 
-    def _patch(self, path: str, *, json: JsonObject | None = None) -> JsonObject:
+    def _patch(self, path: str, *, json: JsonPayload | None = None) -> JsonObject:
         """Send a PATCH request."""
         return self._transport.request("PATCH", path, json=json)
 

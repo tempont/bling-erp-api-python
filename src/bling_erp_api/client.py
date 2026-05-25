@@ -15,7 +15,13 @@ from bling_erp_api.config import (
 from bling_erp_api.resources import (
     ContactsResource,
     InvoicesResource,
+    ProductBatchEntriesResource,
+    ProductBatchesResource,
     ProductsResource,
+    ProductStoresResource,
+    ProductStructuresResource,
+    ProductSuppliersResource,
+    ProductVariationsResource,
     SalesOrdersResource,
 )
 from bling_erp_api.transport.sync import SyncTransport
@@ -58,6 +64,18 @@ class BlingClient:
         self.contacts = ContactsResource(self._transport)
         self.products = ProductsResource(self._transport)
         self.produtos = self.products
+        self.produtos_estruturas = ProductStructuresResource(self._transport)
+        self.product_structures = self.produtos_estruturas
+        self.produtos_fornecedores = ProductSuppliersResource(self._transport)
+        self.product_suppliers = self.produtos_fornecedores
+        self.produtos_lojas = ProductStoresResource(self._transport)
+        self.product_stores = self.produtos_lojas
+        self.lotes = ProductBatchesResource(self._transport)
+        self.product_batches = self.lotes
+        self.lotes_lancamentos = ProductBatchEntriesResource(self._transport)
+        self.product_batch_entries = self.lotes_lancamentos
+        self.produtos_variacoes = ProductVariationsResource(self._transport)
+        self.product_variations = self.produtos_variacoes
         self.sales_orders = SalesOrdersResource(self._transport)
         self.pedidos_vendas = self.sales_orders
         self.invoices = InvoicesResource(self._transport)

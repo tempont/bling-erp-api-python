@@ -6,7 +6,9 @@ A documentação oficial é usada como contrato para paths, métodos e parâmetr
 ## Exemplo
 
 ```python
-# Veja as operacoes geradas abaixo.
+lotes = client.lotes.listar(ids_produtos=[123456789], limite=10)
+lote = client.lotes.obter(123456789)
+controle = client.lotes.listar_produtos_controlam_lote(ids_produtos=[123456789])
 ```
 
 ## Operações

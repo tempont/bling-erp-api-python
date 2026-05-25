@@ -6,7 +6,7 @@ A documentação oficial é usada como contrato para paths, métodos e parâmetr
 ## Exemplo
 
 ```python
-# Veja as operacoes geradas abaixo.
+estrutura = client.produtos_estruturas.obter(123456789)
 ```
 
 ## Operações
