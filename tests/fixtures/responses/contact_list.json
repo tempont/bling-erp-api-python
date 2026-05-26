@@ -1,0 +1,12 @@
+{
+  "data": [
+    {
+      "id": 123456789,
+      "nome": "Cliente Modelo Ltda.",
+      "situacao": "A",
+      "codigo": "CLI-001",
+      "tipo": "J",
+      "email": "contato@example.com"
+    }
+  ]
+}

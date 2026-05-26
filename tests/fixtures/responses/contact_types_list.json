@@ -1,0 +1,6 @@
+{
+  "data": [
+    { "id": 10, "descricao": "Cliente" },
+    { "id": 20, "descricao": "Fornecedor" }
+  ]
+}
