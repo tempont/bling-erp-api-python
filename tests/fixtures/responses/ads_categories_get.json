@@ -1,0 +1,11 @@
+{
+    "data": {
+        "id": 1,
+        "nome": "Atributo 1",
+        "obrigatorio": true,
+        "tipo": "string",
+        "unidadePadrao": "unidade",
+        "minimo": 1,
+        "maximo": 10
+    }
+}

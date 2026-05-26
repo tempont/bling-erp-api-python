@@ -19,6 +19,8 @@ tipos e valores de retorno com formatação colorida.
 | [Lotes](product_batches.md) | `ProductBatchesResource` — `/produtos/lotes` |
 | [Lançamentos de Lotes](product_batch_entries.md) | `ProductBatchEntriesResource` — `/produtos/lotes/lancamentos` |
 | [Variações de Produtos](product_variations.md) | `ProductVariationsResource` — `/produtos/variacoes` |
+| [Anúncios](ads.md) | `AdsResource` — `/anuncios` |
+| [Categorias de Anúncios](ad_categories.md) | `AdCategoriesResource` — `/anuncios/categorias` |
 | [Contatos](contacts.md) | `ContactsResource` — `/contatos` |
 | [NF-e](nfe.md) | `NfeResource` — `/nfe` |
 | [NFC-e](nfce.md) | `NfceResource` — `/nfce` |
