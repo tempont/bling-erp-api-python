@@ -74,6 +74,11 @@ from bling_erp_api.models.generated.estoques import (
     EstoquesSaldosBaseDTO,
     EstoquesSalvarDTO,
 )
+from bling_erp_api.models.generated.homologation import (
+    HomologacaoDadosBaseDTO,
+    HomologacaoDadosDTO,
+    HomologacaoSituacaoDTO,
+)
 from bling_erp_api.models.generated.income_expense_categories import (
     CategoriasReceitasDespesasDadosBaseDTO,
     CategoriasReceitasDespesasDadosDTO,
@@ -103,6 +108,15 @@ from bling_erp_api.models.generated.nfse import (
     NotasServicosDadosDTO_POST,
     NotasServicosListResponse,
 )
+from bling_erp_api.models.generated.payment_methods import (
+    FormasPagamentosAlterarSituacaoDTO,
+    FormasPagamentosDadosBaseDTO,
+    FormasPagamentosDadosCartaoDTO,
+    FormasPagamentosDadosDTO,
+    FormasPagamentosDefinirPadraoDTO,
+    FormasPagamentosSalvarDTO,
+    FormasPagamentosTaxaDTO,
+)
 from bling_erp_api.models.generated.product_batch_entries import (
     BalancePerLotWarehouse,
     BalanceSumAllWarehouses,
@@ -123,6 +137,10 @@ from bling_erp_api.models.generated.product_batches import (
 from bling_erp_api.models.generated.product_categories import (
     CategoriasProdutosCategoriPaiDTO,
     CategoriasProdutosDadosDTO,
+)
+from bling_erp_api.models.generated.product_groups import (
+    GruposProdutosDadosDTO,
+    GruposProdutosGrupoProdutoPaiDTO,
 )
 from bling_erp_api.models.generated.product_stores import (
     ProductStoreBrandRef,
@@ -248,6 +266,18 @@ __all__ = [
     "EstoquesProdutoDTO",
     "EstoquesSaldosBaseDTO",
     "EstoquesSalvarDTO",
+    "FormasPagamentosAlterarSituacaoDTO",
+    "FormasPagamentosDadosBaseDTO",
+    "FormasPagamentosDadosCartaoDTO",
+    "FormasPagamentosDadosDTO",
+    "FormasPagamentosDefinirPadraoDTO",
+    "FormasPagamentosSalvarDTO",
+    "FormasPagamentosTaxaDTO",
+    "GruposProdutosDadosDTO",
+    "GruposProdutosGrupoProdutoPaiDTO",
+    "HomologacaoDadosBaseDTO",
+    "HomologacaoDadosDTO",
+    "HomologacaoSituacaoDTO",
     "NotaFiscalGetResponse",
     "NotaFiscalResponsePOST",
     "NotasFiscaisContatoDTO",

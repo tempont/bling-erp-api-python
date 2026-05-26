@@ -11,15 +11,18 @@ from bling_erp_api.resources.contas_receber import ContasReceberResource
 from bling_erp_api.resources.depositos import DepositosResource
 from bling_erp_api.resources.empresas import EmpresasResource
 from bling_erp_api.resources.estoques import EstoquesResource
+from bling_erp_api.resources.homologation import HomologationResource
 from bling_erp_api.resources.income_expense_categories import (
     IncomeExpenseCategoriesResource,
 )
 from bling_erp_api.resources.nfce import NfceResource
 from bling_erp_api.resources.nfe import NfeResource
 from bling_erp_api.resources.nfse import NfseResource
+from bling_erp_api.resources.payment_methods import PaymentMethodsResource
 from bling_erp_api.resources.product_batch_entries import ProductBatchEntriesResource
 from bling_erp_api.resources.product_batches import ProductBatchesResource
 from bling_erp_api.resources.product_categories import ProductCategoriesResource
+from bling_erp_api.resources.product_groups import ProductGroupsResource
 from bling_erp_api.resources.product_stores import ProductStoresResource
 from bling_erp_api.resources.product_structures import ProductStructuresResource
 from bling_erp_api.resources.product_suppliers import ProductSuppliersResource
@@ -40,13 +43,16 @@ __all__ = [
     "DepositosResource",
     "EmpresasResource",
     "EstoquesResource",
+    "HomologationResource",
     "IncomeExpenseCategoriesResource",
     "NfceResource",
     "NfeResource",
     "NfseResource",
+    "PaymentMethodsResource",
     "ProductBatchEntriesResource",
     "ProductBatchesResource",
     "ProductCategoriesResource",
+    "ProductGroupsResource",
     "ProductStoresResource",
     "ProductStructuresResource",
     "ProductSuppliersResource",

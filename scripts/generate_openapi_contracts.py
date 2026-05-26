@@ -165,6 +165,12 @@ PARAMETER_TO_SDK_NAME = {
     "idContaPagar": "id_conta_pagar",
     "idContaReceber": "id_conta_receber",
     "descricao": "descricao",
+    "tiposPagamentos[]": "tipos_pagamentos",
+    "nome": "nome",
+    "nomePai": "nome_pai",
+    "idGrupoProduto": "id_grupo_produto",
+    "idsGruposProdutos[]": "ids_grupos_produtos",
+    "idProdutoHomologacao": "id_produto_homologacao",
 }
 
 DOCSTRING_ONLY_RESOURCES: list[ResourceConfig] = []
@@ -194,6 +200,9 @@ _CLASS_NAME_MAP: dict[str, str] = {
     "depositos": "DepositosResource",
     "empresas": "EmpresasResource",
     "estoques": "EstoquesResource",
+    "payment_methods": "PaymentMethodsResource",
+    "product_groups": "ProductGroupsResource",
+    "homologation": "HomologationResource",
 }
 
 RESOURCES: list[ResourceConfig] = [
@@ -455,6 +464,36 @@ RESOURCES: list[ResourceConfig] = [
             "saldos_dep = client.estoques.obter_saldos_por_deposito(1, ids_produtos=[123])",
         ],
     },
+    {
+        "openapi_resource": "FormasPagamentos",
+        "module": "payment_methods",
+        "constant": "PAYMENT_METHOD_OPERATIONS",
+        "title": "Formas de Pagamentos",
+        "example": [
+            "formas = client.payment_methods.listar()",
+            "forma = client.payment_methods.obter(123456)",
+        ],
+    },
+    {
+        "openapi_resource": "GruposProdutos",
+        "module": "product_groups",
+        "constant": "PRODUCT_GROUP_OPERATIONS",
+        "title": "Grupos de Produtos",
+        "example": [
+            "grupos = client.product_groups.listar()",
+            "grupo = client.product_groups.obter(123456)",
+        ],
+    },
+    {
+        "openapi_resource": "Homologacao",
+        "module": "homologation",
+        "constant": "HOMOLOGATION_OPERATIONS",
+        "title": "Homologação",
+        "example": [
+            "produto = client.homologation.obter()",
+            "result = client.homologation.criar({'nome': 'Produto Teste', 'preco': 10.00})",
+        ],
+    },
 ]
 
 
@@ -574,6 +613,8 @@ def _sdk_method_for_operation(*, action: str, method: str, path: str) -> str:  #
             return "obter_saldos_saldo"
         if path == "/produtos/{idProduto}/lotes/depositos/{idDeposito}/saldo/soma":
             return "obter_saldos_soma_deposito"
+    if action == "AlterarAtributo" and path == "/formas-pagamentos/{idFormaPagamento}/padrao":
+        return "alterar_padrao"
     return ACTION_TO_SDK_METHOD[action]
 
 

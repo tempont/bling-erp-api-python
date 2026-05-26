@@ -24,13 +24,16 @@ from bling_erp_api.resources import (
     DepositosResource,
     EmpresasResource,
     EstoquesResource,
+    HomologationResource,
     IncomeExpenseCategoriesResource,
     NfceResource,
     NfeResource,
     NfseResource,
+    PaymentMethodsResource,
     ProductBatchEntriesResource,
     ProductBatchesResource,
     ProductCategoriesResource,
+    ProductGroupsResource,
     ProductsResource,
     ProductStoresResource,
     ProductStructuresResource,
@@ -103,6 +106,10 @@ class BlingClient:
         self._depositos = DepositosResource(self._transport)
         self._empresas = EmpresasResource(self._transport)
         self._estoques = EstoquesResource(self._transport)
+
+        self._payment_methods = PaymentMethodsResource(self._transport)
+        self._product_groups = ProductGroupsResource(self._transport)
+        self._homologation = HomologationResource(self._transport)
 
     # -- Resource namespace properties (with IDE-visible docstrings) --
 
@@ -350,6 +357,36 @@ class BlingClient:
     def stock(self) -> EstoquesResource:
         """Alias for ``estoques``. Stock operations on ``/estoques``."""
         return self.estoques
+
+    @property
+    def formas_pagamentos(self) -> PaymentMethodsResource:
+        """Formas de pagamentos — operações em ``/formas-pagamentos``."""
+        return self._payment_methods
+
+    @property
+    def payment_methods(self) -> PaymentMethodsResource:
+        """Alias for ``formas_pagamentos``. Payment method operations on ``/formas-pagamentos``."""
+        return self.formas_pagamentos
+
+    @property
+    def grupos_produtos(self) -> ProductGroupsResource:
+        """Grupos de produtos — operações em ``/grupos-produtos``."""
+        return self._product_groups
+
+    @property
+    def product_groups(self) -> ProductGroupsResource:
+        """Alias for ``grupos_produtos``. Product group operations on ``/grupos-produtos``."""
+        return self.grupos_produtos
+
+    @property
+    def homologacao(self) -> HomologationResource:
+        """Homologação — operações em ``/homologacao/produtos``."""
+        return self._homologation
+
+    @property
+    def homologation(self) -> HomologationResource:
+        """Alias for ``homologacao``. Homologation operations on ``/homologacao/produtos``."""
+        return self.homologacao
 
     @classmethod
     def from_env(  # noqa: PLR0913

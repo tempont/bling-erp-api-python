@@ -17,15 +17,18 @@ from bling_erp_api.resources.contas_receber import ContasReceberResource
 from bling_erp_api.resources.depositos import DepositosResource
 from bling_erp_api.resources.empresas import EmpresasResource
 from bling_erp_api.resources.estoques import EstoquesResource
+from bling_erp_api.resources.homologation import HomologationResource
 from bling_erp_api.resources.income_expense_categories import (
     IncomeExpenseCategoriesResource,
 )
 from bling_erp_api.resources.nfce import NfceResource
 from bling_erp_api.resources.nfe import NfeResource
 from bling_erp_api.resources.nfse import NfseResource
+from bling_erp_api.resources.payment_methods import PaymentMethodsResource
 from bling_erp_api.resources.product_batch_entries import ProductBatchEntriesResource
 from bling_erp_api.resources.product_batches import ProductBatchesResource
 from bling_erp_api.resources.product_categories import ProductCategoriesResource
+from bling_erp_api.resources.product_groups import ProductGroupsResource
 from bling_erp_api.resources.product_stores import ProductStoresResource
 from bling_erp_api.resources.product_structures import ProductStructuresResource
 from bling_erp_api.resources.product_suppliers import ProductSuppliersResource
@@ -2113,3 +2116,250 @@ class TestEstoquesResourceMapping:
             "GET",
             "/estoques/saldos/5",
         )
+
+
+# --- Formas de Pagamentos mapping tests ---
+
+
+class TestPaymentMethodsResourceMapping:
+    """Mapping tests for PaymentMethodsResource."""
+
+    def test_payment_methods_listar_maps_to_bling_endpoint(self) -> None:
+        """Payment methods listar maps pagination params to GET /formas-pagamentos."""
+        transport = RecordingTransport()
+        resource = PaymentMethodsResource(transport)
+        resource.listar(pagina=1, limite=100)
+        assert transport.calls == [
+            ("GET", "/formas-pagamentos?pagina=1&limite=100", {}, None),
+        ]
+
+    def test_payment_methods_listar_with_filters(self) -> None:
+        """Payment methods listar maps tipos_pagamentos filter to Bling camelCase."""
+        transport = RecordingTransport()
+        resource = PaymentMethodsResource(transport)
+        resource.listar(pagina=1, limite=100, tipos_pagamentos=[2])
+        assert transport.calls[0] == (
+            "GET",
+            "/formas-pagamentos?pagina=1&limite=100",
+            {"tiposPagamentos[]": [2]},
+            None,
+        )
+
+    def test_payment_methods_obter_maps_to_bling_endpoint(self) -> None:
+        """Payment methods obter maps ID to GET /formas-pagamentos/{id}."""
+        transport = RecordingTransport()
+        resource = PaymentMethodsResource(transport)
+        resource.obter(10)
+        assert transport.calls == [
+            ("GET", "/formas-pagamentos/10", None, None),
+        ]
+
+    def test_payment_methods_criar_maps_to_bling_endpoint(self) -> None:
+        """Payment methods criar posts JSON body to POST /formas-pagamentos."""
+        transport = RecordingTransport()
+        resource = PaymentMethodsResource(transport)
+        dados: JsonObject = {"descricao": "Boleto", "tipoPagamento": 2}
+        resource.criar(dados)
+        assert transport.calls[0][:2] == ("POST", "/formas-pagamentos")
+        assert transport.calls[0][3] is not None
+
+    def test_payment_methods_alterar_maps_to_bling_endpoint(self) -> None:
+        """Payment methods alterar puts JSON body to PUT /formas-pagamentos/{id}."""
+        transport = RecordingTransport()
+        resource = PaymentMethodsResource(transport)
+        dados: JsonObject = {"descricao": "Boleto Atualizado"}
+        resource.alterar(5, dados)
+        assert transport.calls[0][:2] == ("PUT", "/formas-pagamentos/5")
+        assert transport.calls[0][3] is not None
+
+    def test_payment_methods_remover_maps_to_bling_endpoint(self) -> None:
+        """Payment methods remover sends DELETE to /formas-pagamentos/{id}."""
+        transport = RecordingTransport()
+        resource = PaymentMethodsResource(transport)
+        resource.remover(5)
+        assert transport.calls == [
+            ("DELETE", "/formas-pagamentos/5", None, None),
+        ]
+
+    def test_payment_methods_alterar_padrao_maps_to_bling_endpoint(self) -> None:
+        """Payment methods alterar_padrao patches to /formas-pagamentos/{id}/padrao."""
+        transport = RecordingTransport()
+        resource = PaymentMethodsResource(transport)
+        resource.alterar_padrao(5, padrao=1)
+        assert transport.calls[0][:2] == ("PATCH", "/formas-pagamentos/5/padrao")
+        assert transport.calls[0][3] == {"padrao": 1}
+
+    def test_payment_methods_alterar_situacao_maps_to_bling_endpoint(self) -> None:
+        """Payment methods alterar_situacao patches to /formas-pagamentos/{id}/situacao."""
+        transport = RecordingTransport()
+        resource = PaymentMethodsResource(transport)
+        resource.alterar_situacao(5, situacao=1)
+        assert transport.calls[0][:2] == ("PATCH", "/formas-pagamentos/5/situacao")
+        assert transport.calls[0][3] == {"situacao": 1}
+
+    def test_payment_methods_english_alias_list(self) -> None:
+        """English alias 'list' should map to 'listar'."""
+        transport = RecordingTransport()
+        resource = PaymentMethodsResource(transport)
+        resource.list(page=1, limit=100)
+        assert transport.calls[0][:2] == (
+            "GET",
+            "/formas-pagamentos?pagina=1&limite=100",
+        )
+
+    def test_payment_methods_english_alias_set_default(self) -> None:
+        """English alias 'set_default' should map to 'alterar_padrao'."""
+        transport = RecordingTransport()
+        resource = PaymentMethodsResource(transport)
+        resource.set_default(5, default_type=1)
+        assert transport.calls[0][:2] == ("PATCH", "/formas-pagamentos/5/padrao")
+        assert transport.calls[0][3] == {"padrao": 1}
+
+
+# --- Grupos de Produtos mapping tests ---
+
+
+class TestProductGroupsResourceMapping:
+    """Mapping tests for ProductGroupsResource."""
+
+    def test_product_groups_listar_maps_to_bling_endpoint(self) -> None:
+        """Product groups listar maps pagination params to GET /grupos-produtos."""
+        transport = RecordingTransport()
+        resource = ProductGroupsResource(transport)
+        resource.listar(pagina=1, limite=100)
+        assert transport.calls == [
+            ("GET", "/grupos-produtos?pagina=1&limite=100", {}, None),
+        ]
+
+    def test_product_groups_listar_with_filters(self) -> None:
+        """Product groups listar maps nome filter to Bling camelCase."""
+        transport = RecordingTransport()
+        resource = ProductGroupsResource(transport)
+        resource.listar(pagina=1, limite=100, nome="Eletrônicos")
+        assert transport.calls[0] == (
+            "GET",
+            "/grupos-produtos?pagina=1&limite=100",
+            {"nome": "Eletrônicos"},
+            None,
+        )
+
+    def test_product_groups_obter_maps_to_bling_endpoint(self) -> None:
+        """Product groups obter maps ID to GET /grupos-produtos/{id}."""
+        transport = RecordingTransport()
+        resource = ProductGroupsResource(transport)
+        resource.obter(100)
+        assert transport.calls == [
+            ("GET", "/grupos-produtos/100", None, None),
+        ]
+
+    def test_product_groups_criar_maps_to_bling_endpoint(self) -> None:
+        """Product groups criar posts JSON body to POST /grupos-produtos."""
+        transport = RecordingTransport()
+        resource = ProductGroupsResource(transport)
+        dados: JsonObject = {"nome": "Novo Grupo"}
+        resource.criar(dados)
+        assert transport.calls[0][:2] == ("POST", "/grupos-produtos")
+        assert transport.calls[0][3] is not None
+
+    def test_product_groups_remover_varios_maps_to_bling_endpoint(self) -> None:
+        """Product groups remover_varios sends DELETE with idsGruposProdutos[]."""
+        transport = RecordingTransport()
+        resource = ProductGroupsResource(transport)
+        resource.remover_varios([1, 2, 3])
+        assert transport.calls == [
+            ("DELETE", "/grupos-produtos", {"idsGruposProdutos[]": [1, 2, 3]}, None),
+        ]
+
+    def test_product_groups_english_alias_list(self) -> None:
+        """English alias 'list' should map to 'listar'."""
+        transport = RecordingTransport()
+        resource = ProductGroupsResource(transport)
+        resource.list(page=1, limit=100)
+        assert transport.calls[0][:2] == (
+            "GET",
+            "/grupos-produtos?pagina=1&limite=100",
+        )
+
+    def test_product_groups_english_alias_get(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        transport = RecordingTransport()
+        resource = ProductGroupsResource(transport)
+        resource.get(100)
+        assert transport.calls == [
+            ("GET", "/grupos-produtos/100", None, None),
+        ]
+
+    def test_product_groups_english_alias_delete_multiple(self) -> None:
+        """English alias 'delete_multiple' should map to 'remover_varios'."""
+        transport = RecordingTransport()
+        resource = ProductGroupsResource(transport)
+        resource.delete_multiple([1, 2, 3])
+        assert transport.calls[0] == (
+            "DELETE",
+            "/grupos-produtos",
+            {"idsGruposProdutos[]": [1, 2, 3]},
+            None,
+        )
+
+
+# --- Homologação mapping tests ---
+
+
+class TestHomologationResourceMapping:
+    """Mapping tests for HomologationResource."""
+
+    def test_homologation_obter_maps_to_bling_endpoint(self) -> None:
+        """Homologation obter maps to GET /homologacao/produtos."""
+        transport = RecordingTransport()
+        resource = HomologationResource(transport)
+        resource.obter()
+        assert transport.calls == [
+            ("GET", "/homologacao/produtos", None, None),
+        ]
+
+    def test_homologation_criar_maps_to_bling_endpoint(self) -> None:
+        """Homologation criar posts JSON body to POST /homologacao/produtos."""
+        transport = RecordingTransport()
+        resource = HomologationResource(transport)
+        dados: JsonObject = {"nome": "Produto Homologação"}
+        resource.criar(dados)
+        assert transport.calls[0][:2] == ("POST", "/homologacao/produtos")
+        assert transport.calls[0][3] is not None
+
+    def test_homologation_alterar_maps_to_bling_endpoint(self) -> None:
+        """Homologation alterar puts JSON body to PUT /homologacao/produtos/{id}."""
+        transport = RecordingTransport()
+        resource = HomologationResource(transport)
+        dados: JsonObject = {"nome": "Produto Atualizado"}
+        resource.alterar(999, dados)
+        assert transport.calls[0][:2] == ("PUT", "/homologacao/produtos/999")
+        assert transport.calls[0][3] is not None
+
+    def test_homologation_remover_maps_to_bling_endpoint(self) -> None:
+        """Homologation remover sends DELETE to /homologacao/produtos/{id}."""
+        transport = RecordingTransport()
+        resource = HomologationResource(transport)
+        resource.remover(999)
+        assert transport.calls == [
+            ("DELETE", "/homologacao/produtos/999", None, None),
+        ]
+
+    def test_homologation_alterar_situacao_maps_to_bling_endpoint(self) -> None:
+        """Homologation alterar_situacao patches to /homologacao/produtos/{id}/situacoes."""
+        transport = RecordingTransport()
+        resource = HomologationResource(transport)
+        resource.alterar_situacao(999, situacao="I")
+        assert transport.calls[0][:2] == (
+            "PATCH",
+            "/homologacao/produtos/999/situacoes",
+        )
+        assert transport.calls[0][3] == {"situacao": "I"}
+
+    def test_homologation_english_alias_get(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        transport = RecordingTransport()
+        resource = HomologationResource(transport)
+        resource.get()
+        assert transport.calls == [
+            ("GET", "/homologacao/produtos", None, None),
+        ]

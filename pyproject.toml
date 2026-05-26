@@ -100,6 +100,7 @@ task-tags = ["TODO", "FIXME", "XXX", "HACK"]
 "examples/product_categories/**" = ["TC001"]
 "examples/income_expense_categories/**" = ["TC001"]
 "scripts/**" = ["INP001"]
+"src/bling_erp_api/contracts/generated/**" = ["RUF001"]
 "src/bling_erp_api/models/generated/**" = ["TC001", "D101"]
 "tests/**" = [
     "ANN001",
