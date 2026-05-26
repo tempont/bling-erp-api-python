@@ -21,6 +21,8 @@ tipos e valores de retorno com formatação colorida.
 | [Variações de Produtos](product_variations.md) | `ProductVariationsResource` — `/produtos/variacoes` |
 | [Anúncios](ads.md) | `AdsResource` — `/anuncios` |
 | [Categorias de Anúncios](ad_categories.md) | `AdCategoriesResource` — `/anuncios/categorias` |
+| [Borderôs](borderos.md) | `BorderosResource` — `/borderos` |
+| [Caixas e Bancos](caixas_bancos.md) | `CaixasBancosResource` — `/caixas` |
 | [Contatos](contacts.md) | `ContactsResource` — `/contatos` |
 | [NF-e](nfe.md) | `NfeResource` — `/nfe` |
 | [NFC-e](nfce.md) | `NfceResource` — `/nfce` |

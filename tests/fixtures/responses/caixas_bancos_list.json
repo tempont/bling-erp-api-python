@@ -1,0 +1,48 @@
+{
+  "data": [
+    {
+      "id": "1",
+      "debCred": "D",
+      "situacao": "R",
+      "valor": 500.00,
+      "data": "2025-01-10",
+      "observacoes": "Pagamento de fornecedor",
+      "descricao": "Fornecedor ABC",
+      "origem": {
+        "id": 10,
+        "tipo": "duplicata"
+      },
+      "contato": {
+        "id": 100,
+        "nome": "Fornecedor ABC Ltda",
+        "cnpj": "12345678000199"
+      },
+      "contaFinanceira": {
+        "id": 1,
+        "descricao": "Conta Corrente"
+      }
+    },
+    {
+      "id": "2",
+      "debCred": "C",
+      "situacao": "R",
+      "valor": 1500.00,
+      "data": "2025-01-12",
+      "observacoes": "Recebimento de cliente",
+      "descricao": "Cliente XYZ",
+      "origem": {
+        "id": 20,
+        "tipo": "caixa"
+      },
+      "contato": {
+        "id": 200,
+        "nome": "Cliente XYZ Ltda",
+        "cnpj": "98765432000188"
+      },
+      "contaFinanceira": {
+        "id": 1,
+        "descricao": "Conta Corrente"
+      }
+    }
+  ]
+}

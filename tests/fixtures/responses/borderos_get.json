@@ -1,0 +1,37 @@
+{
+  "data": {
+    "id": 123456,
+    "data": "2025-01-15",
+    "historico": "Borderô referente às vendas de janeiro",
+    "portador": {
+      "id": 100
+    },
+    "categoria": {
+      "id": 200
+    },
+    "pagamentos": [
+      {
+        "contato": {
+          "id": 300
+        },
+        "numeroDocumento": "DOC-001",
+        "valorPago": 1500.75,
+        "juros": 5.50,
+        "desconto": 10.00,
+        "acrescimo": 0.00,
+        "tarifa": 2.50
+      },
+      {
+        "contato": {
+          "id": 301
+        },
+        "numeroDocumento": "DOC-002",
+        "valorPago": 800.00,
+        "juros": 0.00,
+        "desconto": 20.00,
+        "acrescimo": 5.00,
+        "tarifa": 1.80
+      }
+    ]
+  }
+}

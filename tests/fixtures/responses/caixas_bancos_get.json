@@ -1,0 +1,37 @@
+{
+  "data": {
+    "id": 12345678,
+    "debCred": "D",
+    "saldo": "N",
+    "situacao": "R",
+    "transferencia": "0",
+    "tipoLancamento": "1",
+    "data": "2025-01-10",
+    "competencia": "2025-01-01",
+    "valor": 500.00,
+    "observacoes": "Pagamento de fornecedor",
+    "parcela": {
+      "id": 555
+    },
+    "categoria": {
+      "id": 10,
+      "descricao": "Despesas Operacionais"
+    },
+    "conciliacaoMovimentacao": {
+      "id": 777
+    },
+    "contato": {
+      "id": 100,
+      "nome": "Fornecedor ABC Ltda",
+      "cnpj": "12345678000199"
+    },
+    "origem": {
+      "id": 10,
+      "tipo": "duplicata"
+    },
+    "contaFinanceira": {
+      "id": 1,
+      "descricao": "Conta Corrente"
+    }
+  }
+}

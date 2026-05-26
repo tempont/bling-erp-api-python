@@ -77,6 +77,8 @@ nav:
       - resources/nfse.md
       - resources/ad_categories.md
       - resources/ads.md
+      - Borderos: resources/borderos.md
+      - Caixas e Bancos: resources/caixas_bancos.md
   - Referência da API:
       - api-reference/index.md
       - Cliente: api-reference/client.md
@@ -90,6 +92,8 @@ nav:
       - Variações de Produtos: api-reference/product_variations.md
       - Anúncios: api-reference/ads.md
       - Categorias de Anúncios: api-reference/ad_categories.md
+      - Borderôs: api-reference/borderos.md
+      - Caixas e Bancos: api-reference/caixas_bancos.md
       - Contatos: api-reference/contacts.md
       - NF-e: api-reference/nfe.md
       - NFC-e: api-reference/nfce.md
