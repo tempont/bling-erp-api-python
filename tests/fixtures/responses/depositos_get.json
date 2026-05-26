@@ -1,0 +1,9 @@
+{
+  "data": {
+    "id": 1,
+    "descricao": "Depósito Principal",
+    "situacao": 1,
+    "padrao": true,
+    "desconsiderarSaldo": false
+  }
+}

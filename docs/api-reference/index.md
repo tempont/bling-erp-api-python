@@ -28,6 +28,9 @@ tipos e valores de retorno com formatação colorida.
 | [Contas a Pagar](contas_pagar.md) | `ContasPagarResource` — `/contas/pagar` |
 | [Contas a Receber](contas_receber.md) | `ContasReceberResource` — `/contas/receber` |
 | [Contas Financeiras](contas_contabeis.md) | `ContasContabeisResource` — `/contas-contabeis` |
+| [Depósitos](depositos.md) | `DepositosResource` — `/depositos` |
+| [Empresas](empresas.md) | `EmpresasResource` — `/empresas` |
+| [Estoques](estoques.md) | `EstoquesResource` — `/estoques` |
 | [Caixas e Bancos](caixas_bancos.md) | `CaixasBancosResource` — `/caixas` |
 | [Contatos](contacts.md) | `ContactsResource` — `/contatos` |
 | [NF-e](nfe.md) | `NfeResource` — `/nfe` |

@@ -1,0 +1,9 @@
+{
+  "data": [
+    {
+      "produto": {"id": 100, "codigo": "PROD-001"},
+      "saldoFisicoTotal": 50.0,
+      "saldoVirtualTotal": 45.0
+    }
+  ]
+}

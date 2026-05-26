@@ -1,0 +1,9 @@
+{
+  "data": {
+    "id": "abc123",
+    "nome": "Minha Empresa LTDA",
+    "cnpj": "12345678000199",
+    "email": "contato@empresa.com.br",
+    "dataContrato": "2024-01-01"
+  }
+}

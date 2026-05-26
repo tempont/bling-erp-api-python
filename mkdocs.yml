@@ -85,6 +85,9 @@ nav:
       - Contas a Pagar: resources/contas_pagar.md
       - Contas a Receber: resources/contas_receber.md
       - Contas Financeiras: resources/contas_contabeis.md
+      - Depósitos: resources/depositos.md
+      - Empresas: resources/empresas.md
+      - Estoques: resources/estoques.md
   - Referência da API:
       - api-reference/index.md
       - Cliente: api-reference/client.md
@@ -110,3 +113,6 @@ nav:
       - Contas a Pagar: api-reference/contas_pagar.md
       - Contas a Receber: api-reference/contas_receber.md
       - Contas Financeiras: api-reference/contas_contabeis.md
+      - Depósitos: api-reference/depositos.md
+      - Empresas: api-reference/empresas.md
+      - Estoques: api-reference/estoques.md
