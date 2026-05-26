@@ -1,0 +1,9 @@
+{
+  "data": {
+    "id": 200,
+    "descricao": "Camisetas",
+    "categoriaPai": {
+      "id": 10
+    }
+  }
+}

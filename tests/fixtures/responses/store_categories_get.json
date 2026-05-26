@@ -1,0 +1,13 @@
+{
+  "data": {
+    "id": 100,
+    "loja": {
+      "id": 1
+    },
+    "descricao": "Eletrônicos",
+    "codigo": "MLB1234",
+    "categoriaProduto": {
+      "id": 50
+    }
+  }
+}

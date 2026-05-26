@@ -79,6 +79,9 @@ nav:
       - resources/ads.md
       - Borderos: resources/borderos.md
       - Caixas e Bancos: resources/caixas_bancos.md
+      - Categorias Lojas: resources/store_categories.md
+      - Categorias Produtos: resources/product_categories.md
+      - Categorias Receitas e Despesas: resources/income_expense_categories.md
   - Referência da API:
       - api-reference/index.md
       - Cliente: api-reference/client.md
@@ -98,3 +101,6 @@ nav:
       - NF-e: api-reference/nfe.md
       - NFC-e: api-reference/nfce.md
       - NFS-e: api-reference/nfse.md
+      - Categorias - Lojas: api-reference/store_categories.md
+      - Categorias - Produtos: api-reference/product_categories.md
+      - Categorias - Receitas e Despesas: api-reference/income_expense_categories.md
