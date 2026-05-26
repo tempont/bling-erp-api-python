@@ -23,7 +23,12 @@ type ContactStatus = Literal["A", "I", "E", "S"]
 
 
 class ContactsResource(BaseResource):
-    """Operações em ``/contatos``."""
+    """Operações de contatos do Bling.
+
+    Este recurso mapeia os endpoints ``/contatos``. Os métodos canônicos usam
+    português para acompanhar a documentação oficial; os métodos em inglês
+    continuam disponíveis como aliases de compatibilidade.
+    """
 
     def listar(  # noqa: PLR0913
         self,
@@ -44,6 +49,32 @@ class ContactsResource(BaseResource):
         numero_documento: str | None = None,
         tipo_pessoa: ContactPersonKind | None = None,
     ) -> JsonObject:
+        """Lista contatos.
+
+        Endpoint: GET /contatos
+
+        Obtém lista paginada de contatos.
+
+        Args:
+            pagina: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limite: Quantidade de registros por página (Bling: ``limite``, integer, opcional)
+            pesquisa: Termo de pesquisa (Bling: ``pesquisa``, string, opcional)
+            criterio: Critério de listagem: 1=Todos, 2=Ativos, 3=Inativos, 4=Excluídos (Bling: ``criterio``, integer, opcional)
+            data_inclusao_inicial: Data de inclusão inicial (Bling: ``dataInclusaoInicial``, string, opcional)
+            data_inclusao_final: Data de inclusão final (Bling: ``dataInclusaoFinal``, string, opcional)
+            data_alteracao_inicial: Data de alteração inicial (Bling: ``dataAlteracaoInicial``, string, opcional)
+            data_alteracao_final: Data de alteração final (Bling: ``dataAlteracaoFinal``, string, opcional)
+            id_tipo_contato: ID do tipo de contato (Bling: ``idTipoContato``, integer, opcional)
+            id_vendedor: ID do vendedor (Bling: ``idVendedor``, integer, opcional)
+            uf: Sigla da UF (Bling: ``uf``, string, opcional)
+            telefone: Telefone do contato (Bling: ``telefone``, string, opcional)
+            ids_contatos: IDs dos contatos (Bling: ``idsContatos[]``, array, opcional)
+            numero_documento: N° do documento (Bling: ``numeroDocumento``, string, opcional)
+            tipo_pessoa: Tipo de pessoa: 1=Pessoa Física, 2=Pessoa Jurídica, 3=Outros (Bling: ``tipoPessoa``, integer, opcional)
+
+        Returns:
+            Bling API response. Response schemas: 200: ContatosDadosBaseDTO; 404: ErrorResponse
+        """
         return self._get(
             "/contatos",
             params=_contact_list_params(
@@ -84,6 +115,33 @@ class ContactsResource(BaseResource):
         numero_documento: str | None = None,
         tipo_pessoa: ContactPersonKind | None = None,
     ) -> Iterator[JsonObject]:
+        """Itera pelos contatos página a página.
+
+        Endpoint: GET /contatos (via paginação automática)
+
+        Aceita os mesmos filtros de ``listar()`` e busca novas páginas enquanto
+        o Bling retornar registros no envelope ``data``.
+
+        Args:
+            pagina: N° da página inicial
+            limite: Registros por página
+            pesquisa: Termo de pesquisa
+            criterio: Critério de listagem
+            data_inclusao_inicial: Data de inclusão inicial
+            data_inclusao_final: Data de inclusão final
+            data_alteracao_inicial: Data de alteração inicial
+            data_alteracao_final: Data de alteração final
+            id_tipo_contato: ID do tipo de contato
+            id_vendedor: ID do vendedor
+            uf: UF
+            telefone: Telefone
+            ids_contatos: IDs dos contatos
+            numero_documento: N° do documento
+            tipo_pessoa: Tipo de pessoa
+
+        Yields:
+            Iterator de JsonObject — cada iteração retorna a resposta de uma página
+        """
         params: QueryParams = _contact_list_params(
             pagina=pagina,
             limite=limite,
@@ -104,35 +162,152 @@ class ContactsResource(BaseResource):
         return self._iterate("/contatos", page=pagina, limit=limite, params=params)
 
     def obter(self, id_contato: int) -> JsonObject:
+        """Obtém um contato.
+
+        Endpoint: GET /contatos/{idContato}
+
+        Obtém um contato pelo ID.
+
+        Args:
+            id_contato: ID do contato (Bling: ``idContato``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: ContatosDadosBaseDTO; 404: ErrorResponse
+        """
         return self._get(f"/contatos/{id_contato}")
 
     def obter_consumidor_final(self) -> JsonObject:
+        """Obtém o contato Consumidor Final.
+
+        Endpoint: GET /contatos/consumidor-final
+
+        Obtém os dados do contato Consumidor Final pré-definido.
+
+        Returns:
+            Bling API response. Response schemas: 200: ContatosDadosBaseDTO
+        """
         return self._get("/contatos/consumidor-final")
 
     def criar(self, dados: ContactCreateRequest | JsonObject) -> JsonObject:
+        """Cria um contato.
+
+        Endpoint: POST /contatos
+
+        Cria um novo contato.
+
+        Args:
+            dados: Dados do contato. Request body schema: ContatosDadosDTO
+
+        Returns:
+            Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
+        """
         return self._post("/contatos", json=to_json_object(dados))
 
     def alterar(self, id_contato: int, dados: ContactUpdateRequest | JsonObject) -> JsonObject:
+        """Altera um contato.
+
+        Endpoint: PUT /contatos/{idContato}
+
+        Altera um contato pelo ID.
+
+        Args:
+            id_contato: ID do contato (Bling: ``idContato``, integer, obrigatório)
+            dados: Dados do contato para atualização. Request body schema: ContatosDadosDTO
+
+        Returns:
+            Bling API response. Response schemas: 204: NoContent; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self._put(f"/contatos/{id_contato}", json=to_json_object(dados))
 
     def remover(self, id_contato: int) -> JsonObject:
+        """Remove um contato.
+
+        Endpoint: DELETE /contatos/{idContato}
+
+        Remove um contato pelo ID.
+
+        Args:
+            id_contato: ID do contato (Bling: ``idContato``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 204: NoContent; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self._delete(f"/contatos/{id_contato}")
 
     def remover_varios(self, ids_contatos: Sequence[int]) -> JsonObject:
+        """Remove múltiplos contatos.
+
+        Endpoint: DELETE /contatos
+
+        Remove múltiplos contatos pelos IDs.
+
+        Args:
+            ids_contatos: IDs dos contatos (Bling: ``idsContatos[]``, array, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: ContatosAlertasResponse; 204: NoContent; 400: ErrorResponse
+        """
         return self._delete("/contatos", params={"idsContatos[]": list(ids_contatos)})
 
     def obter_tipo_contato(self, id_contato: int) -> JsonObject:
+        """Obtém os tipos de contato de um contato.
+
+        Endpoint: GET /contatos/{idContato}/tipos
+
+        Obtém os tipos de contato associados a um contato.
+
+        Args:
+            id_contato: ID do contato (Bling: ``idContato``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: ContatosTipoContatoDTO; 404: ErrorResponse
+        """
         return self._get(f"/contatos/{id_contato}/tipos")
 
     def listar_tipos(self) -> JsonObject:
+        """Lista tipos de contato.
+
+        Endpoint: GET /contatos/tipos
+
+        Obtém todos os tipos de contato disponíveis.
+
+        Returns:
+            Bling API response. Response schemas: 200: ContatosTipoContatoDTO
+        """
         return self._get("/contatos/tipos")
 
     def alterar_situacao(self, id_contato: int, situacao: ContactStatus) -> JsonObject:
+        """Altera a situação de um contato.
+
+        Endpoint: PATCH /contatos/{idContato}/situacoes
+
+        Altera a situação de um contato pelo ID.
+
+        Args:
+            id_contato: ID do contato (Bling: ``idContato``, integer, obrigatório)
+            situacao: Situação do contato: A=Ativo, I=Inativo, E=Excluído, S=Sem cobrança (Bling: ``situacao``, string, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 204: NoContent; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self._patch(f"/contatos/{id_contato}/situacoes", json={"situacao": situacao})
 
     def alterar_situacao_varios(
         self, ids_contatos: Sequence[int], situacao: ContactStatus
     ) -> JsonObject:
+        """Altera a situação de múltiplos contatos.
+
+        Endpoint: POST /contatos/situacoes
+
+        Altera a situação de múltiplos contatos pelos IDs.
+
+        Args:
+            ids_contatos: IDs dos contatos (Bling: ``idsContatos``, array, obrigatório)
+            situacao: Situação: A=Ativo, I=Inativo, E=Excluído, S=Sem cobrança (Bling: ``situacao``, string, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: ContatosAlertasResponse; 204: NoContent; 400: ErrorResponse
+        """
         return self._post(
             "/contatos/situacoes",
             json={"idsContatos": list(ids_contatos), "situacao": situacao},
@@ -159,7 +334,34 @@ class ContactsResource(BaseResource):
         tax_id: str | None = None,
         person_kind: ContactPersonKind | None = None,
     ) -> JsonObject:
-        """Compatibility alias for ``listar()``."""
+        """Compatibility alias for ``listar()``.
+
+        Lista contatos.
+
+        Endpoint: GET /contatos
+
+        Obtém lista paginada de contatos.
+
+        Args:
+            page: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limit: Quantidade de registros por página (Bling: ``limite``, integer, opcional)
+            search: Termo de pesquisa (Bling: ``pesquisa``, string, opcional)
+            criterion: Critério de listagem (Bling: ``criterio``, integer, opcional)
+            created_start: Data de inclusão inicial (Bling: ``dataInclusaoInicial``, string, opcional)
+            created_end: Data de inclusão final (Bling: ``dataInclusaoFinal``, string, opcional)
+            updated_start: Data de alteração inicial (Bling: ``dataAlteracaoInicial``, string, opcional)
+            updated_end: Data de alteração final (Bling: ``dataAlteracaoFinal``, string, opcional)
+            contact_type_id: ID do tipo de contato (Bling: ``idTipoContato``, integer, opcional)
+            seller_id: ID do vendedor (Bling: ``idVendedor``, integer, opcional)
+            uf: Sigla da UF (Bling: ``uf``, string, opcional)
+            phone: Telefone do contato (Bling: ``telefone``, string, opcional)
+            contact_ids: IDs dos contatos (Bling: ``idsContatos[]``, array, opcional)
+            tax_id: N° do documento (Bling: ``numeroDocumento``, string, opcional)
+            person_kind: Tipo de pessoa (Bling: ``tipoPessoa``, integer, opcional)
+
+        Returns:
+            Bling API response. Response schemas: 200: ContatosDadosBaseDTO; 404: ErrorResponse
+        """
         return self.listar(
             pagina=page,
             limite=limit,
@@ -197,7 +399,35 @@ class ContactsResource(BaseResource):
         tax_id: str | None = None,
         person_kind: ContactPersonKind | None = None,
     ) -> Iterator[JsonObject]:
-        """Compatibility alias for ``iterar()``."""
+        """Compatibility alias for ``iterar()``.
+
+        Itera pelos contatos página a página.
+
+        Endpoint: GET /contatos (via paginação automática)
+
+        Aceita os mesmos filtros de ``listar()`` e busca novas páginas enquanto
+        o Bling retornar registros no envelope ``data``.
+
+        Args:
+            page: N° da página inicial
+            limit: Registros por página
+            search: Termo de pesquisa
+            criterion: Critério
+            created_start: Data de inclusão inicial
+            created_end: Data de inclusão final
+            updated_start: Data de alteração inicial
+            updated_end: Data de alteração final
+            contact_type_id: ID do tipo de contato
+            seller_id: ID do vendedor
+            uf: UF
+            phone: Telefone
+            contact_ids: IDs dos contatos
+            tax_id: N° do documento
+            person_kind: Tipo de pessoa
+
+        Yields:
+            Iterator de JsonObject — cada iteração retorna a resposta de uma página
+        """
         return self.iterar(
             pagina=page,
             limite=limit,
@@ -217,43 +447,170 @@ class ContactsResource(BaseResource):
         )
 
     def get(self, contact_id: int) -> JsonObject:
-        """Compatibility alias for ``obter()``."""
+        """Compatibility alias for ``obter()``.
+
+        Obtém um contato.
+
+        Endpoint: GET /contatos/{idContato}
+
+        Obtém um contato pelo ID.
+
+        Args:
+            contact_id: ID do contato (Bling: ``idContato``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: ContatosDadosBaseDTO; 404: ErrorResponse
+        """
         return self.obter(contact_id)
 
     def get_consumer(self) -> JsonObject:
-        """Compatibility alias for ``obter_consumidor_final()``."""
+        """Compatibility alias for ``obter_consumidor_final()``.
+
+        Obtém o contato Consumidor Final.
+
+        Endpoint: GET /contatos/consumidor-final
+
+        Obtém os dados do contato Consumidor Final pré-definido.
+
+        Returns:
+            Bling API response. Response schemas: 200: ContatosDadosBaseDTO
+        """
         return self.obter_consumidor_final()
 
     def create(self, data: ContactCreateRequest | JsonObject) -> JsonObject:
-        """Compatibility alias for ``criar()``."""
+        """Compatibility alias for ``criar()``.
+
+        Cria um contato.
+
+        Endpoint: POST /contatos
+
+        Cria um novo contato.
+
+        Args:
+            data: Dados do contato. Request body schema: ContatosDadosDTO
+
+        Returns:
+            Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
+        """
         return self.criar(data)
 
     def update(self, contact_id: int, data: ContactUpdateRequest | JsonObject) -> JsonObject:
-        """Compatibility alias for ``alterar()``."""
+        """Compatibility alias for ``alterar()``.
+
+        Altera um contato.
+
+        Endpoint: PUT /contatos/{idContato}
+
+        Altera um contato pelo ID.
+
+        Args:
+            contact_id: ID do contato (Bling: ``idContato``, integer, obrigatório)
+            data: Dados do contato para atualização. Request body schema: ContatosDadosDTO
+
+        Returns:
+            Bling API response. Response schemas: 204: NoContent; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.alterar(contact_id, data)
 
     def delete(self, contact_id: int) -> JsonObject:
-        """Compatibility alias for ``remover()``."""
+        """Compatibility alias for ``remover()``.
+
+        Remove um contato.
+
+        Endpoint: DELETE /contatos/{idContato}
+
+        Remove um contato pelo ID.
+
+        Args:
+            contact_id: ID do contato (Bling: ``idContato``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 204: NoContent; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.remover(contact_id)
 
     def delete_many(self, contact_ids: Sequence[int]) -> JsonObject:
-        """Compatibility alias for ``remover_varios()``."""
+        """Compatibility alias for ``remover_varios()``.
+
+        Remove múltiplos contatos.
+
+        Endpoint: DELETE /contatos
+
+        Remove múltiplos contatos pelos IDs.
+
+        Args:
+            contact_ids: IDs dos contatos (Bling: ``idsContatos[]``, array, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: ContatosAlertasResponse; 204: NoContent; 400: ErrorResponse
+        """
         return self.remover_varios(contact_ids)
 
     def get_contact_types(self, contact_id: int) -> JsonObject:
-        """Compatibility alias for ``obter_tipo_contato()``."""
+        """Compatibility alias for ``obter_tipo_contato()``.
+
+        Obtém os tipos de contato de um contato.
+
+        Endpoint: GET /contatos/{idContato}/tipos
+
+        Obtém os tipos de contato associados a um contato.
+
+        Args:
+            contact_id: ID do contato (Bling: ``idContato``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: ContatosTipoContatoDTO; 404: ErrorResponse
+        """
         return self.obter_tipo_contato(contact_id)
 
     def list_types(self) -> JsonObject:
-        """Compatibility alias for ``listar_tipos()``."""
+        """Compatibility alias for ``listar_tipos()``.
+
+        Lista tipos de contato.
+
+        Endpoint: GET /contatos/tipos
+
+        Obtém todos os tipos de contato disponíveis.
+
+        Returns:
+            Bling API response. Response schemas: 200: ContatosTipoContatoDTO
+        """
         return self.listar_tipos()
 
     def update_status(self, contact_id: int, status: ContactStatus) -> JsonObject:
-        """Compatibility alias for ``alterar_situacao()``."""
+        """Compatibility alias for ``alterar_situacao()``.
+
+        Altera a situação de um contato.
+
+        Endpoint: PATCH /contatos/{idContato}/situacoes
+
+        Altera a situação de um contato pelo ID.
+
+        Args:
+            contact_id: ID do contato (Bling: ``idContato``, integer, obrigatório)
+            status: Situação do contato: A=Ativo, I=Inativo, E=Excluído, S=Sem cobrança (Bling: ``situacao``, string, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 204: NoContent; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.alterar_situacao(contact_id, status)
 
     def update_many_status(self, contact_ids: Sequence[int], status: ContactStatus) -> JsonObject:
-        """Compatibility alias for ``alterar_situacao_varios()``."""
+        """Compatibility alias for ``alterar_situacao_varios()``.
+
+        Altera a situação de múltiplos contatos.
+
+        Endpoint: POST /contatos/situacoes
+
+        Altera a situação de múltiplos contatos pelos IDs.
+
+        Args:
+            contact_ids: IDs dos contatos (Bling: ``idsContatos``, array, obrigatório)
+            status: Situação: A=Ativo, I=Inativo, E=Excluído, S=Sem cobrança (Bling: ``situacao``, string, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: ContatosAlertasResponse; 204: NoContent; 400: ErrorResponse
+        """
         return self.alterar_situacao_varios(contact_ids, status)
 
 
