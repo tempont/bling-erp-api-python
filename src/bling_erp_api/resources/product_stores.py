@@ -32,7 +32,24 @@ class ProductStoresResource(BaseResource):
         data_alteracao_inicial: DateFilter | None = None,
         data_alteracao_final: DateFilter | None = None,
     ) -> JsonObject:
-        """Lista vínculos entre produto e loja."""
+        """Obtém vínculos de produtos com lojas.
+
+        Endpoint: GET /produtos/lojas
+
+        Obtém vínculos de produtos com lojas paginados.
+
+        Args:
+            pagina: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limite: Quantidade de registros que devem ser exibidos por página (Bling: ``limite``, integer, opcional)
+            id_produto: ID do produto (Bling: ``idProduto``, integer, opcional)
+            id_loja: ID da loja (Bling: ``idLoja``, integer, opcional)
+            id_categoria_produto: ID da categoria do produto vinculada à loja (Bling: ``idCategoriaProduto``, integer, opcional)
+            data_alteracao_inicial: Data de alteração inicial (Bling: ``dataAlteracaoInicial``, string, opcional)
+            data_alteracao_final: Data de alteração final (Bling: ``dataAlteracaoFinal``, string, opcional)
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutosLojasDadosDTO; 400: ErrorResponse
+        """
         return self._get(
             "/produtos/lojas",
             params=_store_list_params(
@@ -47,25 +64,90 @@ class ProductStoresResource(BaseResource):
         )
 
     def iterar(self, *, pagina: int = 1, limite: int = 100) -> Iterator[JsonObject]:
-        """Iterador paginado (sem filtros adicionais)."""
+        """Itera pelos registros página a página, mantendo os mesmos filtros.
+
+        Obtém vínculos de produtos com lojas
+
+        Endpoint: GET /produtos/lojas
+
+        Obtém vínculos de produtos com lojas paginados.
+
+        Args:
+            pagina: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limite: Quantidade de registros que devem ser exibidos por página (Bling: ``limite``, integer, opcional)
+            id_produto: ID do produto (Bling: ``idProduto``, integer, opcional)
+            id_loja: ID da loja (Bling: ``idLoja``, integer, opcional)
+            id_categoria_produto: ID da categoria do produto vinculada à loja (Bling: ``idCategoriaProduto``, integer, opcional)
+            data_alteracao_inicial: Data de alteração inicial (Bling: ``dataAlteracaoInicial``, string, opcional)
+            data_alteracao_final: Data de alteração final (Bling: ``dataAlteracaoFinal``, string, opcional)
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutosLojasDadosDTO; 400: ErrorResponse
+        """
         return self._iterate("/produtos/lojas", page=pagina, limit=limite)
 
     def criar(self, dados: ProductStoreLinkCreate | JsonObject) -> JsonObject:
-        """Cria vínculo produto-loja."""
+        """Cria o vínculo de um produto com uma loja.
+
+        Endpoint: POST /produtos/lojas
+
+        Cria o vínculo de um produto com uma loja.
+
+        Request body schema: ProdutosLojasDadosBaseDTO, ProdutosLojasDadosDTO
+
+        Returns:
+            Bling API response. Response schemas: 201: BasePostResponse, ProdutosLojasResponse_POST_PUT; 400: ErrorResponse
+        """
         return self._post("/produtos/lojas", json=to_json_object(dados))
 
     def obter(self, id_produto_loja: int) -> JsonObject:
-        """Obtém vínculo por ID."""
+        """Obtém um vínculo de produto com loja.
+
+        Endpoint: GET /produtos/lojas/{idProdutoLoja}
+
+        Obtém um vínculo de produto com loja pelo ID.
+
+        Args:
+            id_produto_loja: ID do vínculo do produto com a loja (Bling: ``idProdutoLoja``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutosLojasDadosBaseDTO, ProdutosLojasDadosDTO; 404: ErrorResponse
+        """
         return self._get(f"/produtos/lojas/{id_produto_loja}")
 
     def alterar(
         self, id_produto_loja: int, dados: ProductStoreLinkCreate | JsonObject
     ) -> JsonObject:
-        """Atualização completa (``PUT``)."""
+        """Altera o vínculo de um produto com uma loja.
+
+        Endpoint: PUT /produtos/lojas/{idProdutoLoja}
+
+        Altera o vínculo de um produto com uma loja pelo ID.
+
+        Args:
+            id_produto_loja: ID do vínculo do produto com a loja (Bling: ``idProdutoLoja``, integer, obrigatório)
+            dados: Dados do vínculo do produto com a loja.
+
+        Request body schema: ProdutosLojasDadosBaseDTO, ProdutosLojasDadosDTO
+
+        Returns:
+            Bling API response. Response schemas: 200: BasePostResponse, ProdutosLojasResponse_POST_PUT; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self._put(f"/produtos/lojas/{id_produto_loja}", json=to_json_object(dados))
 
     def remover(self, id_produto_loja: int) -> JsonObject:
-        """Remove vínculo."""
+        """Remove o vínculo de um produto com uma loja.
+
+        Endpoint: DELETE /produtos/lojas/{idProdutoLoja}
+
+        Remove o vínculo de um produto com uma loja pelo ID.
+
+        Args:
+            id_produto_loja: ID do vínculo do produto com a loja (Bling: ``idProdutoLoja``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 404: ErrorResponse
+        """
         return self._delete(f"/produtos/lojas/{id_produto_loja}")
 
 

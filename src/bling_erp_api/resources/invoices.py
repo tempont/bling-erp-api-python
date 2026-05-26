@@ -22,7 +22,27 @@ class InvoicesResource(BaseResource):
         limit: int = 100,
         **filters: QueryParamValue,
     ) -> JsonObject:
-        """List invoices."""
+        """Obtém notas fiscais.
+
+        Endpoint: GET /notas/fiscais
+
+        Obtém notas fiscais paginadas.
+
+        Args:
+            page: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limit: Quantidade de registros que devem ser exibidos por página (Bling: ``limite``, integer, opcional)
+            id_transportador: ID do contato do transportador (Bling: ``idTransportador``, integer, opcional)
+            chave_acesso: Chave de acesso (Bling: ``chaveAcesso``, integer, opcional)
+            numero: Número da nota fiscal (Bling: ``numero``, integer, opcional)
+            serie: Série (Bling: ``serie``, integer, opcional)
+            situacao: `1` Pendente<br>`2` Cancelada<br>`3` Aguardando recibo<br>`4` Rejeitada<br>`5` Autorizada<br>`6` Emitida DANFE<br>`7` Registrada<br>`8` Aguardando protocolo<br>`9` Denegada<br>`10` Consulta situação<br>`11` Bloqueada (Bling: ``situacao``, integer, opcional)
+            data_emissao_inicial: Data e hora inicial de emissão (Bling: ``dataEmissaoInicial``, string, opcional)
+            data_emissao_final: Data e hora final de emissão (Bling: ``dataEmissaoFinal``, string, opcional)
+            **filters: Filtros adicionais para a listagem.
+
+        Returns:
+            Bling API response. Response schemas: 200: NotasFiscaisDadosBaseDTO; 404: ErrorResponse
+        """
         return self._get("/notas/fiscais", params={"pagina": page, "limite": limit, **filters})
 
     def iterate(
@@ -32,10 +52,43 @@ class InvoicesResource(BaseResource):
         limit: int = 100,
         **filters: QueryParamValue,
     ) -> Iterator[JsonObject]:
-        """Iterate through invoices across pages."""
+        """Itera pelos registros página a página, mantendo os mesmos filtros.
+
+        Obtém notas fiscais.
+
+        Endpoint: GET /notas/fiscais
+
+        Obtém notas fiscais paginadas.
+
+        Args:
+            page: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limit: Quantidade de registros que devem ser exibidos por página (Bling: ``limite``, integer, opcional)
+            id_transportador: ID do contato do transportador (Bling: ``idTransportador``, integer, opcional)
+            chave_acesso: Chave de acesso (Bling: ``chaveAcesso``, integer, opcional)
+            numero: Número da nota fiscal (Bling: ``numero``, integer, opcional)
+            serie: Série (Bling: ``serie``, integer, opcional)
+            situacao: `1` Pendente<br>`2` Cancelada<br>`3` Aguardando recibo<br>`4` Rejeitada<br>`5` Autorizada<br>`6` Emitida DANFE<br>`7` Registrada<br>`8` Aguardando protocolo<br>`9` Denegada<br>`10` Consulta situação<br>`11` Bloqueada (Bling: ``situacao``, integer, opcional)
+            data_emissao_inicial: Data e hora inicial de emissão (Bling: ``dataEmissaoInicial``, string, opcional)
+            data_emissao_final: Data e hora final de emissão (Bling: ``dataEmissaoFinal``, string, opcional)
+            **filters: Filtros adicionais para a listagem.
+
+        Returns:
+            Bling API response. Response schemas: 200: NotasFiscaisDadosBaseDTO; 404: ErrorResponse
+        """
         params: QueryParams = filters
         return self._iterate("/notas/fiscais", page=page, limit=limit, params=params)
 
     def get(self, invoice_id: int) -> JsonObject:
-        """Get an invoice by id."""
+        """Obtém uma nota fiscal.
+
+        Endpoint: GET /notas/fiscais/{id}
+
+        Obtém uma nota fiscal pelo ID.
+
+        Args:
+            invoice_id: ID da nota fiscal (Bling: ``id``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: NotasFiscaisDadosBaseDTO, NotasFiscaisDadosGetDTO; 404: ErrorResponse
+        """
         return self._get(f"/notas/fiscais/{invoice_id}")

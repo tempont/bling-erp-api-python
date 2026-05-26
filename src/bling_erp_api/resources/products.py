@@ -120,7 +120,36 @@ class ProductsResource(BaseResource):
         stock_balance_filter: ProductStockBalanceFilter | None = None,
         stock_balance_deposit_id: int | None = None,
     ) -> JsonObject:
-        """Compatibility alias for ``listar()``."""
+        """Compatibility alias for ``listar()``.
+
+        Obtém produtos
+
+        Endpoint: GET /produtos
+
+        Obtém produtos paginados.
+
+        Args:
+            page: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limit: Quantidade de registros que devem ser exibidos por página (Bling: ``limite``, integer, opcional)
+            criterion: Critério de listagem <br> `1` Últimos incluídos <br> `2` Ativos <br> `3` Inativos <br> `4` Excluídos <br> `5` Todos (Bling: ``criterio``, integer, opcional)
+            product_type: `T` Todos <br> `P` Produtos <br> `S` Serviços <br> `E` Composições <br> `PS` Produtos simples <br> `C` Com variações <br> `V` Variações (Bling: ``tipo``, string, opcional)
+            component_id: ID do componente. Utilizado quando o filtro **tipo** for `E`. (Bling: ``idComponente``, integer, opcional)
+            created_start: Data de inclusão inicial (Bling: ``dataInclusaoInicial``, string, opcional)
+            created_end: Data de inclusão final (Bling: ``dataInclusaoFinal``, string, opcional)
+            updated_start: Data de alteração inicial (Bling: ``dataAlteracaoInicial``, string, opcional)
+            updated_end: Data de alteração final (Bling: ``dataAlteracaoFinal``, string, opcional)
+            category_id: ID da categoria do produto (Bling: ``idCategoria``, integer, opcional)
+            store_id: ID da loja (Bling: ``idLoja``, integer, opcional)
+            name: Nome do produto (Bling: ``nome``, string, opcional)
+            product_ids: IDs dos produtos (Bling: ``idsProdutos[]``, array, opcional)
+            codes: Códigos (SKU) dos produtos (Bling: ``codigos[]``, array, opcional)
+            gtins: GTINs/EANs dos produtos (Bling: ``gtins[]``, array, opcional)
+            stock_balance_filter: Filtra o saldo em estoque <br> `0` zerado <br> `1` positivo <br> `2` negativo (Bling: ``filtroSaldoEstoque``, integer, opcional)
+            stock_balance_deposit_id: ID do depósito para considerar no filtro de saldo em estoque. Se omitido, considera todos os depósitos. (Bling: ``filtroSaldoEstoqueDeposito``, integer, opcional)
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutosDadosBaseDTO
+        """
         return self.listar(
             pagina=page,
             limite=limit,
@@ -150,74 +179,272 @@ class ProductsResource(BaseResource):
         return self.iterar(pagina=page, limite=limit)
 
     def obter(self, id_produto: int) -> JsonObject:
-        """Obtém um produto pelo ID."""
+        """Obtém um produto.
+
+        Endpoint: GET /produtos/{idProduto}
+
+        Obtém um produto pelo ID.
+
+        Args:
+            id_produto: ID do produto (Bling: ``idProduto``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutosDadosDTO; 403: ErrorResponse; 404: ErrorResponse
+        """
         return self._get(f"/produtos/{id_produto}")
 
     def get(self, product_id: int) -> JsonObject:
-        """Compatibility alias for ``obter()``."""
+        """Compatibility alias for ``obter()``.
+
+        Obtém um produto
+
+        Endpoint: GET /produtos/{idProduto}
+
+        Obtém um produto pelo ID.
+
+        Args:
+            product_id: ID do produto (Bling: ``idProduto``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutosDadosDTO; 403: ErrorResponse; 404: ErrorResponse
+        """
         return self.obter(product_id)
 
     def criar(self, dados: ProductCreateRequest | JsonObject) -> JsonObject:
-        """Cria um produto."""
+        """Cria um produto.
+
+        Endpoint: POST /produtos
+
+        Cria um produto.
+
+        Request body schema: ProdutosDadosDTO
+
+        Returns:
+            Bling API response. Response schemas: 201: ProdutosResponse_POST_PUT; 400: ErrorResponse; 403: ErrorResponse
+        """
         return self._post("/produtos", json=to_json_object(dados))
 
     def create(self, data: ProductCreateRequest | JsonObject) -> JsonObject:
-        """Compatibility alias for ``criar()``."""
+        """Compatibility alias for ``criar()``.
+
+        Cria um produto
+
+        Endpoint: POST /produtos
+
+        Cria um produto.
+
+        Request body schema: ProdutosDadosDTO
+
+        Returns:
+            Bling API response. Response schemas: 201: ProdutosResponse_POST_PUT; 400: ErrorResponse; 403: ErrorResponse
+        """
         return self.criar(data)
 
     def alterar(self, id_produto: int, dados: ProductUpdateRequest | JsonObject) -> JsonObject:
-        """Altera um produto por completo."""
+        """Altera um produto.
+
+        Endpoint: PUT /produtos/{idProduto}
+
+        Altera um produto pelo ID.
+
+        Args:
+            id_produto: ID do produto (Bling: ``idProduto``, integer, obrigatório)
+            dados: Dados do produto para atualização.
+
+        Request body schema: ProdutosDadosDTO
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutosResponse_POST_PUT; 400: ErrorResponse; 403: ErrorResponse
+        """
         return self._put(f"/produtos/{id_produto}", json=to_json_object(dados))
 
     def update(self, product_id: int, data: ProductUpdateRequest | JsonObject) -> JsonObject:
-        """Compatibility alias for ``alterar()``."""
+        """Compatibility alias for ``alterar()``.
+
+        Altera um produto
+
+        Endpoint: PUT /produtos/{idProduto}
+
+        Altera um produto pelo ID.
+
+        Args:
+            product_id: ID do produto (Bling: ``idProduto``, integer, obrigatório)
+            data: Dados do produto para atualização.
+
+        Request body schema: ProdutosDadosDTO
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutosResponse_POST_PUT; 400: ErrorResponse; 403: ErrorResponse
+        """
         return self.alterar(product_id, data)
 
     def alterar_parcialmente(
         self, id_produto: int, dados: ProductPatchRequest | JsonObject
     ) -> JsonObject:
-        """Altera parcialmente um produto."""
+        """Altera parcialmente um produto.
+
+        Endpoint: PATCH /produtos/{idProduto}
+
+        Altera parcialmente um produto pelo ID. Somente os campos informados terão o valor alterado.
+
+        Args:
+            id_produto: ID do produto (Bling: ``idProduto``, integer, obrigatório)
+            dados: Dados parciais do produto para atualização.
+
+        Request body schema: ProdutosDadosPatchDTO
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutosResponse_POST_PUT; 400: ErrorResponse; 403: ErrorResponse
+        """
         return self._patch(f"/produtos/{id_produto}", json=to_json_object(dados))
 
     def patch(self, product_id: int, data: ProductPatchRequest | JsonObject) -> JsonObject:
-        """Compatibility alias for ``alterar_parcialmente()``."""
+        """Compatibility alias for ``alterar_parcialmente()``.
+
+        Altera parcialmente um produto
+
+        Endpoint: PATCH /produtos/{idProduto}
+
+        Altera parcialmente um produto pelo ID. Somente os campos informados terão o valor alterado.
+
+        Args:
+            product_id: ID do produto (Bling: ``idProduto``, integer, obrigatório)
+            data: Dados parciais do produto para atualização.
+
+        Request body schema: ProdutosDadosPatchDTO
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutosResponse_POST_PUT; 400: ErrorResponse; 403: ErrorResponse
+        """
         return self.alterar_parcialmente(product_id, data)
 
     def remover(self, id_produto: int) -> JsonObject:
-        """Remove um produto."""
+        """Remove um produto.
+
+        Endpoint: DELETE /produtos/{idProduto}
+
+        Remove um produto pelo ID.
+
+        Args:
+            id_produto: ID do produto (Bling: ``idProduto``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 404: ErrorResponse
+        """
         return self._delete(f"/produtos/{id_produto}")
 
     def delete(self, product_id: int) -> JsonObject:
-        """Compatibility alias for ``remover()``."""
+        """Compatibility alias for ``remover()``.
+
+        Remove um produto
+
+        Endpoint: DELETE /produtos/{idProduto}
+
+        Remove um produto pelo ID.
+
+        Args:
+            product_id: ID do produto (Bling: ``idProduto``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 404: ErrorResponse
+        """
         return self.remover(product_id)
 
     def remover_varios(self, ids_produtos: Sequence[int]) -> JsonObject:
-        """Remove múltiplos produtos."""
+        """Remove múltiplos produtos.
+
+        Endpoint: DELETE /produtos
+
+        Remove múltiplos produtos pelos IDs.
+
+        Args:
+            ids_produtos: IDs dos produtos (Bling: ``idsProdutos[]``, array, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutosAlertasResponse; 400: ErrorResponse
+        """
         return self._delete("/produtos", params={"idsProdutos[]": list(ids_produtos)})
 
     def delete_many(self, product_ids: Sequence[int]) -> JsonObject:
-        """Compatibility alias for ``remover_varios()``."""
+        """Compatibility alias for ``remover_varios()``.
+
+        Remove múltiplos produtos
+
+        Endpoint: DELETE /produtos
+
+        Remove múltiplos produtos pelos IDs.
+
+        Args:
+            product_ids: IDs dos produtos (Bling: ``idsProdutos[]``, array, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutosAlertasResponse; 400: ErrorResponse
+        """
         return self.remover_varios(product_ids)
 
     def alterar_situacao(self, id_produto: int, situacao: ProductStatus) -> JsonObject:
-        """Altera a situação de um produto."""
+        """Altera a situação de um produto.
+
+        Endpoint: PATCH /produtos/{idProduto}/situacoes
+
+        Altera a situação de um produto pelo ID.
+
+        Args:
+            id_produto: ID do produto (Bling: ``idProduto``, integer, obrigatório)
+            situacao: Situação do produto.
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
+        """
         return self._patch(f"/produtos/{id_produto}/situacoes", json={"situacao": situacao})
 
     def update_status(self, product_id: int, status: ProductStatus) -> JsonObject:
-        """Compatibility alias for ``alterar_situacao()``."""
+        """Compatibility alias for ``alterar_situacao()``.
+
+        Altera a situação de um produto
+
+        Endpoint: PATCH /produtos/{idProduto}/situacoes
+
+        Altera a situação de um produto pelo ID.
+
+        Args:
+            product_id: ID do produto (Bling: ``idProduto``, integer, obrigatório)
+            status: Situação do produto.
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.alterar_situacao(product_id, status)
 
     def alterar_situacao_varios(
         self, ids_produtos: Sequence[int], situacao: ProductStatus
     ) -> JsonObject:
-        """Altera a situação de múltiplos produtos."""
+        """Altera a situação de múltiplos produtos.
+
+        Endpoint: POST /produtos/situacoes
+
+        Altera a situação de múltiplos produtos pelos IDs.
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutosAlertasResponse; 400: ErrorResponse
+        """
         return self._post(
             "/produtos/situacoes",
             json={"idsProdutos": list(ids_produtos), "situacao": situacao},
         )
 
     def update_many_status(self, product_ids: Sequence[int], status: ProductStatus) -> JsonObject:
-        """Compatibility alias for ``alterar_situacao_varios()``."""
+        """Compatibility alias for ``alterar_situacao_varios()``.
+
+        Altera a situação de múltiplos produtos
+
+        Endpoint: POST /produtos/situacoes
+
+        Altera a situação de múltiplos produtos pelos IDs.
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutosAlertasResponse; 400: ErrorResponse
+        """
         return self.alterar_situacao_varios(product_ids, status)
 
 

@@ -61,24 +61,108 @@ class BlingClient:
             rate_limit_max_retries=rate_limit_max_retries,
         )
 
-        self.contacts = ContactsResource(self._transport)
-        self.products = ProductsResource(self._transport)
-        self.produtos = self.products
-        self.produtos_estruturas = ProductStructuresResource(self._transport)
-        self.product_structures = self.produtos_estruturas
-        self.produtos_fornecedores = ProductSuppliersResource(self._transport)
-        self.product_suppliers = self.produtos_fornecedores
-        self.produtos_lojas = ProductStoresResource(self._transport)
-        self.product_stores = self.produtos_lojas
-        self.lotes = ProductBatchesResource(self._transport)
-        self.product_batches = self.lotes
-        self.lotes_lancamentos = ProductBatchEntriesResource(self._transport)
-        self.product_batch_entries = self.lotes_lancamentos
-        self.produtos_variacoes = ProductVariationsResource(self._transport)
-        self.product_variations = self.produtos_variacoes
-        self.sales_orders = SalesOrdersResource(self._transport)
-        self.pedidos_vendas = self.sales_orders
-        self.invoices = InvoicesResource(self._transport)
+        self._contacts = ContactsResource(self._transport)
+        self._products = ProductsResource(self._transport)
+        self._produtos_estruturas = ProductStructuresResource(self._transport)
+        self._produtos_fornecedores = ProductSuppliersResource(self._transport)
+        self._produtos_lojas = ProductStoresResource(self._transport)
+        self._lotes = ProductBatchesResource(self._transport)
+        self._lotes_lancamentos = ProductBatchEntriesResource(self._transport)
+        self._produtos_variacoes = ProductVariationsResource(self._transport)
+        self._sales_orders = SalesOrdersResource(self._transport)
+        self._invoices = InvoicesResource(self._transport)
+
+    # -- Resource namespace properties (with IDE-visible docstrings) --
+
+    @property
+    def contacts(self) -> ContactsResource:
+        """Operações de contatos (/contatos)."""
+        return self._contacts
+
+    @property
+    def products(self) -> ProductsResource:
+        """Operações de produtos (/produtos). Bling API v3."""
+        return self._products
+
+    @property
+    def produtos(self) -> ProductsResource:
+        """Alias pt-BR para ``products``. Operações de produtos (/produtos)."""
+        return self._products
+
+    @property
+    def produtos_estruturas(self) -> ProductStructuresResource:
+        """Operações de estruturas de produtos (/produtos/estruturas)."""
+        return self._produtos_estruturas
+
+    @property
+    def product_structures(self) -> ProductStructuresResource:
+        """Alias em inglês para ``produtos_estruturas``. Product structures (/produtos/estruturas)."""
+        return self._produtos_estruturas
+
+    @property
+    def produtos_fornecedores(self) -> ProductSuppliersResource:
+        """Operações de fornecedores de produtos (/produtos/fornecedores)."""
+        return self._produtos_fornecedores
+
+    @property
+    def product_suppliers(self) -> ProductSuppliersResource:
+        """Alias em inglês para ``produtos_fornecedores``. Product suppliers (/produtos/fornecedores)."""
+        return self._produtos_fornecedores
+
+    @property
+    def produtos_lojas(self) -> ProductStoresResource:
+        """Operações de lojas de produtos (/produtos/lojas)."""
+        return self._produtos_lojas
+
+    @property
+    def product_stores(self) -> ProductStoresResource:
+        """Alias em inglês para ``produtos_lojas``. Product stores (/produtos/lojas)."""
+        return self._produtos_lojas
+
+    @property
+    def lotes(self) -> ProductBatchesResource:
+        """Operações de lotes de produtos (/produtos/lotes)."""
+        return self._lotes
+
+    @property
+    def product_batches(self) -> ProductBatchesResource:
+        """Alias em inglês para ``lotes``. Product batches (/produtos/lotes)."""
+        return self._lotes
+
+    @property
+    def lotes_lancamentos(self) -> ProductBatchEntriesResource:
+        """Operações de lançamentos de lotes (/produtos/lotes/lancamentos)."""
+        return self._lotes_lancamentos
+
+    @property
+    def product_batch_entries(self) -> ProductBatchEntriesResource:
+        """Alias em inglês para ``lotes_lancamentos``. Product batch entries (/produtos/lotes/lancamentos)."""
+        return self._lotes_lancamentos
+
+    @property
+    def produtos_variacoes(self) -> ProductVariationsResource:
+        """Operações de variações de produtos (/produtos/variacoes)."""
+        return self._produtos_variacoes
+
+    @property
+    def product_variations(self) -> ProductVariationsResource:
+        """Alias em inglês para ``produtos_variacoes``. Product variations (/produtos/variacoes)."""
+        return self._produtos_variacoes
+
+    @property
+    def sales_orders(self) -> SalesOrdersResource:
+        """Operações de pedidos de venda (/pedidos/vendas). Bling API v3."""
+        return self._sales_orders
+
+    @property
+    def pedidos_vendas(self) -> SalesOrdersResource:
+        """Alias pt-BR para ``sales_orders``. Operações de pedidos de venda (/pedidos/vendas)."""
+        return self._sales_orders
+
+    @property
+    def invoices(self) -> InvoicesResource:
+        """Operações de notas fiscais (/notas/fiscais)."""
+        return self._invoices
 
     @classmethod
     def from_env(  # noqa: PLR0913

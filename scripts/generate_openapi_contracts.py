@@ -49,6 +49,9 @@ ACTION_TO_SDK_METHOD = {
     "AlterarAtributo": "alterar_atributo",
     "ObterSaldosLote": "obter_saldos",
     "ObterMultiplosProdutoControlaLote": "listar_produtos_controlam_lote",
+    "ObterTipoContato": "obter_tipo_contato",
+    "Autorizar": "autorizar",
+    "ObterDocumentoNotaFiscal": "obter_documento_nota_fiscal",
 }
 
 PARAMETER_TO_SDK_NAME = {
@@ -103,6 +106,55 @@ PARAMETER_TO_SDK_NAME = {
     "dataCriacaoInicial": "data_criacao_inicial",
     "dataCriacaoFinal": "data_criacao_final",
     "idLancamento": "id_lancamento",
+    "idTipoContato": "id_tipo_contato",
+    "idsContatos[]": "ids_contatos",
+    "numeroDocumento": "numero_documento",
+    "pesquisa": "pesquisa",
+    "telefone": "telefone",
+    "tipoPessoa": "tipo_pessoa",
+    "uf": "uf",
+    "chaveAcesso": "chave_acesso",
+    "dataEmissaoFinal": "data_emissao_final",
+    "dataEmissaoInicial": "data_emissao_inicial",
+    "enviarEmail": "enviar_email",
+    "formato": "formato",
+    "idNotaFiscal": "id_nota_fiscal",
+    "idNotaFiscalConsumidor": "id_nota_fiscal_consumidor",
+    "idTransportador": "id_transportador",
+    "idsNotas[]": "ids_notas",
+    "numeroLoja": "numero_loja",
+    "serie": "serie",
+    "situacao": "situacao",
+}
+
+DOCSTRING_ONLY_RESOURCES: list[ResourceConfig] = [
+    {
+        "openapi_resource": "Contatos",
+        "module": "contacts",
+        "constant": "CONTACT_OPERATIONS",
+        "title": "Contatos",
+        "example": ["contatos = client.contacts.list(page=1, limit=10)"],
+    },
+    {
+        "openapi_resource": "NotasFiscais",
+        "module": "invoices",
+        "constant": "INVOICE_OPERATIONS",
+        "title": "Notas Fiscais",
+        "example": ["notas = client.invoices.list(page=1, limit=10)"],
+    },
+]
+
+_CLASS_NAME_MAP: dict[str, str] = {
+    "sales_orders": "SalesOrdersResource",
+    "products": "ProductsResource",
+    "product_structures": "ProductStructuresResource",
+    "product_suppliers": "ProductSuppliersResource",
+    "product_stores": "ProductStoresResource",
+    "product_batches": "ProductBatchesResource",
+    "product_batch_entries": "ProductBatchEntriesResource",
+    "product_variations": "ProductVariationsResource",
+    "contacts": "ContactsResource",
+    "invoices": "InvoicesResource",
 }
 
 RESOURCES: list[ResourceConfig] = [
@@ -201,8 +253,11 @@ RESOURCES: list[ResourceConfig] = [
 
 
 def main() -> None:
-    """Generate supported resource contracts."""
+    """Generate supported resource contracts and docstrings."""
     payload = cast("dict[str, object]", json.loads(SPEC_PATH.read_text(encoding="utf-8")))
+    all_contracts: dict[str, list[dict[str, object]]] = {}
+
+    # Existing resources: generate contracts + docs + collect for docstrings
     for resource in RESOURCES:
         contracts = _resource_contracts(payload, resource=resource["openapi_resource"])
         _write_contract_module(
@@ -216,6 +271,17 @@ def main() -> None:
             contracts,
             resource["example"],
         )
+        class_name = _class_name_for_module(resource["module"])
+        all_contracts[class_name] = contracts
+
+    # Docstring-only resources (not yet fully implemented as SDK resources)
+    for resource in DOCSTRING_ONLY_RESOURCES:
+        contracts = _resource_contracts(payload, resource=resource["openapi_resource"])
+        if contracts:
+            class_name = _class_name_for_module(resource["module"])
+            all_contracts[class_name] = contracts
+
+    _write_docstring_module(all_contracts)
 
 
 def _resource_contracts(payload: Mapping[str, object], *, resource: str) -> list[dict[str, object]]:
@@ -466,6 +532,112 @@ def _snake_case(value: str) -> str:
             chars.append("_")
         chars.append(char.lower() if char.isalnum() else "_")
     return "".join(chars).strip("_")
+
+
+def _class_name_for_module(module: str) -> str:
+    """Convert a module name to the corresponding resource class name."""
+    return _CLASS_NAME_MAP[module]
+
+
+def _generate_docstring(contract: dict[str, object]) -> str:
+    """Generate a Google-style docstring from an operation contract.
+
+    Args:
+        contract: A single operation contract dict.
+
+    Returns:
+        A formatted Google-style docstring string.
+    """
+    summary = str(contract.get("summary") or "")
+    method = str(contract.get("method") or "")
+    path = str(contract.get("path") or "")
+    description = contract.get("description")
+    parameters = cast("list[dict[str, object]]", contract.get("parameters") or [])
+    request_schema_refs = cast("list[str]", contract.get("request_schema_refs") or [])
+    response_schema_refs = cast("dict[str, list[str]]", contract.get("response_schema_refs") or {})
+
+    # Ensure summary ends with punctuation (D415 compliance)
+    if summary and summary[-1] not in ".?!":
+        summary += "."
+
+    lines = [summary, "", f"Endpoint: {method} {path}"]
+
+    # Add description if present and different from summary
+    desc = _optional_str(description)
+    if desc and desc != summary:
+        lines.extend(["", desc])
+
+    # Args section
+    if parameters:
+        lines.append("")
+        lines.append("Args:")
+        for param in parameters:
+            sdk_name = str(param.get("sdk_name", ""))
+            param_name = str(param.get("name", ""))
+            param_desc = param.get("description")
+            schema_type = param.get("schema_type")
+            required = bool(param.get("required", False))
+
+            # Fallback description for None or empty
+            if not param_desc:
+                location = str(param.get("location", "query"))
+                param_desc = "ID do recurso." if location == "path" else f"Filtrar por {sdk_name}."
+
+            type_str = str(schema_type) if schema_type else "string"
+            req_str = "obrigatório" if required else "opcional"
+
+            lines.append(
+                f"    {sdk_name}: {param_desc} (Bling: ``{param_name}``, {type_str}, {req_str})"
+            )
+
+    # Request body schema note
+    if request_schema_refs:
+        lines.append("")
+        lines.append(f"Request body schema: {', '.join(request_schema_refs)}")
+
+    # Returns section
+    if response_schema_refs:
+        lines.append("")
+        lines.append("Returns:")
+        schema_parts: list[str] = []
+        for status, refs in sorted(response_schema_refs.items()):
+            sorted_refs = sorted(refs)
+            schema_parts.append(f"{status}: {', '.join(sorted_refs)}")
+        lines.append(f"    Bling API response. Response schemas: {'; '.join(schema_parts)}")
+
+    return "\n".join(lines)
+
+
+def _write_docstring_module(all_contracts: dict[str, list[dict[str, object]]]) -> None:
+    """Write the _docstrings.py module with all operation docstrings.
+
+    Args:
+        all_contracts: Mapping of class name to list of operation contracts.
+    """
+    CONTRACTS_DIR.mkdir(parents=True, exist_ok=True)
+
+    lines = [
+        '"""Generated docstrings for Bling SDK methods. Do not edit manually."""',
+        "",
+        "from __future__ import annotations",
+        "",
+        "OPERATION_DOCSTRINGS: dict[str, str] = {",
+    ]
+
+    for class_name in sorted(all_contracts):
+        contracts = all_contracts[class_name]
+        mapping = _operation_mapping(contracts)
+        for method_name in sorted(mapping):
+            contract = mapping[method_name]
+            docstring = _generate_docstring(contract)
+            key = f"{class_name}.{method_name}"
+            escaped = docstring.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
+            lines.append(f'    {key!r}: "{escaped}",')
+
+    lines.append("}")
+    lines.append("")
+
+    (CONTRACTS_DIR / "_docstrings.py").write_text("\n".join(lines), encoding="utf-8")
 
 
 if __name__ == "__main__":

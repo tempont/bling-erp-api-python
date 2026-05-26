@@ -29,7 +29,21 @@ class ProductSuppliersResource(BaseResource):
         id_produto: int | None = None,
         id_fornecedor: int | None = None,
     ) -> JsonObject:
-        """Lista vínculos entre produto e fornecedor."""
+        """Obtém produtos fornecedores.
+
+        Endpoint: GET /produtos/fornecedores
+
+        Obtém produtos fornecedores paginados.
+
+        Args:
+            pagina: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limite: Quantidade de registros que devem ser exibidos por página (Bling: ``limite``, integer, opcional)
+            id_produto: ID do produto (Bling: ``idProduto``, integer, opcional)
+            id_fornecedor: ID do contato do tipo fornecedor (Bling: ``idFornecedor``, integer, opcional)
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutosFornecedoresDadosBaseDTO
+        """
         return self._get(
             "/produtos/fornecedores",
             params=_supplier_list_params(
@@ -41,15 +55,52 @@ class ProductSuppliersResource(BaseResource):
         )
 
     def iterar(self, *, pagina: int = 1, limite: int = 100) -> Iterator[JsonObject]:
-        """Iterador paginado (sem filtros adicionais)."""
+        """Itera pelos registros página a página, mantendo os mesmos filtros.
+
+        Obtém produtos fornecedores
+
+        Endpoint: GET /produtos/fornecedores
+
+        Obtém produtos fornecedores paginados.
+
+        Args:
+            pagina: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limite: Quantidade de registros que devem ser exibidos por página (Bling: ``limite``, integer, opcional)
+            id_produto: ID do produto (Bling: ``idProduto``, integer, opcional)
+            id_fornecedor: ID do contato do tipo fornecedor (Bling: ``idFornecedor``, integer, opcional)
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutosFornecedoresDadosBaseDTO
+        """
         return self._iterate("/produtos/fornecedores", page=pagina, limit=limite)
 
     def criar(self, dados: ProductSupplierCreateRequest | JsonObject) -> JsonObject:
-        """Cria vínculo (``POST``)."""
+        """Cria um produto fornecedor.
+
+        Endpoint: POST /produtos/fornecedores
+
+        Cria um produto fornecedor.
+
+        Request body schema: ProdutosFornecedoresDadosBaseDTO, ProdutosFornecedoresDadosDTO
+
+        Returns:
+            Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
+        """
         return self._post("/produtos/fornecedores", json=to_json_object(dados))
 
     def obter(self, id_produto_fornecedor: int) -> JsonObject:
-        """Obtém por ID."""
+        """Obtém um produto fornecedor.
+
+        Endpoint: GET /produtos/fornecedores/{idProdutoFornecedor}
+
+        Obtém um produto fornecedor pelo ID.
+
+        Args:
+            id_produto_fornecedor: ID do produto fornecedor (Bling: ``idProdutoFornecedor``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutosFornecedoresDadosBaseDTO, ProdutosFornecedoresDadosDTO; 404: ErrorResponse
+        """
         return self._get(f"/produtos/fornecedores/{id_produto_fornecedor}")
 
     def alterar(
@@ -57,14 +108,39 @@ class ProductSuppliersResource(BaseResource):
         id_produto_fornecedor: int,
         dados: ProductSupplierUpdateRequest | JsonObject,
     ) -> JsonObject:
-        """Atualização completa (``PUT``)."""
+        """Altera um produto fornecedor.
+
+        Endpoint: PUT /produtos/fornecedores/{idProdutoFornecedor}
+
+        Altera um produto fornecedor pelo ID.
+
+        Args:
+            id_produto_fornecedor: ID do produto fornecedor (Bling: ``idProdutoFornecedor``, integer, obrigatório)
+            dados: Dados do produto fornecedor.
+
+        Request body schema: ProdutosFornecedoresDadosBaseUpdateDTO, ProdutosFornecedoresDadosUpdateDTO
+
+        Returns:
+            Bling API response. Response schemas: 200: BasePostResponse; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self._put(
             f"/produtos/fornecedores/{id_produto_fornecedor}",
             json=to_json_object(dados),
         )
 
     def remover(self, id_produto_fornecedor: int) -> JsonObject:
-        """Remove vínculo."""
+        """Remove um produto fornecedor.
+
+        Endpoint: DELETE /produtos/fornecedores/{idProdutoFornecedor}
+
+        Remove um produto fornecedor pelo ID.
+
+        Args:
+            id_produto_fornecedor: ID do produto fornecedor (Bling: ``idProdutoFornecedor``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
+        """
         return self._delete(f"/produtos/fornecedores/{id_produto_fornecedor}")
 
 
