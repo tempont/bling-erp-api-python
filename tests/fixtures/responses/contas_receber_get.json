@@ -1,0 +1,16 @@
+{
+  "data": {
+    "id": 2001,
+    "situacao": 1,
+    "vencimento": "2025-04-10",
+    "valor": 2500.00,
+    "idTransacao": "TRX001",
+    "linkQRCodePix": "https://pix.example.com/qr",
+    "linkBoleto": "https://boleto.example.com/123",
+    "dataEmissao": "2025-04-01",
+    "contato": {"id": 200, "nome": "Cliente ABC", "numeroDocumento": "123456", "tipo": "J"},
+    "formaPagamento": {"id": 2, "codigoFiscal": "01"},
+    "contaContabil": {"id": 1, "descricao": "Conta Corrente"},
+    "origem": {"id": 500, "tipoOrigem": "venda", "numero": "1001", "dataEmissao": "2025-04-01", "valor": 2500.00, "situacao": 1, "url": "https://bling.com.br/venda/500"}
+  }
+}

@@ -25,6 +25,9 @@ tipos e valores de retorno com formatação colorida.
 | [Categorias - Lojas](store_categories.md) | `StoreCategoriesResource` — `/categorias/lojas` |
 | [Categorias - Produtos](product_categories.md) | `ProductCategoriesResource` — `/categorias/produtos` |
 | [Categorias - Receitas e Despesas](income_expense_categories.md) | `IncomeExpenseCategoriesResource` — `/categorias/receitas-despesas` |
+| [Contas a Pagar](contas_pagar.md) | `ContasPagarResource` — `/contas/pagar` |
+| [Contas a Receber](contas_receber.md) | `ContasReceberResource` — `/contas/receber` |
+| [Contas Financeiras](contas_contabeis.md) | `ContasContabeisResource` — `/contas-contabeis` |
 | [Caixas e Bancos](caixas_bancos.md) | `CaixasBancosResource` — `/caixas` |
 | [Contatos](contacts.md) | `ContactsResource` — `/contatos` |
 | [NF-e](nfe.md) | `NfeResource` — `/nfe` |

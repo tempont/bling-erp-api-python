@@ -1,0 +1,8 @@
+{
+  "data": {
+    "id": 10,
+    "descricao": "Conta Corrente Principal",
+    "tipo": "conta-bancaria",
+    "aliasIntegracao": "bank_account"
+  }
+}

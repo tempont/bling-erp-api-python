@@ -1,0 +1,20 @@
+{
+  "data": {
+    "id": 1001,
+    "situacao": 1,
+    "vencimento": "2025-03-15",
+    "valor": 1500.00,
+    "contato": {"id": 100},
+    "formaPagamento": {"id": 1},
+    "saldo": 1500.00,
+    "dataEmissao": "2025-03-01",
+    "vencimentoOriginal": "2025-03-15",
+    "numeroDocumento": "NF-001",
+    "competencia": "2025-03-01",
+    "historico": "Compra de material",
+    "numeroBanco": "001",
+    "portador": {"id": 5},
+    "categoria": {"id": 10},
+    "borderos": []
+  }
+}

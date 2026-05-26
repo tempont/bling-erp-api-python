@@ -82,6 +82,9 @@ nav:
       - Categorias Lojas: resources/store_categories.md
       - Categorias Produtos: resources/product_categories.md
       - Categorias Receitas e Despesas: resources/income_expense_categories.md
+      - Contas a Pagar: resources/contas_pagar.md
+      - Contas a Receber: resources/contas_receber.md
+      - Contas Financeiras: resources/contas_contabeis.md
   - Referência da API:
       - api-reference/index.md
       - Cliente: api-reference/client.md
@@ -104,3 +107,6 @@ nav:
       - Categorias - Lojas: api-reference/store_categories.md
       - Categorias - Produtos: api-reference/product_categories.md
       - Categorias - Receitas e Despesas: api-reference/income_expense_categories.md
+      - Contas a Pagar: api-reference/contas_pagar.md
+      - Contas a Receber: api-reference/contas_receber.md
+      - Contas Financeiras: api-reference/contas_contabeis.md
