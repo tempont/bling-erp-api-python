@@ -140,6 +140,9 @@ PARAMETER_TO_SDK_NAME = {
     "idContaFinanceira": "id_conta_financeira",
     "valor": "valor",
     "situacaoConciliacao": "situacao_conciliacao",
+    "idCategoriaLoja": "id_categoria_loja",
+    "idCategoriaProdutoPai": "id_categoria_produto_pai",
+    "idsCategorias[]": "ids_categorias",
 }
 
 DOCSTRING_ONLY_RESOURCES: list[ResourceConfig] = []
@@ -160,6 +163,9 @@ _CLASS_NAME_MAP: dict[str, str] = {
     "nfse": "NfseResource",
     "borderos": "BorderosResource",
     "caixas_bancos": "CaixasBancosResource",
+    "store_categories": "StoreCategoriesResource",
+    "product_categories": "ProductCategoriesResource",
+    "income_expense_categories": "IncomeExpenseCategoriesResource",
 }
 
 RESOURCES: list[ResourceConfig] = [
@@ -322,6 +328,36 @@ RESOURCES: list[ResourceConfig] = [
             '    data_inicial="2024-01-01",',
             '    data_final="2024-12-31",',
             ")",
+        ],
+    },
+    {
+        "openapi_resource": "CategoriasLojas",
+        "module": "store_categories",
+        "constant": "STORE_CATEGORY_OPERATIONS",
+        "title": "Categorias - Lojas",
+        "example": [
+            "categorias = client.store_categories.listar()",
+            "categoria = client.store_categories.obter(123456)",
+        ],
+    },
+    {
+        "openapi_resource": "CategoriasProdutos",
+        "module": "product_categories",
+        "constant": "PRODUCT_CATEGORY_OPERATIONS",
+        "title": "Categorias - Produtos",
+        "example": [
+            "categorias = client.product_categories.listar()",
+            "categoria = client.product_categories.obter(123456)",
+        ],
+    },
+    {
+        "openapi_resource": "CategoriasReceitasDespesas",
+        "module": "income_expense_categories",
+        "constant": "INCOME_EXPENSE_CATEGORY_OPERATIONS",
+        "title": "Categorias - Receitas e Despesas",
+        "example": [
+            "categorias = client.income_expense_categories.listar(tipo=2)",
+            "categoria = client.income_expense_categories.obter(123456)",
         ],
     },
 ]

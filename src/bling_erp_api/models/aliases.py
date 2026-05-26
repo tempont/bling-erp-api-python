@@ -42,6 +42,11 @@ from bling_erp_api.models.generated.contacts import (
     ContactTypeListResponse,
     ContactUpdateRequest,
 )
+from bling_erp_api.models.generated.income_expense_categories import (
+    CategoriasReceitasDespesasDadosBaseDTO,
+    CategoriasReceitasDespesasDadosDTO,
+    CategoriasReceitasDespesasDadosPostDTO,
+)
 from bling_erp_api.models.generated.invoices import (
     NotaFiscalGetResponse,
     NotaFiscalResponsePOST,
@@ -82,6 +87,10 @@ from bling_erp_api.models.generated.product_batches import (
     ProductBatchStatusRequest,
     ProductBatchUpdateRequest,
     ProductBatchWarehouseRef,
+)
+from bling_erp_api.models.generated.product_categories import (
+    CategoriasProdutosCategoriPaiDTO,
+    CategoriasProdutosDadosDTO,
 )
 from bling_erp_api.models.generated.product_stores import (
     ProductStoreBrandRef,
@@ -132,6 +141,11 @@ from bling_erp_api.models.generated.sales_orders import (
     SalesOrderResponse,
     SalesOrderUpdateRequest,
 )
+from bling_erp_api.models.generated.store_categories import (
+    CategoriasLojasCategoriaProdutoDTO,
+    CategoriasLojasDadosDTO,
+    CategoriasLojasLojaDTO,
+)
 
 __all__ = [
     "AnunciosCategoriaListDTO",
@@ -158,6 +172,14 @@ __all__ = [
     "CaixasBancosLancamentoParcelaDTO",
     "CaixasBancosSalvarLancamentoDTO",
     "CaixasBancosSalvarLancamentoResponseDTO",
+    "CategoriasLojasCategoriaProdutoDTO",
+    "CategoriasLojasDadosDTO",
+    "CategoriasLojasLojaDTO",
+    "CategoriasProdutosCategoriPaiDTO",
+    "CategoriasProdutosDadosDTO",
+    "CategoriasReceitasDespesasDadosBaseDTO",
+    "CategoriasReceitasDespesasDadosDTO",
+    "CategoriasReceitasDespesasDadosPostDTO",
     "ConfiguracaoNotaServicoDadosBaseDTO",
     "Contact",
     "ContactAlertsResponse",

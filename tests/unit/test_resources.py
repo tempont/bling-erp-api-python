@@ -11,17 +11,22 @@ from bling_erp_api.resources.ads import AdsResource
 from bling_erp_api.resources.borderos import BorderosResource
 from bling_erp_api.resources.caixas_bancos import CaixasBancosResource
 from bling_erp_api.resources.contacts import ContactsResource
+from bling_erp_api.resources.income_expense_categories import (
+    IncomeExpenseCategoriesResource,
+)
 from bling_erp_api.resources.nfce import NfceResource
 from bling_erp_api.resources.nfe import NfeResource
 from bling_erp_api.resources.nfse import NfseResource
 from bling_erp_api.resources.product_batch_entries import ProductBatchEntriesResource
 from bling_erp_api.resources.product_batches import ProductBatchesResource
+from bling_erp_api.resources.product_categories import ProductCategoriesResource
 from bling_erp_api.resources.product_stores import ProductStoresResource
 from bling_erp_api.resources.product_structures import ProductStructuresResource
 from bling_erp_api.resources.product_suppliers import ProductSuppliersResource
 from bling_erp_api.resources.product_variations import ProductVariationsResource
 from bling_erp_api.resources.products import ProductsResource
 from bling_erp_api.resources.sales_orders import SalesOrdersResource
+from bling_erp_api.resources.store_categories import StoreCategoriesResource
 from bling_erp_api.types import JsonObject, JsonPayload, QueryParams
 
 
@@ -1411,3 +1416,272 @@ class TestCaixasBancosResourceMapping:
         resource.delete(123456)
         assert transport.calls[0][0] == "DELETE"
         assert transport.calls[0][1] == "/caixas/123456"
+
+
+# --- Store Categories (Categorias - Lojas) mapping tests ---
+
+
+class TestStoreCategoriesResourceMapping:
+    """Mapping tests for StoreCategoriesResource."""
+
+    def test_store_categories_listar_maps_to_bling_endpoint(self) -> None:
+        """Store categories listar maps to GET /categorias/lojas."""
+        transport = RecordingTransport()
+        resource = StoreCategoriesResource(transport)
+        resource.listar()
+        assert transport.calls == [("GET", "/categorias/lojas?pagina=1&limite=100", {}, None)]
+
+    def test_store_categories_listar_with_filters(self) -> None:
+        """Store categories listar maps optional filters."""
+        transport = RecordingTransport()
+        resource = StoreCategoriesResource(transport)
+        resource.listar(id_loja=1, id_categoria_produto=50)
+        assert transport.calls[0][0] == "GET"
+        assert transport.calls[0][2] == {"idLoja": 1, "idCategoriaProduto": 50}
+
+    def test_store_categories_obter_maps_to_bling_endpoint(self) -> None:
+        """Store categories obter maps ID to GET /categorias/lojas/{id}."""
+        transport = RecordingTransport()
+        resource = StoreCategoriesResource(transport)
+        resource.obter(100)
+        assert transport.calls == [("GET", "/categorias/lojas/100", None, None)]
+
+    def test_store_categories_criar_maps_to_bling_endpoint(self) -> None:
+        """Store categories criar posts to POST /categorias/lojas."""
+        transport = RecordingTransport()
+        resource = StoreCategoriesResource(transport)
+        resource.criar({"loja": {"id": 1}, "descricao": "Test", "codigo": "ABC"})
+        assert transport.calls[0][0] == "POST"
+        assert transport.calls[0][1] == "/categorias/lojas"
+        assert transport.calls[0][3] is not None
+
+    def test_store_categories_alterar_maps_to_bling_endpoint(self) -> None:
+        """Store categories alterar puts to PUT /categorias/lojas/{id}."""
+        transport = RecordingTransport()
+        resource = StoreCategoriesResource(transport)
+        resource.alterar(100, {"loja": {"id": 1}, "descricao": "Upd", "codigo": "XYZ"})
+        assert transport.calls[0][0] == "PUT"
+        assert transport.calls[0][1] == "/categorias/lojas/100"
+
+    def test_store_categories_remover_maps_to_bling_endpoint(self) -> None:
+        """Store categories remover sends DELETE to /categorias/lojas/{id}."""
+        transport = RecordingTransport()
+        resource = StoreCategoriesResource(transport)
+        resource.remover(100)
+        assert transport.calls == [("DELETE", "/categorias/lojas/100", None, None)]
+
+    def test_store_categories_english_alias_list(self) -> None:
+        """English alias 'list' should map to 'listar'."""
+        transport = RecordingTransport()
+        resource = StoreCategoriesResource(transport)
+        resource.list(store_id=5)
+        assert transport.calls[0][0] == "GET"
+        params = transport.calls[0][2]
+        assert params is not None
+        assert params["idLoja"] == 5
+
+    def test_store_categories_english_alias_get(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        transport = RecordingTransport()
+        resource = StoreCategoriesResource(transport)
+        resource.get(100)
+        assert transport.calls[0] == ("GET", "/categorias/lojas/100", None, None)
+
+    def test_store_categories_english_alias_create(self) -> None:
+        """English alias 'create' should map to 'criar'."""
+        transport = RecordingTransport()
+        resource = StoreCategoriesResource(transport)
+        resource.create({"loja": {"id": 1}, "descricao": "Test", "codigo": "X"})
+        assert transport.calls[0][0] == "POST"
+
+    def test_store_categories_english_alias_delete(self) -> None:
+        """English alias 'delete' should map to 'remover'."""
+        transport = RecordingTransport()
+        resource = StoreCategoriesResource(transport)
+        resource.delete(100)
+        assert transport.calls[0] == ("DELETE", "/categorias/lojas/100", None, None)
+
+
+# --- Product Categories (Categorias - Produtos) mapping tests ---
+
+
+class TestProductCategoriesResourceMapping:
+    """Mapping tests for ProductCategoriesResource."""
+
+    def test_product_categories_listar_maps_to_bling_endpoint(self) -> None:
+        """Product categories listar maps to GET /categorias/produtos."""
+        transport = RecordingTransport()
+        resource = ProductCategoriesResource(transport)
+        resource.listar()
+        assert transport.calls == [("GET", "/categorias/produtos?pagina=1&limite=100", None, None)]
+
+    def test_product_categories_obter_maps_to_bling_endpoint(self) -> None:
+        """Product categories obter maps ID to GET .../{id}."""
+        transport = RecordingTransport()
+        resource = ProductCategoriesResource(transport)
+        resource.obter(200)
+        assert transport.calls == [("GET", "/categorias/produtos/200", None, None)]
+
+    def test_product_categories_criar_maps_to_bling_endpoint(self) -> None:
+        """Product categories criar posts to POST."""
+        transport = RecordingTransport()
+        resource = ProductCategoriesResource(transport)
+        resource.criar({"id": 1, "descricao": "Nova"})
+        assert transport.calls[0][0] == "POST"
+        assert transport.calls[0][1] == "/categorias/produtos"
+
+    def test_product_categories_alterar_maps_to_bling_endpoint(self) -> None:
+        """Product categories alterar puts to PUT."""
+        transport = RecordingTransport()
+        resource = ProductCategoriesResource(transport)
+        resource.alterar(200, {"descricao": "Atualizada"})
+        assert transport.calls[0][0] == "PUT"
+        assert transport.calls[0][1] == "/categorias/produtos/200"
+
+    def test_product_categories_remover_maps_to_bling_endpoint(self) -> None:
+        """Product categories remover sends DELETE."""
+        transport = RecordingTransport()
+        resource = ProductCategoriesResource(transport)
+        resource.remover(200)
+        assert transport.calls == [("DELETE", "/categorias/produtos/200", None, None)]
+
+    def test_product_categories_english_alias_list(self) -> None:
+        """EN alias 'list' maps to listar."""
+        transport = RecordingTransport()
+        resource = ProductCategoriesResource(transport)
+        resource.list(page=3, limit=50)
+        assert "pagina=3" in transport.calls[0][1]
+        assert "limite=50" in transport.calls[0][1]
+
+    def test_product_categories_english_alias_get(self) -> None:
+        """EN alias 'get' maps to obter."""
+        transport = RecordingTransport()
+        resource = ProductCategoriesResource(transport)
+        resource.get(200)
+        assert transport.calls[0] == ("GET", "/categorias/produtos/200", None, None)
+
+    def test_product_categories_english_alias_create(self) -> None:
+        """EN alias 'create' maps to criar."""
+        transport = RecordingTransport()
+        resource = ProductCategoriesResource(transport)
+        resource.create({"descricao": "Nova"})
+        assert transport.calls[0][0] == "POST"
+
+    def test_product_categories_english_alias_update(self) -> None:
+        """EN alias 'update' maps to alterar."""
+        transport = RecordingTransport()
+        resource = ProductCategoriesResource(transport)
+        resource.update(200, {"descricao": "Upd"})
+        assert transport.calls[0][0] == "PUT"
+
+    def test_product_categories_english_alias_delete(self) -> None:
+        """EN alias 'delete' maps to remover."""
+        transport = RecordingTransport()
+        resource = ProductCategoriesResource(transport)
+        resource.delete(200)
+        assert transport.calls[0] == ("DELETE", "/categorias/produtos/200", None, None)
+
+
+# --- Income/Expense Categories (Categorias - Receitas e Despesas) mapping tests ---
+
+
+class TestIncomeExpenseCategoriesResourceMapping:
+    """Mapping tests for IncomeExpenseCategoriesResource."""
+
+    def test_income_expense_listar_maps_to_bling_endpoint(self) -> None:
+        """Income/expense listar maps to GET."""
+        transport = RecordingTransport()
+        resource = IncomeExpenseCategoriesResource(transport)
+        resource.listar()
+        assert transport.calls == [
+            ("GET", "/categorias/receitas-despesas?pagina=1&limite=100", {}, None)
+        ]
+
+    def test_income_expense_listar_with_filters(self) -> None:
+        """Income/expense listar maps tipo and situacao."""
+        transport = RecordingTransport()
+        resource = IncomeExpenseCategoriesResource(transport)
+        resource.listar(tipo=2, situacao=1)
+        assert transport.calls[0][2] == {"tipo": 2, "situacao": 1}
+
+    def test_income_expense_obter_maps_to_bling_endpoint(self) -> None:
+        """Income/expense obter maps ID."""
+        transport = RecordingTransport()
+        resource = IncomeExpenseCategoriesResource(transport)
+        resource.obter(300)
+        assert transport.calls == [("GET", "/categorias/receitas-despesas/300", None, None)]
+
+    def test_income_expense_criar_maps_to_bling_endpoint(self) -> None:
+        """Income/expense criar posts to POST."""
+        transport = RecordingTransport()
+        resource = IncomeExpenseCategoriesResource(transport)
+        resource.criar({"descricao": "Nova", "tipo": 2})
+        assert transport.calls[0][0] == "POST"
+        assert transport.calls[0][1] == "/categorias/receitas-despesas"
+
+    def test_income_expense_alterar_maps_to_bling_endpoint(self) -> None:
+        """Income/expense alterar puts."""
+        transport = RecordingTransport()
+        resource = IncomeExpenseCategoriesResource(transport)
+        resource.alterar(300, {"descricao": "Upd", "tipo": 1})
+        assert transport.calls[0][0] == "PUT"
+        assert transport.calls[0][1] == "/categorias/receitas-despesas/300"
+
+    def test_income_expense_remover_maps_to_bling_endpoint(self) -> None:
+        """Income/expense remover sends DELETE."""
+        transport = RecordingTransport()
+        resource = IncomeExpenseCategoriesResource(transport)
+        resource.remover(300)
+        assert transport.calls == [("DELETE", "/categorias/receitas-despesas/300", None, None)]
+
+    def test_income_expense_remover_varios_maps_to_bling_endpoint(self) -> None:
+        """Income/expense remover_varios sends DELETE with idsCategorias."""
+        transport = RecordingTransport()
+        resource = IncomeExpenseCategoriesResource(transport)
+        resource.remover_varios([10, 20, 30])
+        assert transport.calls[0][0] == "DELETE"
+        assert transport.calls[0][1] == "/categorias/receitas-despesas"
+        assert transport.calls[0][2] == {"idsCategorias[]": [10, 20, 30]}
+
+    def test_income_expense_english_alias_list(self) -> None:
+        """EN alias 'list' maps to listar."""
+        transport = RecordingTransport()
+        resource = IncomeExpenseCategoriesResource(transport)
+        resource.list(type_=2, status=1)
+        assert transport.calls[0][2] == {"tipo": 2, "situacao": 1}
+
+    def test_income_expense_english_alias_get(self) -> None:
+        """EN alias 'get' maps to obter."""
+        transport = RecordingTransport()
+        resource = IncomeExpenseCategoriesResource(transport)
+        resource.get(300)
+        assert transport.calls[0] == ("GET", "/categorias/receitas-despesas/300", None, None)
+
+    def test_income_expense_english_alias_create(self) -> None:
+        """EN alias 'create' maps to criar."""
+        transport = RecordingTransport()
+        resource = IncomeExpenseCategoriesResource(transport)
+        resource.create({"descricao": "Test", "tipo": 2})
+        assert transport.calls[0][0] == "POST"
+
+    def test_income_expense_english_alias_update(self) -> None:
+        """EN alias 'update' maps to alterar."""
+        transport = RecordingTransport()
+        resource = IncomeExpenseCategoriesResource(transport)
+        resource.update(300, {"descricao": "Upd", "tipo": 1})
+        assert transport.calls[0][0] == "PUT"
+
+    def test_income_expense_english_alias_delete(self) -> None:
+        """EN alias 'delete' maps to remover."""
+        transport = RecordingTransport()
+        resource = IncomeExpenseCategoriesResource(transport)
+        resource.delete(300)
+        assert transport.calls[0] == ("DELETE", "/categorias/receitas-despesas/300", None, None)
+
+    def test_income_expense_english_alias_delete_multiple(self) -> None:
+        """EN alias 'delete_multiple' maps to remover_varios."""
+        transport = RecordingTransport()
+        resource = IncomeExpenseCategoriesResource(transport)
+        resource.delete_multiple([10, 20])
+        assert transport.calls[0][0] == "DELETE"
+        assert transport.calls[0][2] == {"idsCategorias[]": [10, 20]}

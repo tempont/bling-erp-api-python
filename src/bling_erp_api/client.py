@@ -18,17 +18,20 @@ from bling_erp_api.resources import (
     BorderosResource,
     CaixasBancosResource,
     ContactsResource,
+    IncomeExpenseCategoriesResource,
     NfceResource,
     NfeResource,
     NfseResource,
     ProductBatchEntriesResource,
     ProductBatchesResource,
+    ProductCategoriesResource,
     ProductsResource,
     ProductStoresResource,
     ProductStructuresResource,
     ProductSuppliersResource,
     ProductVariationsResource,
     SalesOrdersResource,
+    StoreCategoriesResource,
 )
 from bling_erp_api.transport.sync import SyncTransport
 
@@ -83,6 +86,9 @@ class BlingClient:
         self._anuncios_categorias = AdCategoriesResource(self._transport)
         self._caixas_bancos = CaixasBancosResource(self._transport)
         self._borderos = BorderosResource(self._transport)
+        self._store_categories = StoreCategoriesResource(self._transport)
+        self._product_categories = ProductCategoriesResource(self._transport)
+        self._income_expense_categories = IncomeExpenseCategoriesResource(self._transport)
 
     # -- Resource namespace properties (with IDE-visible docstrings) --
 
@@ -240,6 +246,36 @@ class BlingClient:
     def borderos(self) -> BorderosResource:
         """Borderôs — operações em ``/borderos``."""
         return self._borderos
+
+    @property
+    def categorias_lojas(self) -> StoreCategoriesResource:
+        """Categorias de lojas — operações em ``/categorias/lojas``."""
+        return self._store_categories
+
+    @property
+    def store_categories(self) -> StoreCategoriesResource:
+        """Alias for ``categorias_lojas``. Store category operations on ``/categorias/lojas``."""
+        return self.categorias_lojas
+
+    @property
+    def categorias_produtos(self) -> ProductCategoriesResource:
+        """Categorias de produtos — operações em ``/categorias/produtos``."""
+        return self._product_categories
+
+    @property
+    def product_categories(self) -> ProductCategoriesResource:
+        """Alias for ``categorias_produtos``. Product category operations on ``/categorias/produtos``."""
+        return self.categorias_produtos
+
+    @property
+    def categorias_receitas_despesas(self) -> IncomeExpenseCategoriesResource:
+        """Categorias de receitas e despesas — operações em ``/categorias/receitas-despesas``."""
+        return self._income_expense_categories
+
+    @property
+    def income_expense_categories(self) -> IncomeExpenseCategoriesResource:
+        """Alias for ``categorias_receitas_despesas``. Income/expense category operations on ``/categorias/receitas-despesas``."""
+        return self.categorias_receitas_despesas
 
     @classmethod
     def from_env(  # noqa: PLR0913
