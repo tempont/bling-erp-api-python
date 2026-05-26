@@ -1,7 +1,9 @@
 """Resource namespaces exposed by the SDK client."""
 
 from bling_erp_api.resources.contacts import ContactsResource
-from bling_erp_api.resources.invoices import InvoicesResource
+from bling_erp_api.resources.nfce import NfceResource
+from bling_erp_api.resources.nfe import NfeResource
+from bling_erp_api.resources.nfse import NfseResource
 from bling_erp_api.resources.product_batch_entries import ProductBatchEntriesResource
 from bling_erp_api.resources.product_batches import ProductBatchesResource
 from bling_erp_api.resources.product_stores import ProductStoresResource
@@ -13,7 +15,9 @@ from bling_erp_api.resources.sales_orders import SalesOrdersResource
 
 __all__ = [
     "ContactsResource",
-    "InvoicesResource",
+    "NfceResource",
+    "NfeResource",
+    "NfseResource",
     "ProductBatchEntriesResource",
     "ProductBatchesResource",
     "ProductStoresResource",

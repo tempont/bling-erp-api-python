@@ -120,9 +120,15 @@ class BaseResource:
         """Send a GET request."""
         return self._transport.request("GET", path, params=params)
 
-    def _post(self, path: str, *, json: JsonPayload | None = None) -> JsonObject:
+    def _post(
+        self,
+        path: str,
+        *,
+        params: QueryParams | None = None,
+        json: JsonPayload | None = None,
+    ) -> JsonObject:
         """Send a POST request."""
-        return self._transport.request("POST", path, json=json)
+        return self._transport.request("POST", path, params=params, json=json)
 
     def _put(self, path: str, *, json: JsonPayload | None = None) -> JsonObject:
         """Send a PUT request."""

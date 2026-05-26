@@ -7,6 +7,9 @@ from datetime import UTC, date, datetime
 from bling_erp_api.models.generated.products import ProductCreateRequest, ProductPatchRequest
 from bling_erp_api.models.generated.sales_orders import SalesOrderCreateRequest
 from bling_erp_api.resources.contacts import ContactsResource
+from bling_erp_api.resources.nfce import NfceResource
+from bling_erp_api.resources.nfe import NfeResource
+from bling_erp_api.resources.nfse import NfseResource
 from bling_erp_api.resources.product_batch_entries import ProductBatchEntriesResource
 from bling_erp_api.resources.product_batches import ProductBatchesResource
 from bling_erp_api.resources.product_stores import ProductStoresResource
@@ -594,3 +597,406 @@ def test_product_variations_map_requests_to_bling() -> None:
             {"atributoAntigo": "Cor", "atributoNovo": "Coloração"},
         ),
     ]
+
+
+# --- NF-e mapping tests ---
+
+
+class TestNfeResourceMapping:
+    """Mapping tests for NfeResource (NF-e endpoints)."""
+
+    def test_nfe_list_maps_to_bling_endpoint(self) -> None:
+        """NF-e listar maps pagination params to /nfe."""
+        transport = RecordingTransport()
+        resource = NfeResource(transport)
+        resource.listar(pagina=1, limite=10)
+        assert transport.calls == [
+            ("GET", "/nfe", {"pagina": 1, "limite": 10}, None),
+        ]
+
+    def test_nfe_list_with_filters(self) -> None:
+        """NF-e listar maps situacao/tipo/date filters to Bling camelCase."""
+        transport = RecordingTransport()
+        resource = NfeResource(transport)
+        resource.listar(
+            situacao=3,
+            tipo=1,
+            data_emissao_inicial="2024-01-01",
+            data_emissao_final="2024-01-31",
+        )
+        assert transport.calls == [
+            (
+                "GET",
+                "/nfe",
+                {
+                    "situacao": 3,
+                    "tipo": 1,
+                    "dataEmissaoInicial": "2024-01-01",
+                    "dataEmissaoFinal": "2024-01-31",
+                },
+                None,
+            ),
+        ]
+
+    def test_nfe_obter_maps_to_bling_endpoint(self) -> None:
+        """NF-e obter maps ID to /nfe/{id}."""
+        transport = RecordingTransport()
+        resource = NfeResource(transport)
+        resource.obter(12345)
+        assert transport.calls == [
+            ("GET", "/nfe/12345", None, None),
+        ]
+
+    def test_nfe_criar_maps_to_bling_endpoint(self) -> None:
+        """NF-e criar posts JSON body to /nfe."""
+        transport = RecordingTransport()
+        resource = NfeResource(transport)
+        dados: JsonObject = {"tipo": 1, "numero": "123"}
+        resource.criar(dados)
+        assert len(transport.calls) == 1
+        assert transport.calls[0][:2] == ("POST", "/nfe")
+        assert transport.calls[0][3] is not None  # body was serialized
+
+    def test_nfe_alterar_maps_to_bling_endpoint(self) -> None:
+        """NF-e alterar puts JSON body to /nfe/{id}."""
+        transport = RecordingTransport()
+        resource = NfeResource(transport)
+        dados: JsonObject = {"tipo": 1}
+        resource.alterar(12345, dados)
+        assert transport.calls[0][:2] == ("PUT", "/nfe/12345")
+        assert transport.calls[0][3] is not None
+
+    def test_nfe_remover_varios_maps_to_bling_endpoint(self) -> None:
+        """NF-e remover_varios sends ids as query params to DELETE /nfe."""
+        transport = RecordingTransport()
+        resource = NfeResource(transport)
+        resource.remover_varios([1, 2, 3])
+        assert transport.calls == [
+            ("DELETE", "/nfe", {"idsNotas[]": [1, 2, 3]}, None),
+        ]
+
+    def test_nfe_autorizar_maps_to_bling_endpoint(self) -> None:
+        """NF-e autorizar sends email flag to /nfe/{id}/enviar."""
+        transport = RecordingTransport()
+        resource = NfeResource(transport)
+        resource.autorizar(12345, enviar_email=True)
+        assert transport.calls == [
+            ("POST", "/nfe/12345/enviar", {"enviarEmail": True}, None),
+        ]
+
+    def test_nfe_autorizar_without_email(self) -> None:
+        """NF-e autorizar works without email param."""
+        transport = RecordingTransport()
+        resource = NfeResource(transport)
+        resource.autorizar(12345)
+        assert transport.calls[0][:2] == ("POST", "/nfe/12345/enviar")
+
+    def test_nfe_lancar_contas_maps_to_bling_endpoint(self) -> None:
+        """NF-e lancar_contas posts to /nfe/{id}/lancar-contas."""
+        transport = RecordingTransport()
+        resource = NfeResource(transport)
+        resource.lancar_contas(12345)
+        assert transport.calls == [
+            ("POST", "/nfe/12345/lancar-contas", None, None),
+        ]
+
+    def test_nfe_estornar_contas_maps_to_bling_endpoint(self) -> None:
+        """NF-e estornar_contas posts to /nfe/{id}/estornar-contas."""
+        transport = RecordingTransport()
+        resource = NfeResource(transport)
+        resource.estornar_contas(12345)
+        assert transport.calls == [
+            ("POST", "/nfe/12345/estornar-contas", None, None),
+        ]
+
+    def test_nfe_lancar_estoque_maps_to_bling_endpoint(self) -> None:
+        """NF-e lancar_estoque posts to /nfe/{id}/lancar-estoque."""
+        transport = RecordingTransport()
+        resource = NfeResource(transport)
+        resource.lancar_estoque(12345)
+        assert transport.calls == [
+            ("POST", "/nfe/12345/lancar-estoque", None, None),
+        ]
+
+    def test_nfe_lancar_estoque_with_deposito(self) -> None:
+        """NF-e lancar_estoque with deposito appends /{deposito}."""
+        transport = RecordingTransport()
+        resource = NfeResource(transport)
+        resource.lancar_estoque(12345, id_deposito=5)
+        assert transport.calls == [
+            ("POST", "/nfe/12345/lancar-estoque/5", None, None),
+        ]
+
+    def test_nfe_estornar_estoque_maps_to_bling_endpoint(self) -> None:
+        """NF-e estornar_estoque posts to /nfe/{id}/estornar-estoque."""
+        transport = RecordingTransport()
+        resource = NfeResource(transport)
+        resource.estornar_estoque(12345)
+        assert transport.calls == [
+            ("POST", "/nfe/12345/estornar-estoque", None, None),
+        ]
+
+    def test_nfe_obter_documento_nota_fiscal_maps_to_bling_endpoint(
+        self,
+    ) -> None:
+        """NF-e get document maps chave de acesso to /nfe/documento/{chave}."""
+        transport = RecordingTransport()
+        resource = NfeResource(transport)
+        resource.obter_documento_nota_fiscal("35240112345678901234567890123456789012345678")
+        call = transport.calls[0]
+        assert call[:2] == (
+            "GET",
+            "/nfe/documento/35240112345678901234567890123456789012345678",
+        )
+        # compact_params returns {} when all values are None
+        assert call[2] == {}
+        assert call[3] is None
+
+    def test_nfe_obter_documento_nota_fiscal_with_formato(self) -> None:
+        """NF-e get document passes formato as query param."""
+        transport = RecordingTransport()
+        resource = NfeResource(transport)
+        resource.obter_documento_nota_fiscal(
+            "35240112345678901234567890123456789012345678", formato="pdf"
+        )
+        assert transport.calls == [
+            (
+                "GET",
+                "/nfe/documento/35240112345678901234567890123456789012345678",
+                {"formato": "pdf"},
+                None,
+            ),
+        ]
+
+    def test_nfe_english_alias_get(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        transport = RecordingTransport()
+        resource = NfeResource(transport)
+        resource.get(12345)
+        assert transport.calls == [
+            ("GET", "/nfe/12345", None, None),
+        ]
+
+    def test_nfe_english_alias_list(self) -> None:
+        """English alias 'list' should map to 'listar'."""
+        transport = RecordingTransport()
+        resource = NfeResource(transport)
+        resource.list(page=1)
+        assert transport.calls[0][:2] == ("GET", "/nfe")
+
+    def test_nfe_english_alias_authorize(self) -> None:
+        """English alias 'authorize' should map to 'autorizar'."""
+        transport = RecordingTransport()
+        resource = NfeResource(transport)
+        resource.authorize(12345)
+        assert transport.calls[0][:2] == ("POST", "/nfe/12345/enviar")
+
+
+# --- NFC-e mapping tests ---
+
+
+class TestNfceResourceMapping:
+    """Mapping tests for NfceResource (NFC-e endpoints)."""
+
+    def test_nfce_list_maps_to_bling_endpoint(self) -> None:
+        """NFC-e listar maps pagination params to /nfce."""
+        transport = RecordingTransport()
+        resource = NfceResource(transport)
+        resource.listar(pagina=1, limite=20)
+        assert transport.calls == [
+            ("GET", "/nfce", {"pagina": 1, "limite": 20}, None),
+        ]
+
+    def test_nfce_list_with_filters(self) -> None:
+        """NFC-e listar maps situacao/date filters to Bling camelCase."""
+        transport = RecordingTransport()
+        resource = NfceResource(transport)
+        resource.listar(situacao=3, data_emissao_inicial="2024-01-01")
+        assert transport.calls == [
+            ("GET", "/nfce", {"situacao": 3, "dataEmissaoInicial": "2024-01-01"}, None),
+        ]
+
+    def test_nfce_obter_maps_to_bling_endpoint(self) -> None:
+        """NFC-e obter maps ID to /nfce/{id}."""
+        transport = RecordingTransport()
+        resource = NfceResource(transport)
+        resource.obter(54321)
+        assert transport.calls == [
+            ("GET", "/nfce/54321", None, None),
+        ]
+
+    def test_nfce_criar_maps_to_bling_endpoint(self) -> None:
+        """NFC-e criar posts JSON body to /nfce."""
+        transport = RecordingTransport()
+        resource = NfceResource(transport)
+        dados: JsonObject = {"tipo": 1}
+        resource.criar(dados)
+        assert transport.calls[0][:2] == ("POST", "/nfce")
+        assert transport.calls[0][3] is not None
+
+    def test_nfce_alterar_maps_to_bling_endpoint(self) -> None:
+        """NFC-e alterar puts to /nfce/{id}."""
+        transport = RecordingTransport()
+        resource = NfceResource(transport)
+        resource.alterar(54321, {"tipo": 1})
+        assert transport.calls[0][:2] == ("PUT", "/nfce/54321")
+
+    def test_nfce_autorizar_maps_to_bling_endpoint(self) -> None:
+        """NFC-e autorizar sends email flag to /nfce/{id}/enviar."""
+        transport = RecordingTransport()
+        resource = NfceResource(transport)
+        resource.autorizar(54321, enviar_email=True)
+        assert transport.calls == [
+            ("POST", "/nfce/54321/enviar", {"enviarEmail": True}, None),
+        ]
+
+    def test_nfce_lancar_contas_maps_to_bling_endpoint(self) -> None:
+        """NFC-e lancar_contas posts to /nfce/{id}/lancar-contas."""
+        transport = RecordingTransport()
+        resource = NfceResource(transport)
+        resource.lancar_contas(54321)
+        assert transport.calls == [
+            ("POST", "/nfce/54321/lancar-contas", None, None),
+        ]
+
+    def test_nfce_estornar_estoque_maps_to_bling_endpoint(self) -> None:
+        """NFC-e estornar_estoque posts to /nfce/{id}/estornar-estoque."""
+        transport = RecordingTransport()
+        resource = NfceResource(transport)
+        resource.estornar_estoque(54321)
+        assert transport.calls == [
+            ("POST", "/nfce/54321/estornar-estoque", None, None),
+        ]
+
+    def test_nfce_lancar_estoque_with_deposito(self) -> None:
+        """NFC-e lancar_estoque with deposito appends /{deposito}."""
+        transport = RecordingTransport()
+        resource = NfceResource(transport)
+        resource.lancar_estoque(54321, id_deposito=3)
+        assert transport.calls == [
+            ("POST", "/nfce/54321/lancar-estoque/3", None, None),
+        ]
+
+    def test_nfce_english_alias_get(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        transport = RecordingTransport()
+        resource = NfceResource(transport)
+        resource.get(54321)
+        assert transport.calls == [
+            ("GET", "/nfce/54321", None, None),
+        ]
+
+
+# --- NFS-e mapping tests ---
+
+
+class TestNfseResourceMapping:
+    """Mapping tests for NfseResource (NFS-e endpoints)."""
+
+    def test_nfse_list_maps_to_bling_endpoint(self) -> None:
+        """NFS-e listar maps pagination params to /nfse."""
+        transport = RecordingTransport()
+        resource = NfseResource(transport)
+        resource.listar(pagina=1, limite=10)
+        assert transport.calls == [
+            ("GET", "/nfse", {"pagina": 1, "limite": 10}, None),
+        ]
+
+    def test_nfse_list_with_situacao(self) -> None:
+        """NFS-e listar maps situacao filter to /nfse."""
+        transport = RecordingTransport()
+        resource = NfseResource(transport)
+        resource.listar(situacao=3)
+        assert transport.calls == [
+            ("GET", "/nfse", {"situacao": 3}, None),
+        ]
+
+    def test_nfse_obter_maps_to_bling_endpoint(self) -> None:
+        """NFS-e obter maps ID to /nfse/{id}."""
+        transport = RecordingTransport()
+        resource = NfseResource(transport)
+        resource.obter(111)
+        assert transport.calls == [
+            ("GET", "/nfse/111", None, None),
+        ]
+
+    def test_nfse_criar_maps_to_bling_endpoint(self) -> None:
+        """NFS-e criar posts JSON body to /nfse."""
+        transport = RecordingTransport()
+        resource = NfseResource(transport)
+        dados: JsonObject = {"numero": "111"}
+        resource.criar(dados)
+        assert transport.calls[0][:2] == ("POST", "/nfse")
+        assert transport.calls[0][3] is not None
+
+    def test_nfse_remover_maps_to_bling_endpoint(self) -> None:
+        """NFS-e remover sends DELETE to /nfse/{id}."""
+        transport = RecordingTransport()
+        resource = NfseResource(transport)
+        resource.remover(111)
+        assert transport.calls == [
+            ("DELETE", "/nfse/111", None, None),
+        ]
+
+    def test_nfse_autorizar_maps_to_bling_endpoint(self) -> None:
+        """NFS-e autorizar posts to /nfse/{id}/enviar."""
+        transport = RecordingTransport()
+        resource = NfseResource(transport)
+        resource.autorizar(111)
+        assert transport.calls == [
+            ("POST", "/nfse/111/enviar", None, None),
+        ]
+
+    def test_nfse_cancelar_maps_to_bling_endpoint(self) -> None:
+        """NFS-e cancelar posts cancellation body to /nfse/{id}/cancelar."""
+        transport = RecordingTransport()
+        resource = NfseResource(transport)
+        dados: JsonObject = {"codigoMotivo": 1, "justificativa": "Erro na emissão"}
+        resource.cancelar(111, dados)
+        assert transport.calls[0][:2] == ("POST", "/nfse/111/cancelar")
+        assert transport.calls[0][3] is not None
+
+    def test_nfse_obter_configuracoes_maps_to_bling_endpoint(self) -> None:
+        """NFS-e obter_configuracoes gets /nfse/configuracoes."""
+        transport = RecordingTransport()
+        resource = NfseResource(transport)
+        resource.obter_configuracoes()
+        assert transport.calls == [
+            ("GET", "/nfse/configuracoes", None, None),
+        ]
+
+    def test_nfse_alterar_configuracoes_maps_to_bling_endpoint(self) -> None:
+        """NFS-e alterar_configuracoes puts to /nfse/configuracoes."""
+        transport = RecordingTransport()
+        resource = NfseResource(transport)
+        dados: JsonObject = {"basicas": {"emissorPadrao": 1}}
+        resource.alterar_configuracoes(dados)
+        assert transport.calls[0][:2] == ("PUT", "/nfse/configuracoes")
+        assert transport.calls[0][3] is not None
+
+    def test_nfse_english_alias_get(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        transport = RecordingTransport()
+        resource = NfseResource(transport)
+        resource.get(111)
+        assert transport.calls == [
+            ("GET", "/nfse/111", None, None),
+        ]
+
+    def test_nfse_english_alias_delete(self) -> None:
+        """English alias 'delete' should map to 'remover'."""
+        transport = RecordingTransport()
+        resource = NfseResource(transport)
+        resource.delete(111)
+        assert transport.calls == [
+            ("DELETE", "/nfse/111", None, None),
+        ]
+
+    def test_nfse_english_alias_get_settings(self) -> None:
+        """English alias 'get_settings' should map to 'obter_configuracoes'."""
+        transport = RecordingTransport()
+        resource = NfseResource(transport)
+        resource.get_settings()
+        assert transport.calls == [
+            ("GET", "/nfse/configuracoes", None, None),
+        ]

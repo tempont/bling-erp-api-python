@@ -54,6 +54,9 @@ ACTION_TO_SDK_METHOD = {
     "ObterTipoContatoMultiplos": "listar_tipos",
     "Autorizar": "autorizar",
     "ObterDocumentoNotaFiscal": "obter_documento_nota_fiscal",
+    "Cancelar": "cancelar",
+    "ObterConfiguracoes": "obter_configuracoes",
+    "AlterarConfiguracoes": "alterar_configuracoes",
 }
 
 PARAMETER_TO_SDK_NAME = {
@@ -127,17 +130,10 @@ PARAMETER_TO_SDK_NAME = {
     "numeroLoja": "numero_loja",
     "serie": "serie",
     "situacao": "situacao",
+    "idNotaServico": "id_nota_servico",
 }
 
-DOCSTRING_ONLY_RESOURCES: list[ResourceConfig] = [
-    {
-        "openapi_resource": "NotasFiscais",
-        "module": "invoices",
-        "constant": "INVOICE_OPERATIONS",
-        "title": "Notas Fiscais",
-        "example": ["notas = client.invoices.list(page=1, limit=10)"],
-    },
-]
+DOCSTRING_ONLY_RESOURCES: list[ResourceConfig] = []
 
 _CLASS_NAME_MAP: dict[str, str] = {
     "sales_orders": "SalesOrdersResource",
@@ -149,7 +145,8 @@ _CLASS_NAME_MAP: dict[str, str] = {
     "product_batch_entries": "ProductBatchEntriesResource",
     "product_variations": "ProductVariationsResource",
     "contacts": "ContactsResource",
-    "invoices": "InvoicesResource",
+    "invoices": "NfeResource",
+    "nfse": "NfseResource",
 }
 
 RESOURCES: list[ResourceConfig] = [
@@ -253,6 +250,24 @@ RESOURCES: list[ResourceConfig] = [
         "example": [
             'contatos = client.contatos.listar(pesquisa="Ana", limite=10)',
             "contato = client.contatos.obter(123456)",
+        ],
+    },
+    {
+        "openapi_resource": "NotasFiscais",
+        "module": "invoices",
+        "constant": "INVOICE_OPERATIONS",
+        "title": "Notas Fiscais",
+        "example": [
+            "notas = client.invoices.listar(pagina=1, limite=10)",
+        ],
+    },
+    {
+        "openapi_resource": "NFSe",
+        "module": "nfse",
+        "constant": "NFSE_OPERATIONS",
+        "title": "Notas Fiscais de Serviço",
+        "example": [
+            "notas = client.nfse.listar(pagina=1, limite=10)",
         ],
     },
 ]

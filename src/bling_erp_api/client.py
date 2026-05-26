@@ -14,7 +14,9 @@ from bling_erp_api.config import (
 )
 from bling_erp_api.resources import (
     ContactsResource,
-    InvoicesResource,
+    NfceResource,
+    NfeResource,
+    NfseResource,
     ProductBatchEntriesResource,
     ProductBatchesResource,
     ProductsResource,
@@ -70,7 +72,9 @@ class BlingClient:
         self._lotes_lancamentos = ProductBatchEntriesResource(self._transport)
         self._produtos_variacoes = ProductVariationsResource(self._transport)
         self._sales_orders = SalesOrdersResource(self._transport)
-        self._invoices = InvoicesResource(self._transport)
+        self._nfe = NfeResource(self._transport)
+        self._nfce = NfceResource(self._transport)
+        self._nfse = NfseResource(self._transport)
 
     # -- Resource namespace properties (with IDE-visible docstrings) --
 
@@ -165,9 +169,34 @@ class BlingClient:
         return self._sales_orders
 
     @property
-    def invoices(self) -> InvoicesResource:
-        """Operações de notas fiscais (/notas/fiscais)."""
-        return self._invoices
+    def notas_fiscais(self) -> NfeResource:
+        """Operações de notas fiscais eletrônicas (/nfe)."""
+        return self._nfe
+
+    @property
+    def invoices(self) -> NfeResource:
+        """Alias em inglês para ``notas_fiscais``. NF-e (/nfe)."""
+        return self._nfe
+
+    @property
+    def notas_fiscais_consumidor(self) -> NfceResource:
+        """Operações de notas fiscais do consumidor (/nfce)."""
+        return self._nfce
+
+    @property
+    def consumer_invoices(self) -> NfceResource:
+        """Alias em inglês para ``notas_fiscais_consumidor``. NFC-e (/nfce)."""
+        return self._nfce
+
+    @property
+    def notas_servicos(self) -> NfseResource:
+        """Operações de notas fiscais de serviço (/nfse)."""
+        return self._nfse
+
+    @property
+    def service_invoices(self) -> NfseResource:
+        """Alias em inglês para ``notas_servicos``. NFS-e (/nfse)."""
+        return self._nfse
 
     @classmethod
     def from_env(  # noqa: PLR0913
