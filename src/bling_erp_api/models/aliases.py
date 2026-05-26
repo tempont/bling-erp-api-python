@@ -42,6 +42,29 @@ from bling_erp_api.models.generated.contacts import (
     ContactTypeListResponse,
     ContactUpdateRequest,
 )
+from bling_erp_api.models.generated.contas_contabeis import ContasContabeisDadosDTO
+from bling_erp_api.models.generated.contas_pagar import (
+    ContasPagarDadosDTO,
+    ContasPagarSalvarDTO,
+)
+from bling_erp_api.models.generated.contas_receber import (
+    ContasReceberBoletosCancelarDTO,
+    ContasReceberBoletosDadosBaseDTO,
+    ContasReceberDadosListDTO,
+    ContasReceberSalvarDTO,
+)
+from bling_erp_api.models.generated.contas_shared import (
+    ContasBaixarContaDTO,
+    ContasCategoriaDTO,
+    ContasContatoDTO,
+    ContasDadosBaseDTO,
+    ContasFormaPagamentoDTO,
+    ContasOcorrenciaParceladaDTO,
+    ContasOcorrenciaRecorrenteDTO,
+    ContasOcorrenciaSemanalDTO,
+    ContasOcorrenciaUnicaDTO,
+    ContasPortadorDTO,
+)
 from bling_erp_api.models.generated.income_expense_categories import (
     CategoriasReceitasDespesasDadosBaseDTO,
     CategoriasReceitasDespesasDadosDTO,
@@ -191,7 +214,24 @@ __all__ = [
     "ContactType",
     "ContactTypeListResponse",
     "ContactUpdateRequest",
+    "ContasBaixarContaDTO",
+    "ContasCategoriaDTO",
+    "ContasContabeisDadosDTO",
+    "ContasContatoDTO",
+    "ContasDadosBaseDTO",
     "ContasFinanceirasDadosBasicosDTO",
+    "ContasFormaPagamentoDTO",
+    "ContasOcorrenciaParceladaDTO",
+    "ContasOcorrenciaRecorrenteDTO",
+    "ContasOcorrenciaSemanalDTO",
+    "ContasOcorrenciaUnicaDTO",
+    "ContasPagarDadosDTO",
+    "ContasPagarSalvarDTO",
+    "ContasPortadorDTO",
+    "ContasReceberBoletosCancelarDTO",
+    "ContasReceberBoletosDadosBaseDTO",
+    "ContasReceberDadosListDTO",
+    "ContasReceberSalvarDTO",
     "NotaFiscalGetResponse",
     "NotaFiscalResponsePOST",
     "NotasFiscaisContatoDTO",

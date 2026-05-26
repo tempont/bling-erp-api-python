@@ -18,6 +18,9 @@ from bling_erp_api.resources import (
     BorderosResource,
     CaixasBancosResource,
     ContactsResource,
+    ContasContabeisResource,
+    ContasPagarResource,
+    ContasReceberResource,
     IncomeExpenseCategoriesResource,
     NfceResource,
     NfeResource,
@@ -89,6 +92,10 @@ class BlingClient:
         self._store_categories = StoreCategoriesResource(self._transport)
         self._product_categories = ProductCategoriesResource(self._transport)
         self._income_expense_categories = IncomeExpenseCategoriesResource(self._transport)
+
+        self._contas_pagar = ContasPagarResource(self._transport)
+        self._contas_receber = ContasReceberResource(self._transport)
+        self._contas_contabeis = ContasContabeisResource(self._transport)
 
     # -- Resource namespace properties (with IDE-visible docstrings) --
 
@@ -276,6 +283,36 @@ class BlingClient:
     def income_expense_categories(self) -> IncomeExpenseCategoriesResource:
         """Alias for ``categorias_receitas_despesas``. Income/expense category operations on ``/categorias/receitas-despesas``."""
         return self.categorias_receitas_despesas
+
+    @property
+    def contas_pagar(self) -> ContasPagarResource:
+        """Contas a pagar — operações em ``/contas/pagar``."""
+        return self._contas_pagar
+
+    @property
+    def accounts_payable(self) -> ContasPagarResource:
+        """Alias for ``contas_pagar``. Accounts payable operations on ``/contas/pagar``."""
+        return self.contas_pagar
+
+    @property
+    def contas_receber(self) -> ContasReceberResource:
+        """Contas a receber — operações em ``/contas/receber``."""
+        return self._contas_receber
+
+    @property
+    def accounts_receivable(self) -> ContasReceberResource:
+        """Alias for ``contas_receber``. Accounts receivable operations on ``/contas/receber``."""
+        return self.contas_receber
+
+    @property
+    def contas_contabeis(self) -> ContasContabeisResource:
+        """Contas financeiras — operações em ``/contas-contabeis``."""
+        return self._contas_contabeis
+
+    @property
+    def financial_accounts(self) -> ContasContabeisResource:
+        """Alias for ``contas_contabeis``. Financial accounts operations on ``/contas-contabeis``."""
+        return self.contas_contabeis
 
     @classmethod
     def from_env(  # noqa: PLR0913

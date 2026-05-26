@@ -59,6 +59,9 @@ ACTION_TO_SDK_METHOD = {
     "Cancelar": "cancelar",
     "ObterConfiguracoes": "obter_configuracoes",
     "AlterarConfiguracoes": "alterar_configuracoes",
+    "BaixarConta": "baixar",
+    "CancelarBoletos": "cancelar_boletos",
+    "ObterBoletos": "obter_boletos",
 }
 
 PARAMETER_TO_SDK_NAME = {
@@ -143,6 +146,22 @@ PARAMETER_TO_SDK_NAME = {
     "idCategoriaLoja": "id_categoria_loja",
     "idCategoriaProdutoPai": "id_categoria_produto_pai",
     "idsCategorias[]": "ids_categorias",
+    "situacoes[]": "situacoes",
+    "tipoFiltroData": "tipo_filtro_data",
+    "dataVencimentoInicial": "data_vencimento_inicial",
+    "dataVencimentoFinal": "data_vencimento_final",
+    "dataPagamentoInicial": "data_pagamento_inicial",
+    "dataPagamentoFinal": "data_pagamento_final",
+    "idPortador": "id_portador",
+    "idFormaPagamento": "id_forma_pagamento",
+    "boletoGerado": "boleto_gerado",
+    "idOrigem": "id_origem",
+    "ocultarInvisiveis": "ocultar_invisiveis",
+    "ocultarTipoContaBancaria": "ocultar_tipo_conta_bancaria",
+    "aliasIntegracao": "alias_integracao",
+    "ordenacao": "ordenacao",
+    "idContaPagar": "id_conta_pagar",
+    "idContaReceber": "id_conta_receber",
 }
 
 DOCSTRING_ONLY_RESOURCES: list[ResourceConfig] = []
@@ -166,6 +185,9 @@ _CLASS_NAME_MAP: dict[str, str] = {
     "store_categories": "StoreCategoriesResource",
     "product_categories": "ProductCategoriesResource",
     "income_expense_categories": "IncomeExpenseCategoriesResource",
+    "contas_pagar": "ContasPagarResource",
+    "contas_receber": "ContasReceberResource",
+    "contas_contabeis": "ContasContabeisResource",
 }
 
 RESOURCES: list[ResourceConfig] = [
@@ -358,6 +380,44 @@ RESOURCES: list[ResourceConfig] = [
         "example": [
             "categorias = client.income_expense_categories.listar(tipo=2)",
             "categoria = client.income_expense_categories.obter(123456)",
+        ],
+    },
+    {
+        "openapi_resource": "ContasPagar",
+        "module": "contas_pagar",
+        "constant": "CONTAS_PAGAR_OPERATIONS",
+        "title": "Contas a Pagar",
+        "example": [
+            "contas = client.contas_pagar.listar(",
+            "    situacao=1,",
+            '    data_vencimento_inicial="2024-01-01",',
+            ")",
+            "conta = client.contas_pagar.obter(123456)",
+        ],
+    },
+    {
+        "openapi_resource": "ContasReceber",
+        "module": "contas_receber",
+        "constant": "CONTAS_RECEBER_OPERATIONS",
+        "title": "Contas a Receber",
+        "example": [
+            "contas = client.contas_receber.listar(",
+            "    situacoes=[1, 2],",
+            '    data_inicial="2024-01-01",',
+            ")",
+            "conta = client.contas_receber.obter(123456)",
+        ],
+    },
+    {
+        "openapi_resource": "ContasContabeis",
+        "module": "contas_contabeis",
+        "constant": "CONTAS_CONTABEIS_OPERATIONS",
+        "title": "Contas Financeiras",
+        "example": [
+            "contas = client.contas_contabeis.listar(",
+            "    situacoes=[1],",
+            ")",
+            "conta = client.contas_contabeis.obter(123456)",
         ],
     },
 ]

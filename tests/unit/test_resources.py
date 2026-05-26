@@ -11,6 +11,9 @@ from bling_erp_api.resources.ads import AdsResource
 from bling_erp_api.resources.borderos import BorderosResource
 from bling_erp_api.resources.caixas_bancos import CaixasBancosResource
 from bling_erp_api.resources.contacts import ContactsResource
+from bling_erp_api.resources.contas_contabeis import ContasContabeisResource
+from bling_erp_api.resources.contas_pagar import ContasPagarResource
+from bling_erp_api.resources.contas_receber import ContasReceberResource
 from bling_erp_api.resources.income_expense_categories import (
     IncomeExpenseCategoriesResource,
 )
@@ -1685,3 +1688,261 @@ class TestIncomeExpenseCategoriesResourceMapping:
         resource.delete_multiple([10, 20])
         assert transport.calls[0][0] == "DELETE"
         assert transport.calls[0][2] == {"idsCategorias[]": [10, 20]}
+
+
+# --- Contas a Pagar mapping tests ---
+
+
+class TestContasPagarResourceMapping:
+    """Mapping tests for ContasPagarResource."""
+
+    def test_contas_pagar_listar_maps_to_bling_endpoint(self) -> None:
+        """Contas pagar listar maps pagination params to GET /contas/pagar."""
+        transport = RecordingTransport()
+        resource = ContasPagarResource(transport)
+        resource.listar(pagina=1, limite=100)
+        assert transport.calls == [
+            ("GET", "/contas/pagar?pagina=1&limite=100", {}, None),
+        ]
+
+    def test_contas_pagar_listar_with_filters(self) -> None:
+        """Contas pagar listar maps situacao filter to Bling camelCase."""
+        transport = RecordingTransport()
+        resource = ContasPagarResource(transport)
+        resource.listar(pagina=1, limite=100, situacao=1)
+        assert transport.calls[0] == (
+            "GET",
+            "/contas/pagar?pagina=1&limite=100",
+            {"situacao": 1},
+            None,
+        )
+
+    def test_contas_pagar_obter_maps_to_bling_endpoint(self) -> None:
+        """Contas pagar obter maps ID to GET /contas/pagar/{id}."""
+        transport = RecordingTransport()
+        resource = ContasPagarResource(transport)
+        resource.obter(123)
+        assert transport.calls == [
+            ("GET", "/contas/pagar/123", None, None),
+        ]
+
+    def test_contas_pagar_criar_maps_to_bling_endpoint(self) -> None:
+        """Contas pagar criar posts JSON body to POST /contas/pagar."""
+        transport = RecordingTransport()
+        resource = ContasPagarResource(transport)
+        dados: JsonObject = {"vencimento": "2025-03-15", "valor": 1500.00}
+        resource.criar(dados)
+        assert transport.calls[0][:2] == ("POST", "/contas/pagar")
+        body = transport.calls[0][3]
+        assert body is not None
+
+    def test_contas_pagar_remover_maps_to_bling_endpoint(self) -> None:
+        """Contas pagar remover sends DELETE to /contas/pagar/{id}."""
+        transport = RecordingTransport()
+        resource = ContasPagarResource(transport)
+        resource.remover(123)
+        assert transport.calls == [
+            ("DELETE", "/contas/pagar/123", None, None),
+        ]
+
+    def test_contas_pagar_baixar_maps_to_bling_endpoint(self) -> None:
+        """Contas pagar baixar posts to POST /contas/pagar/{id}/baixar."""
+        transport = RecordingTransport()
+        resource = ContasPagarResource(transport)
+        dados: JsonObject = {"data": "2025-03-16", "usarDataVencimento": False}
+        resource.baixar(123, dados)
+        assert transport.calls[0][:2] == ("POST", "/contas/pagar/123/baixar")
+        body = transport.calls[0][3]
+        assert body is not None
+
+    def test_contas_pagar_english_alias_list(self) -> None:
+        """English alias 'list' should map to 'listar'."""
+        transport = RecordingTransport()
+        resource = ContasPagarResource(transport)
+        resource.list(page=1, limit=100)
+        assert transport.calls[0][:2] == ("GET", "/contas/pagar?pagina=1&limite=100")
+
+    def test_contas_pagar_english_alias_get(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        transport = RecordingTransport()
+        resource = ContasPagarResource(transport)
+        resource.get(123)
+        assert transport.calls == [
+            ("GET", "/contas/pagar/123", None, None),
+        ]
+
+    def test_contas_pagar_english_alias_settle(self) -> None:
+        """English alias 'settle' should map to 'baixar'."""
+        transport = RecordingTransport()
+        resource = ContasPagarResource(transport)
+        dados: JsonObject = {"data": "2025-03-16", "usarDataVencimento": False}
+        resource.settle(123, data=dados)
+        assert transport.calls[0][:2] == ("POST", "/contas/pagar/123/baixar")
+        body = transport.calls[0][3]
+        assert body is not None
+
+
+# --- Contas a Receber mapping tests ---
+
+
+class TestContasReceberResourceMapping:
+    """Mapping tests for ContasReceberResource."""
+
+    def test_contas_receber_listar_maps_to_bling_endpoint(self) -> None:
+        """Contas receber listar maps pagination params to GET /contas/receber."""
+        transport = RecordingTransport()
+        resource = ContasReceberResource(transport)
+        resource.listar(pagina=1, limite=100)
+        assert transport.calls == [
+            ("GET", "/contas/receber?pagina=1&limite=100", {}, None),
+        ]
+
+    def test_contas_receber_listar_with_filters(self) -> None:
+        """Contas receber listar maps situacoes filter to Bling camelCase."""
+        transport = RecordingTransport()
+        resource = ContasReceberResource(transport)
+        resource.listar(pagina=1, limite=100, situacoes=[1, 2])
+        assert transport.calls[0] == (
+            "GET",
+            "/contas/receber?pagina=1&limite=100",
+            {"situacoes[]": [1, 2]},
+            None,
+        )
+
+    def test_contas_receber_obter_maps_to_bling_endpoint(self) -> None:
+        """Contas receber obter maps ID to GET /contas/receber/{id}."""
+        transport = RecordingTransport()
+        resource = ContasReceberResource(transport)
+        resource.obter(123)
+        assert transport.calls == [
+            ("GET", "/contas/receber/123", None, None),
+        ]
+
+    def test_contas_receber_criar_maps_to_bling_endpoint(self) -> None:
+        """Contas receber criar posts JSON body to POST /contas/receber."""
+        transport = RecordingTransport()
+        resource = ContasReceberResource(transport)
+        dados: JsonObject = {"vencimento": "2025-04-10", "valor": 2500.00}
+        resource.criar(dados)
+        assert transport.calls[0][:2] == ("POST", "/contas/receber")
+        body = transport.calls[0][3]
+        assert body is not None
+
+    def test_contas_receber_remover_maps_to_bling_endpoint(self) -> None:
+        """Contas receber remover sends DELETE to /contas/receber/{id}."""
+        transport = RecordingTransport()
+        resource = ContasReceberResource(transport)
+        resource.remover(123)
+        assert transport.calls == [
+            ("DELETE", "/contas/receber/123", None, None),
+        ]
+
+    def test_contas_receber_baixar_maps_to_bling_endpoint(self) -> None:
+        """Contas receber baixar posts to POST /contas/receber/{id}/baixar."""
+        transport = RecordingTransport()
+        resource = ContasReceberResource(transport)
+        dados: JsonObject = {"data": "2025-04-10", "usarDataVencimento": False}
+        resource.baixar(123, dados)
+        assert transport.calls[0][:2] == ("POST", "/contas/receber/123/baixar")
+        body = transport.calls[0][3]
+        assert body is not None
+
+    def test_contas_receber_obter_boletos_maps_to_bling_endpoint(self) -> None:
+        """Contas receber obter_boletos maps to GET /contas/receber/boletos."""
+        transport = RecordingTransport()
+        resource = ContasReceberResource(transport)
+        resource.obter_boletos(id_origem=500)
+        assert transport.calls[0] == (
+            "GET",
+            "/contas/receber/boletos?idOrigem=500",
+            {},
+            None,
+        )
+
+    def test_contas_receber_cancelar_boletos_maps_to_bling_endpoint(self) -> None:
+        """Contas receber cancelar_boletos posts to POST /contas/receber/boletos/cancelar."""
+        transport = RecordingTransport()
+        resource = ContasReceberResource(transport)
+        dados: JsonObject = {"motivo": "Cancelamento por atraso"}
+        resource.cancelar_boletos(dados)
+        assert transport.calls[0][:2] == ("POST", "/contas/receber/boletos/cancelar")
+        body = transport.calls[0][3]
+        assert body is not None
+
+    def test_contas_receber_english_alias_list(self) -> None:
+        """English alias 'list' should map to 'listar'."""
+        transport = RecordingTransport()
+        resource = ContasReceberResource(transport)
+        resource.list(page=1, limit=100)
+        assert transport.calls[0][:2] == (
+            "GET",
+            "/contas/receber?pagina=1&limite=100",
+        )
+
+    def test_contas_receber_english_alias_get_boletos(self) -> None:
+        """English alias 'get_boletos' should map to 'obter_boletos'."""
+        transport = RecordingTransport()
+        resource = ContasReceberResource(transport)
+        resource.get_boletos(source_id=500)
+        assert transport.calls[0] == (
+            "GET",
+            "/contas/receber/boletos?idOrigem=500",
+            {},
+            None,
+        )
+
+
+# --- Contas Contábeis mapping tests ---
+
+
+class TestContasContabeisResourceMapping:
+    """Mapping tests for ContasContabeisResource."""
+
+    def test_contas_contabeis_listar_maps_to_bling_endpoint(self) -> None:
+        """Contas contabeis listar maps pagination to GET /contas-contabeis."""
+        transport = RecordingTransport()
+        resource = ContasContabeisResource(transport)
+        resource.listar(pagina=1, limite=100)
+        assert transport.calls == [
+            ("GET", "/contas-contabeis?pagina=1&limite=100", {}, None),
+        ]
+
+    def test_contas_contabeis_listar_with_filters(self) -> None:
+        """Contas contabeis listar maps situacoes filter to Bling camelCase."""
+        transport = RecordingTransport()
+        resource = ContasContabeisResource(transport)
+        resource.listar(pagina=1, limite=100, situacoes=[1, 2])
+        assert transport.calls[0] == (
+            "GET",
+            "/contas-contabeis?pagina=1&limite=100",
+            {"situacoes": [1, 2]},
+            None,
+        )
+
+    def test_contas_contabeis_obter_maps_to_bling_endpoint(self) -> None:
+        """Contas contabeis obter maps ID to GET /contas-contabeis/{id}."""
+        transport = RecordingTransport()
+        resource = ContasContabeisResource(transport)
+        resource.obter(10)
+        assert transport.calls == [
+            ("GET", "/contas-contabeis/10", None, None),
+        ]
+
+    def test_contas_contabeis_english_alias_list(self) -> None:
+        """English alias 'list' should map to 'listar'."""
+        transport = RecordingTransport()
+        resource = ContasContabeisResource(transport)
+        resource.list(page=1, limit=100)
+        assert transport.calls[0][:2] == (
+            "GET",
+            "/contas-contabeis?pagina=1&limite=100",
+        )
+
+    def test_contas_contabeis_english_alias_get(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        transport = RecordingTransport()
+        resource = ContasContabeisResource(transport)
+        resource.get(10)
+        assert transport.calls == [
+            ("GET", "/contas-contabeis/10", None, None),
+        ]
