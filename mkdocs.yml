@@ -73,6 +73,8 @@ nav:
       - resources/product_batch_entries.md
       - resources/product_variations.md
       - resources/contacts.md
+      - resources/invoices.md
+      - resources/nfse.md
   - Referência da API:
       - api-reference/index.md
       - Cliente: api-reference/client.md
@@ -85,3 +87,6 @@ nav:
       - Lançamentos de Lotes: api-reference/product_batch_entries.md
       - Variações de Produtos: api-reference/product_variations.md
       - Contatos: api-reference/contacts.md
+      - NF-e: api-reference/nfe.md
+      - NFC-e: api-reference/nfce.md
+      - NFS-e: api-reference/nfse.md

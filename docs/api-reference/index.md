@@ -20,3 +20,6 @@ tipos e valores de retorno com formatação colorida.
 | [Lançamentos de Lotes](product_batch_entries.md) | `ProductBatchEntriesResource` — `/produtos/lotes/lancamentos` |
 | [Variações de Produtos](product_variations.md) | `ProductVariationsResource` — `/produtos/variacoes` |
 | [Contatos](contacts.md) | `ContactsResource` — `/contatos` |
+| [NF-e](nfe.md) | `NfeResource` — `/nfe` |
+| [NFC-e](nfce.md) | `NfceResource` — `/nfce` |
+| [NFS-e](nfse.md) | `NfseResource` — `/nfse` |
