@@ -65,3 +65,5 @@ docs/_references/
 AGENTS.md
 scripts/dev_test*
 examples/dev/
+.opencode
+site

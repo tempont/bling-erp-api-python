@@ -9,7 +9,7 @@ check: sync
 	$(UV) run ruff check .
 	$(UV) run ruff format --check .
 	$(UV) run basedpyright
-	$(UV) run pytest
+	$(UV) run python -m pytest
 
 build:
 	$(UV) build

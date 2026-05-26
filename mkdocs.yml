@@ -1,0 +1,87 @@
+site_name: Bling ERP API SDK
+site_description: Python SDK para a API do Bling ERP v3
+repo_url: https://github.com/tempont/bling-erp-api-python
+site_url: https://tempont.github.io/bling-erp-api-python/
+edit_uri: edit/main/docs/
+copyright: Copyright &copy; 2025 tempont
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Modo escuro
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Modo claro
+  features:
+    - content.code.copy
+    - content.code.annotate
+    - navigation.instant
+    - navigation.tracking
+    - navigation.expand
+    - navigation.indexes
+    - toc.follow
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_root_heading: true
+            show_source: true
+            show_bases: true
+            show_signature_annotations: true
+            separate_signature: true
+            line_length: 80
+            docstring_style: google
+            merge_init_into_class: true
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - tables
+
+nav:
+  - Início: index.md
+  - Comece por aqui: getting-started.md
+  - Autenticação: authentication.md
+  - Paginação: pagination.md
+  - Erros: errors.md
+  - Recursos:
+      - resources/sales_orders.md
+      - resources/products.md
+      - resources/product_structures.md
+      - resources/product_suppliers.md
+      - resources/product_stores.md
+      - resources/product_batches.md
+      - resources/product_batch_entries.md
+      - resources/product_variations.md
+      - resources/contacts.md
+  - Referência da API:
+      - api-reference/index.md
+      - Cliente: api-reference/client.md
+      - Pedidos de Venda: api-reference/sales_orders.md
+      - Produtos: api-reference/products.md
+      - Estruturas de Produtos: api-reference/product_structures.md
+      - Fornecedores de Produtos: api-reference/product_suppliers.md
+      - Lojas de Produtos: api-reference/product_stores.md
+      - Lotes: api-reference/product_batches.md
+      - Lançamentos de Lotes: api-reference/product_batch_entries.md
+      - Variações de Produtos: api-reference/product_variations.md
+      - Contatos: api-reference/contacts.md
