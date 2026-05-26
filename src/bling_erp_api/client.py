@@ -21,6 +21,9 @@ from bling_erp_api.resources import (
     ContasContabeisResource,
     ContasPagarResource,
     ContasReceberResource,
+    DepositosResource,
+    EmpresasResource,
+    EstoquesResource,
     IncomeExpenseCategoriesResource,
     NfceResource,
     NfeResource,
@@ -96,6 +99,10 @@ class BlingClient:
         self._contas_pagar = ContasPagarResource(self._transport)
         self._contas_receber = ContasReceberResource(self._transport)
         self._contas_contabeis = ContasContabeisResource(self._transport)
+
+        self._depositos = DepositosResource(self._transport)
+        self._empresas = EmpresasResource(self._transport)
+        self._estoques = EstoquesResource(self._transport)
 
     # -- Resource namespace properties (with IDE-visible docstrings) --
 
@@ -313,6 +320,36 @@ class BlingClient:
     def financial_accounts(self) -> ContasContabeisResource:
         """Alias for ``contas_contabeis``. Financial accounts operations on ``/contas-contabeis``."""
         return self.contas_contabeis
+
+    @property
+    def depositos(self) -> DepositosResource:
+        """Depósitos — operações em ``/depositos``."""
+        return self._depositos
+
+    @property
+    def warehouses(self) -> DepositosResource:
+        """Alias for ``depositos``. Warehouse operations on ``/depositos``."""
+        return self.depositos
+
+    @property
+    def empresas(self) -> EmpresasResource:
+        """Empresas — operações em ``/empresas``."""
+        return self._empresas
+
+    @property
+    def companies(self) -> EmpresasResource:
+        """Alias for ``empresas``. Company operations on ``/empresas``."""
+        return self.empresas
+
+    @property
+    def estoques(self) -> EstoquesResource:
+        """Estoques — operações em ``/estoques``."""
+        return self._estoques
+
+    @property
+    def stock(self) -> EstoquesResource:
+        """Alias for ``estoques``. Stock operations on ``/estoques``."""
+        return self.estoques
 
     @classmethod
     def from_env(  # noqa: PLR0913

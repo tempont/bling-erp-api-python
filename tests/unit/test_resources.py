@@ -14,6 +14,9 @@ from bling_erp_api.resources.contacts import ContactsResource
 from bling_erp_api.resources.contas_contabeis import ContasContabeisResource
 from bling_erp_api.resources.contas_pagar import ContasPagarResource
 from bling_erp_api.resources.contas_receber import ContasReceberResource
+from bling_erp_api.resources.depositos import DepositosResource
+from bling_erp_api.resources.empresas import EmpresasResource
+from bling_erp_api.resources.estoques import EstoquesResource
 from bling_erp_api.resources.income_expense_categories import (
     IncomeExpenseCategoriesResource,
 )
@@ -1946,3 +1949,167 @@ class TestContasContabeisResourceMapping:
         assert transport.calls == [
             ("GET", "/contas-contabeis/10", None, None),
         ]
+
+
+# --- Depósitos mapping tests ---
+
+
+class TestDepositosResourceMapping:
+    """Mapping tests for DepositosResource."""
+
+    def test_depositos_listar_maps_to_bling_endpoint(self) -> None:
+        """Depositos listar maps pagination to GET /depositos."""
+        transport = RecordingTransport()
+        resource = DepositosResource(transport)
+        resource.listar(pagina=1, limite=100)
+        assert transport.calls == [
+            ("GET", "/depositos?pagina=1&limite=100", {}, None),
+        ]
+
+    def test_depositos_listar_with_filters(self) -> None:
+        """Depositos listar maps situacao filter to Bling camelCase."""
+        transport = RecordingTransport()
+        resource = DepositosResource(transport)
+        resource.listar(pagina=1, limite=100, situacao=1)
+        assert transport.calls[0] == (
+            "GET",
+            "/depositos?pagina=1&limite=100",
+            {"situacao": 1},
+            None,
+        )
+
+    def test_depositos_obter_maps_to_bling_endpoint(self) -> None:
+        """Depositos obter maps ID to GET /depositos/{id}."""
+        transport = RecordingTransport()
+        resource = DepositosResource(transport)
+        resource.obter(1)
+        assert transport.calls == [
+            ("GET", "/depositos/1", None, None),
+        ]
+
+    def test_depositos_criar_maps_to_bling_endpoint(self) -> None:
+        """Depositos criar posts JSON body to POST /depositos."""
+        transport = RecordingTransport()
+        resource = DepositosResource(transport)
+        dados: JsonObject = {"descricao": "Novo Depósito", "situacao": 1}
+        resource.criar(dados=dados)
+        assert len(transport.calls) == 1
+        assert transport.calls[0][0] == "POST"
+        assert transport.calls[0][1] == "/depositos"
+        assert transport.calls[0][3] is not None
+
+    def test_depositos_alterar_maps_to_bling_endpoint(self) -> None:
+        """Depositos alterar puts JSON body to PUT /depositos/{id}."""
+        transport = RecordingTransport()
+        resource = DepositosResource(transport)
+        dados: JsonObject = {"descricao": "Depósito Alterado", "situacao": 1}
+        resource.alterar(1, dados=dados)
+        assert transport.calls[0][0] == "PUT"
+        assert transport.calls[0][1] == "/depositos/1"
+        assert transport.calls[0][3] is not None
+
+    def test_depositos_english_alias_list(self) -> None:
+        """English alias 'list' should map to 'listar'."""
+        transport = RecordingTransport()
+        resource = DepositosResource(transport)
+        resource.list(page=1, limit=100)
+        assert transport.calls[0][:2] == (
+            "GET",
+            "/depositos?pagina=1&limite=100",
+        )
+
+    def test_depositos_english_alias_get(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        transport = RecordingTransport()
+        resource = DepositosResource(transport)
+        resource.get(1)
+        assert transport.calls == [
+            ("GET", "/depositos/1", None, None),
+        ]
+
+
+# --- Empresas mapping tests ---
+
+
+class TestEmpresasResourceMapping:
+    """Mapping tests for EmpresasResource."""
+
+    def test_empresas_obter_dados_basicos_maps_to_bling_endpoint(self) -> None:
+        """Empresas obter_dados_basicos maps to GET /empresas/me/dados-basicos."""
+        transport = RecordingTransport()
+        resource = EmpresasResource(transport)
+        resource.obter_dados_basicos()
+        assert transport.calls == [
+            ("GET", "/empresas/me/dados-basicos", None, None),
+        ]
+
+    def test_empresas_english_alias_get_basic_data(self) -> None:
+        """English alias 'get_basic_data' should map to 'obter_dados_basicos'."""
+        transport = RecordingTransport()
+        resource = EmpresasResource(transport)
+        resource.get_basic_data()
+        assert transport.calls == [
+            ("GET", "/empresas/me/dados-basicos", None, None),
+        ]
+
+
+# --- Estoques mapping tests ---
+
+
+class TestEstoquesResourceMapping:
+    """Mapping tests for EstoquesResource."""
+
+    def test_estoques_obter_saldos_maps_to_bling_endpoint(self) -> None:
+        """Estoques obter_saldos maps to GET /estoques/saldos with idsProdutos[]."""
+        transport = RecordingTransport()
+        resource = EstoquesResource(transport)
+        resource.obter_saldos(ids_produtos=[1, 2])
+        assert transport.calls[0] == (
+            "GET",
+            "/estoques/saldos",
+            {"idsProdutos[]": [1, 2]},
+            None,
+        )
+
+    def test_estoques_obter_saldos_por_deposito_maps_to_bling_endpoint(self) -> None:
+        """Estoques obter_saldos_por_deposito maps to GET /estoques/saldos/{id}."""
+        transport = RecordingTransport()
+        resource = EstoquesResource(transport)
+        resource.obter_saldos_por_deposito(5, ids_produtos=[1])
+        assert transport.calls[0] == (
+            "GET",
+            "/estoques/saldos/5",
+            {"idsProdutos[]": [1]},
+            None,
+        )
+
+    def test_estoques_criar_maps_to_bling_endpoint(self) -> None:
+        """Estoques criar posts JSON body to POST /estoques."""
+        transport = RecordingTransport()
+        resource = EstoquesResource(transport)
+        dados: JsonObject = {"operacao": "E", "quantidade": 10}
+        resource.criar(dados=dados)
+        assert len(transport.calls) == 1
+        assert transport.calls[0][0] == "POST"
+        assert transport.calls[0][1] == "/estoques"
+        assert transport.calls[0][3] is not None
+
+    def test_estoques_english_alias_get_balances(self) -> None:
+        """English alias 'get_balances' should map to 'obter_saldos'."""
+        transport = RecordingTransport()
+        resource = EstoquesResource(transport)
+        resource.get_balances(product_ids=[1, 2])
+        assert transport.calls[0][:2] == (
+            "GET",
+            "/estoques/saldos",
+        )
+
+    def test_estoques_english_alias_get_balances_by_deposit(self) -> None:
+        """English alias 'get_balances_by_deposit' should map to 'obter_saldos_por_deposito'."""
+        transport = RecordingTransport()
+        resource = EstoquesResource(transport)
+        resource.get_balances_by_deposit(5, product_ids=[1])
+        assert transport.calls[0][:2] == (
+            "GET",
+            "/estoques/saldos/5",
+        )

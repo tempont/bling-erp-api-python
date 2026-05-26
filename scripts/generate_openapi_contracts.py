@@ -62,6 +62,8 @@ ACTION_TO_SDK_METHOD = {
     "BaixarConta": "baixar",
     "CancelarBoletos": "cancelar_boletos",
     "ObterBoletos": "obter_boletos",
+    "ObterSaldosEstoque": "obter_saldos",
+    "ObterSaldosEstoqueDeposito": "obter_saldos_por_deposito",
 }
 
 PARAMETER_TO_SDK_NAME = {
@@ -162,6 +164,7 @@ PARAMETER_TO_SDK_NAME = {
     "ordenacao": "ordenacao",
     "idContaPagar": "id_conta_pagar",
     "idContaReceber": "id_conta_receber",
+    "descricao": "descricao",
 }
 
 DOCSTRING_ONLY_RESOURCES: list[ResourceConfig] = []
@@ -188,6 +191,9 @@ _CLASS_NAME_MAP: dict[str, str] = {
     "contas_pagar": "ContasPagarResource",
     "contas_receber": "ContasReceberResource",
     "contas_contabeis": "ContasContabeisResource",
+    "depositos": "DepositosResource",
+    "empresas": "EmpresasResource",
+    "estoques": "EstoquesResource",
 }
 
 RESOURCES: list[ResourceConfig] = [
@@ -420,6 +426,35 @@ RESOURCES: list[ResourceConfig] = [
             "conta = client.contas_contabeis.obter(123456)",
         ],
     },
+    {
+        "openapi_resource": "Depositos",
+        "module": "depositos",
+        "constant": "DEPOSITO_OPERATIONS",
+        "title": "Depósitos",
+        "example": [
+            "depositos = client.depositos.listar()",
+            "deposito = client.depositos.obter(123456)",
+        ],
+    },
+    {
+        "openapi_resource": "Empresas",
+        "module": "empresas",
+        "constant": "EMPRESA_OPERATIONS",
+        "title": "Empresas",
+        "example": [
+            "dados = client.empresas.obter_dados_basicos()",
+        ],
+    },
+    {
+        "openapi_resource": "Estoques",
+        "module": "estoques",
+        "constant": "ESTOQUE_OPERATIONS",
+        "title": "Estoques",
+        "example": [
+            "saldos = client.estoques.obter_saldos(ids_produtos=[123, 456])",
+            "saldos_dep = client.estoques.obter_saldos_por_deposito(1, ids_produtos=[123])",
+        ],
+    },
 ]
 
 
@@ -525,6 +560,8 @@ def _operation_parameters(
 def _sdk_method_for_operation(*, action: str, method: str, path: str) -> str:  # noqa: PLR0911
     if action == "Obter" and method == "GET" and path == "/contatos/consumidor-final":
         return "obter_consumidor_final"
+    if action == "Obter" and method == "GET" and path == "/empresas/me/dados-basicos":
+        return "obter_dados_basicos"
     if action == "Alterar" and method == "PATCH":
         return "alterar_parcialmente"
     if action == "ObterSaldosLote" and method == "GET":

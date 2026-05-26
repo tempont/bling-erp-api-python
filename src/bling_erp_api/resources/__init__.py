@@ -8,6 +8,9 @@ from bling_erp_api.resources.contacts import ContactsResource
 from bling_erp_api.resources.contas_contabeis import ContasContabeisResource
 from bling_erp_api.resources.contas_pagar import ContasPagarResource
 from bling_erp_api.resources.contas_receber import ContasReceberResource
+from bling_erp_api.resources.depositos import DepositosResource
+from bling_erp_api.resources.empresas import EmpresasResource
+from bling_erp_api.resources.estoques import EstoquesResource
 from bling_erp_api.resources.income_expense_categories import (
     IncomeExpenseCategoriesResource,
 )
@@ -34,6 +37,9 @@ __all__ = [
     "ContasContabeisResource",
     "ContasPagarResource",
     "ContasReceberResource",
+    "DepositosResource",
+    "EmpresasResource",
+    "EstoquesResource",
     "IncomeExpenseCategoriesResource",
     "NfceResource",
     "NfeResource",

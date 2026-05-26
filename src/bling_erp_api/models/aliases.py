@@ -65,6 +65,15 @@ from bling_erp_api.models.generated.contas_shared import (
     ContasOcorrenciaUnicaDTO,
     ContasPortadorDTO,
 )
+from bling_erp_api.models.generated.depositos import DepositosDadosDTO
+from bling_erp_api.models.generated.empresas import EmpresasDadosBasicosDTO
+from bling_erp_api.models.generated.estoques import (
+    EstoquesDadosBaseDTO,
+    EstoquesDepositoBaseDTO,
+    EstoquesProdutoDTO,
+    EstoquesSaldosBaseDTO,
+    EstoquesSalvarDTO,
+)
 from bling_erp_api.models.generated.income_expense_categories import (
     CategoriasReceitasDespesasDadosBaseDTO,
     CategoriasReceitasDespesasDadosDTO,
@@ -232,6 +241,13 @@ __all__ = [
     "ContasReceberBoletosDadosBaseDTO",
     "ContasReceberDadosListDTO",
     "ContasReceberSalvarDTO",
+    "DepositosDadosDTO",
+    "EmpresasDadosBasicosDTO",
+    "EstoquesDadosBaseDTO",
+    "EstoquesDepositoBaseDTO",
+    "EstoquesProdutoDTO",
+    "EstoquesSaldosBaseDTO",
+    "EstoquesSalvarDTO",
     "NotaFiscalGetResponse",
     "NotaFiscalResponsePOST",
     "NotasFiscaisContatoDTO",
