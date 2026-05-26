@@ -8,6 +8,8 @@ from bling_erp_api.models.generated.products import ProductCreateRequest, Produc
 from bling_erp_api.models.generated.sales_orders import SalesOrderCreateRequest
 from bling_erp_api.resources.ad_categories import AdCategoriesResource
 from bling_erp_api.resources.ads import AdsResource
+from bling_erp_api.resources.borderos import BorderosResource
+from bling_erp_api.resources.caixas_bancos import CaixasBancosResource
 from bling_erp_api.resources.contacts import ContactsResource
 from bling_erp_api.resources.nfce import NfceResource
 from bling_erp_api.resources.nfe import NfeResource
@@ -1225,3 +1227,187 @@ class TestAdCategoriesResourceMapping:
         resource.get("MLB1430", integration_type="MercadoLivre", store_id=1)
         assert transport.calls[0][0] == "GET"
         assert "/anuncios/categorias/MLB1430" in transport.calls[0][1]
+
+
+# --- Borderos (Borderôs) mapping tests ---
+
+
+class TestBorderosResourceMapping:
+    """Mapping tests for BorderosResource."""
+
+    def test_borderos_obter_maps_to_bling_endpoint(self) -> None:
+        """Borderos obter maps ID to GET /borderos/{idBordero}."""
+        transport = RecordingTransport()
+        resource = BorderosResource(transport)
+        resource.obter(123456)
+        assert transport.calls == [("GET", "/borderos/123456", None, None)]
+
+    def test_borderos_remover_maps_to_bling_endpoint(self) -> None:
+        """Borderos remover sends DELETE to /borderos/{idBordero}."""
+        transport = RecordingTransport()
+        resource = BorderosResource(transport)
+        resource.remover(123456)
+        assert transport.calls == [("DELETE", "/borderos/123456", None, None)]
+
+    def test_borderos_english_alias_get(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        transport = RecordingTransport()
+        resource = BorderosResource(transport)
+        resource.get(123456)
+        assert transport.calls[0][0] == "GET"
+        assert transport.calls[0][1] == "/borderos/123456"
+
+    def test_borderos_english_alias_delete(self) -> None:
+        """English alias 'delete' should map to 'remover'."""
+        transport = RecordingTransport()
+        resource = BorderosResource(transport)
+        resource.delete(123456)
+        assert transport.calls[0][0] == "DELETE"
+        assert transport.calls[0][1] == "/borderos/123456"
+
+
+# --- Caixas e Bancos mapping tests ---
+
+
+class TestCaixasBancosResourceMapping:
+    """Mapping tests for CaixasBancosResource."""
+
+    def test_caixas_bancos_listar_maps_to_bling_endpoint(self) -> None:
+        """Caixas listar maps to GET /caixas with pagina in URL."""
+        transport = RecordingTransport()
+        resource = CaixasBancosResource(transport)
+        resource.listar()
+        assert transport.calls == [("GET", "/caixas?pagina=1", {}, None)]
+
+    def test_caixas_bancos_listar_with_filters(self) -> None:
+        """Caixas listar maps optional filters to Bling camelCase."""
+        transport = RecordingTransport()
+        resource = CaixasBancosResource(transport)
+        resource.listar(
+            data_inicial="2025-01-01",
+            data_final="2025-01-31",
+            ids_categorias=[10, 20],
+            id_conta_financeira=5,
+            situacao_conciliacao=1,
+            situacao="R",
+        )
+        assert transport.calls[0][0] == "GET"
+        assert transport.calls[0][1] == "/caixas?pagina=1"
+        assert transport.calls[0][2] == {
+            "dataInicial": "2025-01-01",
+            "dataFinal": "2025-01-31",
+            "idsCategorias": [10, 20],
+            "idContaFinanceira": 5,
+            "situacaoConciliacao": 1,
+            "situacao": "R",
+        }
+        assert transport.calls[0][3] is None
+
+    def test_caixas_bancos_obter_maps_to_bling_endpoint(self) -> None:
+        """Caixas obter maps ID to GET /caixas/{idCaixa}."""
+        transport = RecordingTransport()
+        resource = CaixasBancosResource(transport)
+        resource.obter(123456)
+        assert transport.calls == [("GET", "/caixas/123456", None, None)]
+
+    def test_caixas_bancos_criar_maps_to_bling_endpoint(self) -> None:
+        """Caixas criar posts JSON body to POST /caixas."""
+        transport = RecordingTransport()
+        resource = CaixasBancosResource(transport)
+        dados: JsonObject = {
+            "data": "2025-02-01",
+            "valor": 350.00,
+            "debCred": "C",
+            "competencia": "2025-02-01",
+            "observacoes": "Teste",
+        }
+        resource.criar(dados)
+        assert len(transport.calls) == 1
+        assert transport.calls[0][0] == "POST"
+        assert transport.calls[0][1] == "/caixas"
+        assert transport.calls[0][3] is not None
+
+    def test_caixas_bancos_alterar_maps_to_bling_endpoint(self) -> None:
+        """Caixas alterar puts JSON body to PUT /caixas/{idCaixa}."""
+        transport = RecordingTransport()
+        resource = CaixasBancosResource(transport)
+        dados: JsonObject = {
+            "data": "2025-02-01",
+            "valor": 500.00,
+            "debCred": "D",
+            "competencia": "2025-02-01",
+            "observacoes": "Atualizado",
+        }
+        resource.alterar(123456, dados)
+        assert transport.calls[0][0] == "PUT"
+        assert transport.calls[0][1] == "/caixas/123456"
+        assert transport.calls[0][3] is not None
+
+    def test_caixas_bancos_remover_maps_to_bling_endpoint(self) -> None:
+        """Caixas remover sends DELETE to /caixas/{idCaixa}."""
+        transport = RecordingTransport()
+        resource = CaixasBancosResource(transport)
+        resource.remover(123456)
+        assert transport.calls == [("DELETE", "/caixas/123456", None, None)]
+
+    def test_caixas_bancos_list_english_alias(self) -> None:
+        """English alias 'list' should map to 'listar'."""
+        transport = RecordingTransport()
+        resource = CaixasBancosResource(transport)
+        resource.list(page=2, start_date="2025-01-01", reconciliation_status=1)
+        assert transport.calls[0][0] == "GET"
+        assert "caixas" in transport.calls[0][1]
+        assert "pagina=2" in transport.calls[0][1]
+        params = transport.calls[0][2]
+        assert params is not None
+        assert params["dataInicial"] == "2025-01-01"
+        assert params["situacaoConciliacao"] == 1
+
+    def test_caixas_bancos_create_english_alias(self) -> None:
+        """English alias 'create' should map to 'criar'."""
+        transport = RecordingTransport()
+        resource = CaixasBancosResource(transport)
+        resource.create(
+            {
+                "data": "2025-02-01",
+                "valor": 100.00,
+                "debCred": "C",
+                "competencia": "2025-02-01",
+                "observacoes": "Test",
+            }
+        )
+        assert transport.calls[0][0] == "POST"
+        assert transport.calls[0][1] == "/caixas"
+
+    def test_caixas_bancos_get_english_alias(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        transport = RecordingTransport()
+        resource = CaixasBancosResource(transport)
+        resource.get(123456)
+        assert transport.calls[0][0] == "GET"
+        assert transport.calls[0][1] == "/caixas/123456"
+
+    def test_caixas_bancos_update_english_alias(self) -> None:
+        """English alias 'update' should map to 'alterar'."""
+        transport = RecordingTransport()
+        resource = CaixasBancosResource(transport)
+        resource.update(
+            123456,
+            {
+                "data": "2025-02-01",
+                "valor": 500.00,
+                "debCred": "D",
+                "competencia": "2025-02-01",
+                "observacoes": "Upd",
+            },
+        )
+        assert transport.calls[0][0] == "PUT"
+        assert transport.calls[0][1] == "/caixas/123456"
+
+    def test_caixas_bancos_delete_english_alias(self) -> None:
+        """English alias 'delete' should map to 'remover'."""
+        transport = RecordingTransport()
+        resource = CaixasBancosResource(transport)
+        resource.delete(123456)
+        assert transport.calls[0][0] == "DELETE"
+        assert transport.calls[0][1] == "/caixas/123456"

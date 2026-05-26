@@ -2,6 +2,8 @@
 
 from bling_erp_api.resources.ad_categories import AdCategoriesResource
 from bling_erp_api.resources.ads import AdsResource
+from bling_erp_api.resources.borderos import BorderosResource
+from bling_erp_api.resources.caixas_bancos import CaixasBancosResource
 from bling_erp_api.resources.contacts import ContactsResource
 from bling_erp_api.resources.nfce import NfceResource
 from bling_erp_api.resources.nfe import NfeResource
@@ -18,6 +20,8 @@ from bling_erp_api.resources.sales_orders import SalesOrdersResource
 __all__ = [
     "AdCategoriesResource",
     "AdsResource",
+    "BorderosResource",
+    "CaixasBancosResource",
     "ContactsResource",
     "NfceResource",
     "NfeResource",

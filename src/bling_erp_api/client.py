@@ -15,6 +15,8 @@ from bling_erp_api.config import (
 from bling_erp_api.resources import (
     AdCategoriesResource,
     AdsResource,
+    BorderosResource,
+    CaixasBancosResource,
     ContactsResource,
     NfceResource,
     NfeResource,
@@ -79,6 +81,8 @@ class BlingClient:
         self._nfse = NfseResource(self._transport)
         self._anuncios = AdsResource(self._transport)
         self._anuncios_categorias = AdCategoriesResource(self._transport)
+        self._caixas_bancos = CaixasBancosResource(self._transport)
+        self._borderos = BorderosResource(self._transport)
 
     # -- Resource namespace properties (with IDE-visible docstrings) --
 
@@ -221,6 +225,21 @@ class BlingClient:
     def ad_categories(self) -> AdCategoriesResource:
         """Alias for ``anuncios_categorias``. Ad category operations on ``/anuncios/categorias``."""
         return self.anuncios_categorias
+
+    @property
+    def caixas_bancos(self) -> CaixasBancosResource:
+        """Lançamentos de caixas e bancos — operações em ``/caixas``."""
+        return self._caixas_bancos
+
+    @property
+    def cash_entries(self) -> CaixasBancosResource:
+        """Alias for ``caixas_bancos``. Cash/bank entry operations on ``/caixas``."""
+        return self.caixas_bancos
+
+    @property
+    def borderos(self) -> BorderosResource:
+        """Borderôs — operações em ``/borderos``."""
+        return self._borderos
 
     @classmethod
     def from_env(  # noqa: PLR0913

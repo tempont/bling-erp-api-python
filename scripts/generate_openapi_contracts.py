@@ -135,6 +135,11 @@ PARAMETER_TO_SDK_NAME = {
     "serie": "serie",
     "situacao": "situacao",
     "idNotaServico": "id_nota_servico",
+    "idBordero": "id_bordero",
+    "idsCategorias": "ids_categorias",
+    "idContaFinanceira": "id_conta_financeira",
+    "valor": "valor",
+    "situacaoConciliacao": "situacao_conciliacao",
 }
 
 DOCSTRING_ONLY_RESOURCES: list[ResourceConfig] = []
@@ -153,6 +158,8 @@ _CLASS_NAME_MAP: dict[str, str] = {
     "contacts": "ContactsResource",
     "invoices": "NfeResource",
     "nfse": "NfseResource",
+    "borderos": "BorderosResource",
+    "caixas_bancos": "CaixasBancosResource",
 }
 
 RESOURCES: list[ResourceConfig] = [
@@ -294,6 +301,27 @@ RESOURCES: list[ResourceConfig] = [
         "title": "Notas Fiscais de Serviço",
         "example": [
             "notas = client.nfse.listar(pagina=1, limite=10)",
+        ],
+    },
+    {
+        "openapi_resource": "Borderos",
+        "module": "borderos",
+        "constant": "BORDERO_OPERATIONS",
+        "title": "Borderôs",
+        "example": [
+            "bordero = client.borderos.obter(123456)",
+        ],
+    },
+    {
+        "openapi_resource": "Caixas",
+        "module": "caixas_bancos",
+        "constant": "CAIXAS_BANCOS_OPERATIONS",
+        "title": "Caixas e Bancos",
+        "example": [
+            "lancamentos = client.caixas_bancos.listar(",
+            '    data_inicial="2024-01-01",',
+            '    data_final="2024-12-31",',
+            ")",
         ],
     },
 ]
