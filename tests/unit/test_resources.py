@@ -6,6 +6,8 @@ from datetime import UTC, date, datetime
 
 from bling_erp_api.models.generated.products import ProductCreateRequest, ProductPatchRequest
 from bling_erp_api.models.generated.sales_orders import SalesOrderCreateRequest
+from bling_erp_api.resources.ad_categories import AdCategoriesResource
+from bling_erp_api.resources.ads import AdsResource
 from bling_erp_api.resources.contacts import ContactsResource
 from bling_erp_api.resources.nfce import NfceResource
 from bling_erp_api.resources.nfe import NfeResource
@@ -1000,3 +1002,226 @@ class TestNfseResourceMapping:
         assert transport.calls == [
             ("GET", "/nfse/configuracoes", None, None),
         ]
+
+
+# --- Ads (Anúncios) mapping tests ---
+
+
+class TestAdsResourceMapping:
+    """Mapping tests for AdsResource (Anúncios endpoints)."""
+
+    def test_ads_listar_maps_to_bling_endpoint(self) -> None:
+        """Ads listar maps required params to GET /anuncios."""
+        transport = RecordingTransport()
+        resource = AdsResource(transport)
+        resource.listar(tipo_integracao="MercadoLivre", id_loja=1)
+        assert len(transport.calls) == 1
+        assert transport.calls[0][0] == "GET"
+        assert transport.calls[0][1] == "/anuncios?pagina=1&limite=100"
+        assert transport.calls[0][2] == {"tipoIntegracao": "MercadoLivre", "idLoja": 1}
+
+    def test_ads_listar_with_filters(self) -> None:
+        """Ads listar maps optional filters to Bling camelCase."""
+        transport = RecordingTransport()
+        resource = AdsResource(transport)
+        resource.listar(
+            tipo_integracao="MercadoLivre",
+            id_loja=1,
+            situacao=1,
+            id_produto=99,
+        )
+        assert transport.calls[0][2] == {
+            "tipoIntegracao": "MercadoLivre",
+            "idLoja": 1,
+            "situacao": 1,
+            "idProduto": 99,
+        }
+
+    def test_ads_obter_maps_to_bling_endpoint(self) -> None:
+        """Ads obter maps ID to GET /anuncios/{id}."""
+        transport = RecordingTransport()
+        resource = AdsResource(transport)
+        resource.obter(123, tipo_integracao="MercadoLivre", id_loja=1)
+        assert transport.calls == [
+            (
+                "GET",
+                "/anuncios/123",
+                {"tipoIntegracao": "MercadoLivre", "idLoja": 1},
+                None,
+            ),
+        ]
+
+    def test_ads_criar_maps_to_bling_endpoint(self) -> None:
+        """Ads criar posts JSON body to POST /anuncios."""
+        transport = RecordingTransport()
+        resource = AdsResource(transport)
+        dados: JsonObject = {
+            "produto": {"id": 1},
+            "integracao": {"tipo": "ML"},
+            "loja": {"id": 1},
+        }
+        resource.criar(dados)
+        assert len(transport.calls) == 1
+        assert transport.calls[0][0] == "POST"
+        assert transport.calls[0][1] == "/anuncios"
+        assert transport.calls[0][3] is not None
+
+    def test_ads_alterar_maps_to_bling_endpoint(self) -> None:
+        """Ads alterar puts JSON body to PUT /anuncios/{id}."""
+        transport = RecordingTransport()
+        resource = AdsResource(transport)
+        dados: JsonObject = {"nome": "Atualizado"}
+        resource.alterar(123, dados)
+        assert transport.calls[0][0] == "PUT"
+        assert transport.calls[0][1] == "/anuncios/123"
+        assert transport.calls[0][3] is not None
+
+    def test_ads_remover_maps_to_bling_endpoint(self) -> None:
+        """Ads remover sends DELETE to /anuncios/{id} with params."""
+        transport = RecordingTransport()
+        resource = AdsResource(transport)
+        resource.remover(123, tipo_integracao="MercadoLivre", id_loja=1)
+        assert transport.calls == [
+            (
+                "DELETE",
+                "/anuncios/123",
+                {"tipoIntegracao": "MercadoLivre", "idLoja": 1},
+                None,
+            ),
+        ]
+
+    def test_ads_publicar_maps_to_bling_endpoint(self) -> None:
+        """Ads publicar posts to POST /anuncios/{id}/publicar."""
+        transport = RecordingTransport()
+        resource = AdsResource(transport)
+        resource.publicar(123, tipo_integracao="MercadoLivre", id_loja=1)
+        assert transport.calls == [
+            (
+                "POST",
+                "/anuncios/123/publicar",
+                {"tipoIntegracao": "MercadoLivre", "idLoja": 1},
+                None,
+            ),
+        ]
+
+    def test_ads_pausar_maps_to_bling_endpoint(self) -> None:
+        """Ads pausar posts to POST /anuncios/{id}/pausar."""
+        transport = RecordingTransport()
+        resource = AdsResource(transport)
+        resource.pausar(123, tipo_integracao="MercadoLivre", id_loja=1)
+        assert transport.calls == [
+            (
+                "POST",
+                "/anuncios/123/pausar",
+                {"tipoIntegracao": "MercadoLivre", "idLoja": 1},
+                None,
+            ),
+        ]
+
+    def test_ads_english_alias_list(self) -> None:
+        """English alias 'list' should map to 'listar'."""
+        transport = RecordingTransport()
+        resource = AdsResource(transport)
+        resource.list(integration_type="MercadoLivre", store_id=1)
+        assert transport.calls[0][0] == "GET"
+        assert "anuncios" in transport.calls[0][1]
+
+    def test_ads_english_alias_get(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        transport = RecordingTransport()
+        resource = AdsResource(transport)
+        resource.get(123, integration_type="MercadoLivre", store_id=1)
+        assert transport.calls[0][0] == "GET"
+        assert "/anuncios/123" in transport.calls[0][1]
+
+    def test_ads_english_alias_create(self) -> None:
+        """English alias 'create' should map to 'criar'."""
+        transport = RecordingTransport()
+        resource = AdsResource(transport)
+        resource.create({"produto": {"id": 1}, "integracao": {"tipo": "ML"}, "loja": {"id": 1}})
+        assert transport.calls[0][0] == "POST"
+        assert transport.calls[0][1] == "/anuncios"
+
+    def test_ads_english_alias_publish(self) -> None:
+        """English alias 'publish' should map to 'publicar'."""
+        transport = RecordingTransport()
+        resource = AdsResource(transport)
+        resource.publish(123, integration_type="MercadoLivre", store_id=1)
+        assert transport.calls[0][0] == "POST"
+        assert "/anuncios/123/publicar" in transport.calls[0][1]
+
+    def test_ads_english_alias_pause(self) -> None:
+        """English alias 'pause' should map to 'pausar'."""
+        transport = RecordingTransport()
+        resource = AdsResource(transport)
+        resource.pause(123, integration_type="MercadoLivre", store_id=1)
+        assert transport.calls[0][0] == "POST"
+        assert "/anuncios/123/pausar" in transport.calls[0][1]
+
+
+# --- Ad Categories (Anúncios - Categorias) mapping tests ---
+
+
+class TestAdCategoriesResourceMapping:
+    """Mapping tests for AdCategoriesResource (Anúncios - Categorias endpoints)."""
+
+    def test_ad_categories_listar_maps_to_bling_endpoint(self) -> None:
+        """Ad categories listar maps required params to GET /anuncios/categorias."""
+        transport = RecordingTransport()
+        resource = AdCategoriesResource(transport)
+        resource.listar(tipo_integracao="MercadoLivre", id_loja=1)
+        assert transport.calls == [
+            (
+                "GET",
+                "/anuncios/categorias",
+                {"tipoIntegracao": "MercadoLivre", "idLoja": 1},
+                None,
+            ),
+        ]
+
+    def test_ad_categories_listar_with_filters(self) -> None:
+        """Ad categories listar maps optional filters."""
+        transport = RecordingTransport()
+        resource = AdCategoriesResource(transport)
+        resource.listar(
+            tipo_integracao="MercadoLivre",
+            id_loja=1,
+            id_categoria=42,
+            tipo_produto="new",
+        )
+        assert transport.calls[0][2] == {
+            "tipoIntegracao": "MercadoLivre",
+            "idLoja": 1,
+            "idCategoria": 42,
+            "tipoProduto": "new",
+        }
+
+    def test_ad_categories_obter_maps_to_bling_endpoint(self) -> None:
+        """Ad categories obter maps category ID to GET /anuncios/categorias/{id}."""
+        transport = RecordingTransport()
+        resource = AdCategoriesResource(transport)
+        resource.obter("MLB1430", tipo_integracao="MercadoLivre", id_loja=1)
+        assert transport.calls == [
+            (
+                "GET",
+                "/anuncios/categorias/MLB1430",
+                {"tipoIntegracao": "MercadoLivre", "idLoja": 1},
+                None,
+            ),
+        ]
+
+    def test_ad_categories_english_alias_list(self) -> None:
+        """English alias 'list' should map to 'listar'."""
+        transport = RecordingTransport()
+        resource = AdCategoriesResource(transport)
+        resource.list(integration_type="MercadoLivre", store_id=1)
+        assert transport.calls[0][0] == "GET"
+        assert "/anuncios/categorias" in transport.calls[0][1]
+
+    def test_ad_categories_english_alias_get(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        transport = RecordingTransport()
+        resource = AdCategoriesResource(transport)
+        resource.get("MLB1430", integration_type="MercadoLivre", store_id=1)
+        assert transport.calls[0][0] == "GET"
+        assert "/anuncios/categorias/MLB1430" in transport.calls[0][1]

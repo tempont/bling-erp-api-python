@@ -13,6 +13,8 @@ from bling_erp_api.config import (
     DEFAULT_TIMEOUT_SECONDS,
 )
 from bling_erp_api.resources import (
+    AdCategoriesResource,
+    AdsResource,
     ContactsResource,
     NfceResource,
     NfeResource,
@@ -75,6 +77,8 @@ class BlingClient:
         self._nfe = NfeResource(self._transport)
         self._nfce = NfceResource(self._transport)
         self._nfse = NfseResource(self._transport)
+        self._anuncios = AdsResource(self._transport)
+        self._anuncios_categorias = AdCategoriesResource(self._transport)
 
     # -- Resource namespace properties (with IDE-visible docstrings) --
 
@@ -197,6 +201,26 @@ class BlingClient:
     def service_invoices(self) -> NfseResource:
         """Alias em inglês para ``notas_servicos``. NFS-e (/nfse)."""
         return self._nfse
+
+    @property
+    def anuncios(self) -> AdsResource:
+        """Anúncios (Ads) — operações em ``/anuncios``."""
+        return self._anuncios
+
+    @property
+    def ads(self) -> AdsResource:
+        """Alias for ``anuncios``. Ads operations on ``/anuncios``."""
+        return self.anuncios
+
+    @property
+    def anuncios_categorias(self) -> AdCategoriesResource:
+        """Categorias de anúncios — operações em ``/anuncios/categorias``."""
+        return self._anuncios_categorias
+
+    @property
+    def ad_categories(self) -> AdCategoriesResource:
+        """Alias for ``anuncios_categorias``. Ad category operations on ``/anuncios/categorias``."""
+        return self.anuncios_categorias
 
     @classmethod
     def from_env(  # noqa: PLR0913

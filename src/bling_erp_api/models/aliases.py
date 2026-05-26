@@ -1,5 +1,16 @@
 """Model aliases for public SDK compatibility."""
 
+from bling_erp_api.models.generated.ad_categories import (
+    AnunciosCategoriaListDTO,
+    AnunciosGetAttributesFromCategoryResponseDTO,
+)
+from bling_erp_api.models.generated.ads import (
+    AnunciosGetAllResponseDTO,
+    AnunciosGetByIdResponseDTO,
+    AnunciosSaveRequest,
+    AnunciosSaveRequestBase,
+    AnunciosSaveResponseDTO,
+)
 from bling_erp_api.models.generated.contacts import (
     Contact,
     ContactAlertsResponse,
@@ -104,6 +115,13 @@ from bling_erp_api.models.generated.sales_orders import (
 )
 
 __all__ = [
+    "AnunciosCategoriaListDTO",
+    "AnunciosGetAllResponseDTO",
+    "AnunciosGetAttributesFromCategoryResponseDTO",
+    "AnunciosGetByIdResponseDTO",
+    "AnunciosSaveRequest",
+    "AnunciosSaveRequestBase",
+    "AnunciosSaveResponseDTO",
     "BalancePerLotWarehouse",
     "BalanceSumAllWarehouses",
     "BalanceSumPerWarehouse",

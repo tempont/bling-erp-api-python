@@ -52,6 +52,8 @@ ACTION_TO_SDK_METHOD = {
     "ObterMultiplosProdutoControlaLote": "listar_produtos_controlam_lote",
     "ObterTipoContato": "obter_tipo_contato",
     "ObterTipoContatoMultiplos": "listar_tipos",
+    "Pausar": "pausar",
+    "Publicar": "publicar",
     "Autorizar": "autorizar",
     "ObterDocumentoNotaFiscal": "obter_documento_nota_fiscal",
     "Cancelar": "cancelar",
@@ -92,6 +94,8 @@ PARAMETER_TO_SDK_NAME = {
     "gtins[]": "gtins",
     "criterio": "criterio",
     "tipo": "tipo",
+    "tipoIntegracao": "tipo_integracao",
+    "tipoProduto": "tipo_produto",
     "idCategoria": "id_categoria",
     "idCategoriaProduto": "id_categoria_produto",
     "dataInclusaoInicial": "data_inclusao_inicial",
@@ -144,6 +148,8 @@ _CLASS_NAME_MAP: dict[str, str] = {
     "product_batches": "ProductBatchesResource",
     "product_batch_entries": "ProductBatchEntriesResource",
     "product_variations": "ProductVariationsResource",
+    "ad_categories": "AdCategoriesResource",
+    "ads": "AdsResource",
     "contacts": "ContactsResource",
     "invoices": "NfeResource",
     "nfse": "NfseResource",
@@ -239,6 +245,26 @@ RESOURCES: list[ResourceConfig] = [
         "title": "Produtos - Variacoes",
         "example": [
             "variacoes = client.produtos_variacoes.listar(id_produto_pai=123456789)",
+        ],
+    },
+    {
+        "openapi_resource": "AnunciosCategorias",
+        "module": "ad_categories",
+        "constant": "AD_CATEGORY_OPERATIONS",
+        "title": "Anúncios - Categorias",
+        "example": [
+            "categorias = client.ad_categories.listar()",
+            "categoria = client.ad_categories.obter(123456)",
+        ],
+    },
+    {
+        "openapi_resource": "Anuncios",
+        "module": "ads",
+        "constant": "AD_OPERATIONS",
+        "title": "Anúncios",
+        "example": [
+            "anuncios = client.ads.listar(pagina=1, limite=10)",
+            "anuncio = client.ads.obter(123456)",
         ],
     },
     {
