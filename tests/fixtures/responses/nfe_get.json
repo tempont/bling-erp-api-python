@@ -1,0 +1,57 @@
+{
+  "data": {
+    "id": 12345,
+    "tipo": 1,
+    "situacao": 3,
+    "numero": "000001234",
+    "serie": 1,
+    "dataEmissao": "2024-01-15 10:30:00",
+    "dataOperacao": "2024-01-15",
+    "chaveAcesso": "35240112345678901234567890123456789012345678",
+    "contato": {
+      "id": 100,
+      "nome": "Cliente Exemplo Ltda",
+      "tipoPessoa": "J",
+      "numeroDocumento": "12345678000199",
+      "contribuinte": 1
+    },
+    "naturezaOperacao": {
+      "id": 1
+    },
+    "loja": {
+      "id": 1
+    },
+    "valorNota": 1500.50,
+    "valorFrete": 50.00,
+    "finalidade": 1,
+    "xml": "<nfeProc>...</nfeProc>",
+    "linkDanfe": "https://bling.com.br/danfe/12345",
+    "linkPDF": "https://bling.com.br/pdf/12345",
+    "optanteSimplesNacional": true,
+    "vendedor": {
+      "id": 10
+    },
+    "itens": [
+      {
+        "codigo": "PROD-001",
+        "descricao": "Produto Exemplo",
+        "unidade": "UN",
+        "quantidade": 10.0,
+        "valor": 100.00,
+        "valorTotal": 1000.00,
+        "tipo": "P",
+        "classificacaoFiscal": "8471.30.12",
+        "origem": 0
+      }
+    ],
+    "parcelas": [
+      {
+        "data": "2024-02-15",
+        "valor": 1500.50,
+        "formaPagamento": {
+          "id": 1
+        }
+      }
+    ]
+  }
+}

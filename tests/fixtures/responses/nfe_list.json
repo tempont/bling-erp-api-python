@@ -1,0 +1,39 @@
+{
+  "data": [
+    {
+      "id": 12345,
+      "tipo": 1,
+      "situacao": 3,
+      "numero": "000001234",
+      "dataEmissao": "2024-01-15 10:30:00",
+      "dataOperacao": "2024-01-15",
+      "chaveAcesso": "35240112345678901234567890123456789012345678",
+      "contato": {
+        "id": 100,
+        "nome": "Cliente Exemplo Ltda",
+        "tipoPessoa": "J",
+        "numeroDocumento": "12345678000199",
+        "ie": "123456789",
+        "contribuinte": 1,
+        "telefone": "1133334444",
+        "email": "cliente@exemplo.com.br",
+        "endereco": {
+          "endereco": "Rua Exemplo",
+          "numero": "100",
+          "bairro": "Centro",
+          "cep": "01001000",
+          "municipio": "São Paulo",
+          "uf": "SP",
+          "pais": "Brasil"
+        }
+      },
+      "naturezaOperacao": {
+        "id": 1
+      },
+      "loja": {
+        "id": 1,
+        "numero": "001"
+      }
+    }
+  ]
+}

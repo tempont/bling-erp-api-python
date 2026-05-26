@@ -1,0 +1,19 @@
+{
+  "data": [
+    {
+      "id": 111,
+      "numero": "000000111",
+      "numeroRPS": "RPS-000001",
+      "serie": "1",
+      "situacao": 3,
+      "dataEmissao": "2024-03-10",
+      "valor": 5000.00,
+      "contato": {
+        "id": 300,
+        "nome": "Empresa Serviços Ltda",
+        "numeroDocumento": "98765432000111",
+        "email": "servicos@exemplo.com.br"
+      }
+    }
+  ]
+}

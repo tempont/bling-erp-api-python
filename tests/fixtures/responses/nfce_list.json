@@ -1,0 +1,26 @@
+{
+  "data": [
+    {
+      "id": 54321,
+      "tipo": 1,
+      "situacao": 3,
+      "numero": "000054321",
+      "dataEmissao": "2024-02-20 14:00:00",
+      "dataOperacao": "2024-02-20",
+      "chaveAcesso": "35240298765432109876543210987654321098765432",
+      "contato": {
+        "id": 200,
+        "nome": "Consumidor Final",
+        "tipoPessoa": "F",
+        "numeroDocumento": "12345678901",
+        "contribuinte": 9
+      },
+      "naturezaOperacao": {
+        "id": 2
+      },
+      "loja": {
+        "id": 1
+      }
+    }
+  ]
+}

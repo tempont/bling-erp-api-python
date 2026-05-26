@@ -1,0 +1,30 @@
+{
+  "basicas": {
+    "emissorPadrao": 1,
+    "naturezaOperacao": 1
+  },
+  "ISS": {
+    "zerar": false,
+    "reter": true,
+    "descontar": false,
+    "tributos": []
+  },
+  "controle": {
+    "numeracaoRPS": {
+      "cnpjEmitente": "12345678000199",
+      "id": 1,
+      "numero": "1",
+      "serie": "1"
+    }
+  },
+  "impostos": {
+    "bloquearRetencaoPessoaFisica": false
+  },
+  "envioEmail": {
+    "enviarBoletoRPS": false
+  },
+  "adicionais": {
+    "CFPS": "9201",
+    "tipoEmissao": "T"
+  }
+}
