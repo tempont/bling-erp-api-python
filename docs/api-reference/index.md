@@ -31,6 +31,9 @@ tipos e valores de retorno com formatação colorida.
 | [Depósitos](depositos.md) | `DepositosResource` — `/depositos` |
 | [Empresas](empresas.md) | `EmpresasResource` — `/empresas` |
 | [Estoques](estoques.md) | `EstoquesResource` — `/estoques` |
+| [Formas de Pagamento](payment_methods.md) | `PaymentMethodsResource` — `/formas-pagamentos` |
+| [Grupos de Produtos](product_groups.md) | `ProductGroupsResource` — `/grupos-produtos` |
+| [Homologação](homologation.md) | `HomologationResource` — `/homologacao/produtos` |
 | [Caixas e Bancos](caixas_bancos.md) | `CaixasBancosResource` — `/caixas` |
 | [Contatos](contacts.md) | `ContactsResource` — `/contatos` |
 | [NF-e](nfe.md) | `NfeResource` — `/nfe` |

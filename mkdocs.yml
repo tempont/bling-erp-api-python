@@ -88,6 +88,9 @@ nav:
       - Depósitos: resources/depositos.md
       - Empresas: resources/empresas.md
       - Estoques: resources/estoques.md
+      - Formas de Pagamento: resources/payment_methods.md
+      - Grupos de Produtos: resources/product_groups.md
+      - Homologação: resources/homologation.md
   - Referência da API:
       - api-reference/index.md
       - Cliente: api-reference/client.md
@@ -116,3 +119,6 @@ nav:
       - Depósitos: api-reference/depositos.md
       - Empresas: api-reference/empresas.md
       - Estoques: api-reference/estoques.md
+      - Formas de Pagamento: api-reference/payment_methods.md
+      - Grupos de Produtos: api-reference/product_groups.md
+      - Homologação: api-reference/homologation.md

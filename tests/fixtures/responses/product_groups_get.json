@@ -1,0 +1,7 @@
+{
+  "data": {
+    "id": 100,
+    "nome": "Eletrônicos",
+    "grupoProdutoPai": {"id": 10, "nome": "Geral"}
+  }
+}

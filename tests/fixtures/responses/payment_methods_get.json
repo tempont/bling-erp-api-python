@@ -1,0 +1,13 @@
+{
+  "data": {
+    "id": 10,
+    "descricao": "Boleto",
+    "tipoPagamento": 2,
+    "situacao": 1,
+    "fixa": false,
+    "padrao": 1,
+    "finalidade": 3,
+    "juros": 2.5,
+    "multa": 1.0
+  }
+}
