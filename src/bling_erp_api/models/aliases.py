@@ -1,6 +1,17 @@
 """Model aliases for public SDK compatibility."""
 
-from bling_erp_api.models.generated.contacts import Contact
+from bling_erp_api.models.generated.contacts import (
+    Contact,
+    ContactAlertsResponse,
+    ContactCreateRequest,
+    ContactListResponse,
+    ContactMutationResponse,
+    ContactMutationResult,
+    ContactResponse,
+    ContactType,
+    ContactTypeListResponse,
+    ContactUpdateRequest,
+)
 from bling_erp_api.models.generated.product_batch_entries import (
     BalancePerLotWarehouse,
     BalanceSumAllWarehouses,
@@ -73,6 +84,15 @@ __all__ = [
     "BalanceSumAllWarehouses",
     "BalanceSumPerWarehouse",
     "Contact",
+    "ContactAlertsResponse",
+    "ContactCreateRequest",
+    "ContactListResponse",
+    "ContactMutationResponse",
+    "ContactMutationResult",
+    "ContactResponse",
+    "ContactType",
+    "ContactTypeListResponse",
+    "ContactUpdateRequest",
     "Product",
     "ProductBatch",
     "ProductBatchControlsLotInfo",

@@ -80,6 +80,11 @@ class BlingClient:
         return self._contacts
 
     @property
+    def contatos(self) -> ContactsResource:
+        """Alias pt-BR para ``contacts``. Operações em ``/contatos``."""
+        return self._contacts
+
+    @property
     def products(self) -> ProductsResource:
         """Operações de produtos (/produtos). Bling API v3."""
         return self._products

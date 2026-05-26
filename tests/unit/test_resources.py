@@ -40,15 +40,47 @@ class RecordingTransport:
 
 
 def test_contacts_list_maps_to_bling_endpoint() -> None:
-    """Contacts listing should use the Portuguese Bling API path."""
+    """Contacts listing should map SDK params to Bling query keys."""
     transport = RecordingTransport()
     resource = ContactsResource(transport)
 
-    response = resource.list(page=2, limit=50, name="Ana")
+    response = resource.listar(pagina=2, limite=50, pesquisa="Ana")
 
     assert response == {"data": []}
     assert transport.calls == [
-        ("GET", "/contatos", {"pagina": 2, "limite": 50, "name": "Ana"}, None)
+        ("GET", "/contatos", {"pagina": 2, "limite": 50, "pesquisa": "Ana"}, None),
+    ]
+
+
+def test_contacts_operations_map_to_bling_endpoints() -> None:
+    """All contact resource methods should target the documented Bling paths."""
+    transport = RecordingTransport()
+    resource = ContactsResource(transport)
+
+    resource.obter(101)
+    resource.obter_consumidor_final()
+    resource.criar({"nome": "Novo"})
+    resource.alterar(102, {"nome": "Atualizado"})
+    resource.remover(103)
+    resource.remover_varios([201, 202])
+    resource.obter_tipo_contato(104)
+    resource.listar_tipos()
+    resource.alterar_situacao(105, "A")
+    resource.alterar_situacao_varios([301, 302], "I")
+    resource.listar(pagina=1, ids_contatos=[10, 20])
+
+    assert transport.calls == [
+        ("GET", "/contatos/101", None, None),
+        ("GET", "/contatos/consumidor-final", None, None),
+        ("POST", "/contatos", None, {"nome": "Novo"}),
+        ("PUT", "/contatos/102", None, {"nome": "Atualizado"}),
+        ("DELETE", "/contatos/103", None, None),
+        ("DELETE", "/contatos", {"idsContatos[]": [201, 202]}, None),
+        ("GET", "/contatos/104/tipos", None, None),
+        ("GET", "/contatos/tipos", None, None),
+        ("PATCH", "/contatos/105/situacoes", None, {"situacao": "A"}),
+        ("POST", "/contatos/situacoes", None, {"idsContatos": [301, 302], "situacao": "I"}),
+        ("GET", "/contatos", {"pagina": 1, "limite": 100, "idsContatos[]": [10, 20]}, None),
     ]
 
 

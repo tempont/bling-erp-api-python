@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from pprint import pformat
-from typing import TYPE_CHECKING, TypedDict, cast
+from typing import TYPE_CHECKING, NotRequired, TypedDict, cast
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -23,6 +23,7 @@ class ResourceConfig(TypedDict):
     constant: str
     title: str
     example: list[str]
+    extra_openapi_resources: NotRequired[list[str]]
 
 
 ACTION_TO_SDK_METHOD = {
@@ -50,6 +51,7 @@ ACTION_TO_SDK_METHOD = {
     "ObterSaldosLote": "obter_saldos",
     "ObterMultiplosProdutoControlaLote": "listar_produtos_controlam_lote",
     "ObterTipoContato": "obter_tipo_contato",
+    "ObterTipoContatoMultiplos": "listar_tipos",
     "Autorizar": "autorizar",
     "ObterDocumentoNotaFiscal": "obter_documento_nota_fiscal",
 }
@@ -128,13 +130,6 @@ PARAMETER_TO_SDK_NAME = {
 }
 
 DOCSTRING_ONLY_RESOURCES: list[ResourceConfig] = [
-    {
-        "openapi_resource": "Contatos",
-        "module": "contacts",
-        "constant": "CONTACT_OPERATIONS",
-        "title": "Contatos",
-        "example": ["contatos = client.contacts.list(page=1, limit=10)"],
-    },
     {
         "openapi_resource": "NotasFiscais",
         "module": "invoices",
@@ -249,6 +244,17 @@ RESOURCES: list[ResourceConfig] = [
             "variacoes = client.produtos_variacoes.listar(id_produto_pai=123456789)",
         ],
     },
+    {
+        "openapi_resource": "Contatos",
+        "extra_openapi_resources": ["ContatosTipos"],
+        "module": "contacts",
+        "constant": "CONTACT_OPERATIONS",
+        "title": "Contatos",
+        "example": [
+            'contatos = client.contatos.listar(pesquisa="Ana", limite=10)',
+            "contato = client.contatos.obter(123456)",
+        ],
+    },
 ]
 
 
@@ -259,7 +265,14 @@ def main() -> None:
 
     # Existing resources: generate contracts + docs + collect for docstrings
     for resource in RESOURCES:
-        contracts = _resource_contracts(payload, resource=resource["openapi_resource"])
+        resource_names = [
+            resource["openapi_resource"],
+            *resource.get("extra_openapi_resources", []),
+        ]
+        contracts: list[dict[str, object]] = []
+        for name in resource_names:
+            contracts.extend(_resource_contracts(payload, resource=name))
+        contracts.sort(key=lambda item: (str(item["path"]), str(item["method"])))
         _write_contract_module(
             resource["module"],
             resource["constant"],
@@ -344,7 +357,9 @@ def _operation_parameters(
     return result
 
 
-def _sdk_method_for_operation(*, action: str, method: str, path: str) -> str:
+def _sdk_method_for_operation(*, action: str, method: str, path: str) -> str:  # noqa: PLR0911
+    if action == "Obter" and method == "GET" and path == "/contatos/consumidor-final":
+        return "obter_consumidor_final"
     if action == "Alterar" and method == "PATCH":
         return "alterar_parcialmente"
     if action == "ObterSaldosLote" and method == "GET":
