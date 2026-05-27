@@ -79,6 +79,7 @@ ACTION_TO_SDK_METHOD = {
     "RemoverRemessa": "remover_remessa",
     "ObterLogisticaRemessaMultiplos": "listar_remessas_por_logistica",
     "CriarRemessa": "criar_remessa",
+    "ObterTributacao": "obter_tributacao",
 }
 
 PARAMETER_TO_SDK_NAME = {
@@ -194,6 +195,7 @@ PARAMETER_TO_SDK_NAME = {
     "idObjeto": "id_objeto",
     "idRemessa": "id_remessa",
     "idsVendas[]": "ids_vendas",
+    "idNaturezaOperacao": "id_natureza_operacao",
 }
 
 DOCSTRING_ONLY_RESOURCES: list[ResourceConfig] = []
@@ -227,6 +229,7 @@ _CLASS_NAME_MAP: dict[str, str] = {
     "product_groups": "ProductGroupsResource",
     "homologation": "HomologationResource",
     "logisticas": "LogisticasResource",
+    "naturezas_operacoes": "NaturezasOperacoesResource",
 }
 
 RESOURCES: list[ResourceConfig] = [
@@ -526,6 +529,19 @@ RESOURCES: list[ResourceConfig] = [
         "example": [
             "logisticas = client.logisticas.listar()",
             "servicos = client.logisticas_servicos.listar()",
+        ],
+    },
+    {
+        "openapi_resource": "NaturezasOperacoes",
+        "module": "naturezas_operacoes",
+        "constant": "NATUREZAS_OPERACOES_OPERATIONS",
+        "title": "Naturezas de Operações",
+        "example": [
+            "naturezas = client.naturezas_operacoes.listar(",
+            "    situacao=1,",
+            ")",
+            "tributacao = client.naturezas_operacoes.obter_tributacao(",
+            "    12345678, calculo={...})",
         ],
     },
 ]

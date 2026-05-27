@@ -20,6 +20,7 @@ from bling_erp_api.resources.logisticas_etiquetas import LogisticasEtiquetasReso
 from bling_erp_api.resources.logisticas_objetos import LogisticasObjetosResource
 from bling_erp_api.resources.logisticas_remessas import LogisticasRemessasResource
 from bling_erp_api.resources.logisticas_servicos import LogisticasServicosResource
+from bling_erp_api.resources.naturezas_operacoes import NaturezasOperacoesResource
 from bling_erp_api.resources.nfce import NfceResource
 from bling_erp_api.resources.nfe import NfeResource
 from bling_erp_api.resources.nfse import NfseResource
@@ -55,6 +56,7 @@ __all__ = [
     "LogisticasRemessasResource",
     "LogisticasResource",
     "LogisticasServicosResource",
+    "NaturezasOperacoesResource",
     "NfceResource",
     "NfeResource",
     "NfseResource",

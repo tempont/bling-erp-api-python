@@ -31,6 +31,7 @@ from bling_erp_api.resources import (
     LogisticasRemessasResource,
     LogisticasResource,
     LogisticasServicosResource,
+    NaturezasOperacoesResource,
     NfceResource,
     NfeResource,
     NfseResource,
@@ -121,6 +122,7 @@ class BlingClient:
         self._logisticas_objetos = LogisticasObjetosResource(self._transport)
         self._logisticas_etiquetas = LogisticasEtiquetasResource(self._transport)
         self._logisticas_remessas = LogisticasRemessasResource(self._transport)
+        self._naturezas_operacoes = NaturezasOperacoesResource(self._transport)
 
     # -- Resource namespace properties (with IDE-visible docstrings) --
 
@@ -448,6 +450,16 @@ class BlingClient:
     def logistics_shipments(self) -> LogisticasRemessasResource:
         """Alias for ``logisticas_remessas``. Logistics shipment operations on ``/logisticas/remessas``."""
         return self.logisticas_remessas
+
+    @property
+    def naturezas_operacoes(self) -> NaturezasOperacoesResource:
+        """Naturezas de Operações (pt-BR)."""
+        return self._naturezas_operacoes
+
+    @property
+    def tax_natures(self) -> NaturezasOperacoesResource:
+        """Naturezas de Operações (EN alias)."""
+        return self._naturezas_operacoes
 
     @classmethod
     def from_env(  # noqa: PLR0913

@@ -26,6 +26,7 @@ from bling_erp_api.resources.logisticas_etiquetas import LogisticasEtiquetasReso
 from bling_erp_api.resources.logisticas_objetos import LogisticasObjetosResource
 from bling_erp_api.resources.logisticas_remessas import LogisticasRemessasResource
 from bling_erp_api.resources.logisticas_servicos import LogisticasServicosResource
+from bling_erp_api.resources.naturezas_operacoes import NaturezasOperacoesResource
 from bling_erp_api.resources.nfce import NfceResource
 from bling_erp_api.resources.nfe import NfeResource
 from bling_erp_api.resources.nfse import NfseResource
@@ -2743,3 +2744,96 @@ class TestLogisticasRemessasResourceMapping:
         resource.create(dados)
         assert transport.calls[0][0] == "POST"
         assert transport.calls[0][1] == "/logisticas/remessas"
+
+
+# --- Naturezas de Operações mapping tests ---
+
+
+class TestNaturezasOperacoesResourceMapping:
+    """Testes de mapeamento para NaturezasOperacoesResource."""
+
+    def test_listar_maps_to_get_with_params(self):
+        """listar() → GET /naturezas-operacoes com query params."""
+        transport = RecordingTransport()
+        resource = NaturezasOperacoesResource(transport)
+        resource.listar(pagina=1, limite=50, situacao=1, descricao="Venda")
+        assert len(transport.calls) == 1
+        method, path, params, body = transport.calls[0]
+        assert method == "GET"
+        assert path == "/naturezas-operacoes"
+        assert params == {"pagina": 1, "limite": 50, "situacao": 1, "descricao": "Venda"}
+        assert body is None
+
+    def test_listar_without_params(self):
+        """listar() sem parâmetros → GET /naturezas-operacoes sem query."""
+        transport = RecordingTransport()
+        resource = NaturezasOperacoesResource(transport)
+        resource.listar()
+        assert len(transport.calls) == 1
+        method, path, params, body = transport.calls[0]
+        assert method == "GET"
+        assert path == "/naturezas-operacoes"
+        assert params == {}
+        assert body is None
+
+    def test_obter_tributacao_maps_to_post_with_body(self):
+        """obter_tributacao() → POST /naturezas-operacoes/{id}/obter-tributacao."""
+        transport = RecordingTransport()
+        resource = NaturezasOperacoesResource(transport)
+        body: JsonObject = {
+            "tipoNota": 1,
+            "uf": "SP",
+            "municipio": {"id": 1},
+            "loja": {"id": 1},
+            "produto": {
+                "id": 1,
+                "valorUnitario": 1.0,
+                "cupomFiscal": 0,
+                "origem": 0,
+                "quantidade": 1.0,
+            },
+        }
+        resource.obter_tributacao(12345678, calculo=body)
+        assert len(transport.calls) == 1
+        method, path, params, req_body = transport.calls[0]
+        assert method == "POST"
+        assert path == "/naturezas-operacoes/12345678/obter-tributacao"
+        assert params is None
+        assert req_body == body
+
+    def test_list_alias_calls_listar(self):
+        """EN alias list() delegates to listar()."""
+        transport = RecordingTransport()
+        resource = NaturezasOperacoesResource(transport)
+        resource.list(pagina=2)
+        assert len(transport.calls) == 1
+        method, path, params, body = transport.calls[0]
+        assert method == "GET"
+        assert path == "/naturezas-operacoes"
+        assert params == {"pagina": 2}
+        assert body is None
+
+    def test_get_taxation_alias_calls_obter_tributacao(self):
+        """EN alias get_taxation() delegates to obter_tributacao()."""
+        transport = RecordingTransport()
+        resource = NaturezasOperacoesResource(transport)
+        body: JsonObject = {
+            "tipoNota": 0,
+            "uf": "RJ",
+            "municipio": {"id": 2},
+            "loja": {"id": 2},
+            "produto": {
+                "id": 2,
+                "valorUnitario": 50.0,
+                "cupomFiscal": 1,
+                "origem": 0,
+                "quantidade": 2.0,
+            },
+        }
+        resource.get_taxation(tax_nature_id=999, calculation=body)
+        assert len(transport.calls) == 1
+        method, path, params, req_body = transport.calls[0]
+        assert method == "POST"
+        assert path == "/naturezas-operacoes/999/obter-tributacao"
+        assert params is None
+        assert req_body == body
