@@ -7,6 +7,7 @@ Usage:
 """
 
 from bling_erp_api import BlingClient
+from bling_erp_api.models.generated.invoices import NfeGetResponse200
 
 
 def main() -> None:
@@ -26,8 +27,10 @@ def main() -> None:
         data_emissao_inicial="2024-01-01",
         data_emissao_final="2024-12-31",
     )
-    print(f"Found invoices: {result}")
+    parsed = NfeGetResponse200(**result)  # type: ignore[reportArgumentType]
+    print(parsed.model_dump_json(indent=2, by_alias=True))
 
+    # NOTE: Uncomment and replace raw dict with NfePostRequest(...) for typed payload construction.
     # 2. Create a new NF-e (requires valid contact, items, etc.)
     # nfe_data = {
     #     "tipo": 1,  # 1 = Saída

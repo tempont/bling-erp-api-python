@@ -1,8 +1,5 @@
 """Exemplo que lista pedidos de venda usando a API de recursos do SDK."""
 
-import json
-from typing import TYPE_CHECKING
-
 from bling_erp_api import BlingClient
 from bling_erp_api.config import (
     DEFAULT_API_BASE_URL,
@@ -10,6 +7,10 @@ from bling_erp_api.config import (
     DEFAULT_RATE_LIMIT_MAX_RETRIES,
     DEFAULT_RATE_LIMIT_PERIOD_SECONDS,
     DEFAULT_TIMEOUT_SECONDS,
+)
+from bling_erp_api.models.generated.sales_orders import (
+    PedidosVendasGetResponse200,
+    PedidosVendasIdPedidoVendaGetResponse200,
 )
 
 bling_client: BlingClient = BlingClient(
@@ -20,22 +21,21 @@ bling_client: BlingClient = BlingClient(
     rate_limit_max_retries=DEFAULT_RATE_LIMIT_MAX_RETRIES,
 )
 
-if TYPE_CHECKING:
-    from bling_erp_api.types import JsonObject
-
 
 def list_orders() -> None:
     """Busca a primeira página de pedidos de venda."""
     with bling_client as client:
-        response: JsonObject = client.pedidos_vendas.listar()
-        print(json.dumps(obj=response, indent=2, ensure_ascii=False))
+        response = client.pedidos_vendas.listar()
+        parsed = PedidosVendasGetResponse200(**response)  # type: ignore[reportArgumentType]
+        print(parsed.model_dump_json(indent=2, by_alias=True))
 
 
 def order_details(id_pedido_venda: int) -> None:
     """Busca detalhes de um pedido de venda."""
     with BlingClient.from_env() as client:
         response = client.pedidos_vendas.obter(id_pedido_venda=id_pedido_venda)
-        print(json.dumps(obj=response, indent=2, ensure_ascii=False))
+        parsed = PedidosVendasIdPedidoVendaGetResponse200(**response)  # type: ignore[reportArgumentType]
+        print(parsed.model_dump_json(indent=2, by_alias=True))
 
 
 if __name__ == "__main__":

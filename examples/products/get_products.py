@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from bling_erp_api import BlingClient
+from bling_erp_api.models.generated.products import ProdutosGetResponse200
 
 if TYPE_CHECKING:
     from bling_erp_api.types import JsonObject
@@ -40,10 +41,11 @@ def main() -> None:
     """
     if SKU_LIST:
         response = get_filtered_products(skus=SKU_LIST)
-        print(response)
-    response: JsonObject = get_product_page()
-
-    print(response)
+        parsed = ProdutosGetResponse200(**response)  # type: ignore[reportArgumentType]
+        print(parsed.model_dump_json(indent=2, by_alias=True))
+    response = get_product_page()
+    parsed = ProdutosGetResponse200(**response)  # type: ignore[reportArgumentType]
+    print(parsed.model_dump_json(indent=2, by_alias=True))
 
 
 if __name__ == "__main__":

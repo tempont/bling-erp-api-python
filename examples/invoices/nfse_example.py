@@ -8,6 +8,10 @@ Usage:
 """
 
 from bling_erp_api import BlingClient
+from bling_erp_api.models.generated.nfse import (
+    ConfiguracaoNotaServicoDadosBaseDTO,
+    NfseGetResponse200,
+)
 
 
 def main() -> None:
@@ -27,8 +31,10 @@ def main() -> None:
         data_emissao_inicial="2024-01-01",
         data_emissao_final="2024-12-31",
     )
-    print(f"Found NFS-e invoices: {result}")
+    parsed = NfseGetResponse200(**result)  # type: ignore[reportArgumentType]
+    print(parsed.model_dump_json(indent=2, by_alias=True))
 
+    # NOTE: Uncomment and replace raw dict with NfsePostRequest(...) for typed payload construction.
     # 2. Create a new NFS-e
     # nfse_data = {
     #     "numero": "111",
@@ -59,13 +65,16 @@ def main() -> None:
     # created = nfse.criar(nfse_data)
     # print(f"Created NFS-e: {created}")
 
+    # NOTE: Uncomment and parse response with NfseIdNotaServicoGetResponse200 for typed output.
     # 3. Get a specific NFS-e
     # invoice = nfse.obter(111)
     # print(f"NFS-e details: {invoice}")
 
+    # NOTE: Uncomment and use typed model for typed payload construction.
     # 4. Authorize (send) NFS-e
     # nfse.autorizar(111)
 
+    # NOTE: Uncomment and use NotasServicosCancelamentoDTO for typed payload construction.
     # 5. Cancel NFS-e
     # cancel_data = {
     #     "codigoMotivo": 1,  # 1 = Erro na emissão
@@ -76,8 +85,10 @@ def main() -> None:
     # 6. Get NFS-e configuration
     print("Getting NFS-e configuration...")
     config = nfse.obter_configuracoes()
-    print(f"Current configuration: {config}")
+    parsed_config = ConfiguracaoNotaServicoDadosBaseDTO(**config)  # type: ignore[reportArgumentType]
+    print(parsed_config.model_dump_json(indent=2, by_alias=True))
 
+    # NOTE: Uncomment and use appropriate config model for typed payload construction.
     # 7. Update NFS-e configuration
     # new_config = {
     #     "basicas": {"emissorPadrao": 1, "naturezaOperacao": 2},
@@ -85,6 +96,7 @@ def main() -> None:
     # }
     # nfse.alterar_configuracoes(new_config)
 
+    # NOTE: Uncomment for typed payload handling.
     # 8. Delete NFS-e
     # nfse.remover(111)
 

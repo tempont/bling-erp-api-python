@@ -1,6 +1,7 @@
 """Example: List cash/bank entries with date filters."""
 
 from bling_erp_api import BlingClient
+from bling_erp_api.models.generated.caixas_bancos import CaixasGetResponse200
 
 
 def main() -> None:
@@ -12,7 +13,8 @@ def main() -> None:
             situacao_conciliacao=1,
             situacao="R",
         )
-        print(response)
+        parsed = CaixasGetResponse200(**response)  # type: ignore[reportArgumentType]
+        print(parsed.model_dump_json(indent=2, by_alias=True))
 
 
 if __name__ == "__main__":

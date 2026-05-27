@@ -1,6 +1,14 @@
 """Exemplos de leitura de lançamentos e saldos de lotes."""
 
 from bling_erp_api import BlingClient
+from bling_erp_api.models.generated.product_batch_entries import (
+    ProdutosIdProdutoLotesDepositosIdDepositoSaldoGetResponse200,
+    ProdutosIdProdutoLotesDepositosIdDepositoSaldoSomaGetResponse200,
+    ProdutosIdProdutoLotesIdLoteDepositosIdDepositoSaldoGetResponse200,
+    ProdutosIdProdutoLotesSaldoSomaGetResponse200,
+    ProdutosLotesIdLoteLancamentosGetResponse200,
+    ProdutosLotesLancamentosIdLancamentoGetResponse200,
+)
 
 
 def main() -> None:
@@ -11,28 +19,34 @@ def main() -> None:
     id_deposito = 444555666  # Exemplo — substitua pelo ID real.
     with BlingClient.from_env() as client:
         lancs = client.lotes_lancamentos.listar(id_lote=id_lote)
-        print("listar lancamentos:", lancs)
+        parsed = ProdutosLotesIdLoteLancamentosGetResponse200(**lancs)  # type: ignore[reportArgumentType]
+        print("listar lancamentos:", parsed.model_dump_json(indent=2, by_alias=True))
         one = client.lotes_lancamentos.obter(id_lancamento)
-        print("obter lancamento:", one)
+        parsed = ProdutosLotesLancamentosIdLancamentoGetResponse200(**one)  # type: ignore[reportArgumentType]
+        print("obter lancamento:", parsed.model_dump_json(indent=2, by_alias=True))
         soma = client.lotes_lancamentos.obter_saldos_soma(id_produto=id_produto)
-        print("saldo soma (todos depositos):", soma)
+        parsed = ProdutosIdProdutoLotesSaldoSomaGetResponse200(**soma)  # type: ignore[reportArgumentType]
+        print("saldo soma (todos depositos):", parsed.model_dump_json(indent=2, by_alias=True))
         soma_dep = client.lotes_lancamentos.obter_saldos_soma_deposito(
             id_produto=id_produto,
             id_deposito=id_deposito,
         )
-        print("saldo soma deposito:", soma_dep)
+        parsed = ProdutosIdProdutoLotesDepositosIdDepositoSaldoSomaGetResponse200(**soma_dep)  # type: ignore[reportArgumentType]
+        print("saldo soma deposito:", parsed.model_dump_json(indent=2, by_alias=True))
         saldos = client.lotes_lancamentos.obter_saldos(
             id_produto=id_produto,
             id_deposito=id_deposito,
             ids_lotes=[id_lote],
         )
-        print("saldos por deposito:", saldos)
+        parsed = ProdutosIdProdutoLotesDepositosIdDepositoSaldoGetResponse200(**saldos)  # type: ignore[reportArgumentType]
+        print("saldos por deposito:", parsed.model_dump_json(indent=2, by_alias=True))
         saldo = client.lotes_lancamentos.obter_saldos_saldo(
             id_produto=id_produto,
             id_lote=id_lote,
             id_deposito=id_deposito,
         )
-        print("saldo lote+deposito:", saldo)
+        parsed = ProdutosIdProdutoLotesIdLoteDepositosIdDepositoSaldoGetResponse200(**saldo)  # type: ignore[reportArgumentType]
+        print("saldo lote+deposito:", parsed.model_dump_json(indent=2, by_alias=True))
 
 
 if __name__ == "__main__":

@@ -1,19 +1,21 @@
 """Example: Create a new income/expense category."""
 
 from bling_erp_api import BlingClient
-from bling_erp_api.types import JsonObject
+from bling_erp_api.models.generated.income_expense_categories import (
+    CategoriasReceitasDespesasPostRequest,
+    CategoriasReceitasDespesasPostResponse201,
+)
 
 
 def main() -> None:
     """Create a new revenue category."""
-    payload: JsonObject = {
-        "descricao": "Consultoria",
-        "tipo": 2,
-        "idCategoriaPai": 0,
-    }
+    payload = CategoriasReceitasDespesasPostRequest.model_construct(
+        descricao="Consultoria", tipo=2, idCategoriaPai=0
+    )
     with BlingClient.from_env() as client:
         response = client.income_expense_categories.criar(payload)
-        print(response)
+        parsed = CategoriasReceitasDespesasPostResponse201(**response)  # type: ignore[reportArgumentType]
+        print(parsed.model_dump_json(indent=2, by_alias=True))
 
 
 if __name__ == "__main__":
