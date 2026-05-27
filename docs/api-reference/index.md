@@ -39,3 +39,8 @@ tipos e valores de retorno com formatação colorida.
 | [NF-e](nfe.md) | `NfeResource` — `/nfe` |
 | [NFC-e](nfce.md) | `NfceResource` — `/nfce` |
 | [NFS-e](nfse.md) | `NfseResource` — `/nfse` |
+| [Logísticas](logisticas.md) | `LogisticasResource` — `/logisticas` |
+| [Logísticas - Serviços](logisticas_servicos.md) | `LogisticasServicosResource` — `/logisticas/servicos` |
+| [Logísticas - Objetos](logisticas_objetos.md) | `LogisticasObjetosResource` — `/logisticas/objetos` |
+| [Logísticas - Etiquetas](logisticas_etiquetas.md) | `LogisticasEtiquetasResource` — `/logisticas/etiquetas` |
+| [Logísticas - Remessas](logisticas_remessas.md) | `LogisticasRemessasResource` — `/logisticas/remessas` |
