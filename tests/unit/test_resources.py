@@ -21,6 +21,11 @@ from bling_erp_api.resources.homologation import HomologationResource
 from bling_erp_api.resources.income_expense_categories import (
     IncomeExpenseCategoriesResource,
 )
+from bling_erp_api.resources.logisticas import LogisticasResource
+from bling_erp_api.resources.logisticas_etiquetas import LogisticasEtiquetasResource
+from bling_erp_api.resources.logisticas_objetos import LogisticasObjetosResource
+from bling_erp_api.resources.logisticas_remessas import LogisticasRemessasResource
+from bling_erp_api.resources.logisticas_servicos import LogisticasServicosResource
 from bling_erp_api.resources.nfce import NfceResource
 from bling_erp_api.resources.nfe import NfeResource
 from bling_erp_api.resources.nfse import NfseResource
@@ -2363,3 +2368,378 @@ class TestHomologationResourceMapping:
         assert transport.calls == [
             ("GET", "/homologacao/produtos", None, None),
         ]
+
+
+# --- Logisticas (Logísticas) mapping tests ---
+
+
+class TestLogisticasResourceMapping:
+    """Mapping tests for LogisticasResource."""
+
+    def test_listar_maps_to_bling_endpoint(self) -> None:
+        """Logisticas listar maps pagination params to GET /logisticas."""
+        transport = RecordingTransport()
+        resource = LogisticasResource(transport)
+        resource.listar(pagina=1, limite=100)
+        assert transport.calls == [
+            ("GET", "/logisticas?pagina=1&limite=100", {}, None),
+        ]
+
+    def test_obter_maps_to_bling_endpoint(self) -> None:
+        """Logisticas obter maps ID to GET /logisticas/{id}."""
+        transport = RecordingTransport()
+        resource = LogisticasResource(transport)
+        resource.obter(101)
+        assert transport.calls == [
+            ("GET", "/logisticas/101", {}, None),
+        ]
+
+    def test_criar_maps_to_bling_endpoint(self) -> None:
+        """Logisticas criar posts JSON body to POST /logisticas."""
+        transport = RecordingTransport()
+        resource = LogisticasResource(transport)
+        dados: JsonObject = {"descricao": "Nova Logística", "situacao": "H"}
+        resource.criar(dados)
+        assert transport.calls[0][0] == "POST"
+        assert transport.calls[0][1] == "/logisticas"
+        body = transport.calls[0][3]
+        assert body is not None
+
+    def test_alterar_maps_to_bling_endpoint(self) -> None:
+        """Logisticas alterar puts JSON body to PUT /logisticas/{id}."""
+        transport = RecordingTransport()
+        resource = LogisticasResource(transport)
+        dados: JsonObject = {"descricao": "Logística Atualizada"}
+        resource.alterar(101, dados)
+        assert transport.calls[0][0] == "PUT"
+        assert transport.calls[0][1] == "/logisticas/101"
+        body = transport.calls[0][3]
+        assert body is not None
+
+    def test_remover_maps_to_bling_endpoint(self) -> None:
+        """Logisticas remover sends DELETE to /logisticas/{id}."""
+        transport = RecordingTransport()
+        resource = LogisticasResource(transport)
+        resource.remover(101)
+        assert transport.calls == [
+            ("DELETE", "/logisticas/101", None, None),
+        ]
+
+    def test_english_alias_list(self) -> None:
+        """English alias 'list' should map to 'listar'."""
+        transport = RecordingTransport()
+        resource = LogisticasResource(transport)
+        resource.list(page=1, limit=100)
+        assert transport.calls[0][0] == "GET"
+        assert "logisticas" in transport.calls[0][1]
+
+    def test_english_alias_get(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        transport = RecordingTransport()
+        resource = LogisticasResource(transport)
+        resource.get(101)
+        assert transport.calls == [
+            ("GET", "/logisticas/101", {}, None),
+        ]
+
+    def test_english_alias_create(self) -> None:
+        """English alias 'create' should map to 'criar'."""
+        transport = RecordingTransport()
+        resource = LogisticasResource(transport)
+        dados: JsonObject = {"descricao": "Nova Logística", "situacao": "H"}
+        resource.create(dados)
+        assert transport.calls[0][0] == "POST"
+        assert transport.calls[0][1] == "/logisticas"
+
+
+# --- Logisticas - Serviços mapping tests ---
+
+
+class TestLogisticasServicosResourceMapping:
+    """Mapping tests for LogisticasServicosResource."""
+
+    def test_listar_maps_to_bling_endpoint(self) -> None:
+        """Servicos listar maps pagination to GET /logisticas/servicos."""
+        transport = RecordingTransport()
+        resource = LogisticasServicosResource(transport)
+        resource.listar(pagina=1, limite=100)
+        assert transport.calls == [
+            ("GET", "/logisticas/servicos?pagina=1&limite=100", {}, None),
+        ]
+
+    def test_obter_maps_to_bling_endpoint(self) -> None:
+        """Servicos obter maps ID to GET /logisticas/servicos/{id}."""
+        transport = RecordingTransport()
+        resource = LogisticasServicosResource(transport)
+        resource.obter(201)
+        assert transport.calls == [
+            ("GET", "/logisticas/servicos/201", None, None),
+        ]
+
+    def test_criar_maps_to_bling_endpoint(self) -> None:
+        """Servicos criar posts JSON body to POST /logisticas/servicos."""
+        transport = RecordingTransport()
+        resource = LogisticasServicosResource(transport)
+        dados: JsonObject = {
+            "logistica": {"id": 101},
+            "servicos": [{"descricao": "PAC", "codigo": "04510"}],
+        }
+        resource.criar(dados)
+        assert transport.calls[0][0] == "POST"
+        assert transport.calls[0][1] == "/logisticas/servicos"
+        body = transport.calls[0][3]
+        assert body is not None
+
+    def test_alterar_maps_to_bling_endpoint(self) -> None:
+        """Servicos alterar puts JSON body to PUT /logisticas/servicos/{id}."""
+        transport = RecordingTransport()
+        resource = LogisticasServicosResource(transport)
+        dados: JsonObject = {"descricao": "PAC Atualizado"}
+        resource.alterar(201, dados)
+        assert transport.calls[0][0] == "PUT"
+        assert transport.calls[0][1] == "/logisticas/servicos/201"
+        body = transport.calls[0][3]
+        assert body is not None
+
+    def test_alterar_situacao_maps_to_bling_endpoint(self) -> None:
+        """Servicos alterar_situacao patches to /logisticas/{id}/situacoes."""
+        transport = RecordingTransport()
+        resource = LogisticasServicosResource(transport)
+        resource.alterar_situacao(201, ativo=False)
+        assert transport.calls[0][0] == "PATCH"
+        assert transport.calls[0][1] == "/logisticas/201/situacoes"
+        body = transport.calls[0][3]
+        assert body is not None
+        assert body == {"ativo": False}
+
+    def test_english_alias_list(self) -> None:
+        """English alias 'list' should map to 'listar'."""
+        transport = RecordingTransport()
+        resource = LogisticasServicosResource(transport)
+        resource.list(page=1, limit=100)
+        assert transport.calls[0][0] == "GET"
+        assert "logisticas/servicos" in transport.calls[0][1]
+
+    def test_english_alias_get(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        transport = RecordingTransport()
+        resource = LogisticasServicosResource(transport)
+        resource.get(201)
+        assert transport.calls == [
+            ("GET", "/logisticas/servicos/201", None, None),
+        ]
+
+    def test_english_alias_set_status(self) -> None:
+        """English alias 'set_status' should map to 'alterar_situacao'."""
+        transport = RecordingTransport()
+        resource = LogisticasServicosResource(transport)
+        resource.set_status(201, active=False)
+        assert transport.calls[0][0] == "PATCH"
+        assert "/logisticas/201/situacoes" in transport.calls[0][1]
+
+
+# --- Logisticas - Objetos mapping tests ---
+
+
+class TestLogisticasObjetosResourceMapping:
+    """Mapping tests for LogisticasObjetosResource."""
+
+    def test_criar_maps_to_bling_endpoint(self) -> None:
+        """Objetos criar posts JSON body to POST /logisticas/objetos."""
+        transport = RecordingTransport()
+        resource = LogisticasObjetosResource(transport)
+        dados: JsonObject = {
+            "pedidoVenda": {"id": 1},
+            "notaFiscal": {"id": 2},
+            "servico": {"id": 3},
+            "dimensoes": {
+                "peso": 1.0,
+                "altura": 10,
+                "largura": 20,
+                "comprimento": 30,
+                "diametro": 0,
+            },
+            "embalagem": {"id": 4},
+            "dataSaida": "2025-01-20",
+            "prazoEntregaPrevisto": 5,
+            "fretePrevisto": 25.0,
+            "valorDeclarado": 100.0,
+            "avisoRecebimento": False,
+            "maoPropria": False,
+        }
+        resource.criar(dados)
+        assert transport.calls[0][0] == "POST"
+        assert transport.calls[0][1] == "/logisticas/objetos"
+        body = transport.calls[0][3]
+        assert body is not None
+
+    def test_obter_maps_to_bling_endpoint(self) -> None:
+        """Objetos obter maps ID to GET /logisticas/objetos/{id}."""
+        transport = RecordingTransport()
+        resource = LogisticasObjetosResource(transport)
+        resource.obter(1)
+        assert transport.calls == [
+            ("GET", "/logisticas/objetos/1", None, None),
+        ]
+
+    def test_alterar_maps_to_bling_endpoint(self) -> None:
+        """Objetos alterar puts JSON body to PUT /logisticas/objetos/{id}."""
+        transport = RecordingTransport()
+        resource = LogisticasObjetosResource(transport)
+        dados: JsonObject = {
+            "dimensoes": {
+                "peso": 2.0,
+                "altura": 10,
+                "largura": 20,
+                "comprimento": 30,
+                "diametro": 0,
+            }
+        }
+        resource.alterar(1, dados)
+        assert transport.calls[0][0] == "PUT"
+        assert transport.calls[0][1] == "/logisticas/objetos/1"
+        body = transport.calls[0][3]
+        assert body is not None
+
+    def test_remover_maps_to_bling_endpoint(self) -> None:
+        """Objetos remover sends DELETE to /logisticas/objetos/{id}."""
+        transport = RecordingTransport()
+        resource = LogisticasObjetosResource(transport)
+        resource.remover(1)
+        assert transport.calls == [
+            ("DELETE", "/logisticas/objetos/1", None, None),
+        ]
+
+    def test_english_alias_get(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        transport = RecordingTransport()
+        resource = LogisticasObjetosResource(transport)
+        resource.get(1)
+        assert transport.calls == [
+            ("GET", "/logisticas/objetos/1", None, None),
+        ]
+
+    def test_english_alias_delete(self) -> None:
+        """English alias 'delete' should map to 'remover'."""
+        transport = RecordingTransport()
+        resource = LogisticasObjetosResource(transport)
+        resource.delete(1)
+        assert transport.calls == [
+            ("DELETE", "/logisticas/objetos/1", None, None),
+        ]
+
+
+# --- Logisticas - Etiquetas mapping tests ---
+
+
+class TestLogisticasEtiquetasResourceMapping:
+    """Mapping tests for LogisticasEtiquetasResource."""
+
+    def test_obter_maps_to_bling_endpoint(self) -> None:
+        """Etiquetas obter maps params to GET /logisticas/etiquetas."""
+        transport = RecordingTransport()
+        resource = LogisticasEtiquetasResource(transport)
+        resource.obter(formato="PDF", ids_vendas=[1])
+        assert transport.calls == [
+            ("GET", "/logisticas/etiquetas", {"formato": "PDF", "idsVendas[]": [1]}, None),
+        ]
+
+    def test_obter_with_zpl_format(self) -> None:
+        """Etiquetas obter works with ZPL format."""
+        transport = RecordingTransport()
+        resource = LogisticasEtiquetasResource(transport)
+        resource.obter(formato="ZPL", ids_vendas=[2])
+        assert transport.calls == [
+            ("GET", "/logisticas/etiquetas", {"formato": "ZPL", "idsVendas[]": [2]}, None),
+        ]
+
+    def test_english_alias_get(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        transport = RecordingTransport()
+        resource = LogisticasEtiquetasResource(transport)
+        resource.get(format="PDF", sale_ids=[1])
+        assert transport.calls[0][0] == "GET"
+        assert transport.calls[0][1] == "/logisticas/etiquetas"
+
+
+# --- Logisticas - Remessas mapping tests ---
+
+
+class TestLogisticasRemessasResourceMapping:
+    """Mapping tests for LogisticasRemessasResource."""
+
+    def test_listar_por_logistica_maps_to_bling_endpoint(self) -> None:
+        """Remessas listar_por_logistica maps to GET /logisticas/{id}/remessas."""
+        transport = RecordingTransport()
+        resource = LogisticasRemessasResource(transport)
+        resource.listar_por_logistica(101)
+        assert transport.calls == [
+            ("GET", "/logisticas/101/remessas", None, None),
+        ]
+
+    def test_obter_maps_to_bling_endpoint(self) -> None:
+        """Remessas obter maps ID to GET /logisticas/remessas/{id}."""
+        transport = RecordingTransport()
+        resource = LogisticasRemessasResource(transport)
+        resource.obter(501)
+        assert transport.calls == [
+            ("GET", "/logisticas/remessas/501", None, None),
+        ]
+
+    def test_criar_maps_to_bling_endpoint(self) -> None:
+        """Remessas criar posts JSON body to POST /logisticas/remessas."""
+        transport = RecordingTransport()
+        resource = LogisticasRemessasResource(transport)
+        dados: JsonObject = {"id": 500}
+        resource.criar(dados)
+        assert transport.calls[0][0] == "POST"
+        assert transport.calls[0][1] == "/logisticas/remessas"
+        body = transport.calls[0][3]
+        assert body is not None
+
+    def test_alterar_maps_to_bling_endpoint(self) -> None:
+        """Remessas alterar puts JSON body to PUT /logisticas/remessas/{id}."""
+        transport = RecordingTransport()
+        resource = LogisticasRemessasResource(transport)
+        dados: JsonObject = {"id": 501}
+        resource.alterar(501, dados)
+        assert transport.calls[0][0] == "PUT"
+        assert transport.calls[0][1] == "/logisticas/remessas/501"
+        body = transport.calls[0][3]
+        assert body is not None
+
+    def test_remover_maps_to_bling_endpoint(self) -> None:
+        """Remessas remover sends DELETE to /logisticas/remessas/{id}."""
+        transport = RecordingTransport()
+        resource = LogisticasRemessasResource(transport)
+        resource.remover(501)
+        assert transport.calls == [
+            ("DELETE", "/logisticas/remessas/501", None, None),
+        ]
+
+    def test_english_alias_list_by_logistics(self) -> None:
+        """English alias 'list_by_logistics' should map to 'listar_por_logistica'."""
+        transport = RecordingTransport()
+        resource = LogisticasRemessasResource(transport)
+        resource.list_by_logistics(101)
+        assert transport.calls == [
+            ("GET", "/logisticas/101/remessas", None, None),
+        ]
+
+    def test_english_alias_get(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        transport = RecordingTransport()
+        resource = LogisticasRemessasResource(transport)
+        resource.get(501)
+        assert transport.calls == [
+            ("GET", "/logisticas/remessas/501", None, None),
+        ]
+
+    def test_english_alias_create(self) -> None:
+        """English alias 'create' should map to 'criar'."""
+        transport = RecordingTransport()
+        resource = LogisticasRemessasResource(transport)
+        dados: JsonObject = {"id": 500}
+        resource.create(dados)
+        assert transport.calls[0][0] == "POST"
+        assert transport.calls[0][1] == "/logisticas/remessas"
