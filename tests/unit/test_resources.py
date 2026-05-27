@@ -30,6 +30,8 @@ from bling_erp_api.resources.naturezas_operacoes import NaturezasOperacoesResour
 from bling_erp_api.resources.nfce import NfceResource
 from bling_erp_api.resources.nfe import NfeResource
 from bling_erp_api.resources.nfse import NfseResource
+from bling_erp_api.resources.notificacoes import NotificacoesResource
+from bling_erp_api.resources.ordens_producao import OrdensProducaoResource
 from bling_erp_api.resources.payment_methods import PaymentMethodsResource
 from bling_erp_api.resources.product_batch_entries import ProductBatchEntriesResource
 from bling_erp_api.resources.product_batches import ProductBatchesResource
@@ -2837,3 +2839,216 @@ class TestNaturezasOperacoesResourceMapping:
         assert path == "/naturezas-operacoes/999/obter-tributacao"
         assert params is None
         assert req_body == body
+
+
+class TestNotificacoesResourceMapping:
+    """Testes de mapeamento para NotificacoesResource."""
+
+    def test_listar_maps_to_get_notificacoes(self) -> None:
+        """listar() → GET /notificacoes com params."""
+        transport = RecordingTransport()
+        resource = NotificacoesResource(transport)
+        resource.listar(periodo="2025-01")
+        assert len(transport.calls) == 1
+        method, path, params, _body = transport.calls[0]
+        assert method == "GET"
+        assert path == "/notificacoes"
+        assert params == {"periodo": "2025-01"}
+
+    def test_listar_no_params(self) -> None:
+        """listar() sem params → GET /notificacoes com {}."""
+        transport = RecordingTransport()
+        resource = NotificacoesResource(transport)
+        resource.listar()
+        assert len(transport.calls) == 1
+        method, path, params, _body = transport.calls[0]
+        assert method == "GET"
+        assert path == "/notificacoes"
+        assert params == {}
+
+    def test_obter_quantidade(self) -> None:
+        """obter_quantidade() → GET /notificacoes/quantidade com params."""
+        transport = RecordingTransport()
+        resource = NotificacoesResource(transport)
+        resource.obter_quantidade(periodo="2025-01")
+        assert len(transport.calls) == 1
+        method, path, params, _body = transport.calls[0]
+        assert method == "GET"
+        assert path == "/notificacoes/quantidade"
+        assert params == {"periodo": "2025-01"}
+
+    def test_alterar_maps_to_post(self) -> None:
+        """alterar() → POST /notificacoes/{id}/confirmar-leitura."""
+        transport = RecordingTransport()
+        resource = NotificacoesResource(transport)
+        resource.alterar("01ARZ3NDEKTSV4RRFFQ69G5FAV")
+        assert len(transport.calls) == 1
+        method, path, _params, _body = transport.calls[0]
+        assert method == "POST"
+        assert path == "/notificacoes/01ARZ3NDEKTSV4RRFFQ69G5FAV/confirmar-leitura"
+
+    def test_list_alias(self) -> None:
+        """EN alias list() delega para listar()."""
+        transport = RecordingTransport()
+        resource = NotificacoesResource(transport)
+        resource.list(period="2025-02")
+        assert len(transport.calls) == 1
+        _method, path, params, _body = transport.calls[0]
+        assert path == "/notificacoes"
+        assert params == {"periodo": "2025-02"}
+
+    def test_get_count_alias(self) -> None:
+        """EN alias get_count() delega para obter_quantidade()."""
+        transport = RecordingTransport()
+        resource = NotificacoesResource(transport)
+        resource.get_count()
+        assert len(transport.calls) == 1
+        _method, path, _params, _body = transport.calls[0]
+        assert path == "/notificacoes/quantidade"
+
+    def test_mark_as_read_alias(self) -> None:
+        """EN alias mark_as_read() delega para alterar()."""
+        transport = RecordingTransport()
+        resource = NotificacoesResource(transport)
+        resource.mark_as_read("ULID123")
+        assert len(transport.calls) == 1
+        _method, path, _params, _body = transport.calls[0]
+        assert path == "/notificacoes/ULID123/confirmar-leitura"
+
+
+class TestOrdensProducaoResourceMapping:
+    """Testes de mapeamento para OrdensProducaoResource."""
+
+    def test_listar(self) -> None:
+        """listar() → GET /ordens-producao com pagination e filtros."""
+        transport = RecordingTransport()
+        resource = OrdensProducaoResource(transport)
+        resource.listar(pagina=1, limite=50, ids_situacoes=[1, 2])
+        assert len(transport.calls) == 1
+        method, path, params, _body = transport.calls[0]
+        assert method == "GET"
+        assert path == "/ordens-producao"
+        assert params == {"pagina": 1, "limite": 50, "idsSituacoes[]": [1, 2]}
+
+    def test_criar(self) -> None:
+        """criar() → POST /ordens-producao com body."""
+        transport = RecordingTransport()
+        resource = OrdensProducaoResource(transport)
+        body: JsonObject = {"numero": 1001, "deposito": {"idOrigem": 10, "idDestino": 20}}
+        resource.criar(body)
+        assert len(transport.calls) == 1
+        method, path, _params, req_body = transport.calls[0]
+        assert method == "POST"
+        assert path == "/ordens-producao"
+        assert req_body == body
+
+    def test_obter(self) -> None:
+        """obter() → GET /ordens-producao/{id}."""
+        transport = RecordingTransport()
+        resource = OrdensProducaoResource(transport)
+        resource.obter(12345)
+        assert len(transport.calls) == 1
+        method, path, _params, _body = transport.calls[0]
+        assert method == "GET"
+        assert path == "/ordens-producao/12345"
+
+    def test_alterar(self) -> None:
+        """alterar() → PUT /ordens-producao/{id} com body."""
+        transport = RecordingTransport()
+        resource = OrdensProducaoResource(transport)
+        body: JsonObject = {"numero": 1002}
+        resource.alterar(12345, body)
+        assert len(transport.calls) == 1
+        method, path, _params, req_body = transport.calls[0]
+        assert method == "PUT"
+        assert path == "/ordens-producao/12345"
+        assert req_body == body
+
+    def test_remover(self) -> None:
+        """remover() → DELETE /ordens-producao/{id}."""
+        transport = RecordingTransport()
+        resource = OrdensProducaoResource(transport)
+        resource.remover(12345)
+        assert len(transport.calls) == 1
+        method, path, _params, _body = transport.calls[0]
+        assert method == "DELETE"
+        assert path == "/ordens-producao/12345"
+
+    def test_alterar_situacao(self) -> None:
+        """alterar_situacao() → PUT /ordens-producao/{id}/situacoes com body."""
+        transport = RecordingTransport()
+        resource = OrdensProducaoResource(transport)
+        body: JsonObject = {"idSituacao": 2}
+        resource.alterar_situacao(12345, body)
+        assert len(transport.calls) == 1
+        method, path, _params, req_body = transport.calls[0]
+        assert method == "PUT"
+        assert path == "/ordens-producao/12345/situacoes"
+        assert req_body == body
+
+    def test_criar_multiplos(self) -> None:
+        """criar_multiplos() → POST /ordens-producao/gerar-sob-demanda."""
+        transport = RecordingTransport()
+        resource = OrdensProducaoResource(transport)
+        resource.criar_multiplos()
+        assert len(transport.calls) == 1
+        method, path, _params, _body = transport.calls[0]
+        assert method == "POST"
+        assert path == "/ordens-producao/gerar-sob-demanda"
+
+    # EN aliases
+    def test_list_alias(self) -> None:
+        """EN alias list() delega para listar()."""
+        transport = RecordingTransport()
+        resource = OrdensProducaoResource(transport)
+        resource.list(page=1)
+        assert len(transport.calls) == 1
+        assert transport.calls[0][1] == "/ordens-producao"
+
+    def test_create_alias(self) -> None:
+        """EN alias create() delega para criar()."""
+        transport = RecordingTransport()
+        resource = OrdensProducaoResource(transport)
+        resource.create({"numero": 1})
+        assert len(transport.calls) == 1
+        assert transport.calls[0][1] == "/ordens-producao"
+
+    def test_get_alias(self) -> None:
+        """EN alias get() delega para obter()."""
+        transport = RecordingTransport()
+        resource = OrdensProducaoResource(transport)
+        resource.get(1)
+        assert len(transport.calls) == 1
+        assert transport.calls[0][1] == "/ordens-producao/1"
+
+    def test_update_alias(self) -> None:
+        """EN alias update() delega para alterar()."""
+        transport = RecordingTransport()
+        resource = OrdensProducaoResource(transport)
+        resource.update(1, {"numero": 2})
+        assert len(transport.calls) == 1
+        assert transport.calls[0][1] == "/ordens-producao/1"
+
+    def test_delete_alias(self) -> None:
+        """EN alias delete() delega para remover()."""
+        transport = RecordingTransport()
+        resource = OrdensProducaoResource(transport)
+        resource.delete(1)
+        assert len(transport.calls) == 1
+        assert transport.calls[0][0] == "DELETE"
+
+    def test_set_status_alias(self) -> None:
+        """EN alias set_status() delega para alterar_situacao()."""
+        transport = RecordingTransport()
+        resource = OrdensProducaoResource(transport)
+        resource.set_status(1, {"idSituacao": 3})
+        assert len(transport.calls) == 1
+        assert transport.calls[0][1] == "/ordens-producao/1/situacoes"
+
+    def test_generate_on_demand_alias(self) -> None:
+        """EN alias generate_on_demand() delega para criar_multiplos()."""
+        transport = RecordingTransport()
+        resource = OrdensProducaoResource(transport)
+        resource.generate_on_demand()
+        assert len(transport.calls) == 1
+        assert transport.calls[0][1] == "/ordens-producao/gerar-sob-demanda"

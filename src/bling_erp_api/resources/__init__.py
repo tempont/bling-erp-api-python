@@ -24,6 +24,8 @@ from bling_erp_api.resources.naturezas_operacoes import NaturezasOperacoesResour
 from bling_erp_api.resources.nfce import NfceResource
 from bling_erp_api.resources.nfe import NfeResource
 from bling_erp_api.resources.nfse import NfseResource
+from bling_erp_api.resources.notificacoes import NotificacoesResource
+from bling_erp_api.resources.ordens_producao import OrdensProducaoResource
 from bling_erp_api.resources.payment_methods import PaymentMethodsResource
 from bling_erp_api.resources.product_batch_entries import ProductBatchEntriesResource
 from bling_erp_api.resources.product_batches import ProductBatchesResource
@@ -60,6 +62,8 @@ __all__ = [
     "NfceResource",
     "NfeResource",
     "NfseResource",
+    "NotificacoesResource",
+    "OrdensProducaoResource",
     "PaymentMethodsResource",
     "ProductBatchEntriesResource",
     "ProductBatchesResource",

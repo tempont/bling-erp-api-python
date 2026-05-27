@@ -35,6 +35,8 @@ from bling_erp_api.resources import (
     NfceResource,
     NfeResource,
     NfseResource,
+    NotificacoesResource,
+    OrdensProducaoResource,
     PaymentMethodsResource,
     ProductBatchEntriesResource,
     ProductBatchesResource,
@@ -123,6 +125,9 @@ class BlingClient:
         self._logisticas_etiquetas = LogisticasEtiquetasResource(self._transport)
         self._logisticas_remessas = LogisticasRemessasResource(self._transport)
         self._naturezas_operacoes = NaturezasOperacoesResource(self._transport)
+
+        self._notificacoes = NotificacoesResource(self._transport)
+        self._ordens_producao = OrdensProducaoResource(self._transport)
 
     # -- Resource namespace properties (with IDE-visible docstrings) --
 
@@ -450,6 +455,26 @@ class BlingClient:
     def logistics_shipments(self) -> LogisticasRemessasResource:
         """Alias for ``logisticas_remessas``. Logistics shipment operations on ``/logisticas/remessas``."""
         return self.logisticas_remessas
+
+    @property
+    def notificacoes(self) -> NotificacoesResource:
+        """Notificações (pt-BR)."""
+        return self._notificacoes
+
+    @property
+    def notifications(self) -> NotificacoesResource:
+        """Notificações (EN alias)."""
+        return self._notificacoes
+
+    @property
+    def ordens_producao(self) -> OrdensProducaoResource:
+        """Ordens de Produção (pt-BR)."""
+        return self._ordens_producao
+
+    @property
+    def production_orders(self) -> OrdensProducaoResource:
+        """Ordens de Produção (EN alias)."""
+        return self._ordens_producao
 
     @property
     def naturezas_operacoes(self) -> NaturezasOperacoesResource:

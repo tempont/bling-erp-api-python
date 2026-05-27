@@ -80,6 +80,7 @@ ACTION_TO_SDK_METHOD = {
     "ObterLogisticaRemessaMultiplos": "listar_remessas_por_logistica",
     "CriarRemessa": "criar_remessa",
     "ObterTributacao": "obter_tributacao",
+    "ObterAcaoMultiplos": "listar",
 }
 
 PARAMETER_TO_SDK_NAME = {
@@ -196,6 +197,9 @@ PARAMETER_TO_SDK_NAME = {
     "idRemessa": "id_remessa",
     "idsVendas[]": "ids_vendas",
     "idNaturezaOperacao": "id_natureza_operacao",
+    "idNotificacao": "id_notificacao",
+    "idOrdemProducao": "id_ordem_producao",
+    "periodo": "periodo",
 }
 
 DOCSTRING_ONLY_RESOURCES: list[ResourceConfig] = []
@@ -230,6 +234,8 @@ _CLASS_NAME_MAP: dict[str, str] = {
     "homologation": "HomologationResource",
     "logisticas": "LogisticasResource",
     "naturezas_operacoes": "NaturezasOperacoesResource",
+    "notificacoes": "NotificacoesResource",
+    "ordens_producao": "OrdensProducaoResource",
 }
 
 RESOURCES: list[ResourceConfig] = [
@@ -544,6 +550,30 @@ RESOURCES: list[ResourceConfig] = [
             "    12345678, calculo={...})",
         ],
     },
+    {
+        "openapi_resource": "Notificacoes",
+        "module": "notificacoes",
+        "constant": "NOTIFICACOES_OPERATIONS",
+        "title": "Notificações",
+        "example": [
+            "notificacoes = client.notificacoes.listar(",
+            '    periodo="2025-01",',
+            ")",
+            'client.notificacoes.alterar("01ARZ3NDEKTSV4RRFFQ69G5FAV")',
+        ],
+    },
+    {
+        "openapi_resource": "OrdensProducao",
+        "module": "ordens_producao",
+        "constant": "ORDENS_PRODUCAO_OPERATIONS",
+        "title": "Ordens de Produção",
+        "example": [
+            "ordens = client.ordens_producao.listar(",
+            "    ids_situacoes=[1, 2],",
+            ")",
+            "ordem = client.ordens_producao.obter(12345678)",
+        ],
+    },
 ]
 
 
@@ -665,6 +695,12 @@ def _sdk_method_for_operation(*, action: str, method: str, path: str) -> str:  #
             return "obter_saldos_soma_deposito"
     if action == "AlterarAtributo" and path == "/formas-pagamentos/{idFormaPagamento}/padrao":
         return "alterar_padrao"
+    # Notificações: /notificacoes/quantidade uses obter_quantidade (not listar)
+    if path == "/notificacoes/quantidade" and method == "GET":
+        return "obter_quantidade"
+    # OrdensProducao: /ordens-producao/gerar-sob-demanda uses criar_multiplos (not criar_varios)
+    if path == "/ordens-producao/gerar-sob-demanda" and method == "POST":
+        return "criar_multiplos"
     return ACTION_TO_SDK_METHOD[action]
 
 
