@@ -60,6 +60,7 @@ Thumbs.db
 
 # Project-specific
 docs/_references/
+data
 .cursor/
 .codegraph/
 AGENTS.md

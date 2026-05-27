@@ -45,3 +45,5 @@ tipos e valores de retorno com formatação colorida.
 | [Logísticas - Etiquetas](logisticas_etiquetas.md) | `LogisticasEtiquetasResource` — `/logisticas/etiquetas` |
 | [Logísticas - Remessas](logisticas_remessas.md) | `LogisticasRemessasResource` — `/logisticas/remessas` |
 | [Naturezas de Operações](naturezas_operacoes.md) | Listagem e cálculo de tributação |
+| [Notificações](notificacoes.md) | Listagem, contagem e leitura de notificações |
+| [Ordens de Produção](ordens_producao.md) | CRUD, situações e geração sob demanda |
