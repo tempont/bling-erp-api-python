@@ -1,0 +1,1 @@
+{"data":{"id":1,"numero":1001,"dataPrevisaoInicio":"2025-02-01","dataPrevisaoFinal":"2025-02-10","deposito":{"idOrigem":10,"idDestino":20},"situacao":{"id":1,"valor":1,"nome":"Em aberto"},"itens":[{"produto":{"id":100,"nome":"Produto A","codigo":"PA001"},"quantidade":50.0}],"observacoes":"Urgente","vendas":[{"numero":5001,"contato":{"id":200,"nome":"Cliente X"}}]}}
