@@ -96,6 +96,7 @@ nav:
       - Logísticas - Objetos: resources/logisticas_objetos.md
       - Logísticas - Etiquetas: resources/logisticas_etiquetas.md
       - Logísticas - Remessas: resources/logisticas_remessas.md
+      - Naturezas de Operações: resources/naturezas_operacoes.md
   - Referência da API:
       - api-reference/index.md
       - Cliente: api-reference/client.md
@@ -132,3 +133,4 @@ nav:
       - Logísticas - Objetos: api-reference/logisticas_objetos.md
       - Logísticas - Etiquetas: api-reference/logisticas_etiquetas.md
       - Logísticas - Remessas: api-reference/logisticas_remessas.md
+      - Naturezas de Operações: api-reference/naturezas_operacoes.md

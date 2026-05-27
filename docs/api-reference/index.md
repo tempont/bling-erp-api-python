@@ -44,3 +44,4 @@ tipos e valores de retorno com formatação colorida.
 | [Logísticas - Objetos](logisticas_objetos.md) | `LogisticasObjetosResource` — `/logisticas/objetos` |
 | [Logísticas - Etiquetas](logisticas_etiquetas.md) | `LogisticasEtiquetasResource` — `/logisticas/etiquetas` |
 | [Logísticas - Remessas](logisticas_remessas.md) | `LogisticasRemessasResource` — `/logisticas/remessas` |
+| [Naturezas de Operações](naturezas_operacoes.md) | Listagem e cálculo de tributação |
