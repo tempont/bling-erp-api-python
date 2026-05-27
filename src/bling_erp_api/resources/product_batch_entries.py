@@ -12,8 +12,8 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from bling_erp_api.models.generated.product_batch_entries import (
-        ProductBatchEntry,
-        ProductBatchEntryObservationPatch,
+        LoteLancamentoDTO,
+        LoteLancamentoObservacaoDTO,
     )
     from bling_erp_api.types import JsonObject
 
@@ -39,7 +39,7 @@ class ProductBatchEntriesResource(BaseResource):
     def alterar_atributo(
         self,
         id_lancamento: int,
-        dados: ProductBatchEntryObservationPatch | JsonObject,
+        dados: LoteLancamentoObservacaoDTO | JsonObject,
     ) -> JsonObject:
         """Altera a observação de um lançamento de um lote de um produto.
 
@@ -72,7 +72,7 @@ class ProductBatchEntriesResource(BaseResource):
         """
         return self._get(f"/produtos/lotes/{id_lote}/lancamentos")
 
-    def criar(self, id_lote: int, dados: ProductBatchEntry | JsonObject) -> JsonObject:
+    def criar(self, id_lote: int, dados: LoteLancamentoDTO | JsonObject) -> JsonObject:
         """Cria um lançamento de um lote.
 
         Endpoint: POST /produtos/lotes/{idLote}/lancamentos

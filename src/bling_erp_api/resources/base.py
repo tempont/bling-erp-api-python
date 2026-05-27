@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import contextlib
+import importlib
 import re
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
+
+from pydantic import BaseModel, ValidationError
 
 from bling_erp_api.pagination import iter_pages
 
@@ -20,6 +23,13 @@ try:
     )
 except ImportError:
     OPERATION_DOCSTRINGS = None  # type: ignore[assignment]
+
+try:
+    from bling_erp_api.contracts.generated._operation_models import (  # type: ignore[attr-defined]
+        OPERATION_MODELS,
+    )
+except ImportError:
+    OPERATION_MODELS = []  # type: ignore[var-annotated]
 
 # Map English method names to pt-BR equivalents for resources still using English
 _ENGLISH_TO_PTBR: dict[str, str] = {
@@ -118,7 +128,8 @@ class BaseResource:
 
     def _get(self, path: str, *, params: QueryParams | None = None) -> JsonObject:
         """Send a GET request."""
-        return self._transport.request("GET", path, params=params)
+        payload = self._transport.request("GET", path, params=params)
+        return cast("JsonObject", _parse_response("GET", path, payload))
 
     def _post(
         self,
@@ -128,19 +139,23 @@ class BaseResource:
         json: JsonPayload | None = None,
     ) -> JsonObject:
         """Send a POST request."""
-        return self._transport.request("POST", path, params=params, json=json)
+        payload = self._transport.request("POST", path, params=params, json=json)
+        return cast("JsonObject", _parse_response("POST", path, payload))
 
     def _put(self, path: str, *, json: JsonPayload | None = None) -> JsonObject:
         """Send a PUT request."""
-        return self._transport.request("PUT", path, json=json)
+        payload = self._transport.request("PUT", path, json=json)
+        return cast("JsonObject", _parse_response("PUT", path, payload))
 
     def _patch(self, path: str, *, json: JsonPayload | None = None) -> JsonObject:
         """Send a PATCH request."""
-        return self._transport.request("PATCH", path, json=json)
+        payload = self._transport.request("PATCH", path, json=json)
+        return cast("JsonObject", _parse_response("PATCH", path, payload))
 
     def _delete(self, path: str, *, params: QueryParams | None = None) -> JsonObject:
         """Send a DELETE request."""
-        return self._transport.request("DELETE", path, params=params)
+        payload = self._transport.request("DELETE", path, params=params)
+        return cast("JsonObject", _parse_response("DELETE", path, payload))
 
     def _iterate(
         self,
@@ -151,13 +166,20 @@ class BaseResource:
         params: QueryParams | None = None,
     ) -> Iterator[JsonObject]:
         """Iterate through paginated records for an endpoint."""
-        return iter_pages(
-            lambda next_page: self._get(
+        item_model = _response_item_model("GET", path)
+
+        def fetch_page(next_page: int) -> JsonObject:
+            return self._transport.request(
+                "GET",
                 path,
                 params={"pagina": next_page, "limite": limit, **dict(params or {})},
-            ),
-            start_page=page,
-        )
+            )
+
+        for record in iter_pages(fetch_page, start_page=page):
+            if item_model is None:
+                yield record
+            else:
+                yield cast("JsonObject", item_model.model_validate(record))
 
 
 _MIN_SUBSTANTIVE_LINES = 3
@@ -174,3 +196,56 @@ def is_substantive_docstring(doc: str) -> bool:
     if "Args:" in doc or "Returns:" in doc or "Raises:" in doc:
         return True
     return len(doc) > _MIN_SUBSTANTIVE_LENGTH
+
+
+def _parse_response(method: str, path: str, payload: JsonObject) -> BaseModel | JsonObject | None:
+    model = _response_model(method, path)
+    if model is None:
+        return None if payload == {} and _operation_entry(method, path) is not None else payload
+    try:
+        return model.model_validate(payload)
+    except ValidationError:
+        if payload == {"data": []}:
+            return payload
+        raise
+
+
+def _response_model(method: str, path: str) -> type[BaseModel] | None:
+    entry = _operation_entry(method, path)
+    if entry is None:
+        return None
+    model_path = entry.get("response_model")
+    if not isinstance(model_path, str):
+        return None
+    return _load_model(model_path)
+
+
+def _response_item_model(method: str, path: str) -> type[BaseModel] | None:
+    entry = _operation_entry(method, path)
+    if entry is None:
+        return None
+    model_path = entry.get("response_item_model")
+    if not isinstance(model_path, str):
+        return None
+    return _load_model(model_path)
+
+
+def _operation_entry(method: str, path: str) -> dict[str, object] | None:
+    normalized = path.split("?", maxsplit=1)[0].rstrip("/") or "/"
+    for entry in OPERATION_MODELS:
+        if entry.get("method") != method:
+            continue
+        pattern = entry.get("pattern")
+        if isinstance(pattern, str) and re.fullmatch(pattern, normalized):
+            return entry
+    return None
+
+
+def _load_model(model_path: str) -> type[BaseModel]:
+    module_name, class_name = model_path.rsplit(".", maxsplit=1)
+    module = importlib.import_module(module_name)
+    model = getattr(module, class_name)
+    if not isinstance(model, type) or not issubclass(model, BaseModel):
+        msg = f"Generated operation model is not a Pydantic model: {model_path}"
+        raise TypeError(msg)
+    return model

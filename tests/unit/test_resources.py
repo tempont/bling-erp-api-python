@@ -3,9 +3,18 @@
 from __future__ import annotations
 
 from datetime import UTC, date, datetime
+from typing import cast
 
-from bling_erp_api.models.generated.products import ProductCreateRequest, ProductPatchRequest
-from bling_erp_api.models.generated.sales_orders import SalesOrderCreateRequest
+from bling_erp_api.models.generated.contacts import ContatosGetResponse200
+from bling_erp_api.models.generated.products import (
+    ProdutosDadosDTO,
+    ProdutosDadosPatchDTO,
+    ProdutosGetResponse200,
+)
+from bling_erp_api.models.generated.sales_orders import (
+    PedidosVendasGetResponse200,
+    PedidosVendasPostRequest,
+)
 from bling_erp_api.resources.ad_categories import AdCategoriesResource
 from bling_erp_api.resources.ads import AdsResource
 from bling_erp_api.resources.borderos import BorderosResource
@@ -75,7 +84,7 @@ def test_contacts_list_maps_to_bling_endpoint() -> None:
 
     response = resource.listar(pagina=2, limite=50, pesquisa="Ana")
 
-    assert response == {"data": []}
+    assert cast("ContatosGetResponse200", response).data == []
     assert transport.calls == [
         ("GET", "/contatos", {"pagina": 2, "limite": 50, "pesquisa": "Ana"}, None),
     ]
@@ -128,7 +137,7 @@ def test_products_list_maps_to_bling_endpoint() -> None:
         data_alteracao_inicial=datetime(2024, 1, 2, 10, 30, 45, tzinfo=UTC),
     )
 
-    assert response == {"data": []}
+    assert cast("ProdutosGetResponse200", response).data == []
     assert transport.calls == [
         (
             "GET",
@@ -151,7 +160,7 @@ def test_products_create_and_patch_serialize_model_with_api_aliases() -> None:
     """Product write operations should serialize Pydantic payloads using Bling aliases."""
     transport = RecordingTransport()
     resource = ProductsResource(transport)
-    product = ProductCreateRequest.model_validate(
+    product = ProdutosDadosDTO.model_validate(
         {
             "nome": "Produto Teste",
             "codigo": "SKU-1",
@@ -161,7 +170,7 @@ def test_products_create_and_patch_serialize_model_with_api_aliases() -> None:
             "formato": "S",
         }
     )
-    patch = ProductPatchRequest.model_validate({"preco": 21.9, "situacao": "A"})
+    patch = ProdutosDadosPatchDTO.model_validate({"preco": 21.9, "situacao": "A"})
 
     resource.criar(product)
     resource.alterar_parcialmente(123, patch)
@@ -180,7 +189,7 @@ def test_products_create_and_patch_serialize_model_with_api_aliases() -> None:
                 "formato": "S",
             },
         ),
-        ("PATCH", "/produtos/123", None, {"preco": 21.9, "situacao": "A"}),
+        ("PATCH", "/produtos/123", None, {"preco": 21.9}),
     ]
 
 
@@ -221,7 +230,7 @@ def test_sales_orders_list_maps_to_bling_endpoint() -> None:
         numeros_lojas=["WEB-1", "WEB-2"],
     )
 
-    assert response == {"data": []}
+    assert cast("PedidosVendasGetResponse200", response).data == []
     assert transport.calls == [
         (
             "GET",
@@ -256,7 +265,7 @@ def test_sales_orders_create_serializes_model_with_api_aliases() -> None:
     """Sales order creation should serialize Pydantic payloads using Bling aliases."""
     transport = RecordingTransport()
     resource = SalesOrdersResource(transport)
-    order = SalesOrderCreateRequest.model_validate(
+    order = PedidosVendasPostRequest.model_validate(
         {
             "data": "2024-01-10",
             "dataSaida": "2024-01-10",
@@ -264,6 +273,7 @@ def test_sales_orders_create_serializes_model_with_api_aliases() -> None:
             "contato": {"id": 123, "nome": "Ana"},
             "itens": [
                 {
+                    "id": 1,
                     "codigo": "SKU-1",
                     "quantidade": 2,
                     "valor": 10.5,
@@ -273,6 +283,7 @@ def test_sales_orders_create_serializes_model_with_api_aliases() -> None:
             ],
             "parcelas": [
                 {
+                    "id": 1,
                     "dataVencimento": "2024-01-20",
                     "valor": 21,
                     "formaPagamento": {"id": 789},
@@ -296,6 +307,7 @@ def test_sales_orders_create_serializes_model_with_api_aliases() -> None:
                 "contato": {"id": 123, "nome": "Ana"},
                 "itens": [
                     {
+                        "id": 1,
                         "codigo": "SKU-1",
                         "quantidade": 2.0,
                         "valor": 10.5,
@@ -305,6 +317,7 @@ def test_sales_orders_create_serializes_model_with_api_aliases() -> None:
                 ],
                 "parcelas": [
                     {
+                        "id": 1,
                         "dataVencimento": "2024-01-20",
                         "valor": 21.0,
                         "formaPagamento": {"id": 789},

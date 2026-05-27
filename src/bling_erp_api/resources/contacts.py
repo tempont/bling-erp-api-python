@@ -12,7 +12,10 @@ from bling_erp_api.utils.serialization import to_json_object
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
 
-    from bling_erp_api.models.generated.contacts import ContactCreateRequest, ContactUpdateRequest
+    from bling_erp_api.models.generated.contacts import (
+        ContatosIdContatoPutRequest,
+        ContatosPostRequest,
+    )
     from bling_erp_api.types import JsonObject, QueryParams
 
 
@@ -188,7 +191,7 @@ class ContactsResource(BaseResource):
         """
         return self._get("/contatos/consumidor-final")
 
-    def criar(self, dados: ContactCreateRequest | JsonObject) -> JsonObject:
+    def criar(self, dados: ContatosPostRequest | JsonObject) -> JsonObject:
         """Cria um contato.
 
         Endpoint: POST /contatos
@@ -203,7 +206,9 @@ class ContactsResource(BaseResource):
         """
         return self._post("/contatos", json=to_json_object(dados))
 
-    def alterar(self, id_contato: int, dados: ContactUpdateRequest | JsonObject) -> JsonObject:
+    def alterar(
+        self, id_contato: int, dados: ContatosIdContatoPutRequest | JsonObject
+    ) -> JsonObject:
         """Altera um contato.
 
         Endpoint: PUT /contatos/{idContato}
@@ -477,7 +482,7 @@ class ContactsResource(BaseResource):
         """
         return self.obter_consumidor_final()
 
-    def create(self, data: ContactCreateRequest | JsonObject) -> JsonObject:
+    def create(self, data: ContatosPostRequest | JsonObject) -> JsonObject:
         """Compatibility alias for ``criar()``.
 
         Cria um contato.
@@ -494,7 +499,7 @@ class ContactsResource(BaseResource):
         """
         return self.criar(data)
 
-    def update(self, contact_id: int, data: ContactUpdateRequest | JsonObject) -> JsonObject:
+    def update(self, contact_id: int, data: ContatosIdContatoPutRequest | JsonObject) -> JsonObject:
         """Compatibility alias for ``alterar()``.
 
         Altera um contato.

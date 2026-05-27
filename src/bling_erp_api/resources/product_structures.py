@@ -12,8 +12,8 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from bling_erp_api.models.generated.product_structures import (
-        ProductStructureComponent,
-        ProductStructureUpdateRequest,
+        ProdutosComponenteDTO,
+        ProdutosEstruturaDTO,
     )
     from bling_erp_api.types import JsonObject
 
@@ -57,7 +57,7 @@ class ProductStructuresResource(BaseResource):
     def alterar(
         self,
         id_produto_estrutura: int,
-        dados: ProductStructureUpdateRequest | JsonObject,
+        dados: ProdutosEstruturaDTO | JsonObject,
     ) -> JsonObject:
         """Altera a estrutura de um produto com composição.
 
@@ -106,7 +106,7 @@ class ProductStructuresResource(BaseResource):
     def vincular_componentes(
         self,
         id_produto_estrutura: int,
-        componentes: Sequence[ProductStructureComponent | JsonObject],
+        componentes: Sequence[ProdutosComponenteDTO | JsonObject],
     ) -> JsonObject:
         """Adiciona componente(s) a uma estrutura.
 
@@ -133,7 +133,7 @@ class ProductStructuresResource(BaseResource):
         self,
         id_produto_estrutura: int,
         id_componente: int,
-        dados: ProductStructureComponent | JsonObject,
+        dados: ProdutosComponenteDTO | JsonObject,
     ) -> JsonObject:
         """Altera um componente de uma estrutura.
 

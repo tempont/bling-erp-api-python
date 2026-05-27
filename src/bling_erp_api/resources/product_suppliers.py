@@ -12,8 +12,8 @@ if TYPE_CHECKING:
     from collections.abc import Iterator
 
     from bling_erp_api.models.generated.product_suppliers import (
-        ProductSupplierCreateRequest,
-        ProductSupplierUpdateRequest,
+        ProdutosFornecedoresIdProdutoFornecedorPutRequest,
+        ProdutosFornecedoresPostRequest,
     )
     from bling_erp_api.types import JsonObject, QueryParams
 
@@ -74,7 +74,7 @@ class ProductSuppliersResource(BaseResource):
         """
         return self._iterate("/produtos/fornecedores", page=pagina, limit=limite)
 
-    def criar(self, dados: ProductSupplierCreateRequest | JsonObject) -> JsonObject:
+    def criar(self, dados: ProdutosFornecedoresPostRequest | JsonObject) -> JsonObject:
         """Cria um produto fornecedor.
 
         Endpoint: POST /produtos/fornecedores
@@ -106,7 +106,7 @@ class ProductSuppliersResource(BaseResource):
     def alterar(
         self,
         id_produto_fornecedor: int,
-        dados: ProductSupplierUpdateRequest | JsonObject,
+        dados: ProdutosFornecedoresIdProdutoFornecedorPutRequest | JsonObject,
     ) -> JsonObject:
         """Altera um produto fornecedor.
 

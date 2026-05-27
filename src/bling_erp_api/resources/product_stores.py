@@ -12,7 +12,10 @@ from bling_erp_api.utils.serialization import to_json_object
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from bling_erp_api.models.generated.product_stores import ProductStoreLinkCreate
+    from bling_erp_api.models.generated.product_stores import (
+        ProdutosLojasIdProdutoLojaPutRequest,
+        ProdutosLojasPostRequest,
+    )
     from bling_erp_api.types import JsonObject, QueryParams
 
 type DateFilter = date | datetime | str
@@ -86,7 +89,7 @@ class ProductStoresResource(BaseResource):
         """
         return self._iterate("/produtos/lojas", page=pagina, limit=limite)
 
-    def criar(self, dados: ProductStoreLinkCreate | JsonObject) -> JsonObject:
+    def criar(self, dados: ProdutosLojasPostRequest | JsonObject) -> JsonObject:
         """Cria o vínculo de um produto com uma loja.
 
         Endpoint: POST /produtos/lojas
@@ -116,7 +119,7 @@ class ProductStoresResource(BaseResource):
         return self._get(f"/produtos/lojas/{id_produto_loja}")
 
     def alterar(
-        self, id_produto_loja: int, dados: ProductStoreLinkCreate | JsonObject
+        self, id_produto_loja: int, dados: ProdutosLojasIdProdutoLojaPutRequest | JsonObject
     ) -> JsonObject:
         """Altera o vínculo de um produto com uma loja.
 

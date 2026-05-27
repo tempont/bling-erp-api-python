@@ -9,8 +9,8 @@ from bling_erp_api.utils.serialization import to_json_object
 
 if TYPE_CHECKING:
     from bling_erp_api.models.generated.product_variations import (
-        ProductVariationAttributeRenameRequest,
-        ProductVariationCombinationRequest,
+        ProdutosVariacoesCombinacaoDadosDTO,
+        ProdutosVariacoesDadosAtributoDTO,
     )
     from bling_erp_api.types import JsonObject
 
@@ -19,7 +19,7 @@ class ProductVariationsResource(BaseResource):
     """Operações em ``/produtos/variacoes``."""
 
     def gerar_combinacoes(
-        self, dados: ProductVariationCombinationRequest | JsonObject
+        self, dados: ProdutosVariacoesCombinacaoDadosDTO | JsonObject
     ) -> JsonObject:
         """Retorna o produto pai com combinações de novas variações.
 
@@ -55,7 +55,7 @@ class ProductVariationsResource(BaseResource):
     def alterar_atributo(
         self,
         id_produto_pai: int,
-        dados: ProductVariationAttributeRenameRequest | JsonObject,
+        dados: ProdutosVariacoesDadosAtributoDTO | JsonObject,
     ) -> JsonObject:
         """Altera o nome do atributo nas variações.
 

@@ -13,9 +13,9 @@ if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
 
     from bling_erp_api.models.generated.product_batches import (
-        ProductBatch,
-        ProductBatchStatusRequest,
-        ProductBatchUpdateRequest,
+        LotePutRequestDTO,
+        LotesDTO,
+        LoteStatusDTO,
     )
     from bling_erp_api.types import JsonObject, QueryParams
 
@@ -164,7 +164,7 @@ class ProductBatchesResource(BaseResource):
 
         return self._iterate("/produtos/lotes", page=pagina, limit=limite, params=merged or {})
 
-    def criar_varios(self, lotes: Sequence[ProductBatch | JsonObject]) -> JsonObject:
+    def criar_varios(self, lotes: Sequence[LotesDTO | JsonObject]) -> JsonObject:
         """Salva lotes de produtos.
 
         Endpoint: PUT /produtos/lotes
@@ -212,7 +212,7 @@ class ProductBatchesResource(BaseResource):
         """
         return self._get(f"/produtos/lotes/{id_lote}")
 
-    def alterar(self, id_lote: int, dados: ProductBatchUpdateRequest | JsonObject) -> JsonObject:
+    def alterar(self, id_lote: int, dados: LotePutRequestDTO | JsonObject) -> JsonObject:
         """Altera um lote de um produto.
 
         Endpoint: PUT /produtos/lotes/{idLote}
@@ -226,9 +226,7 @@ class ProductBatchesResource(BaseResource):
         """
         return self._put(f"/produtos/lotes/{id_lote}", json=to_json_object(dados))
 
-    def alterar_situacao(
-        self, id_lote: int, dados: ProductBatchStatusRequest | JsonObject
-    ) -> JsonObject:
+    def alterar_situacao(self, id_lote: int, dados: LoteStatusDTO | JsonObject) -> JsonObject:
         """Altera o status de um lote do produto.
 
         Endpoint: PATCH /produtos/lotes/{idLote}/status

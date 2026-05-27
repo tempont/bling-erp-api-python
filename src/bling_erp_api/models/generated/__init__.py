@@ -1,5 +1,17 @@
-"""Generated model modules.
+"""OpenAPI-generated Pydantic models."""
 
-Files in this package are intended to be produced or refreshed from the
-OpenAPI document while preserving manual models outside this package.
-"""
+# pyright: reportUnsupportedDunderAll=false
+
+from __future__ import annotations
+
+from importlib import import_module
+
+_schemas = import_module("bling_erp_api.models.generated.schemas")
+
+__all__ = list(_schemas.__all__)
+
+
+def __getattr__(name: str) -> object:
+    if name in __all__:
+        return getattr(_schemas, name)
+    raise AttributeError(name)

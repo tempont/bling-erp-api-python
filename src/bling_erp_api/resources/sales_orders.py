@@ -13,8 +13,8 @@ if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
 
     from bling_erp_api.models.generated.sales_orders import (
-        SalesOrderCreateRequest,
-        SalesOrderUpdateRequest,
+        PedidosVendasIdPedidoVendaPutRequest,
+        PedidosVendasPostRequest,
     )
     from bling_erp_api.types import JsonObject, QueryParams
 
@@ -239,23 +239,23 @@ class SalesOrdersResource(BaseResource):
         """Compatibility alias for ``obter()``."""
         return self.obter(order_id)
 
-    def criar(self, dados: SalesOrderCreateRequest | JsonObject) -> JsonObject:
+    def criar(self, dados: PedidosVendasPostRequest | JsonObject) -> JsonObject:
         """Cria um pedido de venda.
 
         Mapeia ``POST /pedidos/vendas``.
 
         Args:
-            dados: Payload do pedido. Use ``SalesOrderCreateRequest`` para uso
+            dados: Payload do pedido. Use ``PedidosVendasPostRequest`` para uso
                 tipado ou um objeto JSON com os nomes de campos do Bling.
         """
         return self._post("/pedidos/vendas", json=to_json_object(dados))
 
-    def create(self, data: SalesOrderCreateRequest | JsonObject) -> JsonObject:
+    def create(self, data: PedidosVendasPostRequest | JsonObject) -> JsonObject:
         """Compatibility alias for ``criar()``."""
         return self.criar(data)
 
     def alterar(
-        self, id_pedido_venda: int, dados: SalesOrderUpdateRequest | JsonObject
+        self, id_pedido_venda: int, dados: PedidosVendasIdPedidoVendaPutRequest | JsonObject
     ) -> JsonObject:
         """Altera um pedido de venda.
 
@@ -263,12 +263,14 @@ class SalesOrdersResource(BaseResource):
 
         Args:
             id_pedido_venda: ID do pedido, enviado como ``idPedidoVenda``.
-            dados: Payload do pedido. Use ``SalesOrderUpdateRequest`` para uso
+            dados: Payload do pedido. Use ``PedidosVendasIdPedidoVendaPutRequest`` para uso
                 tipado ou um objeto JSON com os nomes de campos do Bling.
         """
         return self._put(f"/pedidos/vendas/{id_pedido_venda}", json=to_json_object(dados))
 
-    def update(self, order_id: int, data: SalesOrderUpdateRequest | JsonObject) -> JsonObject:
+    def update(
+        self, order_id: int, data: PedidosVendasIdPedidoVendaPutRequest | JsonObject
+    ) -> JsonObject:
         """Compatibility alias for ``alterar()``."""
         return self.alterar(order_id, data)
 

@@ -17,6 +17,9 @@ def response_json(response: httpx.Response) -> JsonValue:
 
 def response_json_object(response: httpx.Response) -> JsonObject:
     """Decode an HTTP response and require a JSON object body."""
+    if not response.content:
+        return {}
+
     payload = response_json(response)
     if isinstance(payload, dict):
         return payload

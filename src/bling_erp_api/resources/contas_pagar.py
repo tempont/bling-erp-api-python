@@ -9,7 +9,7 @@ from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
 
 if TYPE_CHECKING:
-    from bling_erp_api.models.generated.contas_shared import ContasBaixarContaDTO
+    from bling_erp_api.models.generated.contas_pagar import ContasBaixarContaDTO
     from bling_erp_api.types import JsonObject, QueryParams
 
 
