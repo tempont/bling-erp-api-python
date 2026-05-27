@@ -64,6 +64,21 @@ ACTION_TO_SDK_METHOD = {
     "ObterBoletos": "obter_boletos",
     "ObterSaldosEstoque": "obter_saldos",
     "ObterSaldosEstoqueDeposito": "obter_saldos_por_deposito",
+    "ObterServicoLogisticoMultiplos": "listar_servicos",
+    "ObterServicoLogistico": "obter_servico",
+    "CriarLogisticaServico": "criar_servico",
+    "AlterarLogisticaServico": "alterar_servico",
+    "AlterarSituacaoLogisticaServico": "alterar_situacao_servico",
+    "ObterObjetoLogistico": "obter_objeto",
+    "AlterarLogisticaObjeto": "alterar_objeto",
+    "RemoverObjetoLogistico": "remover_objeto",
+    "CriarLogisticaObjeto": "criar_objeto",
+    "ObterEtiquetaMultiplos": "obter_etiquetas",
+    "ObterRemessa": "obter_remessa",
+    "AlterarRemessa": "alterar_remessa",
+    "RemoverRemessa": "remover_remessa",
+    "ObterLogisticaRemessaMultiplos": "listar_remessas_por_logistica",
+    "CriarRemessa": "criar_remessa",
 }
 
 PARAMETER_TO_SDK_NAME = {
@@ -171,6 +186,14 @@ PARAMETER_TO_SDK_NAME = {
     "idGrupoProduto": "id_grupo_produto",
     "idsGruposProdutos[]": "ids_grupos_produtos",
     "idProdutoHomologacao": "id_produto_homologacao",
+    "tiposIntegracoes[]": "tipos_integracoes",
+    "logisticasReversas": "logisticas_reversas",
+    "listarServicosInativos": "listar_servicos_inativos",
+    "idLogistica": "id_logistica",
+    "idLogisticaServico": "id_logistica_servico",
+    "idObjeto": "id_objeto",
+    "idRemessa": "id_remessa",
+    "idsVendas[]": "ids_vendas",
 }
 
 DOCSTRING_ONLY_RESOURCES: list[ResourceConfig] = []
@@ -203,6 +226,7 @@ _CLASS_NAME_MAP: dict[str, str] = {
     "payment_methods": "PaymentMethodsResource",
     "product_groups": "ProductGroupsResource",
     "homologation": "HomologationResource",
+    "logisticas": "LogisticasResource",
 }
 
 RESOURCES: list[ResourceConfig] = [
@@ -492,6 +516,16 @@ RESOURCES: list[ResourceConfig] = [
         "example": [
             "produto = client.homologation.obter()",
             "result = client.homologation.criar({'nome': 'Produto Teste', 'preco': 10.00})",
+        ],
+    },
+    {
+        "openapi_resource": "Logisticas",
+        "module": "logisticas",
+        "constant": "LOGISTICAS_OPERATIONS",
+        "title": "Logísticas",
+        "example": [
+            "logisticas = client.logisticas.listar()",
+            "servicos = client.logisticas_servicos.listar()",
         ],
     },
 ]

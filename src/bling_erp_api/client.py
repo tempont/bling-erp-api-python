@@ -26,6 +26,11 @@ from bling_erp_api.resources import (
     EstoquesResource,
     HomologationResource,
     IncomeExpenseCategoriesResource,
+    LogisticasEtiquetasResource,
+    LogisticasObjetosResource,
+    LogisticasRemessasResource,
+    LogisticasResource,
+    LogisticasServicosResource,
     NfceResource,
     NfeResource,
     NfseResource,
@@ -110,6 +115,12 @@ class BlingClient:
         self._payment_methods = PaymentMethodsResource(self._transport)
         self._product_groups = ProductGroupsResource(self._transport)
         self._homologation = HomologationResource(self._transport)
+
+        self._logisticas = LogisticasResource(self._transport)
+        self._logisticas_servicos = LogisticasServicosResource(self._transport)
+        self._logisticas_objetos = LogisticasObjetosResource(self._transport)
+        self._logisticas_etiquetas = LogisticasEtiquetasResource(self._transport)
+        self._logisticas_remessas = LogisticasRemessasResource(self._transport)
 
     # -- Resource namespace properties (with IDE-visible docstrings) --
 
@@ -387,6 +398,56 @@ class BlingClient:
     def homologation(self) -> HomologationResource:
         """Alias for ``homologacao``. Homologation operations on ``/homologacao/produtos``."""
         return self.homologacao
+
+    @property
+    def logisticas(self) -> LogisticasResource:
+        """Logísticas — operações em ``/logisticas``."""
+        return self._logisticas
+
+    @property
+    def logistics(self) -> LogisticasResource:
+        """Alias for ``logisticas``. Logistics operations on ``/logisticas``."""
+        return self.logisticas
+
+    @property
+    def logisticas_servicos(self) -> LogisticasServicosResource:
+        """Serviços de logísticas — operações em ``/logisticas/servicos``."""
+        return self._logisticas_servicos
+
+    @property
+    def logistics_services(self) -> LogisticasServicosResource:
+        """Alias for ``logisticas_servicos``. Logistics service operations on ``/logisticas/servicos``."""
+        return self.logisticas_servicos
+
+    @property
+    def logisticas_objetos(self) -> LogisticasObjetosResource:
+        """Objetos de logísticas — operações em ``/logisticas/objetos``."""
+        return self._logisticas_objetos
+
+    @property
+    def logistics_objects(self) -> LogisticasObjetosResource:
+        """Alias for ``logisticas_objetos``. Logistics object operations on ``/logisticas/objetos``."""
+        return self.logisticas_objetos
+
+    @property
+    def logisticas_etiquetas(self) -> LogisticasEtiquetasResource:
+        """Etiquetas de logísticas — operações em ``/logisticas/etiquetas``."""
+        return self._logisticas_etiquetas
+
+    @property
+    def logistics_labels(self) -> LogisticasEtiquetasResource:
+        """Alias for ``logisticas_etiquetas``. Logistics label operations on ``/logisticas/etiquetas``."""
+        return self.logisticas_etiquetas
+
+    @property
+    def logisticas_remessas(self) -> LogisticasRemessasResource:
+        """Remessas de logísticas — operações em ``/logisticas/remessas``."""
+        return self._logisticas_remessas
+
+    @property
+    def logistics_shipments(self) -> LogisticasRemessasResource:
+        """Alias for ``logisticas_remessas``. Logistics shipment operations on ``/logisticas/remessas``."""
+        return self.logisticas_remessas
 
     @classmethod
     def from_env(  # noqa: PLR0913

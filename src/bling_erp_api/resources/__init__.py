@@ -15,6 +15,11 @@ from bling_erp_api.resources.homologation import HomologationResource
 from bling_erp_api.resources.income_expense_categories import (
     IncomeExpenseCategoriesResource,
 )
+from bling_erp_api.resources.logisticas import LogisticasResource
+from bling_erp_api.resources.logisticas_etiquetas import LogisticasEtiquetasResource
+from bling_erp_api.resources.logisticas_objetos import LogisticasObjetosResource
+from bling_erp_api.resources.logisticas_remessas import LogisticasRemessasResource
+from bling_erp_api.resources.logisticas_servicos import LogisticasServicosResource
 from bling_erp_api.resources.nfce import NfceResource
 from bling_erp_api.resources.nfe import NfeResource
 from bling_erp_api.resources.nfse import NfseResource
@@ -45,6 +50,11 @@ __all__ = [
     "EstoquesResource",
     "HomologationResource",
     "IncomeExpenseCategoriesResource",
+    "LogisticasEtiquetasResource",
+    "LogisticasObjetosResource",
+    "LogisticasRemessasResource",
+    "LogisticasResource",
+    "LogisticasServicosResource",
     "NfceResource",
     "NfeResource",
     "NfseResource",
