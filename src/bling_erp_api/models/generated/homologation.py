@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from bling_erp_api.models.generated.schemas import (
-    ErrorResponse,
+from bling_erp_api.models.generated.schemas.common import ErrorResponse
+from bling_erp_api.models.generated.schemas.homologacao import (
     HomologacaoDadosBaseDTO,
     HomologacaoDadosDTO,
     HomologacaoProdutosGetResponse200,

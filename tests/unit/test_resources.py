@@ -15,6 +15,7 @@ from bling_erp_api.models.generated.sales_orders import (
     PedidosVendasGetResponse200,
     PedidosVendasPostRequest,
 )
+from bling_erp_api.models.generated.schemas import ContasBaixarContaDTO
 from bling_erp_api.resources.ad_categories import AdCategoriesResource
 from bling_erp_api.resources.ads import AdsResource
 from bling_erp_api.resources.borderos import BorderosResource
@@ -97,8 +98,8 @@ def test_contacts_operations_map_to_bling_endpoints() -> None:
 
     resource.obter(101)
     resource.obter_consumidor_final()
-    resource.criar({"nome": "Novo"})
-    resource.alterar(102, {"nome": "Atualizado"})
+    resource.criar({"nome": "Novo"})  # type: ignore[reportArgumentType]
+    resource.alterar(102, {"nome": "Atualizado"})  # type: ignore[reportArgumentType]
     resource.remover(103)
     resource.remover_varios([201, 202])
     resource.obter_tipo_contato(104)
@@ -199,7 +200,7 @@ def test_products_write_operations_map_to_bling_endpoints() -> None:
     resource = ProductsResource(transport)
 
     resource.obter(123)
-    resource.alterar(123, {"nome": "Produto"})
+    resource.alterar(123, {"nome": "Produto"})  # type: ignore[reportArgumentType]
     resource.remover(123)
     resource.remover_varios([123, 456])
     resource.alterar_situacao(123, "I")
@@ -333,7 +334,7 @@ def test_sales_orders_write_operations_map_to_bling_endpoints() -> None:
     transport = RecordingTransport()
     resource = SalesOrdersResource(transport)
 
-    resource.alterar(123, {"numeroLoja": "WEB-123"})
+    resource.alterar(123, {"numeroLoja": "WEB-123"})  # type: ignore[reportArgumentType]
     resource.remover(123)
     resource.remover_varios([123, 456])
     resource.alterar_situacao(123, 9)
@@ -377,16 +378,16 @@ def test_product_structures_map_requests_to_bling() -> None:
 
     resource.remover_varios([1, 2])
     resource.obter(3)
-    resource.alterar(4, {"tipoEstoque": "F", "lancamentoEstoque": "A", "componentes": []})
+    resource.alterar(4, {"tipoEstoque": "F", "lancamentoEstoque": "A", "componentes": []})  # type: ignore[reportArgumentType]
     resource.remover_componentes(5, ids_componentes=[9])
     resource.vincular_componentes(
         6,
-        [{"produto": {"id": 42}, "quantidade": 1.5}],
+        [{"produto": {"id": 42}, "quantidade": 1.5}],  # type: ignore[reportArgumentType]
     )
     resource.alterar_componente(
         7,
         id_componente=8,
-        dados={"produto": {"id": 99}, "quantidade": 2.0},
+        dados={"produto": {"id": 99}, "quantidade": 2.0},  # type: ignore[reportArgumentType]
     )
 
     assert transport.calls == [
@@ -408,7 +409,7 @@ def test_product_structures_map_requests_to_bling() -> None:
             "POST",
             "/produtos/estruturas/6/componentes",
             None,
-            [{"produto": {"id": 42}, "quantidade": 1.5}],
+            [{"produto": {"id": 42}, "quantidade": 1.5}],  # type: ignore[reportArgumentType]
         ),
         (
             "PATCH",
@@ -426,10 +427,10 @@ def test_product_suppliers_map_requests_to_bling() -> None:
 
     resource.listar(pagina=2, limite=40, id_produto=111, id_fornecedor=222)
     resource.criar(
-        {"produto": {"id": 1}, "fornecedor": {"id": 2}, "codigo": "SKU-F", "garantia": 3}
+        {"produto": {"id": 1}, "fornecedor": {"id": 2}, "codigo": "SKU-F", "garantia": 3}  # type: ignore[reportArgumentType]
     )
     resource.obter(77)
-    resource.alterar(77, {"produto": {"id": 1}, "garantia": 12})
+    resource.alterar(77, {"produto": {"id": 1}, "garantia": 12})  # type: ignore[reportArgumentType]
     resource.remover(88)
 
     assert transport.calls == [
@@ -519,12 +520,12 @@ def test_product_batches_map_requests_to_bling() -> None:
                 "dataFabricacao": "2024-01-01",
                 "dataValidade": "2024-06-01",
             }
-        ]
+        ]  # type: ignore[reportArgumentType]
     )
     resource.listar_produtos_controlam_lote([111])
     resource.obter(999)
-    resource.alterar(999, {"codigoLote": "L"})
-    resource.alterar_situacao(999, {"status": 2})
+    resource.alterar(999, {"codigoLote": "L"})  # type: ignore[reportArgumentType]
+    resource.alterar_situacao(999, {"status": 2})  # type: ignore[reportArgumentType]
     resource.alterar_situacao_desativar(4321)
 
     assert transport.calls[:2] == [
@@ -572,9 +573,9 @@ def test_product_batch_entries_map_requests_to_bling() -> None:
     resource = ProductBatchEntriesResource(transport)
 
     resource.obter(1001)
-    resource.alterar_atributo(1001, {"observacao": "ajuste"})
+    resource.alterar_atributo(1001, {"observacao": "ajuste"})  # type: ignore[reportArgumentType]
     resource.listar(2002)
-    resource.criar(2002, {"idLote": 2002, "observacao": "novo"})
+    resource.criar(2002, {"idLote": 2002, "observacao": "novo"})  # type: ignore[reportArgumentType]
     resource.obter_saldos(id_produto=303, id_deposito=404, ids_lotes=[505, 506])
     resource.obter_saldos_soma(id_produto=303)
     resource.obter_saldos_soma_deposito(id_produto=303, id_deposito=404)
@@ -613,10 +614,10 @@ def test_product_variations_map_requests_to_bling() -> None:
     resource = ProductVariationsResource(transport)
 
     resource.gerar_combinacoes(
-        {"produtoPai": {"id": 9}, "atributos": [{"nome": "Cor", "opcoes": ["Azul"]}]}
+        {"produtoPai": {"id": 9}, "atributos": [{"nome": "Cor", "opcoes": ["Azul"]}]}  # type: ignore[reportArgumentType]
     )
     resource.listar(10)
-    resource.alterar_atributo(10, {"atributoAntigo": "Cor", "atributoNovo": "Coloração"})
+    resource.alterar_atributo(10, {"atributoAntigo": "Cor", "atributoNovo": "Coloração"})  # type: ignore[reportArgumentType]
 
     assert transport.calls == [
         (
@@ -1097,7 +1098,7 @@ class TestAdsResourceMapping:
             "integracao": {"tipo": "ML"},
             "loja": {"id": 1},
         }
-        resource.criar(dados)
+        resource.criar(dados)  # type: ignore[reportArgumentType]
         assert len(transport.calls) == 1
         assert transport.calls[0][0] == "POST"
         assert transport.calls[0][1] == "/anuncios"
@@ -1108,7 +1109,7 @@ class TestAdsResourceMapping:
         transport = RecordingTransport()
         resource = AdsResource(transport)
         dados: JsonObject = {"nome": "Atualizado"}
-        resource.alterar(123, dados)
+        resource.alterar(123, dados)  # type: ignore[reportArgumentType]
         assert transport.calls[0][0] == "PUT"
         assert transport.calls[0][1] == "/anuncios/123"
         assert transport.calls[0][3] is not None
@@ -1175,7 +1176,7 @@ class TestAdsResourceMapping:
         """English alias 'create' should map to 'criar'."""
         transport = RecordingTransport()
         resource = AdsResource(transport)
-        resource.create({"produto": {"id": 1}, "integracao": {"tipo": "ML"}, "loja": {"id": 1}})
+        resource.create({"produto": {"id": 1}, "integracao": {"tipo": "ML"}, "loja": {"id": 1}})  # type: ignore[reportArgumentType]
         assert transport.calls[0][0] == "POST"
         assert transport.calls[0][1] == "/anuncios"
 
@@ -1356,7 +1357,7 @@ class TestCaixasBancosResourceMapping:
             "competencia": "2025-02-01",
             "observacoes": "Teste",
         }
-        resource.criar(dados)
+        resource.criar(dados)  # type: ignore[reportArgumentType]
         assert len(transport.calls) == 1
         assert transport.calls[0][0] == "POST"
         assert transport.calls[0][1] == "/caixas"
@@ -1373,7 +1374,7 @@ class TestCaixasBancosResourceMapping:
             "competencia": "2025-02-01",
             "observacoes": "Atualizado",
         }
-        resource.alterar(123456, dados)
+        resource.alterar(123456, dados)  # type: ignore[reportArgumentType]
         assert transport.calls[0][0] == "PUT"
         assert transport.calls[0][1] == "/caixas/123456"
         assert transport.calls[0][3] is not None
@@ -1409,7 +1410,7 @@ class TestCaixasBancosResourceMapping:
                 "debCred": "C",
                 "competencia": "2025-02-01",
                 "observacoes": "Test",
-            }
+            }  # type: ignore[reportArgumentType]
         )
         assert transport.calls[0][0] == "POST"
         assert transport.calls[0][1] == "/caixas"
@@ -1434,7 +1435,7 @@ class TestCaixasBancosResourceMapping:
                 "debCred": "D",
                 "competencia": "2025-02-01",
                 "observacoes": "Upd",
-            },
+            },  # type: ignore[reportArgumentType]
         )
         assert transport.calls[0][0] == "PUT"
         assert transport.calls[0][1] == "/caixas/123456"
@@ -1480,7 +1481,7 @@ class TestStoreCategoriesResourceMapping:
         """Store categories criar posts to POST /categorias/lojas."""
         transport = RecordingTransport()
         resource = StoreCategoriesResource(transport)
-        resource.criar({"loja": {"id": 1}, "descricao": "Test", "codigo": "ABC"})
+        resource.criar({"loja": {"id": 1}, "descricao": "Test", "codigo": "ABC"})  # type: ignore[reportArgumentType]
         assert transport.calls[0][0] == "POST"
         assert transport.calls[0][1] == "/categorias/lojas"
         assert transport.calls[0][3] is not None
@@ -1489,7 +1490,7 @@ class TestStoreCategoriesResourceMapping:
         """Store categories alterar puts to PUT /categorias/lojas/{id}."""
         transport = RecordingTransport()
         resource = StoreCategoriesResource(transport)
-        resource.alterar(100, {"loja": {"id": 1}, "descricao": "Upd", "codigo": "XYZ"})
+        resource.alterar(100, {"loja": {"id": 1}, "descricao": "Upd", "codigo": "XYZ"})  # type: ignore[reportArgumentType]
         assert transport.calls[0][0] == "PUT"
         assert transport.calls[0][1] == "/categorias/lojas/100"
 
@@ -1521,7 +1522,7 @@ class TestStoreCategoriesResourceMapping:
         """English alias 'create' should map to 'criar'."""
         transport = RecordingTransport()
         resource = StoreCategoriesResource(transport)
-        resource.create({"loja": {"id": 1}, "descricao": "Test", "codigo": "X"})
+        resource.create({"loja": {"id": 1}, "descricao": "Test", "codigo": "X"})  # type: ignore[reportArgumentType]
         assert transport.calls[0][0] == "POST"
 
     def test_store_categories_english_alias_delete(self) -> None:
@@ -1556,7 +1557,7 @@ class TestProductCategoriesResourceMapping:
         """Product categories criar posts to POST."""
         transport = RecordingTransport()
         resource = ProductCategoriesResource(transport)
-        resource.criar({"id": 1, "descricao": "Nova"})
+        resource.criar({"id": 1, "descricao": "Nova"})  # type: ignore[reportArgumentType]
         assert transport.calls[0][0] == "POST"
         assert transport.calls[0][1] == "/categorias/produtos"
 
@@ -1564,7 +1565,7 @@ class TestProductCategoriesResourceMapping:
         """Product categories alterar puts to PUT."""
         transport = RecordingTransport()
         resource = ProductCategoriesResource(transport)
-        resource.alterar(200, {"descricao": "Atualizada"})
+        resource.alterar(200, {"descricao": "Atualizada"})  # type: ignore[reportArgumentType]
         assert transport.calls[0][0] == "PUT"
         assert transport.calls[0][1] == "/categorias/produtos/200"
 
@@ -1594,14 +1595,14 @@ class TestProductCategoriesResourceMapping:
         """EN alias 'create' maps to criar."""
         transport = RecordingTransport()
         resource = ProductCategoriesResource(transport)
-        resource.create({"descricao": "Nova"})
+        resource.create({"descricao": "Nova"})  # type: ignore[reportArgumentType]
         assert transport.calls[0][0] == "POST"
 
     def test_product_categories_english_alias_update(self) -> None:
         """EN alias 'update' maps to alterar."""
         transport = RecordingTransport()
         resource = ProductCategoriesResource(transport)
-        resource.update(200, {"descricao": "Upd"})
+        resource.update(200, {"descricao": "Upd"})  # type: ignore[reportArgumentType]
         assert transport.calls[0][0] == "PUT"
 
     def test_product_categories_english_alias_delete(self) -> None:
@@ -1645,7 +1646,7 @@ class TestIncomeExpenseCategoriesResourceMapping:
         """Income/expense criar posts to POST."""
         transport = RecordingTransport()
         resource = IncomeExpenseCategoriesResource(transport)
-        resource.criar({"descricao": "Nova", "tipo": 2})
+        resource.criar({"descricao": "Nova", "tipo": 2})  # type: ignore[reportArgumentType]
         assert transport.calls[0][0] == "POST"
         assert transport.calls[0][1] == "/categorias/receitas-despesas"
 
@@ -1653,7 +1654,7 @@ class TestIncomeExpenseCategoriesResourceMapping:
         """Income/expense alterar puts."""
         transport = RecordingTransport()
         resource = IncomeExpenseCategoriesResource(transport)
-        resource.alterar(300, {"descricao": "Upd", "tipo": 1})
+        resource.alterar(300, {"descricao": "Upd", "tipo": 1})  # type: ignore[reportArgumentType]
         assert transport.calls[0][0] == "PUT"
         assert transport.calls[0][1] == "/categorias/receitas-despesas/300"
 
@@ -1691,14 +1692,14 @@ class TestIncomeExpenseCategoriesResourceMapping:
         """EN alias 'create' maps to criar."""
         transport = RecordingTransport()
         resource = IncomeExpenseCategoriesResource(transport)
-        resource.create({"descricao": "Test", "tipo": 2})
+        resource.create({"descricao": "Test", "tipo": 2})  # type: ignore[reportArgumentType]
         assert transport.calls[0][0] == "POST"
 
     def test_income_expense_english_alias_update(self) -> None:
         """EN alias 'update' maps to alterar."""
         transport = RecordingTransport()
         resource = IncomeExpenseCategoriesResource(transport)
-        resource.update(300, {"descricao": "Upd", "tipo": 1})
+        resource.update(300, {"descricao": "Upd", "tipo": 1})  # type: ignore[reportArgumentType]
         assert transport.calls[0][0] == "PUT"
 
     def test_income_expense_english_alias_delete(self) -> None:
@@ -1776,7 +1777,7 @@ class TestContasPagarResourceMapping:
         """Contas pagar baixar posts to POST /contas/pagar/{id}/baixar."""
         transport = RecordingTransport()
         resource = ContasPagarResource(transport)
-        dados: JsonObject = {"data": "2025-03-16", "usarDataVencimento": False}
+        dados = cast("ContasBaixarContaDTO", {"data": "2025-03-16", "usarDataVencimento": False})
         resource.baixar(123, dados)
         assert transport.calls[0][:2] == ("POST", "/contas/pagar/123/baixar")
         body = transport.calls[0][3]
@@ -1802,7 +1803,7 @@ class TestContasPagarResourceMapping:
         """English alias 'settle' should map to 'baixar'."""
         transport = RecordingTransport()
         resource = ContasPagarResource(transport)
-        dados: JsonObject = {"data": "2025-03-16", "usarDataVencimento": False}
+        dados = cast("ContasBaixarContaDTO", {"data": "2025-03-16", "usarDataVencimento": False})
         resource.settle(123, data=dados)
         assert transport.calls[0][:2] == ("POST", "/contas/pagar/123/baixar")
         body = transport.calls[0][3]
@@ -1868,7 +1869,7 @@ class TestContasReceberResourceMapping:
         """Contas receber baixar posts to POST /contas/receber/{id}/baixar."""
         transport = RecordingTransport()
         resource = ContasReceberResource(transport)
-        dados: JsonObject = {"data": "2025-04-10", "usarDataVencimento": False}
+        dados = cast("ContasBaixarContaDTO", {"data": "2025-04-10", "usarDataVencimento": False})
         resource.baixar(123, dados)
         assert transport.calls[0][:2] == ("POST", "/contas/receber/123/baixar")
         body = transport.calls[0][3]

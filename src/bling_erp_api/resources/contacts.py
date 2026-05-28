@@ -191,7 +191,7 @@ class ContactsResource(BaseResource):
         """
         return self._get("/contatos/consumidor-final")
 
-    def criar(self, dados: ContatosPostRequest | JsonObject) -> JsonObject:
+    def criar(self, dados: ContatosPostRequest) -> JsonObject:
         """Cria um contato.
 
         Endpoint: POST /contatos
@@ -206,9 +206,7 @@ class ContactsResource(BaseResource):
         """
         return self._post("/contatos", json=to_json_object(dados))
 
-    def alterar(
-        self, id_contato: int, dados: ContatosIdContatoPutRequest | JsonObject
-    ) -> JsonObject:
+    def alterar(self, id_contato: int, dados: ContatosIdContatoPutRequest) -> JsonObject:
         """Altera um contato.
 
         Endpoint: PUT /contatos/{idContato}
@@ -482,7 +480,7 @@ class ContactsResource(BaseResource):
         """
         return self.obter_consumidor_final()
 
-    def create(self, data: ContatosPostRequest | JsonObject) -> JsonObject:
+    def create(self, data: ContatosPostRequest) -> JsonObject:
         """Compatibility alias for ``criar()``.
 
         Cria um contato.
@@ -499,7 +497,7 @@ class ContactsResource(BaseResource):
         """
         return self.criar(data)
 
-    def update(self, contact_id: int, data: ContatosIdContatoPutRequest | JsonObject) -> JsonObject:
+    def update(self, contact_id: int, data: ContatosIdContatoPutRequest) -> JsonObject:
         """Compatibility alias for ``alterar()``.
 
         Altera um contato.

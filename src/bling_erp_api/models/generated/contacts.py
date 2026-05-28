@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from bling_erp_api.models.generated.schemas import (
-    BasePostResponse,
+from bling_erp_api.models.generated.schemas.common import BasePostResponse, ErrorResponse
+from bling_erp_api.models.generated.schemas.contatos import (
     ContatosAlertasResponse,
     ContatosConsumidorFinalGetResponse200,
     ContatosDadosBaseDTO,
@@ -20,7 +20,6 @@ from bling_erp_api.models.generated.schemas import (
     ContatosSituacoesPostResponse200,
     ContatosTipoContatoDTO,
     ContatosTiposGetResponse200,
-    ErrorResponse,
 )
 
 __all__ = [

@@ -74,7 +74,7 @@ class ProductSuppliersResource(BaseResource):
         """
         return self._iterate("/produtos/fornecedores", page=pagina, limit=limite)
 
-    def criar(self, dados: ProdutosFornecedoresPostRequest | JsonObject) -> JsonObject:
+    def criar(self, dados: ProdutosFornecedoresPostRequest) -> JsonObject:
         """Cria um produto fornecedor.
 
         Endpoint: POST /produtos/fornecedores
@@ -106,7 +106,7 @@ class ProductSuppliersResource(BaseResource):
     def alterar(
         self,
         id_produto_fornecedor: int,
-        dados: ProdutosFornecedoresIdProdutoFornecedorPutRequest | JsonObject,
+        dados: ProdutosFornecedoresIdProdutoFornecedorPutRequest,
     ) -> JsonObject:
         """Altera um produto fornecedor.
 

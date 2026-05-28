@@ -235,7 +235,7 @@ class AdsResource(BaseResource):
 
     def criar(
         self,
-        dados: AnunciosSaveRequest | JsonObject,
+        dados: AnunciosSaveRequest,
     ) -> JsonObject:
         """Cria um anúncio.
 
@@ -251,7 +251,7 @@ class AdsResource(BaseResource):
         """
         return self._post("/anuncios", json=to_json_object(dados))
 
-    def create(self, data: AnunciosSaveRequest | JsonObject) -> JsonObject:
+    def create(self, data: AnunciosSaveRequest) -> JsonObject:
         """Compatibility alias for ``criar()``.
 
         Cria um anúncio.
@@ -271,7 +271,7 @@ class AdsResource(BaseResource):
     def alterar(
         self,
         id_anuncio: int,
-        dados: AnunciosSaveRequest | JsonObject,
+        dados: AnunciosSaveRequest,
     ) -> JsonObject:
         """Altera um anúncio.
 
@@ -291,7 +291,7 @@ class AdsResource(BaseResource):
     def update(
         self,
         ad_id: int,
-        data: AnunciosSaveRequest | JsonObject,
+        data: AnunciosSaveRequest,
     ) -> JsonObject:
         """Compatibility alias for ``alterar()``.
 

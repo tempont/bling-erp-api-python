@@ -93,7 +93,7 @@ class IncomeExpenseCategoriesResource(BaseResource):
 
     def criar(
         self,
-        dados: CategoriasReceitasDespesasDadosPostDTO | JsonObject,
+        dados: CategoriasReceitasDespesasDadosPostDTO,
     ) -> JsonObject:
         """Cria uma categoria de receita e despesa.
 
@@ -111,7 +111,7 @@ class IncomeExpenseCategoriesResource(BaseResource):
 
     def create(
         self,
-        data: CategoriasReceitasDespesasDadosPostDTO | JsonObject,
+        data: CategoriasReceitasDespesasDadosPostDTO,
     ) -> JsonObject:
         """Compatibility alias for ``criar()``.
 
@@ -192,7 +192,7 @@ class IncomeExpenseCategoriesResource(BaseResource):
     def alterar(
         self,
         id_categoria: int,
-        dados: CategoriasReceitasDespesasDadosPostDTO | JsonObject,
+        dados: CategoriasReceitasDespesasDadosPostDTO,
     ) -> JsonObject:
         """Altera uma categoria de receita e despesa.
 
@@ -214,7 +214,7 @@ class IncomeExpenseCategoriesResource(BaseResource):
     def update(
         self,
         category_id: int,
-        data: CategoriasReceitasDespesasDadosPostDTO | JsonObject,
+        data: CategoriasReceitasDespesasDadosPostDTO,
     ) -> JsonObject:
         """Compatibility alias for ``alterar()``.
 

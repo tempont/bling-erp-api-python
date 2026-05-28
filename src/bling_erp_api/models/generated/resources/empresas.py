@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from bling_erp_api.models.generated.schemas import (
+from bling_erp_api.models.generated.schemas.empresas import (
     EmpresasDadosBasicosDTO,
     EmpresasMeDadosBasicosGetResponse200,
 )

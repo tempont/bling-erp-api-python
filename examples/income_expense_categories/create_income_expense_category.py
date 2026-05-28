@@ -9,6 +9,9 @@ from bling_erp_api.models.generated.income_expense_categories import (
 
 def main() -> None:
     """Create a new revenue category."""
+    # Model: CategoriasReceitasDespesasPostRequest  # noqa: ERA001
+    #   Required: descricao (str), tipo (int)
+    #   Optional: id (int|None), id_categoria_pai (int|None), grupo_dre (int|None)
     payload = CategoriasReceitasDespesasPostRequest.model_construct(
         descricao="Consultoria", tipo=2, idCategoriaPai=0
     )

@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from bling_erp_api.models.generated.schemas import (
-    BasePostResponse,
-    ContasBaixarContaDTO,
-    ContasDadosBaseDTO,
+from bling_erp_api.models.generated.schemas.common import BasePostResponse, ErrorResponse
+from bling_erp_api.models.generated.schemas.contas import ContasBaixarContaDTO, ContasDadosBaseDTO
+from bling_erp_api.models.generated.schemas.contas_receber import (
     ContasReceberBoletosCancelarDTO,
     ContasReceberBoletosDadosBaseDTO,
     ContasReceberDadosBaseDTO,
@@ -17,7 +16,6 @@ from bling_erp_api.models.generated.schemas import (
     ContasReceberIdContaReceberPutRequest,
     ContasReceberPostRequest,
     ContasReceberPostResponse201,
-    ErrorResponse,
 )
 
 __all__ = [

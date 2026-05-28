@@ -239,7 +239,7 @@ class SalesOrdersResource(BaseResource):
         """Compatibility alias for ``obter()``."""
         return self.obter(order_id)
 
-    def criar(self, dados: PedidosVendasPostRequest | JsonObject) -> JsonObject:
+    def criar(self, dados: PedidosVendasPostRequest) -> JsonObject:
         """Cria um pedido de venda.
 
         Mapeia ``POST /pedidos/vendas``.
@@ -250,12 +250,12 @@ class SalesOrdersResource(BaseResource):
         """
         return self._post("/pedidos/vendas", json=to_json_object(dados))
 
-    def create(self, data: PedidosVendasPostRequest | JsonObject) -> JsonObject:
+    def create(self, data: PedidosVendasPostRequest) -> JsonObject:
         """Compatibility alias for ``criar()``."""
         return self.criar(data)
 
     def alterar(
-        self, id_pedido_venda: int, dados: PedidosVendasIdPedidoVendaPutRequest | JsonObject
+        self, id_pedido_venda: int, dados: PedidosVendasIdPedidoVendaPutRequest
     ) -> JsonObject:
         """Altera um pedido de venda.
 
@@ -268,9 +268,7 @@ class SalesOrdersResource(BaseResource):
         """
         return self._put(f"/pedidos/vendas/{id_pedido_venda}", json=to_json_object(dados))
 
-    def update(
-        self, order_id: int, data: PedidosVendasIdPedidoVendaPutRequest | JsonObject
-    ) -> JsonObject:
+    def update(self, order_id: int, data: PedidosVendasIdPedidoVendaPutRequest) -> JsonObject:
         """Compatibility alias for ``alterar()``."""
         return self.alterar(order_id, data)
 

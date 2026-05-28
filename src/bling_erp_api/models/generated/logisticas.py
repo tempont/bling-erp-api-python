@@ -2,18 +2,24 @@
 
 from __future__ import annotations
 
-from bling_erp_api.models.generated.schemas import (
-    ErrorResponse,
+from bling_erp_api.models.generated.schemas.common import ErrorResponse
+from bling_erp_api.models.generated.schemas.logisticas import (
     LogisticasDadosBaseDTO,
     LogisticasDadosDTO,
     LogisticasDadosPostDTO,
     LogisticasDadosPutDTO,
-    LogisticasEtiquetasDadosResponseDTO,
-    LogisticasEtiquetasGetResponse200,
     LogisticasGetResponse200,
     LogisticasIdLogisticaGetResponse200,
     LogisticasIdLogisticaRemessasGetResponse200,
     LogisticasLogisticaDTO,
+    LogisticasPostResponse201,
+    LogisticasRemessaRemessaDTO,
+)
+from bling_erp_api.models.generated.schemas.logisticas_etiquetas import (
+    LogisticasEtiquetasDadosResponseDTO,
+    LogisticasEtiquetasGetResponse200,
+)
+from bling_erp_api.models.generated.schemas.logisticas_objetos import (
     LogisticasObjetosDadosCreateRequestDTO,
     LogisticasObjetosDadosDTO,
     LogisticasObjetosIdObjetoGetResponse200,
@@ -21,8 +27,8 @@ from bling_erp_api.models.generated.schemas import (
     LogisticasObjetosObjetoDTO,
     LogisticasObjetosPostResponse201,
     LogisticasObjetosUpdateRequestDTO,
-    LogisticasPostResponse201,
-    LogisticasRemessaRemessaDTO,
+)
+from bling_erp_api.models.generated.schemas.logisticas_remessas import (
     LogisticasRemessasDadosBaseDTO,
     LogisticasRemessasDadosBaseDTOCommon,
     LogisticasRemessasDadosDTO,
@@ -30,6 +36,8 @@ from bling_erp_api.models.generated.schemas import (
     LogisticasRemessasIdRemessaGetResponse200,
     LogisticasRemessasIdRemessaPutResponse200,
     LogisticasRemessasPostResponse201,
+)
+from bling_erp_api.models.generated.schemas.logisticas_servicos import (
     LogisticasServicosDadosCreateRequestDTO,
     LogisticasServicosDadosDTO,
     LogisticasServicosDadosSaveDTO,

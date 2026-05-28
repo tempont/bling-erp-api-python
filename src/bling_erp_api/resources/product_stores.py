@@ -89,7 +89,7 @@ class ProductStoresResource(BaseResource):
         """
         return self._iterate("/produtos/lojas", page=pagina, limit=limite)
 
-    def criar(self, dados: ProdutosLojasPostRequest | JsonObject) -> JsonObject:
+    def criar(self, dados: ProdutosLojasPostRequest) -> JsonObject:
         """Cria o vínculo de um produto com uma loja.
 
         Endpoint: POST /produtos/lojas
@@ -119,7 +119,7 @@ class ProductStoresResource(BaseResource):
         return self._get(f"/produtos/lojas/{id_produto_loja}")
 
     def alterar(
-        self, id_produto_loja: int, dados: ProdutosLojasIdProdutoLojaPutRequest | JsonObject
+        self, id_produto_loja: int, dados: ProdutosLojasIdProdutoLojaPutRequest
     ) -> JsonObject:
         """Altera o vínculo de um produto com uma loja.
 

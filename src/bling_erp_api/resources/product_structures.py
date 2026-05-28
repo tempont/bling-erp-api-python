@@ -57,7 +57,7 @@ class ProductStructuresResource(BaseResource):
     def alterar(
         self,
         id_produto_estrutura: int,
-        dados: ProdutosEstruturaDTO | JsonObject,
+        dados: ProdutosEstruturaDTO,
     ) -> JsonObject:
         """Altera a estrutura de um produto com composição.
 
@@ -106,7 +106,7 @@ class ProductStructuresResource(BaseResource):
     def vincular_componentes(
         self,
         id_produto_estrutura: int,
-        componentes: Sequence[ProdutosComponenteDTO | JsonObject],
+        componentes: Sequence[ProdutosComponenteDTO],
     ) -> JsonObject:
         """Adiciona componente(s) a uma estrutura.
 
@@ -133,7 +133,7 @@ class ProductStructuresResource(BaseResource):
         self,
         id_produto_estrutura: int,
         id_componente: int,
-        dados: ProdutosComponenteDTO | JsonObject,
+        dados: ProdutosComponenteDTO,
     ) -> JsonObject:
         """Altera um componente de uma estrutura.
 

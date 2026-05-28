@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
+from bling_erp_api.models.generated.product_stores import ProdutosLojasPostRequest
 from bling_erp_api.models.generated.products import (
     ProdutosDadosBaseDTO,
     ProdutosDadosDTO,
@@ -12,6 +15,8 @@ from bling_erp_api.models.generated.sales_orders import (
     PedidosVendasPostRequest,
 )
 from bling_erp_api.utils.serialization import to_json_object
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 def test_generated_model_accepts_bling_aliases_and_preserves_extra_fields() -> None:
@@ -131,3 +136,22 @@ def test_generated_composed_request_serializes_aliases() -> None:
             "produto": {"id": 123},
         }
     ]
+
+
+def test_generated_model_docstrings_document_payload_fields() -> None:
+    """Public payload models should describe their available fields in IDE hovers."""
+    product_doc = ProdutosDadosDTO.__doc__ or ""
+    store_doc = ProdutosLojasPostRequest.__doc__ or ""
+
+    assert "categoria: Bling ``categoria``" in product_doc
+    assert "codigo: Bling ``codigo``" in store_doc
+    assert "categorias_produtos: Bling ``categoriasProdutos``" in store_doc
+
+
+def test_generated_schemas_are_split_into_schema_modules() -> None:
+    """Generated schemas should live in a package instead of a single monolithic file."""
+    generated_dir = PROJECT_ROOT / "src" / "bling_erp_api" / "models" / "generated"
+
+    assert not (generated_dir / "schemas.py").exists()
+    assert (generated_dir / "schemas" / "produtos.py").exists()
+    assert (generated_dir / "schemas" / "produtos_lojas.py").exists()

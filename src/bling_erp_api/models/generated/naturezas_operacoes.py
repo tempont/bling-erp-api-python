@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
-from bling_erp_api.models.generated.schemas import (
+from bling_erp_api.models.generated.schemas.calculos_impostos import (
     CalculosImpostosCalculoDTO,
     CalculosImpostosDadosDTO,
-    ErrorResponse,
+)
+from bling_erp_api.models.generated.schemas.common import ErrorResponse
+from bling_erp_api.models.generated.schemas.naturezas_operacoes import (
     NaturezasOperacoesDadosDTO,
     NaturezasOperacoesGetResponse200,
     NaturezasOperacoesIdNaturezaOperacaoObterTributacaoPostResponse200,

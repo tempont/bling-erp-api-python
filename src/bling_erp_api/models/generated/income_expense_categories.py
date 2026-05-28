@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from bling_erp_api.models.generated.schemas import (
+from bling_erp_api.models.generated.schemas.categorias_receitas_despesas import (
     CategoriasReceitasDespesasDadosBaseDTO,
     CategoriasReceitasDespesasDadosDTO,
     CategoriasReceitasDespesasDadosPostDTO,
@@ -13,8 +13,8 @@ from bling_erp_api.models.generated.schemas import (
     CategoriasReceitasDespesasIdCategoriaPutResponse200,
     CategoriasReceitasDespesasPostRequest,
     CategoriasReceitasDespesasPostResponse201,
-    ErrorResponse,
 )
+from bling_erp_api.models.generated.schemas.common import ErrorResponse
 
 __all__ = [
     "CategoriasReceitasDespesasDadosBaseDTO",

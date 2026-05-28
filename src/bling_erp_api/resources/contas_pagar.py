@@ -206,7 +206,7 @@ class ContasPagarResource(BaseResource):
     def baixar(
         self,
         id_conta_pagar: int,
-        dados: ContasBaixarContaDTO | JsonObject,
+        dados: ContasBaixarContaDTO,
     ) -> JsonObject:
         """Baixa uma conta a pagar (registra o pagamento).
 
@@ -226,7 +226,7 @@ class ContasPagarResource(BaseResource):
     def settle(
         self,
         payable_id: int,
-        data: ContasBaixarContaDTO | JsonObject,
+        data: ContasBaixarContaDTO,
     ) -> JsonObject:
         """Compatibility alias for ``baixar()``."""
         return self.baixar(id_conta_pagar=payable_id, dados=data)

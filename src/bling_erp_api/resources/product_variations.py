@@ -18,9 +18,7 @@ if TYPE_CHECKING:
 class ProductVariationsResource(BaseResource):
     """Operações em ``/produtos/variacoes``."""
 
-    def gerar_combinacoes(
-        self, dados: ProdutosVariacoesCombinacaoDadosDTO | JsonObject
-    ) -> JsonObject:
+    def gerar_combinacoes(self, dados: ProdutosVariacoesCombinacaoDadosDTO) -> JsonObject:
         """Retorna o produto pai com combinações de novas variações.
 
         Endpoint: POST /produtos/variacoes/atributos/gerar-combinacoes
@@ -55,7 +53,7 @@ class ProductVariationsResource(BaseResource):
     def alterar_atributo(
         self,
         id_produto_pai: int,
-        dados: ProdutosVariacoesDadosAtributoDTO | JsonObject,
+        dados: ProdutosVariacoesDadosAtributoDTO,
     ) -> JsonObject:
         """Altera o nome do atributo nas variações.
 

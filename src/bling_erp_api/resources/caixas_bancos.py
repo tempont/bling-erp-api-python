@@ -143,7 +143,7 @@ class CaixasBancosResource(BaseResource):
 
     def criar(
         self,
-        lancamento: CaixasBancosSalvarLancamentoDTO | JsonObject,
+        lancamento: CaixasBancosSalvarLancamentoDTO,
     ) -> JsonObject:
         """Cria um lançamento de caixa e banco.
 
@@ -161,7 +161,7 @@ class CaixasBancosResource(BaseResource):
 
     def create(
         self,
-        entry: CaixasBancosSalvarLancamentoDTO | JsonObject,
+        entry: CaixasBancosSalvarLancamentoDTO,
     ) -> JsonObject:
         """Compatibility alias for ``criar()``.
 
@@ -214,7 +214,7 @@ class CaixasBancosResource(BaseResource):
     def alterar(
         self,
         id_caixa: int,
-        lancamento: CaixasBancosSalvarLancamentoDTO | JsonObject,
+        lancamento: CaixasBancosSalvarLancamentoDTO,
     ) -> JsonObject:
         """Altera um lançamento de caixa e banco.
 
@@ -234,7 +234,7 @@ class CaixasBancosResource(BaseResource):
     def update(
         self,
         entry_id: int,
-        entry: CaixasBancosSalvarLancamentoDTO | JsonObject,
+        entry: CaixasBancosSalvarLancamentoDTO,
     ) -> JsonObject:
         """Compatibility alias for ``alterar()``.
 

@@ -209,7 +209,7 @@ class ProductsResource(BaseResource):
         """
         return self.obter(product_id)
 
-    def criar(self, dados: ProdutosDadosDTO | JsonObject) -> JsonObject:
+    def criar(self, dados: ProdutosDadosDTO) -> JsonObject:
         """Cria um produto.
 
         Endpoint: POST /produtos
@@ -223,7 +223,7 @@ class ProductsResource(BaseResource):
         """
         return self._post("/produtos", json=to_json_object(dados))
 
-    def create(self, data: ProdutosDadosDTO | JsonObject) -> JsonObject:
+    def create(self, data: ProdutosDadosDTO) -> JsonObject:
         """Compatibility alias for ``criar()``.
 
         Cria um produto
@@ -466,7 +466,7 @@ class ProductsResource(BaseResource):
         """
         return self.criar(data)
 
-    def alterar(self, id_produto: int, dados: ProdutosDadosDTO | JsonObject) -> JsonObject:
+    def alterar(self, id_produto: int, dados: ProdutosDadosDTO) -> JsonObject:
         """Altera um produto.
 
         Endpoint: PUT /produtos/{idProduto}
@@ -484,7 +484,7 @@ class ProductsResource(BaseResource):
         """
         return self._put(f"/produtos/{id_produto}", json=to_json_object(dados))
 
-    def update(self, product_id: int, data: ProdutosDadosDTO | JsonObject) -> JsonObject:
+    def update(self, product_id: int, data: ProdutosDadosDTO) -> JsonObject:
         """Compatibility alias for ``alterar()``.
 
         Altera um produto
@@ -504,9 +504,7 @@ class ProductsResource(BaseResource):
         """
         return self.alterar(product_id, data)
 
-    def alterar_parcialmente(
-        self, id_produto: int, dados: ProdutosDadosPatchDTO | JsonObject
-    ) -> JsonObject:
+    def alterar_parcialmente(self, id_produto: int, dados: ProdutosDadosPatchDTO) -> JsonObject:
         """Altera parcialmente um produto.
 
         Endpoint: PATCH /produtos/{idProduto}
@@ -524,7 +522,7 @@ class ProductsResource(BaseResource):
         """
         return self._patch(f"/produtos/{id_produto}", json=to_json_object(dados))
 
-    def patch(self, product_id: int, data: ProdutosDadosPatchDTO | JsonObject) -> JsonObject:
+    def patch(self, product_id: int, data: ProdutosDadosPatchDTO) -> JsonObject:
         """Compatibility alias for ``alterar_parcialmente()``.
 
         Altera parcialmente um produto

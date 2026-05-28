@@ -9,8 +9,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/anuncios/categorias",
         "pattern": r"^/anuncios/categorias/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.AnunciosCategoriasGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.AnunciosCategoriaDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.anuncios_categorias.AnunciosCategoriasGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.anuncios.AnunciosCategoriaDTO",
     },
     {
         "resource_class": "AdCategoriesResource",
@@ -18,7 +18,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/anuncios/categorias/{idCategoria}",
         "pattern": r"^/anuncios/categorias/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.AnunciosCategoriasIdCategoriaGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.anuncios_categorias.AnunciosCategoriasIdCategoriaGetResponse200",
         "response_item_model": None,
     },
     {
@@ -27,8 +27,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/anuncios",
         "pattern": r"^/anuncios/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.AnunciosGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.AnunciosGetAllResponseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.anuncios.AnunciosGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.anuncios.AnunciosGetAllResponseDTO",
     },
     {
         "resource_class": "AdsResource",
@@ -36,7 +36,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/anuncios",
         "pattern": r"^/anuncios/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.AnunciosPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.anuncios.AnunciosPostResponse201",
         "response_item_model": None,
     },
     {
@@ -54,7 +54,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/anuncios/{idAnuncio}",
         "pattern": r"^/anuncios/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.AnunciosIdAnuncioGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.anuncios.AnunciosIdAnuncioGetResponse200",
         "response_item_model": None,
     },
     {
@@ -99,7 +99,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/borderos/{idBordero}",
         "pattern": r"^/borderos/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.BorderosIdBorderoGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.borderos.BorderosIdBorderoGetResponse200",
         "response_item_model": None,
     },
     {
@@ -108,8 +108,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/caixas",
         "pattern": r"^/caixas/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.CaixasGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.CaixasBancosItemLancamentoDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.caixas_bancos.CaixasGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.caixas_bancos.CaixasBancosItemLancamentoDTO",
     },
     {
         "resource_class": "CaixasBancosResource",
@@ -117,7 +117,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/caixas",
         "pattern": r"^/caixas/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.CaixasBancosSalvarLancamentoResponseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.caixas_bancos.CaixasBancosSalvarLancamentoResponseDTO",
         "response_item_model": None,
     },
     {
@@ -135,7 +135,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/caixas/{idCaixa}",
         "pattern": r"^/caixas/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.CaixasBancosLancamentoDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.caixas_bancos.CaixasBancosLancamentoDTO",
         "response_item_model": None,
     },
     {
@@ -144,7 +144,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "PUT",
         "path": "/caixas/{idCaixa}",
         "pattern": r"^/caixas/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.CaixasBancosSalvarLancamentoResponseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.caixas_bancos.CaixasBancosSalvarLancamentoResponseDTO",
         "response_item_model": None,
     },
     {
@@ -153,7 +153,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "DELETE",
         "path": "/contatos",
         "pattern": r"^/contatos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ContatosDeleteResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.contatos.ContatosDeleteResponse200",
         "response_item_model": None,
     },
     {
@@ -162,8 +162,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/contatos",
         "pattern": r"^/contatos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ContatosGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.ContatosDadosBaseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.contatos.ContatosGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.contatos.ContatosDadosBaseDTO",
     },
     {
         "resource_class": "ContactsResource",
@@ -171,7 +171,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/contatos",
         "pattern": r"^/contatos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ContatosPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.contatos.ContatosPostResponse201",
         "response_item_model": None,
     },
     {
@@ -180,7 +180,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/contatos/consumidor-final",
         "pattern": r"^/contatos/consumidor-final/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ContatosConsumidorFinalGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.contatos.ContatosConsumidorFinalGetResponse200",
         "response_item_model": None,
     },
     {
@@ -189,7 +189,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/contatos/situacoes",
         "pattern": r"^/contatos/situacoes/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ContatosSituacoesPostResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.contatos.ContatosSituacoesPostResponse200",
         "response_item_model": None,
     },
     {
@@ -198,7 +198,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/contatos/tipos",
         "pattern": r"^/contatos/tipos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ContatosTiposGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.contatos.ContatosTiposGetResponse200",
         "response_item_model": None,
     },
     {
@@ -216,7 +216,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/contatos/{idContato}",
         "pattern": r"^/contatos/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ContatosIdContatoGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.contatos.ContatosIdContatoGetResponse200",
         "response_item_model": None,
     },
     {
@@ -243,7 +243,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/contatos/{idContato}/tipos",
         "pattern": r"^/contatos/[^/]+/tipos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ContatosIdContatoTiposGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.contatos.ContatosIdContatoTiposGetResponse200",
         "response_item_model": None,
     },
     {
@@ -252,8 +252,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/contas-contabeis",
         "pattern": r"^/contas-contabeis/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ContasContabeisGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.ContasContabeisDadosDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.contas_contabeis.ContasContabeisGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.contas_contabeis.ContasContabeisDadosDTO",
     },
     {
         "resource_class": "ContasContabeisResource",
@@ -261,7 +261,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/contas-contabeis/{idContaContabil}",
         "pattern": r"^/contas-contabeis/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ContasContabeisIdContaContabilGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.contas_contabeis.ContasContabeisIdContaContabilGetResponse200",
         "response_item_model": None,
     },
     {
@@ -270,8 +270,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/contas/pagar",
         "pattern": r"^/contas/pagar/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ContasPagarGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.ContasDadosBaseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.contas_pagar.ContasPagarGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.contas.ContasDadosBaseDTO",
     },
     {
         "resource_class": "ContasPagarResource",
@@ -279,7 +279,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/contas/pagar",
         "pattern": r"^/contas/pagar/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.BasePostResponse",
+        "response_model": "bling_erp_api.models.generated.schemas.common.BasePostResponse",
         "response_item_model": None,
     },
     {
@@ -297,7 +297,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/contas/pagar/{idContaPagar}",
         "pattern": r"^/contas/pagar/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ContasPagarIdContaPagarGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.contas_pagar.ContasPagarIdContaPagarGetResponse200",
         "response_item_model": None,
     },
     {
@@ -306,7 +306,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "PUT",
         "path": "/contas/pagar/{idContaPagar}",
         "pattern": r"^/contas/pagar/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.BasePostResponse",
+        "response_model": "bling_erp_api.models.generated.schemas.common.BasePostResponse",
         "response_item_model": None,
     },
     {
@@ -315,7 +315,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/contas/pagar/{idContaPagar}/baixar",
         "pattern": r"^/contas/pagar/[^/]+/baixar/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ContasPagarIdContaPagarBaixarPostResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.contas_pagar.ContasPagarIdContaPagarBaixarPostResponse200",
         "response_item_model": None,
     },
     {
@@ -324,8 +324,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/contas/receber",
         "pattern": r"^/contas/receber/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ContasReceberGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.ContasReceberDadosListDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.contas_receber.ContasReceberGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.contas_receber.ContasReceberDadosListDTO",
     },
     {
         "resource_class": "ContasReceberResource",
@@ -333,7 +333,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/contas/receber",
         "pattern": r"^/contas/receber/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ContasReceberPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.contas_receber.ContasReceberPostResponse201",
         "response_item_model": None,
     },
     {
@@ -342,7 +342,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/contas/receber/boletos",
         "pattern": r"^/contas/receber/boletos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ContasReceberBoletosDadosBaseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.contas_receber.ContasReceberBoletosDadosBaseDTO",
         "response_item_model": None,
     },
     {
@@ -369,7 +369,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/contas/receber/{idContaReceber}",
         "pattern": r"^/contas/receber/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ContasReceberIdContaReceberGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.contas_receber.ContasReceberIdContaReceberGetResponse200",
         "response_item_model": None,
     },
     {
@@ -387,7 +387,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/contas/receber/{idContaReceber}/baixar",
         "pattern": r"^/contas/receber/[^/]+/baixar/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ContasReceberIdContaReceberBaixarPostResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.contas_receber.ContasReceberIdContaReceberBaixarPostResponse200",
         "response_item_model": None,
     },
     {
@@ -396,8 +396,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/depositos",
         "pattern": r"^/depositos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.DepositosGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.DepositosDadosDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.depositos.DepositosGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.depositos.DepositosDadosDTO",
     },
     {
         "resource_class": "DepositosResource",
@@ -405,7 +405,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/depositos",
         "pattern": r"^/depositos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.DepositosPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.depositos.DepositosPostResponse201",
         "response_item_model": None,
     },
     {
@@ -414,7 +414,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/depositos/{idDeposito}",
         "pattern": r"^/depositos/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.DepositosIdDepositoGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.depositos.DepositosIdDepositoGetResponse200",
         "response_item_model": None,
     },
     {
@@ -423,7 +423,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "PUT",
         "path": "/depositos/{idDeposito}",
         "pattern": r"^/depositos/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.DepositosIdDepositoPutResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.depositos.DepositosIdDepositoPutResponse200",
         "response_item_model": None,
     },
     {
@@ -432,7 +432,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/empresas/me/dados-basicos",
         "pattern": r"^/empresas/me/dados-basicos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.EmpresasMeDadosBasicosGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.empresas.EmpresasMeDadosBasicosGetResponse200",
         "response_item_model": None,
     },
     {
@@ -441,7 +441,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/estoques",
         "pattern": r"^/estoques/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.EstoquesPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.estoques.EstoquesPostResponse201",
         "response_item_model": None,
     },
     {
@@ -450,7 +450,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/estoques/saldos",
         "pattern": r"^/estoques/saldos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.EstoquesSaldosGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.estoques.EstoquesSaldosGetResponse200",
         "response_item_model": None,
     },
     {
@@ -459,7 +459,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/estoques/saldos/{idDeposito}",
         "pattern": r"^/estoques/saldos/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.EstoquesSaldosIdDepositoGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.estoques.EstoquesSaldosIdDepositoGetResponse200",
         "response_item_model": None,
     },
     {
@@ -468,7 +468,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/homologacao/produtos",
         "pattern": r"^/homologacao/produtos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.HomologacaoProdutosGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.homologacao.HomologacaoProdutosGetResponse200",
         "response_item_model": None,
     },
     {
@@ -477,7 +477,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/homologacao/produtos",
         "pattern": r"^/homologacao/produtos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.HomologacaoProdutosPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.homologacao.HomologacaoProdutosPostResponse201",
         "response_item_model": None,
     },
     {
@@ -513,7 +513,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "DELETE",
         "path": "/categorias/receitas-despesas",
         "pattern": r"^/categorias/receitas-despesas/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.CategoriasReceitasDespesasDeleteResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.categorias_receitas_despesas.CategoriasReceitasDespesasDeleteResponse200",
         "response_item_model": None,
     },
     {
@@ -522,8 +522,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/categorias/receitas-despesas",
         "pattern": r"^/categorias/receitas-despesas/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.CategoriasReceitasDespesasGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.CategoriasReceitasDespesasDadosBaseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.categorias_receitas_despesas.CategoriasReceitasDespesasGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.categorias_receitas_despesas.CategoriasReceitasDespesasDadosBaseDTO",
     },
     {
         "resource_class": "IncomeExpenseCategoriesResource",
@@ -531,7 +531,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/categorias/receitas-despesas",
         "pattern": r"^/categorias/receitas-despesas/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.CategoriasReceitasDespesasPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.categorias_receitas_despesas.CategoriasReceitasDespesasPostResponse201",
         "response_item_model": None,
     },
     {
@@ -549,7 +549,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/categorias/receitas-despesas/{idCategoria}",
         "pattern": r"^/categorias/receitas-despesas/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.CategoriasReceitasDespesasIdCategoriaGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.categorias_receitas_despesas.CategoriasReceitasDespesasIdCategoriaGetResponse200",
         "response_item_model": None,
     },
     {
@@ -558,7 +558,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "PUT",
         "path": "/categorias/receitas-despesas/{idCategoria}",
         "pattern": r"^/categorias/receitas-despesas/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.CategoriasReceitasDespesasIdCategoriaPutResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.categorias_receitas_despesas.CategoriasReceitasDespesasIdCategoriaPutResponse200",
         "response_item_model": None,
     },
     {
@@ -567,8 +567,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/nfce",
         "pattern": r"^/nfce/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NfceGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.NotasFiscaisDadosBaseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.notas_fiscais_consumidor.NfceGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NotasFiscaisDadosBaseDTO",
     },
     {
         "resource_class": "NfeResource",
@@ -576,7 +576,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/nfce",
         "pattern": r"^/nfce/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NfcePostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.notas_fiscais_consumidor.NfcePostResponse201",
         "response_item_model": None,
     },
     {
@@ -585,7 +585,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/nfce/{idNotaFiscalConsumidor}",
         "pattern": r"^/nfce/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NfceIdNotaFiscalConsumidorGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.notas_fiscais_consumidor.NfceIdNotaFiscalConsumidorGetResponse200",
         "response_item_model": None,
     },
     {
@@ -594,7 +594,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "PUT",
         "path": "/nfce/{idNotaFiscalConsumidor}",
         "pattern": r"^/nfce/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NfceIdNotaFiscalConsumidorPutResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.notas_fiscais_consumidor.NfceIdNotaFiscalConsumidorPutResponse200",
         "response_item_model": None,
     },
     {
@@ -603,7 +603,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/nfce/{idNotaFiscalConsumidor}/enviar",
         "pattern": r"^/nfce/[^/]+/enviar/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NfceIdNotaFiscalConsumidorEnviarPostResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.notas_fiscais_consumidor.NfceIdNotaFiscalConsumidorEnviarPostResponse200",
         "response_item_model": None,
     },
     {
@@ -657,7 +657,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "DELETE",
         "path": "/nfe",
         "pattern": r"^/nfe/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NfeDeleteResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NfeDeleteResponse200",
         "response_item_model": None,
     },
     {
@@ -666,8 +666,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/nfe",
         "pattern": r"^/nfe/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NfeGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.NotasFiscaisDadosBaseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NfeGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NotasFiscaisDadosBaseDTO",
     },
     {
         "resource_class": "NfeResource",
@@ -675,7 +675,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/nfe",
         "pattern": r"^/nfe/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NfePostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NfePostResponse201",
         "response_item_model": None,
     },
     {
@@ -684,7 +684,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/nfe/documento/{chaveAcesso}",
         "pattern": r"^/nfe/documento/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NfeDocumentoChaveAcessoGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NfeDocumentoChaveAcessoGetResponse200",
         "response_item_model": None,
     },
     {
@@ -693,7 +693,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/nfe/{idNotaFiscal}",
         "pattern": r"^/nfe/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NfeIdNotaFiscalGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NfeIdNotaFiscalGetResponse200",
         "response_item_model": None,
     },
     {
@@ -702,7 +702,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "PUT",
         "path": "/nfe/{idNotaFiscal}",
         "pattern": r"^/nfe/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NfeIdNotaFiscalPutResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NfeIdNotaFiscalPutResponse200",
         "response_item_model": None,
     },
     {
@@ -711,7 +711,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/nfe/{idNotaFiscal}/enviar",
         "pattern": r"^/nfe/[^/]+/enviar/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NfeIdNotaFiscalEnviarPostResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NfeIdNotaFiscalEnviarPostResponse200",
         "response_item_model": None,
     },
     {
@@ -756,8 +756,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/logisticas",
         "pattern": r"^/logisticas/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.LogisticasGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.LogisticasDadosBaseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.logisticas.LogisticasGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.logisticas.LogisticasDadosBaseDTO",
     },
     {
         "resource_class": "LogisticasResource",
@@ -765,7 +765,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/logisticas",
         "pattern": r"^/logisticas/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.LogisticasPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.logisticas.LogisticasPostResponse201",
         "response_item_model": None,
     },
     {
@@ -774,7 +774,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/logisticas/etiquetas",
         "pattern": r"^/logisticas/etiquetas/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.LogisticasEtiquetasGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.logisticas_etiquetas.LogisticasEtiquetasGetResponse200",
         "response_item_model": None,
     },
     {
@@ -783,7 +783,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/logisticas/objetos",
         "pattern": r"^/logisticas/objetos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.LogisticasObjetosPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.logisticas_objetos.LogisticasObjetosPostResponse201",
         "response_item_model": None,
     },
     {
@@ -801,7 +801,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/logisticas/objetos/{idObjeto}",
         "pattern": r"^/logisticas/objetos/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.LogisticasObjetosIdObjetoGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.logisticas_objetos.LogisticasObjetosIdObjetoGetResponse200",
         "response_item_model": None,
     },
     {
@@ -810,7 +810,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "PUT",
         "path": "/logisticas/objetos/{idObjeto}",
         "pattern": r"^/logisticas/objetos/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.LogisticasObjetosIdObjetoPutResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.logisticas_objetos.LogisticasObjetosIdObjetoPutResponse200",
         "response_item_model": None,
     },
     {
@@ -819,7 +819,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/logisticas/remessas",
         "pattern": r"^/logisticas/remessas/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.LogisticasRemessasPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.logisticas_remessas.LogisticasRemessasPostResponse201",
         "response_item_model": None,
     },
     {
@@ -837,7 +837,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/logisticas/remessas/{idRemessa}",
         "pattern": r"^/logisticas/remessas/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.LogisticasRemessasIdRemessaGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.logisticas_remessas.LogisticasRemessasIdRemessaGetResponse200",
         "response_item_model": None,
     },
     {
@@ -846,7 +846,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "PUT",
         "path": "/logisticas/remessas/{idRemessa}",
         "pattern": r"^/logisticas/remessas/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.LogisticasRemessasIdRemessaPutResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.logisticas_remessas.LogisticasRemessasIdRemessaPutResponse200",
         "response_item_model": None,
     },
     {
@@ -855,7 +855,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/logisticas/servicos",
         "pattern": r"^/logisticas/servicos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.LogisticasServicosGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.logisticas_servicos.LogisticasServicosGetResponse200",
         "response_item_model": None,
     },
     {
@@ -864,7 +864,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/logisticas/servicos",
         "pattern": r"^/logisticas/servicos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.LogisticasServicosPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.logisticas_servicos.LogisticasServicosPostResponse201",
         "response_item_model": None,
     },
     {
@@ -873,7 +873,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/logisticas/servicos/{idLogisticaServico}",
         "pattern": r"^/logisticas/servicos/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.LogisticasServicosIdLogisticaServicoGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.logisticas_servicos.LogisticasServicosIdLogisticaServicoGetResponse200",
         "response_item_model": None,
     },
     {
@@ -882,7 +882,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "PUT",
         "path": "/logisticas/servicos/{idLogisticaServico}",
         "pattern": r"^/logisticas/servicos/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.LogisticasServicosIdLogisticaServicoPutResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.logisticas_servicos.LogisticasServicosIdLogisticaServicoPutResponse200",
         "response_item_model": None,
     },
     {
@@ -909,7 +909,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/logisticas/{idLogistica}",
         "pattern": r"^/logisticas/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.LogisticasIdLogisticaGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.logisticas.LogisticasIdLogisticaGetResponse200",
         "response_item_model": None,
     },
     {
@@ -927,7 +927,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/logisticas/{idLogistica}/remessas",
         "pattern": r"^/logisticas/[^/]+/remessas/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.LogisticasIdLogisticaRemessasGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.logisticas.LogisticasIdLogisticaRemessasGetResponse200",
         "response_item_model": None,
     },
     {
@@ -936,8 +936,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/naturezas-operacoes",
         "pattern": r"^/naturezas-operacoes/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NaturezasOperacoesGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.NaturezasOperacoesDadosDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.naturezas_operacoes.NaturezasOperacoesGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.naturezas_operacoes.NaturezasOperacoesDadosDTO",
     },
     {
         "resource_class": "NaturezasOperacoesResource",
@@ -945,7 +945,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/naturezas-operacoes/{idNaturezaOperacao}/obter-tributacao",
         "pattern": r"^/naturezas-operacoes/[^/]+/obter-tributacao/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NaturezasOperacoesIdNaturezaOperacaoObterTributacaoPostResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.naturezas_operacoes.NaturezasOperacoesIdNaturezaOperacaoObterTributacaoPostResponse200",
         "response_item_model": None,
     },
     {
@@ -954,8 +954,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/nfse",
         "pattern": r"^/nfse/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NfseGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.NotasServicosDadosBaseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.notas_servicos.NfseGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.notas_servicos.NotasServicosDadosBaseDTO",
     },
     {
         "resource_class": "NfseResource",
@@ -963,7 +963,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/nfse",
         "pattern": r"^/nfse/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NfsePostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.notas_servicos.NfsePostResponse201",
         "response_item_model": None,
     },
     {
@@ -972,7 +972,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/nfse/configuracoes",
         "pattern": r"^/nfse/configuracoes/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ConfiguracaoNotaServicoDadosBaseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.configuracoes.ConfiguracaoNotaServicoDadosBaseDTO",
         "response_item_model": None,
     },
     {
@@ -999,7 +999,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/nfse/{idNotaServico}",
         "pattern": r"^/nfse/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NfseIdNotaServicoGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.notas_servicos.NfseIdNotaServicoGetResponse200",
         "response_item_model": None,
     },
     {
@@ -1017,7 +1017,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/nfse/{idNotaServico}/enviar",
         "pattern": r"^/nfse/[^/]+/enviar/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NfseIdNotaServicoEnviarPostResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.notas_servicos.NfseIdNotaServicoEnviarPostResponse200",
         "response_item_model": None,
     },
     {
@@ -1026,7 +1026,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/notificacoes",
         "pattern": r"^/notificacoes/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NotificacoesGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.notificacoes.NotificacoesGetResponse200",
         "response_item_model": None,
     },
     {
@@ -1035,8 +1035,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/notificacoes/quantidade",
         "pattern": r"^/notificacoes/quantidade/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NotificacoesQuantidadeGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.NotificacoesQuantidadeDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.notificacoes.NotificacoesQuantidadeGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.notificacoes.NotificacoesQuantidadeDTO",
     },
     {
         "resource_class": "NotificacoesResource",
@@ -1044,7 +1044,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/notificacoes/{idNotificacao}/confirmar-leitura",
         "pattern": r"^/notificacoes/[^/]+/confirmar-leitura/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.NotificacoesIdNotificacaoConfirmarLeituraPostResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.notificacoes.NotificacoesIdNotificacaoConfirmarLeituraPostResponse200",
         "response_item_model": None,
     },
     {
@@ -1053,8 +1053,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/ordens-producao",
         "pattern": r"^/ordens-producao/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.OrdensProducaoGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.OrdensProducaoDadosBaseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.ordens_producao.OrdensProducaoGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.ordens_producao.OrdensProducaoDadosBaseDTO",
     },
     {
         "resource_class": "OrdensProducaoResource",
@@ -1062,7 +1062,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/ordens-producao",
         "pattern": r"^/ordens-producao/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.OrdensProducaoPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.ordens_producao.OrdensProducaoPostResponse201",
         "response_item_model": None,
     },
     {
@@ -1071,7 +1071,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/ordens-producao/gerar-sob-demanda",
         "pattern": r"^/ordens-producao/gerar-sob-demanda/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.OrdensProducaoGerarSobDemandaPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.ordens_producao.OrdensProducaoGerarSobDemandaPostResponse201",
         "response_item_model": None,
     },
     {
@@ -1089,7 +1089,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/ordens-producao/{idOrdemProducao}",
         "pattern": r"^/ordens-producao/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.OrdensProducaoIdOrdemProducaoGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.ordens_producao.OrdensProducaoIdOrdemProducaoGetResponse200",
         "response_item_model": None,
     },
     {
@@ -1116,8 +1116,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/formas-pagamentos",
         "pattern": r"^/formas-pagamentos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.FormasPagamentosGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.FormasPagamentosDadosBaseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.formas_pagamentos.FormasPagamentosGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.formas_pagamentos.FormasPagamentosDadosBaseDTO",
     },
     {
         "resource_class": "PaymentMethodsResource",
@@ -1125,7 +1125,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/formas-pagamentos",
         "pattern": r"^/formas-pagamentos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.FormasPagamentosPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.formas_pagamentos.FormasPagamentosPostResponse201",
         "response_item_model": None,
     },
     {
@@ -1143,7 +1143,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/formas-pagamentos/{idFormaPagamento}",
         "pattern": r"^/formas-pagamentos/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.FormasPagamentosIdFormaPagamentoGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.formas_pagamentos.FormasPagamentosIdFormaPagamentoGetResponse200",
         "response_item_model": None,
     },
     {
@@ -1152,7 +1152,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "PUT",
         "path": "/formas-pagamentos/{idFormaPagamento}",
         "pattern": r"^/formas-pagamentos/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.FormasPagamentosIdFormaPagamentoPutResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.formas_pagamentos.FormasPagamentosIdFormaPagamentoPutResponse200",
         "response_item_model": None,
     },
     {
@@ -1179,7 +1179,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/produtos/lotes/lancamentos/{idLancamento}",
         "pattern": r"^/produtos/lotes/lancamentos/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosLotesLancamentosIdLancamentoGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.lotes.ProdutosLotesLancamentosIdLancamentoGetResponse200",
         "response_item_model": None,
     },
     {
@@ -1197,8 +1197,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/produtos/lotes/{idLote}/lancamentos",
         "pattern": r"^/produtos/lotes/[^/]+/lancamentos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosLotesIdLoteLancamentosGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.LoteLancamentoDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.lotes.ProdutosLotesIdLoteLancamentosGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.lotes_lancamentos.LoteLancamentoDTO",
     },
     {
         "resource_class": "ProductBatchEntriesResource",
@@ -1206,7 +1206,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/produtos/lotes/{idLote}/lancamentos",
         "pattern": r"^/produtos/lotes/[^/]+/lancamentos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosLotesIdLoteLancamentosPostResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.lotes.ProdutosLotesIdLoteLancamentosPostResponse200",
         "response_item_model": None,
     },
     {
@@ -1215,7 +1215,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/produtos/{idProduto}/lotes/depositos/{idDeposito}/saldo",
         "pattern": r"^/produtos/[^/]+/lotes/depositos/[^/]+/saldo/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosIdProdutoLotesDepositosIdDepositoSaldoGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos.ProdutosIdProdutoLotesDepositosIdDepositoSaldoGetResponse200",
         "response_item_model": None,
     },
     {
@@ -1224,7 +1224,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/produtos/{idProduto}/lotes/depositos/{idDeposito}/saldo/soma",
         "pattern": r"^/produtos/[^/]+/lotes/depositos/[^/]+/saldo/soma/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosIdProdutoLotesDepositosIdDepositoSaldoSomaGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos.ProdutosIdProdutoLotesDepositosIdDepositoSaldoSomaGetResponse200",
         "response_item_model": None,
     },
     {
@@ -1233,7 +1233,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/produtos/{idProduto}/lotes/saldo/soma",
         "pattern": r"^/produtos/[^/]+/lotes/saldo/soma/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosIdProdutoLotesSaldoSomaGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos.ProdutosIdProdutoLotesSaldoSomaGetResponse200",
         "response_item_model": None,
     },
     {
@@ -1242,7 +1242,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/produtos/{idProduto}/lotes/{idLote}/depositos/{idDeposito}/saldo",
         "pattern": r"^/produtos/[^/]+/lotes/[^/]+/depositos/[^/]+/saldo/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosIdProdutoLotesIdLoteDepositosIdDepositoSaldoGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos.ProdutosIdProdutoLotesIdLoteDepositosIdDepositoSaldoGetResponse200",
         "response_item_model": None,
     },
     {
@@ -1260,8 +1260,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/produtos/lotes",
         "pattern": r"^/produtos/lotes/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosLotesGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.LotesDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.lotes.ProdutosLotesGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.lotes.LotesDTO",
     },
     {
         "resource_class": "ProductBatchesResource",
@@ -1269,7 +1269,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "PUT",
         "path": "/produtos/lotes",
         "pattern": r"^/produtos/lotes/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosLotesPutResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.lotes.ProdutosLotesPutResponse200",
         "response_item_model": None,
     },
     {
@@ -1278,8 +1278,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/produtos/lotes/controla-lote",
         "pattern": r"^/produtos/lotes/controla-lote/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosLotesControlaLoteGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.ProdutoControlaLotesDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.lotes.ProdutosLotesControlaLoteGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.lotes.ProdutoControlaLotesDTO",
     },
     {
         "resource_class": "ProductBatchesResource",
@@ -1287,7 +1287,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/produtos/lotes/{idLote}",
         "pattern": r"^/produtos/lotes/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosLotesIdLoteGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.lotes.ProdutosLotesIdLoteGetResponse200",
         "response_item_model": None,
     },
     {
@@ -1323,7 +1323,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/categorias/produtos",
         "pattern": r"^/categorias/produtos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.CategoriasProdutosGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.categorias_produtos.CategoriasProdutosGetResponse200",
         "response_item_model": None,
     },
     {
@@ -1332,7 +1332,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/categorias/produtos",
         "pattern": r"^/categorias/produtos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.CategoriasProdutosPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.categorias_produtos.CategoriasProdutosPostResponse201",
         "response_item_model": None,
     },
     {
@@ -1350,7 +1350,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/categorias/produtos/{idCategoriaProduto}",
         "pattern": r"^/categorias/produtos/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.CategoriasProdutosIdCategoriaProdutoGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.categorias_produtos.CategoriasProdutosIdCategoriaProdutoGetResponse200",
         "response_item_model": None,
     },
     {
@@ -1368,7 +1368,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "DELETE",
         "path": "/grupos-produtos",
         "pattern": r"^/grupos-produtos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.GruposProdutosDeleteResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.grupos_produtos.GruposProdutosDeleteResponse200",
         "response_item_model": None,
     },
     {
@@ -1377,8 +1377,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/grupos-produtos",
         "pattern": r"^/grupos-produtos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.GruposProdutosGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.GruposProdutosDadosDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.grupos_produtos.GruposProdutosGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.grupos_produtos.GruposProdutosDadosDTO",
     },
     {
         "resource_class": "ProductGroupsResource",
@@ -1386,7 +1386,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/grupos-produtos",
         "pattern": r"^/grupos-produtos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.GruposProdutosPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.grupos_produtos.GruposProdutosPostResponse201",
         "response_item_model": None,
     },
     {
@@ -1404,7 +1404,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/grupos-produtos/{idGrupoProduto}",
         "pattern": r"^/grupos-produtos/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.GruposProdutosIdGrupoProdutoGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.grupos_produtos.GruposProdutosIdGrupoProdutoGetResponse200",
         "response_item_model": None,
     },
     {
@@ -1422,8 +1422,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/produtos/lojas",
         "pattern": r"^/produtos/lojas/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosLojasGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.ProdutosLojasDadosDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos_lojas.ProdutosLojasGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.produtos_lojas.ProdutosLojasDadosDTO",
     },
     {
         "resource_class": "ProductStoresResource",
@@ -1431,7 +1431,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/produtos/lojas",
         "pattern": r"^/produtos/lojas/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosLojasPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos_lojas.ProdutosLojasPostResponse201",
         "response_item_model": None,
     },
     {
@@ -1449,7 +1449,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/produtos/lojas/{idProdutoLoja}",
         "pattern": r"^/produtos/lojas/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosLojasIdProdutoLojaGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos_lojas.ProdutosLojasIdProdutoLojaGetResponse200",
         "response_item_model": None,
     },
     {
@@ -1458,7 +1458,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "PUT",
         "path": "/produtos/lojas/{idProdutoLoja}",
         "pattern": r"^/produtos/lojas/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosLojasIdProdutoLojaPutResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos_lojas.ProdutosLojasIdProdutoLojaPutResponse200",
         "response_item_model": None,
     },
     {
@@ -1467,7 +1467,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "DELETE",
         "path": "/produtos/estruturas",
         "pattern": r"^/produtos/estruturas/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosEstruturasDeleteResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos_estruturas.ProdutosEstruturasDeleteResponse200",
         "response_item_model": None,
     },
     {
@@ -1476,7 +1476,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/produtos/estruturas/{idProdutoEstrutura}",
         "pattern": r"^/produtos/estruturas/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosEstruturasIdProdutoEstruturaGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos_estruturas.ProdutosEstruturasIdProdutoEstruturaGetResponse200",
         "response_item_model": None,
     },
     {
@@ -1521,8 +1521,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/produtos/fornecedores",
         "pattern": r"^/produtos/fornecedores/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosFornecedoresGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.ProdutosFornecedoresDadosBaseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos_fornecedores.ProdutosFornecedoresGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.produtos_fornecedores.ProdutosFornecedoresDadosBaseDTO",
     },
     {
         "resource_class": "ProductSuppliersResource",
@@ -1530,7 +1530,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/produtos/fornecedores",
         "pattern": r"^/produtos/fornecedores/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosFornecedoresPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos_fornecedores.ProdutosFornecedoresPostResponse201",
         "response_item_model": None,
     },
     {
@@ -1548,7 +1548,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/produtos/fornecedores/{idProdutoFornecedor}",
         "pattern": r"^/produtos/fornecedores/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosFornecedoresIdProdutoFornecedorGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos_fornecedores.ProdutosFornecedoresIdProdutoFornecedorGetResponse200",
         "response_item_model": None,
     },
     {
@@ -1557,7 +1557,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "PUT",
         "path": "/produtos/fornecedores/{idProdutoFornecedor}",
         "pattern": r"^/produtos/fornecedores/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosFornecedoresIdProdutoFornecedorPutResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos_fornecedores.ProdutosFornecedoresIdProdutoFornecedorPutResponse200",
         "response_item_model": None,
     },
     {
@@ -1566,7 +1566,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/produtos/variacoes/atributos/gerar-combinacoes",
         "pattern": r"^/produtos/variacoes/atributos/gerar-combinacoes/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosVariacoesAtributosGerarCombinacoesPostResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos_variacoes.ProdutosVariacoesAtributosGerarCombinacoesPostResponse200",
         "response_item_model": None,
     },
     {
@@ -1575,8 +1575,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/produtos/variacoes/{idProdutoPai}",
         "pattern": r"^/produtos/variacoes/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosVariacoesIdProdutoPaiGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.ProdutosDadosDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos_variacoes.ProdutosVariacoesIdProdutoPaiGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.produtos.ProdutosDadosDTO",
     },
     {
         "resource_class": "ProductVariationsResource",
@@ -1584,7 +1584,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "PATCH",
         "path": "/produtos/variacoes/{idProdutoPai}/atributos",
         "pattern": r"^/produtos/variacoes/[^/]+/atributos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosVariacoesIdProdutoPaiAtributosPatchResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos_variacoes.ProdutosVariacoesIdProdutoPaiAtributosPatchResponse200",
         "response_item_model": None,
     },
     {
@@ -1593,7 +1593,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "DELETE",
         "path": "/produtos",
         "pattern": r"^/produtos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosDeleteResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos.ProdutosDeleteResponse200",
         "response_item_model": None,
     },
     {
@@ -1602,8 +1602,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/produtos",
         "pattern": r"^/produtos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.ProdutosDadosBaseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos.ProdutosGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.produtos.ProdutosDadosBaseDTO",
     },
     {
         "resource_class": "ProductsResource",
@@ -1611,7 +1611,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/produtos",
         "pattern": r"^/produtos/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosResponsePOSTPUT",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos.ProdutosResponsePOSTPUT",
         "response_item_model": None,
     },
     {
@@ -1620,7 +1620,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/produtos/situacoes",
         "pattern": r"^/produtos/situacoes/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosSituacoesPostResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos.ProdutosSituacoesPostResponse200",
         "response_item_model": None,
     },
     {
@@ -1638,7 +1638,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/produtos/{idProduto}",
         "pattern": r"^/produtos/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosIdProdutoGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos.ProdutosIdProdutoGetResponse200",
         "response_item_model": None,
     },
     {
@@ -1647,7 +1647,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "PATCH",
         "path": "/produtos/{idProduto}",
         "pattern": r"^/produtos/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosResponsePOSTPUT",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos.ProdutosResponsePOSTPUT",
         "response_item_model": None,
     },
     {
@@ -1656,7 +1656,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "PUT",
         "path": "/produtos/{idProduto}",
         "pattern": r"^/produtos/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.ProdutosResponsePOSTPUT",
+        "response_model": "bling_erp_api.models.generated.schemas.produtos.ProdutosResponsePOSTPUT",
         "response_item_model": None,
     },
     {
@@ -1674,7 +1674,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "DELETE",
         "path": "/pedidos/vendas",
         "pattern": r"^/pedidos/vendas/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.PedidosVendasDeleteResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.pedidos_vendas.PedidosVendasDeleteResponse200",
         "response_item_model": None,
     },
     {
@@ -1683,8 +1683,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/pedidos/vendas",
         "pattern": r"^/pedidos/vendas/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.PedidosVendasGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.VendasDadosBaseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.pedidos_vendas.PedidosVendasGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.pedidos_vendas.VendasDadosBaseDTO",
     },
     {
         "resource_class": "SalesOrdersResource",
@@ -1692,7 +1692,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/pedidos/vendas",
         "pattern": r"^/pedidos/vendas/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.PedidosVendasPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.pedidos_vendas.PedidosVendasPostResponse201",
         "response_item_model": None,
     },
     {
@@ -1710,7 +1710,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/pedidos/vendas/{idPedidoVenda}",
         "pattern": r"^/pedidos/vendas/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.PedidosVendasIdPedidoVendaGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.pedidos_vendas.PedidosVendasIdPedidoVendaGetResponse200",
         "response_item_model": None,
     },
     {
@@ -1719,7 +1719,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "PUT",
         "path": "/pedidos/vendas/{idPedidoVenda}",
         "pattern": r"^/pedidos/vendas/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.PedidosVendasIdPedidoVendaPutResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.pedidos_vendas.PedidosVendasIdPedidoVendaPutResponse200",
         "response_item_model": None,
     },
     {
@@ -1746,7 +1746,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/pedidos/vendas/{idPedidoVenda}/gerar-nfce",
         "pattern": r"^/pedidos/vendas/[^/]+/gerar-nfce/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.VendasCreateInvoiceResponseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.pedidos_vendas.VendasCreateInvoiceResponseDTO",
         "response_item_model": None,
     },
     {
@@ -1755,7 +1755,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/pedidos/vendas/{idPedidoVenda}/gerar-nfe",
         "pattern": r"^/pedidos/vendas/[^/]+/gerar-nfe/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.VendasCreateInvoiceResponseDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.pedidos_vendas.VendasCreateInvoiceResponseDTO",
         "response_item_model": None,
     },
     {
@@ -1800,8 +1800,8 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/categorias/lojas",
         "pattern": r"^/categorias/lojas/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.CategoriasLojasGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.CategoriasLojasDadosDTO",
+        "response_model": "bling_erp_api.models.generated.schemas.categorias_lojas.CategoriasLojasGetResponse200",
+        "response_item_model": "bling_erp_api.models.generated.schemas.categorias_lojas.CategoriasLojasDadosDTO",
     },
     {
         "resource_class": "StoreCategoriesResource",
@@ -1809,7 +1809,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/categorias/lojas",
         "pattern": r"^/categorias/lojas/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.CategoriasLojasPostResponse201",
+        "response_model": "bling_erp_api.models.generated.schemas.categorias_lojas.CategoriasLojasPostResponse201",
         "response_item_model": None,
     },
     {
@@ -1827,7 +1827,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "GET",
         "path": "/categorias/lojas/{idCategoriaLoja}",
         "pattern": r"^/categorias/lojas/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.CategoriasLojasIdCategoriaLojaGetResponse200",
+        "response_model": "bling_erp_api.models.generated.schemas.categorias_lojas.CategoriasLojasIdCategoriaLojaGetResponse200",
         "response_item_model": None,
     },
     {

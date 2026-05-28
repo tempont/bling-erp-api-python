@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from bling_erp_api.models.generated.schemas import (
+from bling_erp_api.models.generated.schemas.anuncios import (
     AnunciosCategoriaDTO,
+    AnunciosGetAttributesFromCategoryResponseDTO,
+)
+from bling_erp_api.models.generated.schemas.anuncios_categorias import (
     AnunciosCategoriasGetResponse200,
     AnunciosCategoriasIdCategoriaGetResponse200,
-    AnunciosGetAttributesFromCategoryResponseDTO,
-    ErrorResponse,
 )
+from bling_erp_api.models.generated.schemas.common import ErrorResponse
 
 __all__ = [
     "AnunciosCategoriaDTO",

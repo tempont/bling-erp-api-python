@@ -2,17 +2,12 @@
 
 from __future__ import annotations
 
-from bling_erp_api.models.generated.schemas import (
+from bling_erp_api.models.generated.schemas.common import (
     BasePostResponse,
     ErrorField,
     ErrorResponse,
-    NfceGetResponse200,
-    NfceIdNotaFiscalConsumidorEnviarPostResponse200,
-    NfceIdNotaFiscalConsumidorGetResponse200,
-    NfceIdNotaFiscalConsumidorPutRequest,
-    NfceIdNotaFiscalConsumidorPutResponse200,
-    NfcePostRequest,
-    NfcePostResponse201,
+)
+from bling_erp_api.models.generated.schemas.notas_fiscais import (
     NfeDeleteResponse200,
     NfeDocumentoChaveAcessoGetResponse200,
     NfeGetResponse200,
@@ -28,6 +23,15 @@ from bling_erp_api.models.generated.schemas import (
     NotasFiscaisDadosPostDTO,
     NotasFiscaisDocumentoDTO,
     NotasFiscaisExclusaoDTO,
+)
+from bling_erp_api.models.generated.schemas.notas_fiscais_consumidor import (
+    NfceGetResponse200,
+    NfceIdNotaFiscalConsumidorEnviarPostResponse200,
+    NfceIdNotaFiscalConsumidorGetResponse200,
+    NfceIdNotaFiscalConsumidorPutRequest,
+    NfceIdNotaFiscalConsumidorPutResponse200,
+    NfcePostRequest,
+    NfcePostResponse201,
 )
 
 __all__ = [

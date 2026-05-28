@@ -96,7 +96,7 @@ class ProductCategoriesResource(BaseResource):
 
     def criar(
         self,
-        dados: CategoriasProdutosDadosDTO | JsonObject,
+        dados: CategoriasProdutosDadosDTO,
     ) -> JsonObject:
         """Cria uma categoria de produto.
 
@@ -114,7 +114,7 @@ class ProductCategoriesResource(BaseResource):
 
     def create(
         self,
-        data: CategoriasProdutosDadosDTO | JsonObject,
+        data: CategoriasProdutosDadosDTO,
     ) -> JsonObject:
         """Compatibility alias for ``criar()``.
 
@@ -133,7 +133,7 @@ class ProductCategoriesResource(BaseResource):
     def alterar(
         self,
         id_categoria_produto: int,
-        dados: CategoriasProdutosDadosDTO | JsonObject,
+        dados: CategoriasProdutosDadosDTO,
     ) -> JsonObject:
         """Altera uma categoria de produto.
 
@@ -153,7 +153,7 @@ class ProductCategoriesResource(BaseResource):
     def update(
         self,
         product_category_id: int,
-        data: CategoriasProdutosDadosDTO | JsonObject,
+        data: CategoriasProdutosDadosDTO,
     ) -> JsonObject:
         """Compatibility alias for ``alterar()``.
 

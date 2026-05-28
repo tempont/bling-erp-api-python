@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from bling_erp_api.models.generated.schemas import (
-    Error,
-    ErrorResponse,
+from bling_erp_api.models.generated.schemas.common import Error, ErrorResponse
+from bling_erp_api.models.generated.schemas.produtos import (
     ProdutosComponenteDTO,
     ProdutosEstruturaDTO,
+)
+from bling_erp_api.models.generated.schemas.produtos_estruturas import (
     ProdutosEstruturasDeleteResponse200,
     ProdutosEstruturasIdProdutoEstruturaComponentesPostRequest,
     ProdutosEstruturasIdProdutoEstruturaGetResponse200,

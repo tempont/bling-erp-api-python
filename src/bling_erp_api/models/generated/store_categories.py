@@ -2,14 +2,13 @@
 
 from __future__ import annotations
 
-from bling_erp_api.models.generated.schemas import (
-    BasePostResponse,
+from bling_erp_api.models.generated.schemas.categorias_lojas import (
     CategoriasLojasDadosDTO,
     CategoriasLojasGetResponse200,
     CategoriasLojasIdCategoriaLojaGetResponse200,
     CategoriasLojasPostResponse201,
-    ErrorResponse,
 )
+from bling_erp_api.models.generated.schemas.common import BasePostResponse, ErrorResponse
 
 __all__ = [
     "BasePostResponse",

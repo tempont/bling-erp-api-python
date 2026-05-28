@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
-from bling_erp_api.models.generated.schemas import (
+from bling_erp_api.models.generated.schemas.caixas_bancos import (
     CaixasBancosItemLancamentoDTO,
     CaixasBancosLancamentoDTO,
     CaixasBancosSalvarLancamentoDTO,
     CaixasBancosSalvarLancamentoResponseDTO,
     CaixasGetResponse200,
-    ErrorResponse,
 )
+from bling_erp_api.models.generated.schemas.common import ErrorResponse
 
 __all__ = [
     "CaixasBancosItemLancamentoDTO",

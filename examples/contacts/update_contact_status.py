@@ -8,6 +8,8 @@ CONTATO_ID = 12345678
 
 def main() -> None:
     """Define situação ``A`` (ativo) para o contato informado."""
+    # Model: ContatosIdContatoSituacoesPatchRequest  # noqa: ERA001
+    #   Optional: situacao (str|None)  # noqa: ERA001
     payload = ContatosIdContatoSituacoesPatchRequest(situacao="A")
     with BlingClient.from_env() as client:
         response = client.contatos.alterar_situacao(CONTATO_ID, payload.situacao)  # type: ignore[arg-type]
