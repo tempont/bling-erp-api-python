@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -114,7 +114,12 @@ class CaixasBancosItemLancamentoDTO(BlingModel):
         conta_financeira: Bling ``contaFinanceira``; type ``ContasFinanceirasDadosBasicosDTO | None``; opcional."""
 
     id: str | None = Field(default=None, examples=["1234567"])
-    deb_cred: str | None = Field(default=None, alias="debCred", examples=["D"])
+    deb_cred: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("deb_cred", "debCred"),
+        examples=["D"],
+        serialization_alias="debCred",
+    )
     situacao: str | None = Field(default=None, examples=["R"])
     valor: float | None = Field(default=None, examples=[100])
     data: str | None = Field(default=None, examples=["2025-01-01"])
@@ -123,7 +128,9 @@ class CaixasBancosItemLancamentoDTO(BlingModel):
     origem: CaixasBancosDadosBasicosOrigemDTO | None = None
     contato: CaixasBancosDadosBasicoContatoDTO | None = None
     conta_financeira: ContasFinanceirasDadosBasicosDTO | None = Field(
-        default=None, alias="contaFinanceira"
+        default=None,
+        validation_alias=AliasChoices("conta_financeira", "contaFinanceira"),
+        serialization_alias="contaFinanceira",
     )
 
 
@@ -152,11 +159,21 @@ class CaixasBancosLancamentoDTO(BlingModel):
         conta_financeira: Bling ``contaFinanceira``; type ``ContasFinanceirasDadosBasicosDTO | None``; opcional."""
 
     id: int | None = Field(default=None, examples=[12345678])
-    deb_cred: str | None = Field(default=None, alias="debCred", examples=["D"])
+    deb_cred: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("deb_cred", "debCred"),
+        examples=["D"],
+        serialization_alias="debCred",
+    )
     saldo: str | None = Field(default=None, examples=["S"])
     situacao: str | None = Field(default=None, examples=["R"])
     transferencia: str | None = Field(default=None, examples=["1"])
-    tipo_lancamento: str | None = Field(default=None, alias="tipoLancamento", examples=["1"])
+    tipo_lancamento: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("tipo_lancamento", "tipoLancamento"),
+        examples=["1"],
+        serialization_alias="tipoLancamento",
+    )
     data: date | None = Field(default=None, examples=["2025-01-01"])
     competencia: date | None = Field(default=None, examples=["2025-01-01"])
     valor: float | None = Field(default=None, examples=[100])
@@ -164,12 +181,16 @@ class CaixasBancosLancamentoDTO(BlingModel):
     parcela: CaixasBancosLancamentoParcelaDTO | None = None
     categoria: CaixasBancosDadosBasicosCategoriaDTO | None = None
     conciliacao_movimentacao: CaixasBancosLancamentoConciliacaoMovimentacaoDTO | None = Field(
-        default=None, alias="conciliacaoMovimentacao"
+        default=None,
+        validation_alias=AliasChoices("conciliacao_movimentacao", "conciliacaoMovimentacao"),
+        serialization_alias="conciliacaoMovimentacao",
     )
     contato: CaixasBancosDadosBasicoContatoDTO | None = None
     origem: CaixasBancosDadosBasicosOrigemDTO | None = None
     conta_financeira: ContasFinanceirasDadosBasicosDTO | None = Field(
-        default=None, alias="contaFinanceira"
+        default=None,
+        validation_alias=AliasChoices("conta_financeira", "contaFinanceira"),
+        serialization_alias="contaFinanceira",
     )
 
 
@@ -195,12 +216,19 @@ class CaixasBancosSalvarLancamentoDTO(BlingModel):
     id: int | None = Field(default=None, examples=[12345678])
     data: date = Field(..., examples=["2025-01-01"])
     valor: float = Field(..., examples=["123.00"])
-    deb_cred: str = Field(..., alias="debCred", examples=["C"])
+    deb_cred: str = Field(
+        ...,
+        validation_alias=AliasChoices("deb_cred", "debCred"),
+        examples=["C"],
+        serialization_alias="debCred",
+    )
     competencia: date = Field(..., examples=["2025-01-01"])
     observacoes: str = Field(..., examples=["Lançamento atualizado"])
     transferencia: str | None = Field(default=None, examples=[""])
     conta_financeira: ContasFinanceirasDadosBasicosDTO | None = Field(
-        default=None, alias="contaFinanceira"
+        default=None,
+        validation_alias=AliasChoices("conta_financeira", "contaFinanceira"),
+        serialization_alias="contaFinanceira",
     )
     categoria: CaixasBancosDadosBasicosCategoriaDTO | None = None
     origem: CaixasBancosDadosBasicosOrigemDTO | None = None

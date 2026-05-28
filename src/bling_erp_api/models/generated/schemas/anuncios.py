@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -61,7 +61,12 @@ class AnunciosGetAttributesFromCategoryResponseDTO(BlingModel):
     nome: str | None = Field(default=None, examples=["Atributo 1"])
     obrigatorio: bool | None = Field(default=None, examples=[True])
     tipo: str | None = Field(default=None, examples=["string"])
-    unidade_padrao: str | None = Field(default=None, alias="unidadePadrao", examples=["unidade"])
+    unidade_padrao: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("unidade_padrao", "unidadePadrao"),
+        examples=["unidade"],
+        serialization_alias="unidadePadrao",
+    )
     minimo: int | None = Field(default=None, examples=[1])
     maximo: int | None = Field(default=None, examples=[10])
 
@@ -186,12 +191,20 @@ class AnunciosSaveRequestBase(BlingModel):
     nome: str | None = Field(default=None, examples=["Nome do anúncio"])
     descricao: str | None = Field(default=None, examples=["Descrição do anúncio"])
     preco: Preco | None = None
-    anuncio_loja: AnuncioLoja | None = Field(default=None, alias="anuncioLoja")
+    anuncio_loja: AnuncioLoja | None = Field(
+        default=None,
+        validation_alias=AliasChoices("anuncio_loja", "anuncioLoja"),
+        serialization_alias="anuncioLoja",
+    )
     estoques: Estoques | None = None
     categoria: Categoria | None = None
     atributos: list[Atributo] | None = None
     imagens: list[Imagen] | None = None
-    mercado_livre: MercadoLivre | None = Field(default=None, alias="mercadoLivre")
+    mercado_livre: MercadoLivre | None = Field(
+        default=None,
+        validation_alias=AliasChoices("mercado_livre", "mercadoLivre"),
+        serialization_alias="mercadoLivre",
+    )
 
 
 class AnunciosSaveRequest(AnunciosSaveRequestBase):
@@ -231,7 +244,11 @@ class AnunciosSaveResponseDTO(BlingModel):
         ids_variacoes: Bling ``idsVariacoes``; type ``list[int] | None``; opcional. Lista de IDs das variações associadas ao anúncio."""
 
     id: int | None = Field(default=None, examples=[123])
-    ids_variacoes: list[int] | None = Field(default=None, alias="idsVariacoes")
+    ids_variacoes: list[int] | None = Field(
+        default=None,
+        validation_alias=AliasChoices("ids_variacoes", "idsVariacoes"),
+        serialization_alias="idsVariacoes",
+    )
 
 
 class AnunciosGetResponse200(BlingModel):

@@ -7,6 +7,12 @@ from bling_erp_api.models.generated.caixas_bancos import (
     CaixasBancosSalvarLancamentoDTO,
     CaixasBancosSalvarLancamentoResponseDTO,
 )
+from bling_erp_api.models.generated.schemas.caixas_bancos import (
+    CaixasBancosDadosBasicosCategoriaDTO,
+)
+from bling_erp_api.models.generated.schemas.contas_financeiras import (
+    ContasFinanceirasDadosBasicosDTO,
+)
 
 
 def main() -> None:
@@ -18,14 +24,14 @@ def main() -> None:
     #             categoria (CaixasBancosDadosBasicosCategoriaDTO|None),  # noqa: ERA001
     #             origem (CaixasBancosDadosBasicosOrigemDTO|None),  # noqa: ERA001
     #             contato (CaixasBancosDadosBasicoContatoDTO|None)  # noqa: ERA001
-    payload = CaixasBancosSalvarLancamentoDTO.model_construct(
+    payload = CaixasBancosSalvarLancamentoDTO(
         data=date(2025, 2, 1),
         valor=350.00,
-        debCred="C",
+        deb_cred="C",
         competencia=date(2025, 2, 1),
         observacoes="Venda balcão",
-        contaFinanceira={"id": 1},
-        categoria={"id": 10},
+        conta_financeira=ContasFinanceirasDadosBasicosDTO(id=1),
+        categoria=CaixasBancosDadosBasicosCategoriaDTO(id=10),
     )
     with BlingClient.from_env() as client:
         response = client.caixas_bancos.criar(payload)

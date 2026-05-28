@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -29,7 +29,12 @@ class EmpresasDadosBasicosDTO(BlingModel):
     nome: str | None = Field(default=None, examples=["Empresa Teste LTDA"])
     cnpj: str | None = Field(default=None, examples=["12.345.657/8910-11"])
     email: str | None = Field(default=None, examples=["empresa@email.com"])
-    data_contrato: date | None = Field(default=None, alias="dataContrato", examples=["2024-12-31"])
+    data_contrato: date | None = Field(
+        default=None,
+        validation_alias=AliasChoices("data_contrato", "dataContrato"),
+        examples=["2024-12-31"],
+        serialization_alias="dataContrato",
+    )
 
 
 class EmpresasMeDadosBasicosGetResponse200(BlingModel):

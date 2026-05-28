@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -28,7 +28,12 @@ class CategoriasReceitasDespesasDadosBaseDTO(BlingModel):
         tipo: Bling ``tipo``; type ``int``; obrigatório. `1` Despesa<br>`2` Receita<br>`3` Receita e despesa"""
 
     id: int | None = Field(default=None, examples=[12345678])
-    id_categoria_pai: int | None = Field(default=None, alias="idCategoriaPai", examples=[0])
+    id_categoria_pai: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("id_categoria_pai", "idCategoriaPai"),
+        examples=[0],
+        serialization_alias="idCategoriaPai",
+    )
     descricao: str = Field(..., examples=["Vendas de mercadorias"])
     tipo: int = Field(..., examples=[1])
 
@@ -54,7 +59,12 @@ class CategoriasReceitasDespesasDadosPostDTO(BlingModel):
     Fields:
         grupo_dre: Bling ``grupoDRE``; type ``int | None``; opcional. `1` Não exibir DRE<br>`2` Receita Operacional Bruta<br>`3` Deduções da Receita Bruta<br>`7` Despesas Operacionais<br>`8` Receita Financeira<br>`9` Despesa Financeira<br>`10` Outra..."""
 
-    grupo_dre: int | None = Field(default=1, alias="grupoDRE", examples=[1])
+    grupo_dre: int | None = Field(
+        default=1,
+        validation_alias=AliasChoices("grupo_dre", "grupoDRE"),
+        examples=[1],
+        serialization_alias="grupoDRE",
+    )
 
 
 class CategoriasReceitasDespesasGetResponse200(BlingModel):

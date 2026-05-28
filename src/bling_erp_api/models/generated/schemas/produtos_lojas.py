@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -86,7 +86,9 @@ class ProdutosLojasResponsePOSTPUT(BlingModel):
         categorias_produtos: Bling ``categoriasProdutos``; type ``list[CategoriasProduto] | None``; opcional."""
 
     categorias_produtos: list[CategoriasProduto] | None = Field(
-        default=None, alias="categoriasProdutos"
+        default=None,
+        validation_alias=AliasChoices("categorias_produtos", "categoriasProdutos"),
+        serialization_alias="categoriasProdutos",
     )
 
 
@@ -135,16 +137,27 @@ class ProdutosLojasDadosBaseDTO(BlingModel):
     codigo: str = Field(..., examples=["ASDF1234"])
     preco: float | None = Field(default=None, examples=[25.99])
     preco_promocional: float | None = Field(
-        default=None, alias="precoPromocional", examples=[22.99]
+        default=None,
+        validation_alias=AliasChoices("preco_promocional", "precoPromocional"),
+        examples=[22.99],
+        serialization_alias="precoPromocional",
     )
     produto: ProdutosLojasProdutoDTO
     loja: ProdutosLojasLojaDTO
     fornecedor_loja: ProdutosLojasFornecedorLojaDTO | None = Field(
-        default=None, alias="fornecedorLoja"
+        default=None,
+        validation_alias=AliasChoices("fornecedor_loja", "fornecedorLoja"),
+        serialization_alias="fornecedorLoja",
     )
-    marca_loja: ProdutosLojasMarcaLojaDTO | None = Field(default=None, alias="marcaLoja")
+    marca_loja: ProdutosLojasMarcaLojaDTO | None = Field(
+        default=None,
+        validation_alias=AliasChoices("marca_loja", "marcaLoja"),
+        serialization_alias="marcaLoja",
+    )
     categorias_produtos: ProdutosLojasCategoriaDTO | None = Field(
-        default=None, alias="categoriasProdutos"
+        default=None,
+        validation_alias=AliasChoices("categorias_produtos", "categoriasProdutos"),
+        serialization_alias="categoriasProdutos",
     )
 
 
@@ -168,7 +181,9 @@ class ProdutosLojasDadosDTO(ProdutosLojasDadosBaseDTO):
         categorias_produtos: Bling ``categoriasProdutos``; type ``list[ProdutosLojasCategoriaDTO] | CategoriasProdutos | None``; opcional."""
 
     categorias_produtos: list[ProdutosLojasCategoriaDTO] | CategoriasProdutos | None = Field(
-        default=None, alias="categoriasProdutos"
+        default=None,
+        validation_alias=AliasChoices("categorias_produtos", "categoriasProdutos"),
+        serialization_alias="categoriasProdutos",
     )
 
 

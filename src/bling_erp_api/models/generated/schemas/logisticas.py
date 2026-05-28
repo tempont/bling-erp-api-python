@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -142,8 +142,18 @@ class LogisticasDadosBaseDTO(BlingModel):
 
     id: int = Field(..., examples=[6423813145])
     descricao: str = Field(..., examples=["Correios Cliente"])
-    tipo_integracao: str = Field(..., alias="tipoIntegracao", examples=["Correios"])
-    integracao_nativa: bool = Field(..., alias="integracaoNativa", examples=[False])
+    tipo_integracao: str = Field(
+        ...,
+        validation_alias=AliasChoices("tipo_integracao", "tipoIntegracao"),
+        examples=["Correios"],
+        serialization_alias="tipoIntegracao",
+    )
+    integracao_nativa: bool = Field(
+        ...,
+        validation_alias=AliasChoices("integracao_nativa", "integracaoNativa"),
+        examples=[False],
+        serialization_alias="integracaoNativa",
+    )
     situacao: str = Field(..., examples=["H"])
     integracao: LogisticasIntegracaoDTO
     servicos: list[LogisticasServicoBaseDTO]
@@ -169,8 +179,18 @@ class LogisticasServicoDTO(LogisticasServicoBaseDTO):
         ativo: Bling ``ativo``; type ``bool``; obrigatório. Indica se o serviço está ativo"""
 
     descricao: str = Field(..., examples=["CARTA REG AR CONV B1 MFD"])
-    frete_item: float = Field(..., alias="freteItem", examples=[12.45])
-    estimativa_entrega: int = Field(..., alias="estimativaEntrega", examples=[2])
+    frete_item: float = Field(
+        ...,
+        validation_alias=AliasChoices("frete_item", "freteItem"),
+        examples=[12.45],
+        serialization_alias="freteItem",
+    )
+    estimativa_entrega: int = Field(
+        ...,
+        validation_alias=AliasChoices("estimativa_entrega", "estimativaEntrega"),
+        examples=[2],
+        serialization_alias="estimativaEntrega",
+    )
     codigo: str = Field(..., examples=["ABC1234"])
     logistica: LogisticasLogisticaDTO
     transportador: LogisticasTransportadorDTO
@@ -194,8 +214,18 @@ class LogisticaServicoPostDTO(BlingModel):
         ativo: Bling ``ativo``; type ``bool | None``; opcional. Indica se o serviço está ativo"""
 
     descricao: str = Field(..., examples=["CARTA REG AR CONV B1 MFD"])
-    frete_item: float | None = Field(default=None, alias="freteItem", examples=[12.45])
-    estimativa_entrega: int | None = Field(default=None, alias="estimativaEntrega", examples=[2])
+    frete_item: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("frete_item", "freteItem"),
+        examples=[12.45],
+        serialization_alias="freteItem",
+    )
+    estimativa_entrega: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("estimativa_entrega", "estimativaEntrega"),
+        examples=[2],
+        serialization_alias="estimativaEntrega",
+    )
     codigo: str | None = Field(default=None, examples=["ABC1234"])
     transportador: LogisticasTransportadorDTO | None = None
     aliases: list[str] | None = None

@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -25,7 +25,12 @@ class NotasServicosCancelamentoDTO(BlingModel):
         codigo_motivo: Bling ``codigoMotivo``; type ``int | None``; opcional. `1` Erro na Emissão<br> `2` Serviço não Prestado<br>`9` Outros
         justificativa: Bling ``justificativa``; type ``str | None``; opcional. Justificativa do cancelamento."""
 
-    codigo_motivo: int | None = Field(default=None, alias="codigoMotivo", examples=[1])
+    codigo_motivo: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("codigo_motivo", "codigoMotivo"),
+        examples=[1],
+        serialization_alias="codigoMotivo",
+    )
     justificativa: str | None = Field(default=None, examples=["Cancelamento de NFS-e"])
 
 
@@ -70,10 +75,20 @@ class NotasServicosDadosBase(BlingModel):
 
     id: int = Field(..., examples=[12345678])
     numero: str | None = Field(default=None, examples=["123"])
-    numero_rps: str = Field(..., alias="numeroRPS", examples=["32"])
+    numero_rps: str = Field(
+        ...,
+        validation_alias=AliasChoices("numero_rps", "numeroRPS"),
+        examples=["32"],
+        serialization_alias="numeroRPS",
+    )
     serie: str = Field(..., examples=["1"])
     situacao: int | None = Field(default=None, examples=[0])
-    data_emissao: date | None = Field(default=None, alias="dataEmissao", examples=["2023-01-12"])
+    data_emissao: date | None = Field(
+        default=None,
+        validation_alias=AliasChoices("data_emissao", "dataEmissao"),
+        examples=["2023-01-12"],
+        serialization_alias="dataEmissao",
+    )
     valor: float | None = Field(default=None, examples=[100])
 
 
@@ -88,7 +103,11 @@ class NotasServicosDados(BlingModel):
         codigo_verificacao: Bling ``codigoVerificacao``; type ``str | None``; opcional."""
 
     link: str | None = Field(default=None, examples=["https://linkexemplo.com.br/nfse"])
-    codigo_verificacao: str | None = Field(default=None, alias="codigoVerificacao")
+    codigo_verificacao: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("codigo_verificacao", "codigoVerificacao"),
+        serialization_alias="codigoVerificacao",
+    )
 
 
 class NotasServicosDadosDTO(NotasServicosDados):
@@ -120,7 +139,12 @@ class NotasServicosContatoBaseDTO(BlingModel):
 
     id: int = Field(..., examples=[12345678])
     nome: str = Field(..., examples=["Pedro Silva"])
-    numero_documento: str = Field(..., alias="numeroDocumento", examples=["30188025000121"])
+    numero_documento: str = Field(
+        ...,
+        validation_alias=AliasChoices("numero_documento", "numeroDocumento"),
+        examples=["30188025000121"],
+        serialization_alias="numeroDocumento",
+    )
     email: str = Field(..., examples=["pedrosilva@bling.com.br"])
 
 
@@ -168,23 +192,59 @@ class NotasServicosTributacaoIbsCbsValoresDTO(BlingModel):
         percentual_diferimento_municipal: Bling ``percentualDiferimentoMunicipal``; type ``float | None``; opcional. Percentual de diferimento do IBS municipal, de 0.00 a 100.00. Aplica-se à parcela municipal do imposto sobre bens e serviços. Consulte sua contabilidade para verificar se há difer...
         percentual_diferimento_cbs: Bling ``percentualDiferimentoCBS``; type ``float | None``; opcional. Percentual de diferimento da Contribuição sobre Bens e Serviços (CBS), de 0.00 a 100.00. A CBS é o tributo federal da Reforma Tributária. Consulte sua contabilidade para verificar..."""
 
-    codigo_situacao_tributaria: str = Field(..., alias="codigoSituacaoTributaria", examples=["000"])
-    classificacao_tributaria: str = Field(..., alias="classificacaoTributaria", examples=["000001"])
-    codigo_credito_presumido: str | None = Field(
-        default=None, alias="codigoCreditoPresumido", examples=["01"]
+    codigo_situacao_tributaria: str = Field(
+        ...,
+        validation_alias=AliasChoices("codigo_situacao_tributaria", "codigoSituacaoTributaria"),
+        examples=["000"],
+        serialization_alias="codigoSituacaoTributaria",
     )
-    cst_regime_regular: str | None = Field(default=None, alias="cstRegimeRegular", examples=["550"])
+    classificacao_tributaria: str = Field(
+        ...,
+        validation_alias=AliasChoices("classificacao_tributaria", "classificacaoTributaria"),
+        examples=["000001"],
+        serialization_alias="classificacaoTributaria",
+    )
+    codigo_credito_presumido: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("codigo_credito_presumido", "codigoCreditoPresumido"),
+        examples=["01"],
+        serialization_alias="codigoCreditoPresumido",
+    )
+    cst_regime_regular: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("cst_regime_regular", "cstRegimeRegular"),
+        examples=["550"],
+        serialization_alias="cstRegimeRegular",
+    )
     classificacao_tributaria_regular: str | None = Field(
-        default=None, alias="classificacaoTributariaRegular", examples=["550016"]
+        default=None,
+        validation_alias=AliasChoices(
+            "classificacao_tributaria_regular", "classificacaoTributariaRegular"
+        ),
+        examples=["550016"],
+        serialization_alias="classificacaoTributariaRegular",
     )
     percentual_diferimento_estadual: float | None = Field(
-        default=None, alias="percentualDiferimentoEstadual", examples=[10]
+        default=None,
+        validation_alias=AliasChoices(
+            "percentual_diferimento_estadual", "percentualDiferimentoEstadual"
+        ),
+        examples=[10],
+        serialization_alias="percentualDiferimentoEstadual",
     )
     percentual_diferimento_municipal: float | None = Field(
-        default=None, alias="percentualDiferimentoMunicipal", examples=[5]
+        default=None,
+        validation_alias=AliasChoices(
+            "percentual_diferimento_municipal", "percentualDiferimentoMunicipal"
+        ),
+        examples=[5],
+        serialization_alias="percentualDiferimentoMunicipal",
     )
     percentual_diferimento_cbs: float | None = Field(
-        default=None, alias="percentualDiferimentoCBS", examples=[8]
+        default=None,
+        validation_alias=AliasChoices("percentual_diferimento_cbs", "percentualDiferimentoCBS"),
+        examples=[8],
+        serialization_alias="percentualDiferimentoCBS",
     )
 
 
@@ -212,7 +272,12 @@ class NotasServicosResponsePOSTPUT(BlingModel):
         serie: Bling ``serie``; type ``str``; obrigatório."""
 
     id: int = Field(..., examples=[12345678])
-    numero_rps: str = Field(..., alias="numeroRPS", examples=["123"])
+    numero_rps: str = Field(
+        ...,
+        validation_alias=AliasChoices("numero_rps", "numeroRPS"),
+        examples=["123"],
+        serialization_alias="numeroRPS",
+    )
     serie: str = Field(..., examples=["1"])
 
 
@@ -304,7 +369,9 @@ class NotasServicosParcelaDTO(BlingModel):
     valor: float = Field(..., examples=[123.45])
     observacoes: str | None = Field(default=None, examples=["Observação da parcela"])
     forma_pagamento: NotasServicosParcelaFormaPagamentoDTO | None = Field(
-        default=None, alias="formaPagamento"
+        default=None,
+        validation_alias=AliasChoices("forma_pagamento", "formaPagamento"),
+        serialization_alias="formaPagamento",
     )
 
 
@@ -320,10 +387,23 @@ class NotasServicosTributacaoIbsCbsDTO(BlingModel):
         tipo_ente_governamental: Bling ``tipoEnteGovernamental``; type ``str | None``; opcional. Tipo de ente governamental tomador do serviço. Informe APENAS quando o cliente for órgão público. Valores aceitos: '1' = União (órgão federal), '2' = Estado (órgão estadual), '3'...
         tributacao: Bling ``tributacao``; type ``NotasServicosTributacaoIbsCbsValoresDTO``; obrigatório."""
 
-    indicador_operacao: str = Field(..., alias="indicadorOperacao", examples=["100301"])
-    tipo_operacao: str = Field(..., alias="tipoOperacao", examples=["1"])
+    indicador_operacao: str = Field(
+        ...,
+        validation_alias=AliasChoices("indicador_operacao", "indicadorOperacao"),
+        examples=["100301"],
+        serialization_alias="indicadorOperacao",
+    )
+    tipo_operacao: str = Field(
+        ...,
+        validation_alias=AliasChoices("tipo_operacao", "tipoOperacao"),
+        examples=["1"],
+        serialization_alias="tipoOperacao",
+    )
     tipo_ente_governamental: str | None = Field(
-        default=None, alias="tipoEnteGovernamental", examples=["4"]
+        default=None,
+        validation_alias=AliasChoices("tipo_ente_governamental", "tipoEnteGovernamental"),
+        examples=["4"],
+        serialization_alias="tipoEnteGovernamental",
     )
     tributacao: NotasServicosTributacaoIbsCbsValoresDTO
 
@@ -385,14 +465,26 @@ class NotasServicosDadosDTOPOST(NotasServicosDados):
         tributacao_ibs_cbs: Bling ``tributacaoIbsCbs``; type ``NotasServicosTributacaoIbsCbsDTO | None``; opcional."""
 
     data: date | None = Field(default=None, examples=["2023-01-12"])
-    base_calculo: float | None = Field(default=None, alias="baseCalculo", examples=[100])
-    reter_iss: bool | None = Field(default=None, alias="reterISS", examples=[False])
+    base_calculo: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("base_calculo", "baseCalculo"),
+        examples=[100],
+        serialization_alias="baseCalculo",
+    )
+    reter_iss: bool | None = Field(
+        default=None,
+        validation_alias=AliasChoices("reter_iss", "reterISS"),
+        examples=[False],
+        serialization_alias="reterISS",
+    )
     desconto: float | None = Field(default=None, examples=[15.45])
     vendedor: NotasServicosVendedorDTO | None = None
     servicos: list[NotasServicosServicoDTO]
     parcelas: list[NotasServicosParcelaDTO] | None = None
     tributacao_ibs_cbs: NotasServicosTributacaoIbsCbsDTO | None = Field(
-        default=None, alias="tributacaoIbsCbs"
+        default=None,
+        validation_alias=AliasChoices("tributacao_ibs_cbs", "tributacaoIbsCbs"),
+        serialization_alias="tributacaoIbsCbs",
     )
 
 

@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+from inspect import signature
 from pathlib import Path
+
+import pytest
+from pydantic import ValidationError
 
 from bling_erp_api.models.generated.product_stores import ProdutosLojasPostRequest
 from bling_erp_api.models.generated.products import (
@@ -56,6 +60,51 @@ def test_generated_model_accepts_pythonic_field_names_and_serializes_bling_alias
         "situacao": "A",
         "formato": "S",
     }
+
+
+def test_generated_model_constructor_signature_prefers_pythonic_names() -> None:
+    """Generated models should guide SDK users toward Python field names."""
+    model_signature = str(signature(ProdutosDadosDTO))
+
+    assert "descricao_curta" in model_signature
+    assert "data_validade" in model_signature
+    assert "descricaoCurta" not in model_signature
+    assert "dataValidade" not in model_signature
+
+
+def test_generated_model_normalizes_bling_aliases_without_preserving_them_as_extra() -> None:
+    """Known Bling aliases should hydrate fields, not survive as extra payload keys."""
+    model = ProdutosDadosDTO.model_validate(
+        {
+            "nome": "Produto",
+            "tipo": "P",
+            "situacao": "A",
+            "formato": "S",
+            "descricaoCurta": "Descrição curta",
+        }
+    )
+
+    payload = to_json_object(model)
+
+    assert model.descricao_curta == "Descrição curta"
+    assert "descricaoCurta" not in (model.model_extra or {})
+    assert payload["descricaoCurta"] == "Descrição curta"
+    assert "descricao_curta" not in payload
+
+
+def test_generated_model_rejects_conflicting_python_and_bling_field_names() -> None:
+    """Users should not be able to serialize both snake_case and Bling names."""
+    with pytest.raises(ValidationError, match="Conflicting values"):
+        ProdutosDadosDTO.model_validate(
+            {
+                "nome": "Produto",
+                "tipo": "P",
+                "situacao": "A",
+                "formato": "S",
+                "descricao_curta": "snake",
+                "descricaoCurta": "camel",
+            }
+        )
 
 
 def test_generated_list_response_wraps_data_items() -> None:

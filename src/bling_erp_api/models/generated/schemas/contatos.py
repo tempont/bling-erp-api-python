@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -27,7 +27,10 @@ class ContatosDadoAdicionalDTO(BlingModel):
         naturalidade: Bling ``naturalidade``; type ``str | None``; opcional."""
 
     data_nascimento: date | None = Field(
-        default=None, alias="dataNascimento", examples=["1990-08-24"]
+        default=None,
+        validation_alias=AliasChoices("data_nascimento", "dataNascimento"),
+        examples=["1990-08-24"],
+        serialization_alias="dataNascimento",
     )
     sexo: str | None = Field(default=None, examples=["M"])
     naturalidade: str | None = Field(default=None, examples=["Brasileira"])
@@ -53,7 +56,10 @@ class ContatosDadosBaseDTO(BlingModel):
     codigo: str | None = Field(default=None, examples=["ASD001"])
     situacao: str = Field(..., examples=["A"])
     numero_documento: str | None = Field(
-        default=None, alias="numeroDocumento", examples=["123.456.789-10"]
+        default=None,
+        validation_alias=AliasChoices("numero_documento", "numeroDocumento"),
+        examples=["123.456.789-10"],
+        serialization_alias="numeroDocumento",
     )
     telefone: str | None = Field(default=None, examples=["(54) 3333-4444"])
     celular: str | None = Field(default=None, examples=["(54) 99999-8888"])
@@ -106,8 +112,18 @@ class ContatosFinanceiroDTO(BlingModel):
         condicao_pagamento: Bling ``condicaoPagamento``; type ``str | None``; opcional. Número de parcelas ou prazos
         categoria: Bling ``categoria``; type ``ContatosFinanceiroCategoriaDTO | None``; opcional."""
 
-    limite_credito: float | None = Field(default=0, alias="limiteCredito", examples=[0])
-    condicao_pagamento: str | None = Field(default=None, alias="condicaoPagamento", examples=["30"])
+    limite_credito: float | None = Field(
+        default=0,
+        validation_alias=AliasChoices("limite_credito", "limiteCredito"),
+        examples=[0],
+        serialization_alias="limiteCredito",
+    )
+    condicao_pagamento: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("condicao_pagamento", "condicaoPagamento"),
+        examples=["30"],
+        serialization_alias="condicaoPagamento",
+    )
     categoria: ContatosFinanceiroCategoriaDTO | None = None
 
 
@@ -221,7 +237,11 @@ class ContatosSituacoesPostRequest(BlingModel):
         ids_contatos: Bling ``idsContatos``; type ``list[int] | None``; opcional.
         situacao: Bling ``situacao``; type ``str | None``; opcional."""
 
-    ids_contatos: list[int] | None = Field(default=None, alias="idsContatos")
+    ids_contatos: list[int] | None = Field(
+        default=None,
+        validation_alias=AliasChoices("ids_contatos", "idsContatos"),
+        serialization_alias="idsContatos",
+    )
     situacao: str | None = Field(default=None, examples=["A"])
 
 
@@ -288,32 +308,66 @@ class ContatosPostRequest(BlingModel):
     codigo: str | None = Field(default=None, examples=["ASD001"])
     situacao: str = Field(..., examples=["A"])
     numero_documento: str | None = Field(
-        default=None, alias="numeroDocumento", examples=["12345678910"]
+        default=None,
+        validation_alias=AliasChoices("numero_documento", "numeroDocumento"),
+        examples=["12345678910"],
+        serialization_alias="numeroDocumento",
     )
     telefone: str | None = Field(default=None, examples=["(54) 3333-4444"])
     celular: str | None = Field(default=None, examples=["(54) 99999-8888"])
     fantasia: str | None = Field(default=None, examples=["Nome fantasia"])
     tipo: str = Field(..., examples=["J"])
-    indicador_ie: int | None = Field(default=None, alias="indicadorIe", examples=[1])
+    indicador_ie: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("indicador_ie", "indicadorIe"),
+        examples=[1],
+        serialization_alias="indicadorIe",
+    )
     ie: str | None = Field(default=None, examples=["123.456.789.101"])
     rg: str | None = Field(default=None, examples=["1234567890"])
     inscricao_municipal: str | None = Field(
-        default=None, alias="inscricaoMunicipal", examples=["123456789012"]
+        default=None,
+        validation_alias=AliasChoices("inscricao_municipal", "inscricaoMunicipal"),
+        examples=["123456789012"],
+        serialization_alias="inscricaoMunicipal",
     )
-    orgao_emissor: str | None = Field(default=None, alias="orgaoEmissor", examples=["1234567890"])
+    orgao_emissor: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("orgao_emissor", "orgaoEmissor"),
+        examples=["1234567890"],
+        serialization_alias="orgaoEmissor",
+    )
     email: str | None = Field(default=None, examples=["contato@email.com"])
     email_nota_fiscal: str | None = Field(
-        default=None, alias="emailNotaFiscal", examples=["fiscal@email.com"]
+        default=None,
+        validation_alias=AliasChoices("email_nota_fiscal", "emailNotaFiscal"),
+        examples=["fiscal@email.com"],
+        serialization_alias="emailNotaFiscal",
     )
-    orgao_publico: str | None = Field(default=None, alias="orgaoPublico", examples=["N"])
+    orgao_publico: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("orgao_publico", "orgaoPublico"),
+        examples=["N"],
+        serialization_alias="orgaoPublico",
+    )
     endereco: ContatosEnderecoDTO | None = None
     vendedor: ContatosVendedorDTO | None = None
-    dados_adicionais: ContatosDadoAdicionalDTO | None = Field(default=None, alias="dadosAdicionais")
+    dados_adicionais: ContatosDadoAdicionalDTO | None = Field(
+        default=None,
+        validation_alias=AliasChoices("dados_adicionais", "dadosAdicionais"),
+        serialization_alias="dadosAdicionais",
+    )
     financeiro: ContatosFinanceiroDTO | None = None
     pais: ContatosPaisDTO | None = None
-    tipos_contato: list[ContatosTipoContatoDTO] | None = Field(default=None, alias="tiposContato")
+    tipos_contato: list[ContatosTipoContatoDTO] | None = Field(
+        default=None,
+        validation_alias=AliasChoices("tipos_contato", "tiposContato"),
+        serialization_alias="tiposContato",
+    )
     pessoas_contato: list[ContatosPessoaContatoDTO] | None = Field(
-        default=None, alias="pessoasContato"
+        default=None,
+        validation_alias=AliasChoices("pessoas_contato", "pessoasContato"),
+        serialization_alias="pessoasContato",
     )
 
 
@@ -366,32 +420,66 @@ class ContatosIdContatoPutRequest(BlingModel):
     codigo: str | None = Field(default=None, examples=["ASD001"])
     situacao: str = Field(..., examples=["A"])
     numero_documento: str | None = Field(
-        default=None, alias="numeroDocumento", examples=["12345678910"]
+        default=None,
+        validation_alias=AliasChoices("numero_documento", "numeroDocumento"),
+        examples=["12345678910"],
+        serialization_alias="numeroDocumento",
     )
     telefone: str | None = Field(default=None, examples=["(54) 3333-4444"])
     celular: str | None = Field(default=None, examples=["(54) 99999-8888"])
     fantasia: str | None = Field(default=None, examples=["Nome fantasia"])
     tipo: str = Field(..., examples=["J"])
-    indicador_ie: int | None = Field(default=None, alias="indicadorIe", examples=[1])
+    indicador_ie: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("indicador_ie", "indicadorIe"),
+        examples=[1],
+        serialization_alias="indicadorIe",
+    )
     ie: str | None = Field(default=None, examples=["123.456.789.101"])
     rg: str | None = Field(default=None, examples=["1234567890"])
     inscricao_municipal: str | None = Field(
-        default=None, alias="inscricaoMunicipal", examples=["123456789012"]
+        default=None,
+        validation_alias=AliasChoices("inscricao_municipal", "inscricaoMunicipal"),
+        examples=["123456789012"],
+        serialization_alias="inscricaoMunicipal",
     )
-    orgao_emissor: str | None = Field(default=None, alias="orgaoEmissor", examples=["1234567890"])
+    orgao_emissor: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("orgao_emissor", "orgaoEmissor"),
+        examples=["1234567890"],
+        serialization_alias="orgaoEmissor",
+    )
     email: str | None = Field(default=None, examples=["contato@email.com"])
     email_nota_fiscal: str | None = Field(
-        default=None, alias="emailNotaFiscal", examples=["fiscal@email.com"]
+        default=None,
+        validation_alias=AliasChoices("email_nota_fiscal", "emailNotaFiscal"),
+        examples=["fiscal@email.com"],
+        serialization_alias="emailNotaFiscal",
     )
-    orgao_publico: str | None = Field(default=None, alias="orgaoPublico", examples=["N"])
+    orgao_publico: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("orgao_publico", "orgaoPublico"),
+        examples=["N"],
+        serialization_alias="orgaoPublico",
+    )
     endereco: ContatosEnderecoDTO | None = None
     vendedor: ContatosVendedorDTO | None = None
-    dados_adicionais: ContatosDadoAdicionalDTO | None = Field(default=None, alias="dadosAdicionais")
+    dados_adicionais: ContatosDadoAdicionalDTO | None = Field(
+        default=None,
+        validation_alias=AliasChoices("dados_adicionais", "dadosAdicionais"),
+        serialization_alias="dadosAdicionais",
+    )
     financeiro: ContatosFinanceiroDTO | None = None
     pais: ContatosPaisDTO | None = None
-    tipos_contato: list[ContatosTipoContatoDTO] | None = Field(default=None, alias="tiposContato")
+    tipos_contato: list[ContatosTipoContatoDTO] | None = Field(
+        default=None,
+        validation_alias=AliasChoices("tipos_contato", "tiposContato"),
+        serialization_alias="tiposContato",
+    )
     pessoas_contato: list[ContatosPessoaContatoDTO] | None = Field(
-        default=None, alias="pessoasContato"
+        default=None,
+        validation_alias=AliasChoices("pessoas_contato", "pessoasContato"),
+        serialization_alias="pessoasContato",
     )
 
 
@@ -435,29 +523,63 @@ class ContatosDadosDTO(BlingModel):
 
     fantasia: str | None = Field(default=None, examples=["Nome fantasia"])
     tipo: str = Field(..., examples=["J"])
-    indicador_ie: int | None = Field(default=None, alias="indicadorIe", examples=[1])
+    indicador_ie: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("indicador_ie", "indicadorIe"),
+        examples=[1],
+        serialization_alias="indicadorIe",
+    )
     ie: str | None = Field(default=None, examples=["123.456.789.101"])
     rg: str | None = Field(default=None, examples=["1234567890"])
     inscricao_municipal: str | None = Field(
-        default=None, alias="inscricaoMunicipal", examples=["123456789012"]
+        default=None,
+        validation_alias=AliasChoices("inscricao_municipal", "inscricaoMunicipal"),
+        examples=["123456789012"],
+        serialization_alias="inscricaoMunicipal",
     )
-    orgao_emissor: str | None = Field(default=None, alias="orgaoEmissor", examples=["1234567890"])
+    orgao_emissor: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("orgao_emissor", "orgaoEmissor"),
+        examples=["1234567890"],
+        serialization_alias="orgaoEmissor",
+    )
     email: str | None = Field(default=None, examples=["contato@email.com"])
     email_nota_fiscal: str | None = Field(
-        default=None, alias="emailNotaFiscal", examples=["fiscal@email.com"]
+        default=None,
+        validation_alias=AliasChoices("email_nota_fiscal", "emailNotaFiscal"),
+        examples=["fiscal@email.com"],
+        serialization_alias="emailNotaFiscal",
     )
     numero_documento: str | None = Field(
-        default=None, alias="numeroDocumento", examples=["12345678910"]
+        default=None,
+        validation_alias=AliasChoices("numero_documento", "numeroDocumento"),
+        examples=["12345678910"],
+        serialization_alias="numeroDocumento",
     )
-    orgao_publico: str | None = Field(default=None, alias="orgaoPublico", examples=["N"])
+    orgao_publico: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("orgao_publico", "orgaoPublico"),
+        examples=["N"],
+        serialization_alias="orgaoPublico",
+    )
     endereco: ContatosEnderecoDTO | None = None
     vendedor: ContatosVendedorDTO | None = None
-    dados_adicionais: ContatosDadoAdicionalDTO | None = Field(default=None, alias="dadosAdicionais")
+    dados_adicionais: ContatosDadoAdicionalDTO | None = Field(
+        default=None,
+        validation_alias=AliasChoices("dados_adicionais", "dadosAdicionais"),
+        serialization_alias="dadosAdicionais",
+    )
     financeiro: ContatosFinanceiroDTO | None = None
     pais: ContatosPaisDTO | None = None
-    tipos_contato: list[ContatosTipoContatoDTO] | None = Field(default=None, alias="tiposContato")
+    tipos_contato: list[ContatosTipoContatoDTO] | None = Field(
+        default=None,
+        validation_alias=AliasChoices("tipos_contato", "tiposContato"),
+        serialization_alias="tiposContato",
+    )
     pessoas_contato: list[ContatosPessoaContatoDTO] | None = Field(
-        default=None, alias="pessoasContato"
+        default=None,
+        validation_alias=AliasChoices("pessoas_contato", "pessoasContato"),
+        serialization_alias="pessoasContato",
     )
 
 

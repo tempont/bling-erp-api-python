@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -25,7 +25,12 @@ class VendedoresComissaoDTO(BlingModel):
         desconto_maximo: Bling ``descontoMaximo``; type ``float``; obrigatório.
         aliquota: Bling ``aliquota``; type ``float``; obrigatório."""
 
-    desconto_maximo: float = Field(..., alias="descontoMaximo", examples=[10])
+    desconto_maximo: float = Field(
+        ...,
+        validation_alias=AliasChoices("desconto_maximo", "descontoMaximo"),
+        examples=[10],
+        serialization_alias="descontoMaximo",
+    )
     aliquota: float = Field(..., examples=[2])
 
 
@@ -82,7 +87,12 @@ class VendedoresDadosBaseDTO(BlingModel):
         contato: Bling ``contato``; type ``VendedoresContatoDTO``; obrigatório."""
 
     id: int | None = Field(default=None, examples=[12345678])
-    desconto_limite: float | None = Field(default=None, alias="descontoLimite", examples=[10.12])
+    desconto_limite: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("desconto_limite", "descontoLimite"),
+        examples=[10.12],
+        serialization_alias="descontoLimite",
+    )
     loja: VendedoresLojaDTO | None = None
     contato: VendedoresContatoDTO
 

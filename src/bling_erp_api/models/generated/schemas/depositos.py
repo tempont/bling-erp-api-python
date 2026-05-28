@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -35,7 +35,12 @@ class DepositosDadosDTO(BlingModel):
     descricao: str = Field(..., examples=["Depósito Geral"])
     situacao: int = Field(..., examples=[1])
     padrao: bool = Field(..., examples=[False])
-    desconsiderar_saldo: bool = Field(..., alias="desconsiderarSaldo", examples=[False])
+    desconsiderar_saldo: bool = Field(
+        ...,
+        validation_alias=AliasChoices("desconsiderar_saldo", "desconsiderarSaldo"),
+        examples=[False],
+        serialization_alias="desconsiderarSaldo",
+    )
 
 
 class Deposito(EstoquesDepositoBaseDTO, EstoquesDepositoDTO):

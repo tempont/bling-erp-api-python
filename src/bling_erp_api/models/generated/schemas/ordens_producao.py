@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -39,8 +39,18 @@ class OrdensProducaoDepositoDTO(BlingModel):
         id_destino: Bling ``idDestino``; type ``int | None``; opcional.
         id_origem: Bling ``idOrigem``; type ``int | None``; opcional."""
 
-    id_destino: int | None = Field(default=None, alias="idDestino", examples=[12345678])
-    id_origem: int | None = Field(default=None, alias="idOrigem", examples=[12345678])
+    id_destino: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("id_destino", "idDestino"),
+        examples=[12345678],
+        serialization_alias="idDestino",
+    )
+    id_origem: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("id_origem", "idOrigem"),
+        examples=[12345678],
+        serialization_alias="idOrigem",
+    )
 
 
 class OrdensProducaoProdutoDTO(BlingModel):
@@ -87,10 +97,20 @@ class OrdensProducaoSituacaoDadosDTO(BlingModel):
         observacoes: Bling ``observacoes``; type ``str | None``; opcional.
         considerar_perdas: Bling ``considerarPerdas``; type ``bool | None``; opcional. Se deve considerar perdas na finalização da ordem de produção. (Válido apenas para finalização"""
 
-    id_situacao: int = Field(..., alias="idSituacao", examples=[12345678])
+    id_situacao: int = Field(
+        ...,
+        validation_alias=AliasChoices("id_situacao", "idSituacao"),
+        examples=[12345678],
+        serialization_alias="idSituacao",
+    )
     quantidade: float | None = Field(default=None, examples=[1])
     observacoes: str | None = Field(default=None, examples=["Observação"])
-    considerar_perdas: bool | None = Field(default=None, alias="considerarPerdas", examples=[True])
+    considerar_perdas: bool | None = Field(
+        default=None,
+        validation_alias=AliasChoices("considerar_perdas", "considerarPerdas"),
+        examples=[True],
+        serialization_alias="considerarPerdas",
+    )
 
 
 class OrdensProducaoVendaDTO(BlingModel):
@@ -138,13 +158,29 @@ class OrdensProducaoDadosBaseDTO(BlingModel):
 
     id: int = Field(..., examples=[12345678])
     data_previsao_inicio: date | None = Field(
-        default=None, alias="dataPrevisaoInicio", examples=["2021-01-01"]
+        default=None,
+        validation_alias=AliasChoices("data_previsao_inicio", "dataPrevisaoInicio"),
+        examples=["2021-01-01"],
+        serialization_alias="dataPrevisaoInicio",
     )
     data_previsao_final: date | None = Field(
-        default=None, alias="dataPrevisaoFinal", examples=["2021-01-01"]
+        default=None,
+        validation_alias=AliasChoices("data_previsao_final", "dataPrevisaoFinal"),
+        examples=["2021-01-01"],
+        serialization_alias="dataPrevisaoFinal",
     )
-    data_inicio: date | None = Field(default=None, alias="dataInicio", examples=["2021-01-01"])
-    data_fim: date | None = Field(default=None, alias="dataFim", examples=["2021-01-01"])
+    data_inicio: date | None = Field(
+        default=None,
+        validation_alias=AliasChoices("data_inicio", "dataInicio"),
+        examples=["2021-01-01"],
+        serialization_alias="dataInicio",
+    )
+    data_fim: date | None = Field(
+        default=None,
+        validation_alias=AliasChoices("data_fim", "dataFim"),
+        examples=["2021-01-01"],
+        serialization_alias="dataFim",
+    )
     numero: int = Field(..., examples=[12345678])
     responsavel: str | None = Field(default=None, examples=["Responsável pela ordem de produção"])
     deposito: OrdensProducaoDepositoDTO

@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -135,8 +135,16 @@ class CamposCustomizadosResponsePOSTPUT(BlingModel):
         ids_vinculos_agrupadores: Bling ``idsVinculosAgrupadores``; type ``list[int] | None``; opcional.
         ids_opcoes: Bling ``idsOpcoes``; type ``list[int] | None``; opcional."""
 
-    ids_vinculos_agrupadores: list[int] | None = Field(default=None, alias="idsVinculosAgrupadores")
-    ids_opcoes: list[int] | None = Field(default=None, alias="idsOpcoes")
+    ids_vinculos_agrupadores: list[int] | None = Field(
+        default=None,
+        validation_alias=AliasChoices("ids_vinculos_agrupadores", "idsVinculosAgrupadores"),
+        serialization_alias="idsVinculosAgrupadores",
+    )
+    ids_opcoes: list[int] | None = Field(
+        default=None,
+        validation_alias=AliasChoices("ids_opcoes", "idsOpcoes"),
+        serialization_alias="idsOpcoes",
+    )
 
 
 class CamposCustomizadosTiposGetResponse200(BlingModel):
@@ -210,7 +218,11 @@ class CamposCustomizadosDadosDTO(BlingModel):
         tipo_campo: Bling ``tipoCampo``; type ``CamposCustomizadosTipoBaseDTO``; obrigatório."""
 
     modulo: CamposCustomizadosModuloBaseDTO
-    tipo_campo: CamposCustomizadosTipoBaseDTO = Field(..., alias="tipoCampo")
+    tipo_campo: CamposCustomizadosTipoBaseDTO = Field(
+        ...,
+        validation_alias=AliasChoices("tipo_campo", "tipoCampo"),
+        serialization_alias="tipoCampo",
+    )
 
 
 class CamposCustomizadosDadosEdicaoDTO(BlingModel):

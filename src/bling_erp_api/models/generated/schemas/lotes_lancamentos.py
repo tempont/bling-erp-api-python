@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -31,11 +31,26 @@ class LoteLancamentoDTO(BlingModel):
         observacao: Bling ``observacao``; type ``str``; obrigatório. Observação do lote"""
 
     id: int | None = Field(default=None, examples=[12345678])
-    id_lote: int = Field(..., alias="idLote", examples=[12345678])
+    id_lote: int = Field(
+        ...,
+        validation_alias=AliasChoices("id_lote", "idLote"),
+        examples=[12345678],
+        serialization_alias="idLote",
+    )
     quantidade: int | None = Field(default=None, examples=[12345678])
-    tipo_lancamento: int | None = Field(default=None, alias="tipoLancamento", examples=["1"])
+    tipo_lancamento: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("tipo_lancamento", "tipoLancamento"),
+        examples=["1"],
+        serialization_alias="tipoLancamento",
+    )
     data: str | None = Field(default=None, examples=["2021-01-01 00:00:00"])
-    id_origem: int | None = Field(default=None, alias="idOrigem", examples=[12345678])
+    id_origem: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("id_origem", "idOrigem"),
+        examples=[12345678],
+        serialization_alias="idOrigem",
+    )
     observacao: str = Field(..., examples=["Observação do lote"])
 
 
@@ -63,10 +78,20 @@ class SaldoLoteDTO(BlingModel):
         deposito: Bling ``deposito``; type ``LotesDepositoDTO | None``; opcional.
         saldo_atual: Bling ``saldoAtual``; type ``float | None``; opcional. Saldo atual do lote"""
 
-    id_lote: int | None = Field(default=None, alias="idLote", examples=[12345678])
+    id_lote: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("id_lote", "idLote"),
+        examples=[12345678],
+        serialization_alias="idLote",
+    )
     produto: LotesProdutoDTO | None = None
     deposito: LotesDepositoDTO | None = None
-    saldo_atual: float | None = Field(default=None, alias="saldoAtual", examples=[12345678.12])
+    saldo_atual: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("saldo_atual", "saldoAtual"),
+        examples=[12345678.12],
+        serialization_alias="saldoAtual",
+    )
 
 
 class SaldoSomaLotesDTO(BlingModel):
@@ -82,7 +107,12 @@ class SaldoSomaLotesDTO(BlingModel):
 
     produto: LotesProdutoDTO | None = None
     deposito: LotesDepositoDTO | None = None
-    saldo_total: float | None = Field(default=None, alias="saldoTotal", examples=[12345678.12])
+    saldo_total: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("saldo_total", "saldoTotal"),
+        examples=[12345678.12],
+        serialization_alias="saldoTotal",
+    )
 
 
 class SaldoSomaLotesTodosDepositosDTO(BlingModel):
@@ -96,7 +126,12 @@ class SaldoSomaLotesTodosDepositosDTO(BlingModel):
         saldo_total: Bling ``saldoTotal``; type ``float | None``; opcional. Soma dos saldos de lotes"""
 
     produto: LotesProdutoDTO | None = None
-    saldo_total: float | None = Field(default=None, alias="saldoTotal", examples=[12345678.12])
+    saldo_total: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("saldo_total", "saldoTotal"),
+        examples=[12345678.12],
+        serialization_alias="saldoTotal",
+    )
 
 
 __all__ = [

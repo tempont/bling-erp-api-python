@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -57,10 +57,16 @@ class CanalVendaFilialDTO(BlingModel):
 
     cnpj: str | None = Field(default=None, examples=["12.345.678/9012-34"])
     id_unidade_negocio: int | None = Field(
-        default=None, alias="idUnidadeNegocio", examples=[12345678]
+        default=None,
+        validation_alias=AliasChoices("id_unidade_negocio", "idUnidadeNegocio"),
+        examples=[12345678],
+        serialization_alias="idUnidadeNegocio",
     )
     unidade_negocio: str | None = Field(
-        default=None, alias="unidadeNegocio", examples=["Empresa Teste"]
+        default=None,
+        validation_alias=AliasChoices("unidade_negocio", "unidadeNegocio"),
+        examples=["Empresa Teste"],
+        serialization_alias="unidadeNegocio",
     )
     deposito: CanalVendaDepositoDTO | None = None
     padrao: bool | None = Field(default=None, examples=[True])

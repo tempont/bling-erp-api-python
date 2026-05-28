@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -40,8 +40,18 @@ class ProdutosVariacoesDadosAtributoDTO(BlingModel):
         atributo_antigo: Bling ``atributoAntigo``; type ``str``; obrigatório.
         atributo_novo: Bling ``atributoNovo``; type ``str``; obrigatório."""
 
-    atributo_antigo: str = Field(..., alias="atributoAntigo", examples=["Cor"])
-    atributo_novo: str = Field(..., alias="atributoNovo", examples=["Coloração"])
+    atributo_antigo: str = Field(
+        ...,
+        validation_alias=AliasChoices("atributo_antigo", "atributoAntigo"),
+        examples=["Cor"],
+        serialization_alias="atributoAntigo",
+    )
+    atributo_novo: str = Field(
+        ...,
+        validation_alias=AliasChoices("atributo_novo", "atributoNovo"),
+        examples=["Coloração"],
+        serialization_alias="atributoNovo",
+    )
 
 
 class ProdutosVariacoesProdutoPaiDTO(BlingModel):
@@ -78,7 +88,11 @@ class ProdutosVariacoesCombinacaoDadosDTO(BlingModel):
         produto_pai: Bling ``produtoPai``; type ``ProdutosVariacoesProdutoPaiDTO``; obrigatório.
         atributos: Bling ``atributos``; type ``list[ProdutosVariacoesAtributoDTO]``; obrigatório."""
 
-    produto_pai: ProdutosVariacoesProdutoPaiDTO = Field(..., alias="produtoPai")
+    produto_pai: ProdutosVariacoesProdutoPaiDTO = Field(
+        ...,
+        validation_alias=AliasChoices("produto_pai", "produtoPai"),
+        serialization_alias="produtoPai",
+    )
     atributos: list[ProdutosVariacoesAtributoDTO]
 
 

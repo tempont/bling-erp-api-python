@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -56,7 +56,12 @@ class SituacoesModuloDTO(BlingModel):
 
     nome: str = Field(..., examples=["Vendas"])
     descricao: str = Field(..., examples=["Pedidos de Venda"])
-    criar_situacoes: bool = Field(..., alias="criarSituacoes", examples=[False])
+    criar_situacoes: bool = Field(
+        ...,
+        validation_alias=AliasChoices("criar_situacoes", "criarSituacoes"),
+        examples=[False],
+        serialization_alias="criarSituacoes",
+    )
 
 
 class SituacoesDTO(BlingModel):
@@ -83,7 +88,12 @@ class SituacoesDadosDTO(BlingModel):
         id_herdado: Bling ``idHerdado``; type ``int | None``; opcional. ID da situação de referência.
         cor: Bling ``cor``; type ``str | None``; opcional. Código hexadecimal."""
 
-    id_herdado: int | None = Field(default=None, alias="idHerdado", examples=[0])
+    id_herdado: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("id_herdado", "idHerdado"),
+        examples=[0],
+        serialization_alias="idHerdado",
+    )
     cor: str | None = Field(default=None, examples=["#E9DC40"])
 
 
@@ -105,8 +115,16 @@ class SituacoesTransicaoDTO(BlingModel):
     ativo: bool | None = Field(default=None, examples=[True])
     acoes: list[int] | None = Field(default=None, examples=[[12, 15]])
     modulo: SituacoesModuloBaseDTO | None = None
-    situacao_origem: SituacoesDTO = Field(..., alias="situacaoOrigem")
-    situacao_destino: SituacoesDTO = Field(..., alias="situacaoDestino")
+    situacao_origem: SituacoesDTO = Field(
+        ...,
+        validation_alias=AliasChoices("situacao_origem", "situacaoOrigem"),
+        serialization_alias="situacaoOrigem",
+    )
+    situacao_destino: SituacoesDTO = Field(
+        ...,
+        validation_alias=AliasChoices("situacao_destino", "situacaoDestino"),
+        serialization_alias="situacaoDestino",
+    )
 
 
 class SituacoesModulosGetResponse200(BlingModel):
@@ -184,7 +202,10 @@ class SituacoesIdSituacaoPutRequest(SituacoesDadosDTO):
         nome: Bling ``nome``; type ``str | None``; opcional."""
 
     id_modulo_sistema: int | None = Field(
-        default=None, alias="idModuloSistema", examples=[6423808065]
+        default=None,
+        validation_alias=AliasChoices("id_modulo_sistema", "idModuloSistema"),
+        examples=[6423808065],
+        serialization_alias="idModuloSistema",
     )
     nome: str | None = Field(default=None, examples=["Finalizado"])
 
@@ -216,7 +237,10 @@ class SituacoesPostRequest(SituacoesDadosDTO):
         nome: Bling ``nome``; type ``str | None``; opcional."""
 
     id_modulo_sistema: int | None = Field(
-        default=None, alias="idModuloSistema", examples=[6423808065]
+        default=None,
+        validation_alias=AliasChoices("id_modulo_sistema", "idModuloSistema"),
+        examples=[6423808065],
+        serialization_alias="idModuloSistema",
     )
     nome: str | None = Field(default=None, examples=["Finalizado"])
 

@@ -12,8 +12,8 @@ def main() -> None:
     # Model: CategoriasReceitasDespesasPostRequest  # noqa: ERA001
     #   Required: descricao (str), tipo (int)
     #   Optional: id (int|None), id_categoria_pai (int|None), grupo_dre (int|None)
-    payload = CategoriasReceitasDespesasPostRequest.model_construct(
-        descricao="Consultoria", tipo=2, idCategoriaPai=0
+    payload = CategoriasReceitasDespesasPostRequest(
+        descricao="Consultoria", tipo=2, id_categoria_pai=0
     )
     with BlingClient.from_env() as client:
         response = client.income_expense_categories.criar(payload)

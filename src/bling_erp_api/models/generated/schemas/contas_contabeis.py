@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -28,7 +28,10 @@ class ContasContabeisDadosDTO(BlingModel):
     descricao: str | None = Field(default=None, examples=["Contas a pagar"])
     tipo: str | None = Field(default=None, examples=["integracao-pagamento"])
     alias_integracao: str | None = Field(
-        default=None, alias="aliasIntegracao", examples=["BlingPagamentos"]
+        default=None,
+        validation_alias=AliasChoices("alias_integracao", "aliasIntegracao"),
+        examples=["BlingPagamentos"],
+        serialization_alias="aliasIntegracao",
     )
 
 

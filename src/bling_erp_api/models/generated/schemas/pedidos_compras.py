@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -92,10 +92,17 @@ class PedidosComprasParcelaDTO(BlingModel):
         forma_pagamento: Bling ``formaPagamento``; type ``PedidosComprasFormaPagamentoDTO | None``; opcional."""
 
     valor: float = Field(..., examples=[2090.66])
-    data_vencimento: date = Field(..., alias="dataVencimento", examples=["2020-09-23"])
+    data_vencimento: date = Field(
+        ...,
+        validation_alias=AliasChoices("data_vencimento", "dataVencimento"),
+        examples=["2020-09-23"],
+        serialization_alias="dataVencimento",
+    )
     observacao: str | None = Field(default=None, examples=["Observação da parcela."])
     forma_pagamento: PedidosComprasFormaPagamentoDTO | None = Field(
-        default=None, alias="formaPagamento"
+        default=None,
+        validation_alias=AliasChoices("forma_pagamento", "formaPagamento"),
+        serialization_alias="formaPagamento",
     )
 
 
@@ -142,8 +149,18 @@ class PedidosComprasTransporteDTO(BlingModel):
 
     frete: float | None = Field(default=None, examples=[15.78])
     transportador: str | None = Field(default=None, examples=["Zé Transportes"])
-    frete_por_conta: int | None = Field(default=1, alias="fretePorConta", examples=[0])
-    peso_bruto: float | None = Field(default=None, alias="pesoBruto", examples=[15.78])
+    frete_por_conta: int | None = Field(
+        default=1,
+        validation_alias=AliasChoices("frete_por_conta", "fretePorConta"),
+        examples=[0],
+        serialization_alias="fretePorConta",
+    )
+    peso_bruto: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("peso_bruto", "pesoBruto"),
+        examples=[15.78],
+        serialization_alias="pesoBruto",
+    )
     volumes: int | None = Field(default=None, examples=[11])
 
 
@@ -157,8 +174,18 @@ class PedidosComprasTributacaoDTO(BlingModel):
         total_icms: Bling ``totalICMS``; type ``float | None``; opcional.
         total_ipi: Bling ``totalIPI``; type ``float | None``; opcional. Calculado automaticamente com base no IPI dos itens."""
 
-    total_icms: float | None = Field(default=None, alias="totalICMS", examples=[5.55])
-    total_ipi: float | None = Field(default=None, alias="totalIPI", examples=[5.55])
+    total_icms: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("total_icms", "totalICMS"),
+        examples=[5.55],
+        serialization_alias="totalICMS",
+    )
+    total_ipi: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("total_ipi", "totalIPI"),
+        examples=[5.55],
+        serialization_alias="totalIPI",
+    )
 
 
 class PedidosCompraResponsePOSTPUT(BlingModel):
@@ -176,7 +203,11 @@ class PedidosCompraResponsePOSTPUT(BlingModel):
     id: int = Field(..., examples=[12345678])
     numero: int = Field(..., examples=[123])
     alertas: list[str] | None = None
-    erros_anexo: list[str] | None = Field(default=None, alias="errosAnexo")
+    erros_anexo: list[str] | None = Field(
+        default=None,
+        validation_alias=AliasChoices("erros_anexo", "errosAnexo"),
+        serialization_alias="errosAnexo",
+    )
 
 
 class PedidosComprasPostResponse201(BlingModel):
@@ -222,8 +253,18 @@ class PedidosComprasDadosBaseDTO(BlingModel):
     id: int | None = Field(default=None, examples=[12345678])
     numero: int | None = Field(default=None, examples=[12])
     data: date | None = Field(default=None, examples=["2020-08-24"])
-    data_prevista: date | None = Field(default=None, alias="dataPrevista", examples=["2020-08-30"])
-    total_produtos: float | None = Field(default=None, alias="totalProdutos", examples=[2090.66])
+    data_prevista: date | None = Field(
+        default=None,
+        validation_alias=AliasChoices("data_prevista", "dataPrevista"),
+        examples=["2020-08-30"],
+        serialization_alias="dataPrevista",
+    )
+    total_produtos: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("total_produtos", "totalProdutos"),
+        examples=[2090.66],
+        serialization_alias="totalProdutos",
+    )
     total: float | None = Field(default=None, examples=[2090.66])
     fornecedor: PedidosComprasFornecedorDTO
     situacao: PedidosComprasSituacaoDTO | None = None
@@ -248,16 +289,31 @@ class PedidosComprasItemDTO(BlingModel):
 
     descricao: str = Field(..., examples=["Copo do Bling"])
     codigo_fornecedor: str | None = Field(
-        default=None, alias="codigoFornecedor", examples=["46546546"]
+        default=None,
+        validation_alias=AliasChoices("codigo_fornecedor", "codigoFornecedor"),
+        examples=["46546546"],
+        serialization_alias="codigoFornecedor",
     )
     unidade: str | None = Field(default=None, examples=["Un"])
     valor: float = Field(..., examples=[149.99])
     quantidade: float | None = Field(default=None, examples=[12])
-    aliquota_ipi: float | None = Field(default=None, alias="aliquotaIPI", examples=[15.85])
-    descricao_detalhada: str | None = Field(
-        default=None, alias="descricaoDetalhada", examples=["Descrição do item do pedido."]
+    aliquota_ipi: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("aliquota_ipi", "aliquotaIPI"),
+        examples=[15.85],
+        serialization_alias="aliquotaIPI",
     )
-    nota_fiscal: PedidosComprasItemNotaFiscalDTO | None = Field(default=None, alias="notaFiscal")
+    descricao_detalhada: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("descricao_detalhada", "descricaoDetalhada"),
+        examples=["Descrição do item do pedido."],
+        serialization_alias="descricaoDetalhada",
+    )
+    nota_fiscal: PedidosComprasItemNotaFiscalDTO | None = Field(
+        default=None,
+        validation_alias=AliasChoices("nota_fiscal", "notaFiscal"),
+        serialization_alias="notaFiscal",
+    )
     produto: PedidosComprasProdutoDTO | None = None
 
 
@@ -290,10 +346,18 @@ class PedidosComprasDadosDTO(BlingModel):
         itens: Bling ``itens``; type ``list[PedidosComprasItemDTO]``; obrigatório.
         parcelas: Bling ``parcelas``; type ``list[PedidosComprasParcelaDTO] | None``; opcional."""
 
-    ordem_compra: str | None = Field(default=None, alias="ordemCompra", examples=["351635"])
+    ordem_compra: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("ordem_compra", "ordemCompra"),
+        examples=["351635"],
+        serialization_alias="ordemCompra",
+    )
     observacoes: str | None = Field(default=None, examples=["Observação sobre o pedido."])
     observacoes_internas: str | None = Field(
-        default=None, alias="observacoesInternas", examples=["Observação interna sobre o pedido."]
+        default=None,
+        validation_alias=AliasChoices("observacoes_internas", "observacoesInternas"),
+        examples=["Observação interna sobre o pedido."],
+        serialization_alias="observacoesInternas",
     )
     desconto: PedidosComprasDescontoDTO | None = None
     categoria: PedidosComprasCategoriaDTO | None = None

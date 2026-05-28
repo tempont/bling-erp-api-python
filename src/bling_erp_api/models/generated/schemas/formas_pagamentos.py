@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -46,7 +46,12 @@ class FormasPagamentosDadosBaseDTO(BlingModel):
 
     id: int | None = Field(default=None, examples=[12345678])
     descricao: str = Field(..., examples=["Dinheiro"])
-    tipo_pagamento: int = Field(..., alias="tipoPagamento", examples=[1])
+    tipo_pagamento: int = Field(
+        ...,
+        validation_alias=AliasChoices("tipo_pagamento", "tipoPagamento"),
+        examples=[1],
+        serialization_alias="tipoPagamento",
+    )
     situacao: int | None = Field(default=None, examples=[1])
     fixa: bool | None = Field(default=None, examples=[False])
     padrao: int | None = Field(default=None, examples=[0])
@@ -70,9 +75,17 @@ class FormasPagamentosDadosCartaoDTO(BlingModel):
     bandeira: int = Field(..., examples=[1])
     tipo: int = Field(..., examples=[1])
     cnpj_credenciadora: str | None = Field(
-        default=None, alias="cnpjCredenciadora", examples=["67168564000109"]
+        default=None,
+        validation_alias=AliasChoices("cnpj_credenciadora", "cnpjCredenciadora"),
+        examples=["67168564000109"],
+        serialization_alias="cnpjCredenciadora",
     )
-    auto_liquidacao: int | None = Field(default=None, alias="autoLiquidacao", examples=[1])
+    auto_liquidacao: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("auto_liquidacao", "autoLiquidacao"),
+        examples=[1],
+        serialization_alias="autoLiquidacao",
+    )
 
 
 class FormasPagamentosDefinirPadraoDTO(BlingModel):
@@ -154,9 +167,18 @@ class FormasPagamentosDadosDTO(BlingModel):
 
     condicao: str | None = Field(default=None, examples=["1x"])
     destino: int = Field(..., examples=[1])
-    utiliza_dias_uteis: bool | None = Field(default=None, alias="utilizaDiasUteis", examples=[True])
+    utiliza_dias_uteis: bool | None = Field(
+        default=None,
+        validation_alias=AliasChoices("utiliza_dias_uteis", "utilizaDiasUteis"),
+        examples=[True],
+        serialization_alias="utilizaDiasUteis",
+    )
     taxas: FormasPagamentosTaxaDTO | None = None
-    dados_cartao: FormasPagamentosDadosCartaoDTO | None = Field(default=None, alias="dadosCartao")
+    dados_cartao: FormasPagamentosDadosCartaoDTO | None = Field(
+        default=None,
+        validation_alias=AliasChoices("dados_cartao", "dadosCartao"),
+        serialization_alias="dadosCartao",
+    )
 
 
 class FormasPagamentosPostRequest(FormasPagamentosDadosBaseDTO, FormasPagamentosDadosDTO):

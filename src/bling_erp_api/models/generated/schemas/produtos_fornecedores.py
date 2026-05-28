@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -45,8 +45,18 @@ class ProdutoFornecedorDTO(BlingModel):
     id: int | None = Field(default=None, examples=[123456789])
     contato: FornecedorContatoDTO | None = None
     codigo: str | None = Field(default=None, examples=["SKU-FORNECEDOR"])
-    preco_custo: float | None = Field(default=None, alias="precoCusto", examples=[55.55])
-    preco_compra: float | None = Field(default=None, alias="precoCompra", examples=[55.55])
+    preco_custo: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("preco_custo", "precoCusto"),
+        examples=[55.55],
+        serialization_alias="precoCusto",
+    )
+    preco_compra: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("preco_compra", "precoCompra"),
+        examples=[55.55],
+        serialization_alias="precoCompra",
+    )
 
 
 class ProdutosFornecedoresDadosDTO(BlingModel):
@@ -152,8 +162,18 @@ class ProdutosFornecedoresDadosBaseDTO(BlingModel):
     id: int | None = Field(default=None, examples=[12345678])
     descricao: str | None = Field(default=None, examples=["Copo do Bling"])
     codigo: str | None = Field(default=None, examples=["COD-123"])
-    preco_custo: float | None = Field(default=None, alias="precoCusto", examples=[5.9])
-    preco_compra: float | None = Field(default=None, alias="precoCompra", examples=[3.5])
+    preco_custo: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("preco_custo", "precoCusto"),
+        examples=[5.9],
+        serialization_alias="precoCusto",
+    )
+    preco_compra: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("preco_compra", "precoCompra"),
+        examples=[3.5],
+        serialization_alias="precoCompra",
+    )
     padrao: bool | None = Field(default=None, examples=[False])
     produto: ProdutosFornecedoresProdutoDTO | None = None
     fornecedor: ProdutosFornecedoresFornecedorDTO | None = None
@@ -178,8 +198,18 @@ class ProdutosFornecedoresDadosBaseUpdateDTO(BlingModel):
     id: int | None = Field(default=None, examples=[12345678])
     descricao: str | None = Field(default=None, examples=["Copo do Bling"])
     codigo: str | None = Field(default=None, examples=["COD-123"])
-    preco_custo: float | None = Field(default=None, alias="precoCusto", examples=[5.9])
-    preco_compra: float | None = Field(default=None, alias="precoCompra", examples=[3.5])
+    preco_custo: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("preco_custo", "precoCusto"),
+        examples=[5.9],
+        serialization_alias="precoCusto",
+    )
+    preco_compra: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("preco_compra", "precoCompra"),
+        examples=[3.5],
+        serialization_alias="precoCompra",
+    )
     padrao: bool | None = Field(default=None, examples=[False])
     produto: ProdutosFornecedoresProdutoDTO | None = None
     fornecedor: ProdutosFornecedoresFornecedorUpdateDTO | None = None

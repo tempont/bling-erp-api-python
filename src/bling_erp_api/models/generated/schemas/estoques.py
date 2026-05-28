@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -70,8 +70,18 @@ class EstoquesDepositoDTO(BlingModel):
         saldo_fisico: Bling ``saldoFisico``; type ``float | None``; opcional. Saldo físico do produto
         saldo_virtual: Bling ``saldoVirtual``; type ``float | None``; opcional. Saldo do produto desconsiderando produtos reservados"""
 
-    saldo_fisico: float | None = Field(default=None, alias="saldoFisico", examples=[1250.75])
-    saldo_virtual: float | None = Field(default=None, alias="saldoVirtual", examples=[1250.75])
+    saldo_fisico: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("saldo_fisico", "saldoFisico"),
+        examples=[1250.75],
+        serialization_alias="saldoFisico",
+    )
+    saldo_virtual: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("saldo_virtual", "saldoVirtual"),
+        examples=[1250.75],
+        serialization_alias="saldoVirtual",
+    )
 
 
 class EstoquesProdutoDTO(BlingModel):
@@ -101,10 +111,16 @@ class EstoquesSaldosBaseDTO(BlingModel):
 
     produto: EstoquesProdutoDTO | None = None
     saldo_fisico_total: float | None = Field(
-        default=None, alias="saldoFisicoTotal", examples=[1500.75]
+        default=None,
+        validation_alias=AliasChoices("saldo_fisico_total", "saldoFisicoTotal"),
+        examples=[1500.75],
+        serialization_alias="saldoFisicoTotal",
     )
     saldo_virtual_total: float | None = Field(
-        default=None, alias="saldoVirtualTotal", examples=[1500.75]
+        default=None,
+        validation_alias=AliasChoices("saldo_virtual_total", "saldoVirtualTotal"),
+        examples=[1500.75],
+        serialization_alias="saldoVirtualTotal",
     )
 
 
@@ -130,7 +146,10 @@ class EstoqueGetAllResponseDTO(BlingModel):
         saldo_virtual_total: Bling ``saldoVirtualTotal``; type ``float | None``; opcional. Saldo em estoque atual, considerando a reserva de estoque."""
 
     saldo_virtual_total: float | None = Field(
-        default=None, alias="saldoVirtualTotal", examples=["1.0"]
+        default=None,
+        validation_alias=AliasChoices("saldo_virtual_total", "saldoVirtualTotal"),
+        examples=["1.0"],
+        serialization_alias="saldoVirtualTotal",
     )
 
 

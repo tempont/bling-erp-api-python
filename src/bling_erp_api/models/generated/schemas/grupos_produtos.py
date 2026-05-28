@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -55,7 +55,9 @@ class GruposProdutosDadosDTO(BlingModel):
     id: int | None = Field(default=None, examples=[123456])
     nome: str = Field(..., examples=["Grupo 1"])
     grupo_produto_pai: GruposProdutosGrupoProdutoPaiDTO | None = Field(
-        default=None, alias="grupoProdutoPai"
+        default=None,
+        validation_alias=AliasChoices("grupo_produto_pai", "grupoProdutoPai"),
+        serialization_alias="grupoProdutoPai",
     )
 
 

@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -107,9 +107,24 @@ class LogisticasServicosDadosDTO(BlingModel):
     codigo: str = Field(..., examples=["ABC1234"])
     aliases: list[str]
     ativo: bool | None = Field(default=None, examples=[True])
-    frete_item: float = Field(..., alias="freteItem", examples=[12.45])
-    estimativa_entrega: int = Field(..., alias="estimativaEntrega", examples=[2])
-    id_codigo_servico: str | None = Field(default=None, alias="idCodigoServico", examples=[13112])
+    frete_item: float = Field(
+        ...,
+        validation_alias=AliasChoices("frete_item", "freteItem"),
+        examples=[12.45],
+        serialization_alias="freteItem",
+    )
+    estimativa_entrega: int = Field(
+        ...,
+        validation_alias=AliasChoices("estimativa_entrega", "estimativaEntrega"),
+        examples=[2],
+        serialization_alias="estimativaEntrega",
+    )
+    id_codigo_servico: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("id_codigo_servico", "idCodigoServico"),
+        examples=[13112],
+        serialization_alias="idCodigoServico",
+    )
     logistica: LogisticasServicosLogisticaDTO
     transportador: LogisticasServicosTransportadorDTO
 
@@ -134,9 +149,24 @@ class LogisticasServicosDadosSaveRequestDTO(BlingModel):
     codigo: str = Field(..., examples=["ABC1234"])
     aliases: list[str]
     ativo: bool | None = Field(default=None, examples=[True])
-    frete_item: float = Field(..., alias="freteItem", examples=[12.45])
-    estimativa_entrega: int = Field(..., alias="estimativaEntrega", examples=[2])
-    id_codigo_servico: str | None = Field(default=None, alias="idCodigoServico", examples=[13112])
+    frete_item: float = Field(
+        ...,
+        validation_alias=AliasChoices("frete_item", "freteItem"),
+        examples=[12.45],
+        serialization_alias="freteItem",
+    )
+    estimativa_entrega: int = Field(
+        ...,
+        validation_alias=AliasChoices("estimativa_entrega", "estimativaEntrega"),
+        examples=[2],
+        serialization_alias="estimativaEntrega",
+    )
+    id_codigo_servico: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("id_codigo_servico", "idCodigoServico"),
+        examples=[13112],
+        serialization_alias="idCodigoServico",
+    )
     transportador: LogisticasServicosTransportadorDTO | None = None
 
 

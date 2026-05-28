@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -41,16 +41,35 @@ class LotePutRequestDTO(BlingModel):
         dias_permitido_venda: Bling ``diasPermitidoVenda``; type ``int | None``; opcional.
         codigo_agregacao: Bling ``codigoAgregacao``; type ``str | None``; opcional."""
 
-    codigo_lote: str | None = Field(default=None, alias="codigoLote", examples=["Lote 1"])
-    data_fabricacao: str | None = Field(
-        default=None, alias="dataFabricacao", examples=["2021-01-01"]
+    codigo_lote: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("codigo_lote", "codigoLote"),
+        examples=["Lote 1"],
+        serialization_alias="codigoLote",
     )
-    data_validade: str | None = Field(default=None, alias="dataValidade", examples=["2021-01-01"])
+    data_fabricacao: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("data_fabricacao", "dataFabricacao"),
+        examples=["2021-01-01"],
+        serialization_alias="dataFabricacao",
+    )
+    data_validade: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("data_validade", "dataValidade"),
+        examples=["2021-01-01"],
+        serialization_alias="dataValidade",
+    )
     dias_permitido_venda: int | None = Field(
-        default=None, alias="diasPermitidoVenda", examples=[10]
+        default=None,
+        validation_alias=AliasChoices("dias_permitido_venda", "diasPermitidoVenda"),
+        examples=[10],
+        serialization_alias="diasPermitidoVenda",
     )
     codigo_agregacao: str | None = Field(
-        default=None, alias="codigoAgregacao", examples=["12345678"]
+        default=None,
+        validation_alias=AliasChoices("codigo_agregacao", "codigoAgregacao"),
+        examples=["12345678"],
+        serialization_alias="codigoAgregacao",
     )
 
 
@@ -76,8 +95,18 @@ class ProdutoControlaLotesDTO(BlingModel):
         id_produto: Bling ``idProduto``; type ``int``; obrigatório. ID do produto
         controla_lote: Bling ``controlaLote``; type ``bool | None``; opcional. Indica se o produto controla lote"""
 
-    id_produto: int = Field(..., alias="idProduto", examples=[12345678])
-    controla_lote: bool | None = Field(default=None, alias="controlaLote", examples=[True])
+    id_produto: int = Field(
+        ...,
+        validation_alias=AliasChoices("id_produto", "idProduto"),
+        examples=[12345678],
+        serialization_alias="idProduto",
+    )
+    controla_lote: bool | None = Field(
+        default=None,
+        validation_alias=AliasChoices("controla_lote", "controlaLote"),
+        examples=[True],
+        serialization_alias="controlaLote",
+    )
 
 
 class LotesProdutoDTO(BlingModel):
@@ -157,15 +186,41 @@ class LotesDTO(BlingModel):
         deposito: Bling ``deposito``; type ``LotesDepositoDTO``; obrigatório.
         status: Bling ``status``; type ``int | None``; opcional. `1` Ativo <br> `2` Inativo"""
 
-    id_lote: int = Field(..., alias="idLote", examples=["12345678"])
-    codigo_lote: str | None = Field(default=None, alias="codigoLote", examples=["Lote 1"])
-    data_fabricacao: str = Field(..., alias="dataFabricacao", examples=["2021-01-01"])
-    data_validade: str = Field(..., alias="dataValidade", examples=["2021-01-01"])
+    id_lote: int = Field(
+        ...,
+        validation_alias=AliasChoices("id_lote", "idLote"),
+        examples=["12345678"],
+        serialization_alias="idLote",
+    )
+    codigo_lote: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("codigo_lote", "codigoLote"),
+        examples=["Lote 1"],
+        serialization_alias="codigoLote",
+    )
+    data_fabricacao: str = Field(
+        ...,
+        validation_alias=AliasChoices("data_fabricacao", "dataFabricacao"),
+        examples=["2021-01-01"],
+        serialization_alias="dataFabricacao",
+    )
+    data_validade: str = Field(
+        ...,
+        validation_alias=AliasChoices("data_validade", "dataValidade"),
+        examples=["2021-01-01"],
+        serialization_alias="dataValidade",
+    )
     dias_permitido_venda: int | None = Field(
-        default=None, alias="diasPermitidoVenda", examples=[10]
+        default=None,
+        validation_alias=AliasChoices("dias_permitido_venda", "diasPermitidoVenda"),
+        examples=[10],
+        serialization_alias="diasPermitidoVenda",
     )
     codigo_agregacao: str | None = Field(
-        default=None, alias="codigoAgregacao", examples=["12345678"]
+        default=None,
+        validation_alias=AliasChoices("codigo_agregacao", "codigoAgregacao"),
+        examples=["12345678"],
+        serialization_alias="codigoAgregacao",
     )
     produto: LotesProdutoDTO
     deposito: LotesDepositoDTO

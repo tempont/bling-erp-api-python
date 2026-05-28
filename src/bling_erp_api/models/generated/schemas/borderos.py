@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -52,8 +52,18 @@ class BorderosPagamentoDTO(BlingModel):
         tarifa: Bling ``tarifa``; type ``float``; obrigatório. Tarifa da forma de pagamento"""
 
     contato: BorderosContatoDTO
-    numero_documento: str = Field(..., alias="numeroDocumento", examples=[""])
-    valor_pago: float = Field(..., alias="valorPago", examples=[1500.75])
+    numero_documento: str = Field(
+        ...,
+        validation_alias=AliasChoices("numero_documento", "numeroDocumento"),
+        examples=[""],
+        serialization_alias="numeroDocumento",
+    )
+    valor_pago: float = Field(
+        ...,
+        validation_alias=AliasChoices("valor_pago", "valorPago"),
+        examples=[1500.75],
+        serialization_alias="valorPago",
+    )
     juros: float = Field(..., examples=[10])
     desconto: float = Field(..., examples=[10])
     acrescimo: float = Field(..., examples=[10])

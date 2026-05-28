@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -36,7 +36,12 @@ class VendasCreateInvoiceResponseDTO(BlingModel):
     Fields:
         id_nota_fiscal: Bling ``idNotaFiscal``; type ``int``; obrigatório."""
 
-    id_nota_fiscal: int = Field(..., alias="idNotaFiscal", examples=[12345678])
+    id_nota_fiscal: int = Field(
+        ...,
+        validation_alias=AliasChoices("id_nota_fiscal", "idNotaFiscal"),
+        examples=[12345678],
+        serialization_alias="idNotaFiscal",
+    )
 
 
 class VendasDescontoDTO(BlingModel):
@@ -64,7 +69,12 @@ class VendasIntermediadorDTO(BlingModel):
         nome_usuario: Bling ``nomeUsuario``; type ``str | None``; opcional."""
 
     cnpj: str | None = Field(default=None, examples=["13921649000197"])
-    nome_usuario: str | None = Field(default=None, alias="nomeUsuario", examples=["usuario"])
+    nome_usuario: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("nome_usuario", "nomeUsuario"),
+        examples=["usuario"],
+        serialization_alias="nomeUsuario",
+    )
 
 
 class VendasItemComissaoDTO(BlingModel):
@@ -118,7 +128,11 @@ class VendasLojaDTO(BlingModel):
         unidade_negocio: Bling ``unidadeNegocio``; type ``LojaUnidadeNegocioDTO | None``; opcional."""
 
     id: int = Field(..., examples=[12345678])
-    unidade_negocio: LojaUnidadeNegocioDTO | None = Field(default=None, alias="unidadeNegocio")
+    unidade_negocio: LojaUnidadeNegocioDTO | None = Field(
+        default=None,
+        validation_alias=AliasChoices("unidade_negocio", "unidadeNegocio"),
+        serialization_alias="unidadeNegocio",
+    )
 
 
 class VendasNotaFiscalDTO(BlingModel):
@@ -184,9 +198,24 @@ class VendasTaxaDTO(BlingModel):
         custo_frete: Bling ``custoFrete``; type ``float | None``; opcional. Valor de custo do frete.
         valor_base: Bling ``valorBase``; type ``float | None``; opcional. Valor base da venda para demonstrativo de cálculo das taxas via interface (Se não informado considera o total da venda)."""
 
-    taxa_comissao: float | None = Field(default=None, alias="taxaComissao", examples=[1])
-    custo_frete: float | None = Field(default=None, alias="custoFrete", examples=[9.99])
-    valor_base: float | None = Field(default=None, alias="valorBase", examples=[129.9])
+    taxa_comissao: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("taxa_comissao", "taxaComissao"),
+        examples=[1],
+        serialization_alias="taxaComissao",
+    )
+    custo_frete: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("custo_frete", "custoFrete"),
+        examples=[9.99],
+        serialization_alias="custoFrete",
+    )
+    valor_base: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_base", "valorBase"),
+        examples=[129.9],
+        serialization_alias="valorBase",
+    )
 
 
 class VendasTransporteContatoDTO(BlingModel):
@@ -228,7 +257,12 @@ class VendasTransporteEtiquetaDTO(BlingModel):
     uf: str | None = Field(default=None, examples=["RS"])
     cep: str | None = Field(default=None, examples=["95702-000"])
     bairro: str | None = Field(default=None, examples=["Imigrante"])
-    nome_pais: str | None = Field(default=None, alias="nomePais", examples=["BRASIL"])
+    nome_pais: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("nome_pais", "nomePais"),
+        examples=["BRASIL"],
+        serialization_alias="nomePais",
+    )
 
 
 class VendasTransporteVolumeDTO(BlingModel):
@@ -245,7 +279,10 @@ class VendasTransporteVolumeDTO(BlingModel):
     id: int = Field(..., examples=[12345678])
     servico: str = Field(..., examples=["ALIAS_123"])
     codigo_rastreamento: str | None = Field(
-        default=None, alias="codigoRastreamento", examples=["COD123BR"]
+        default=None,
+        validation_alias=AliasChoices("codigo_rastreamento", "codigoRastreamento"),
+        examples=["COD123BR"],
+        serialization_alias="codigoRastreamento",
     )
 
 
@@ -259,8 +296,18 @@ class VendasTributacaoDTO(BlingModel):
         total_icms: Bling ``totalICMS``; type ``float | None``; opcional.
         total_ipi: Bling ``totalIPI``; type ``float | None``; opcional."""
 
-    total_icms: float | None = Field(default=None, alias="totalICMS", examples=[5.55])
-    total_ipi: float | None = Field(default=None, alias="totalIPI", examples=[5.55])
+    total_icms: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("total_icms", "totalICMS"),
+        examples=[5.55],
+        serialization_alias="totalICMS",
+    )
+    total_ipi: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("total_ipi", "totalIPI"),
+        examples=[5.55],
+        serialization_alias="totalIPI",
+    )
 
 
 class VendasContatoDTO(BlingModel):
@@ -277,9 +324,17 @@ class VendasContatoDTO(BlingModel):
 
     id: int = Field(..., examples=[12345678])
     nome: str = Field(..., examples=["Contato do Bling"])
-    tipo_pessoa: str | None = Field(default=None, alias="tipoPessoa", examples=["J"])
+    tipo_pessoa: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("tipo_pessoa", "tipoPessoa"),
+        examples=["J"],
+        serialization_alias="tipoPessoa",
+    )
     numero_documento: str | None = Field(
-        default=None, alias="numeroDocumento", examples=["30188025000121"]
+        default=None,
+        validation_alias=AliasChoices("numero_documento", "numeroDocumento"),
+        examples=["30188025000121"],
+        serialization_alias="numeroDocumento",
     )
 
 
@@ -328,11 +383,31 @@ class VendasDadosBaseDTO(BlingModel):
 
     id: int | None = Field(default=None, examples=[12345678])
     numero: int | None = Field(default=None, examples=[123])
-    numero_loja: str | None = Field(default=None, alias="numeroLoja", examples=["Loja_123"])
+    numero_loja: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("numero_loja", "numeroLoja"),
+        examples=["Loja_123"],
+        serialization_alias="numeroLoja",
+    )
     data: date = Field(..., examples=["2023-01-12"])
-    data_saida: date = Field(..., alias="dataSaida", examples=["2023-01-12"])
-    data_prevista: date = Field(..., alias="dataPrevista", examples=["2023-01-12"])
-    total_produtos: float | None = Field(default=None, alias="totalProdutos", examples=[10])
+    data_saida: date = Field(
+        ...,
+        validation_alias=AliasChoices("data_saida", "dataSaida"),
+        examples=["2023-01-12"],
+        serialization_alias="dataSaida",
+    )
+    data_prevista: date = Field(
+        ...,
+        validation_alias=AliasChoices("data_prevista", "dataPrevista"),
+        examples=["2023-01-12"],
+        serialization_alias="dataPrevista",
+    )
+    total_produtos: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("total_produtos", "totalProdutos"),
+        examples=[10],
+        serialization_alias="totalProdutos",
+    )
     total: float | None = Field(default=None, examples=[12])
     contato: VendasContatoDTO
     situacao: VendasSituacaoDTO | None = None
@@ -360,11 +435,31 @@ class VendasDadosBaseDTOPUT(BlingModel):
 
     id: int | None = Field(default=None, examples=[12345678])
     numero: int | None = Field(default=None, examples=[123])
-    numero_loja: str | None = Field(default=None, alias="numeroLoja", examples=["Loja_123"])
+    numero_loja: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("numero_loja", "numeroLoja"),
+        examples=["Loja_123"],
+        serialization_alias="numeroLoja",
+    )
     data: date = Field(..., examples=["2023-01-12"])
-    data_saida: date = Field(..., alias="dataSaida", examples=["2023-01-12"])
-    data_prevista: date = Field(..., alias="dataPrevista", examples=["2023-01-12"])
-    total_produtos: float | None = Field(default=None, alias="totalProdutos", examples=[10])
+    data_saida: date = Field(
+        ...,
+        validation_alias=AliasChoices("data_saida", "dataSaida"),
+        examples=["2023-01-12"],
+        serialization_alias="dataSaida",
+    )
+    data_prevista: date = Field(
+        ...,
+        validation_alias=AliasChoices("data_prevista", "dataPrevista"),
+        examples=["2023-01-12"],
+        serialization_alias="dataPrevista",
+    )
+    total_produtos: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("total_produtos", "totalProdutos"),
+        examples=[10],
+        serialization_alias="totalProdutos",
+    )
     total: float | None = Field(default=None, examples=[12])
     contato: VendasContatoDTO
     situacao: VendasSituacaoDTOPUT | None = None
@@ -397,15 +492,25 @@ class VendasItemDTO(BlingModel):
     quantidade: float = Field(..., examples=[1])
     desconto: float | None = Field(default=None, examples=[2])
     valor: float = Field(..., examples=[4.9])
-    aliquota_ipi: float | None = Field(default=None, alias="aliquotaIPI", examples=[0])
+    aliquota_ipi: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("aliquota_ipi", "aliquotaIPI"),
+        examples=[0],
+        serialization_alias="aliquotaIPI",
+    )
     descricao: str = Field(..., examples=["Produto do Bling"])
     descricao_detalhada: str | None = Field(
-        default=None, alias="descricaoDetalhada", examples=["Brinde"]
+        default=None,
+        validation_alias=AliasChoices("descricao_detalhada", "descricaoDetalhada"),
+        examples=["Brinde"],
+        serialization_alias="descricaoDetalhada",
     )
     produto: VendasItemProdutoDTO | None = None
     comissao: VendasItemComissaoDTO | None = None
     natureza_operacao: VendasItemNaturezaOperacaoDTO | None = Field(
-        default=None, alias="naturezaOperacao"
+        default=None,
+        validation_alias=AliasChoices("natureza_operacao", "naturezaOperacao"),
+        serialization_alias="naturezaOperacao",
     )
 
 
@@ -424,11 +529,20 @@ class VendasParcelaDTO(BlingModel):
         forma_pagamento: Bling ``formaPagamento``; type ``VendasParcelaFormaPagamentoDTO``; obrigatório."""
 
     id: int = Field(..., examples=[12345678])
-    data_vencimento: date = Field(..., alias="dataVencimento", examples=["2023-01-12"])
+    data_vencimento: date = Field(
+        ...,
+        validation_alias=AliasChoices("data_vencimento", "dataVencimento"),
+        examples=["2023-01-12"],
+        serialization_alias="dataVencimento",
+    )
     valor: float = Field(..., examples=[123.45])
     observacoes: str | None = Field(default=None, examples=["Observação da parcela"])
     caut: str | None = Field(default=None, examples=["123456789"])
-    forma_pagamento: VendasParcelaFormaPagamentoDTO = Field(..., alias="formaPagamento")
+    forma_pagamento: VendasParcelaFormaPagamentoDTO = Field(
+        ...,
+        validation_alias=AliasChoices("forma_pagamento", "formaPagamento"),
+        serialization_alias="formaPagamento",
+    )
 
 
 class VendasTransporteDTO(BlingModel):
@@ -447,11 +561,31 @@ class VendasTransporteDTO(BlingModel):
         etiqueta: Bling ``etiqueta``; type ``VendasTransporteEtiquetaDTO | None``; opcional.
         volumes: Bling ``volumes``; type ``list[VendasTransporteVolumeDTO] | None``; opcional."""
 
-    frete_por_conta: int | None = Field(default=None, alias="fretePorConta", examples=[0])
+    frete_por_conta: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("frete_por_conta", "fretePorConta"),
+        examples=[0],
+        serialization_alias="fretePorConta",
+    )
     frete: float | None = Field(default=None, examples=[20])
-    quantidade_volumes: int | None = Field(default=None, alias="quantidadeVolumes", examples=[1])
-    peso_bruto: float | None = Field(default=None, alias="pesoBruto", examples=[0.5])
-    prazo_entrega: int | None = Field(default=None, alias="prazoEntrega", examples=[10])
+    quantidade_volumes: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("quantidade_volumes", "quantidadeVolumes"),
+        examples=[1],
+        serialization_alias="quantidadeVolumes",
+    )
+    peso_bruto: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("peso_bruto", "pesoBruto"),
+        examples=[0.5],
+        serialization_alias="pesoBruto",
+    )
+    prazo_entrega: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("prazo_entrega", "prazoEntrega"),
+        examples=[10],
+        serialization_alias="prazoEntrega",
+    )
     contato: VendasTransporteContatoDTO | None = None
     etiqueta: VendasTransporteEtiquetaDTO | None = None
     volumes: list[VendasTransporteVolumeDTO] | None = None
@@ -492,16 +626,31 @@ class VendasDadosDTO(BlingModel):
         taxas: Bling ``taxas``; type ``VendasTaxaDTO | None``; opcional."""
 
     numero_pedido_compra: str | None = Field(
-        default=None, alias="numeroPedidoCompra", examples=["123"]
+        default=None,
+        validation_alias=AliasChoices("numero_pedido_compra", "numeroPedidoCompra"),
+        examples=["123"],
+        serialization_alias="numeroPedidoCompra",
     )
-    outras_despesas: float | None = Field(default=None, alias="outrasDespesas", examples=[2])
+    outras_despesas: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("outras_despesas", "outrasDespesas"),
+        examples=[2],
+        serialization_alias="outrasDespesas",
+    )
     observacoes: str | None = Field(default=None, examples=["Observações do pedido."])
     observacoes_internas: str | None = Field(
-        default=None, alias="observacoesInternas", examples=["Observações internas do pedido."]
+        default=None,
+        validation_alias=AliasChoices("observacoes_internas", "observacoesInternas"),
+        examples=["Observações internas do pedido."],
+        serialization_alias="observacoesInternas",
     )
     desconto: VendasDescontoDTO | None = None
     categoria: VendasCategoriaDTO | None = None
-    nota_fiscal: VendasNotaFiscalDTO | None = Field(default=None, alias="notaFiscal")
+    nota_fiscal: VendasNotaFiscalDTO | None = Field(
+        default=None,
+        validation_alias=AliasChoices("nota_fiscal", "notaFiscal"),
+        serialization_alias="notaFiscal",
+    )
     tributacao: VendasTributacaoDTO | None = None
     itens: list[VendasItemDTO]
     parcelas: list[VendasParcelaDTO]

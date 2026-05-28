@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -114,7 +114,12 @@ class ContratosDescontoDTO(BlingModel):
         data_fim: Bling ``dataFim``; type ``str``; obrigatório. Formato: YYYY-MM"""
 
     valor: float = Field(..., examples=[4.99])
-    data_fim: str = Field(..., alias="dataFim", examples=["2023-02"])
+    data_fim: str = Field(
+        ...,
+        validation_alias=AliasChoices("data_fim", "dataFim"),
+        examples=["2023-02"],
+        serialization_alias="dataFim",
+    )
 
 
 class ContratosFormaPagamentoDTO(BlingModel):
@@ -166,7 +171,12 @@ class ContratosVendedorComissaoDTO(BlingModel):
         numero_parcelas: Bling ``numeroParcelas``; type ``int``; obrigatório."""
 
     aliquota: float = Field(..., examples=[0.5])
-    numero_parcelas: int = Field(..., alias="numeroParcelas", examples=[1])
+    numero_parcelas: int = Field(
+        ...,
+        validation_alias=AliasChoices("numero_parcelas", "numeroParcelas"),
+        examples=[1],
+        serialization_alias="numeroParcelas",
+    )
 
 
 class ContratosVendedorDTO(BlingModel):
@@ -230,7 +240,12 @@ class ContratosCobrancaDTO(BlingModel):
         contato: Bling ``contato``; type ``ContratosCobrancaContatoDTO | None``; opcional.
         vencimento: Bling ``vencimento``; type ``ContratosCobrancaVencimentoDTO | None``; opcional."""
 
-    data_base: date | None = Field(default=None, alias="dataBase", examples=["2023-02-22"])
+    data_base: date | None = Field(
+        default=None,
+        validation_alias=AliasChoices("data_base", "dataBase"),
+        examples=["2023-02-22"],
+        serialization_alias="dataBase",
+    )
     contato: ContratosCobrancaContatoDTO | None = None
     vencimento: ContratosCobrancaVencimentoDTO | None = None
 
@@ -245,7 +260,12 @@ class ContratosNotaFiscalItemDTO(BlingModel):
         codigo_servico: Bling ``codigoServico``; type ``str | None``; opcional. Código do serviço conforme tabela de serviços.
         produto: Bling ``produto``; type ``ContratosNotaFiscalItemProdutoDTO | None``; opcional."""
 
-    codigo_servico: str | None = Field(default=None, alias="codigoServico", examples=["14.13"])
+    codigo_servico: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("codigo_servico", "codigoServico"),
+        examples=["14.13"],
+        serialization_alias="codigoServico",
+    )
     produto: ContratosNotaFiscalItemProdutoDTO | None = None
 
 
@@ -267,7 +287,10 @@ class ContratosNotaFiscalDTO(BlingModel):
     mes: int | None = Field(default=None, examples=[2])
     gerar: int | None = Field(default=None, examples=[1])
     descontar_imposto_renda: int | None = Field(
-        default=None, alias="descontarImpostoRenda", examples=[1]
+        default=None,
+        validation_alias=AliasChoices("descontar_imposto_renda", "descontarImpostoRenda"),
+        examples=[1],
+        serialization_alias="descontarImpostoRenda",
     )
     texto: str | None = Field(default=None, examples=["Exemplo de texto."])
     cfop: str | None = Field(default=None, examples=["5.556"])
@@ -294,16 +317,43 @@ class ContratosDadosDTO(BlingModel):
         nota_fiscal: Bling ``notaFiscal``; type ``ContratosNotaFiscalDTO | None``; opcional.
         cobranca: Bling ``cobranca``; type ``ContratosCobrancaDTO``; obrigatório."""
 
-    data_fim: str = Field(..., alias="dataFim", examples=["2024-05"])
-    tipo_manutencao: int = Field(..., alias="tipoManutencao", examples=[1])
-    emitir_ordem_servico: bool = Field(..., alias="emitirOrdemServico", examples=[False])
+    data_fim: str = Field(
+        ...,
+        validation_alias=AliasChoices("data_fim", "dataFim"),
+        examples=["2024-05"],
+        serialization_alias="dataFim",
+    )
+    tipo_manutencao: int = Field(
+        ...,
+        validation_alias=AliasChoices("tipo_manutencao", "tipoManutencao"),
+        examples=[1],
+        serialization_alias="tipoManutencao",
+    )
+    emitir_ordem_servico: bool = Field(
+        ...,
+        validation_alias=AliasChoices("emitir_ordem_servico", "emitirOrdemServico"),
+        examples=[False],
+        serialization_alias="emitirOrdemServico",
+    )
     observacoes: str = Field(..., examples=[""])
     vendedor: ContratosVendedorDTO
     categoria: ContratosCategoriaDTO
     desconto: ContratosDescontoDTO
-    conta_contabil: ContratosContaContabilDTO = Field(..., alias="contaContabil")
-    forma_pagamento: ContratosFormaPagamentoDTO = Field(..., alias="formaPagamento")
-    nota_fiscal: ContratosNotaFiscalDTO | None = Field(default=None, alias="notaFiscal")
+    conta_contabil: ContratosContaContabilDTO = Field(
+        ...,
+        validation_alias=AliasChoices("conta_contabil", "contaContabil"),
+        serialization_alias="contaContabil",
+    )
+    forma_pagamento: ContratosFormaPagamentoDTO = Field(
+        ...,
+        validation_alias=AliasChoices("forma_pagamento", "formaPagamento"),
+        serialization_alias="formaPagamento",
+    )
+    nota_fiscal: ContratosNotaFiscalDTO | None = Field(
+        default=None,
+        validation_alias=AliasChoices("nota_fiscal", "notaFiscal"),
+        serialization_alias="notaFiscal",
+    )
     cobranca: ContratosCobrancaDTO
 
 

@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -92,11 +92,17 @@ class ProdutosCampoCustomizadoDTO(BlingModel):
         valor: Bling ``valor``; type ``str | None``; opcional.
         item: Bling ``item``; type ``str | None``; opcional."""
 
-    id_campo_customizado: int = Field(..., alias="idCampoCustomizado", examples=[123456789])
+    id_campo_customizado: int = Field(
+        ...,
+        validation_alias=AliasChoices("id_campo_customizado", "idCampoCustomizado"),
+        examples=[123456789],
+        serialization_alias="idCampoCustomizado",
+    )
     id_vinculo: int | None = Field(
         default=None,
-        alias="idVinculo",
+        validation_alias=AliasChoices("id_vinculo", "idVinculo"),
         examples=["Utilize para atualizar o valor existente. Ex: 123456789"],
+        serialization_alias="idVinculo",
     )
     valor: str | None = Field(default=None, examples=["256GB"])
     item: str | None = Field(default=None, examples=["Opção A"])
@@ -151,12 +157,16 @@ class ProdutosDadosBaseDTOGetByID(BlingModel):
     situacao: str = Field(..., examples=["A"])
     formato: str = Field(..., examples=["S"])
     descricao_curta: str | None = Field(
-        default=None, alias="descricaoCurta", examples=["Descrição curta"]
+        default=None,
+        validation_alias=AliasChoices("descricao_curta", "descricaoCurta"),
+        examples=["Descrição curta"],
+        serialization_alias="descricaoCurta",
     )
     imagem_url: str | None = Field(
         default=None,
-        alias="imagemURL",
+        validation_alias=AliasChoices("imagem_url", "imagemURL"),
         examples=["https://www.bling.com.br/imagens/imagens-produtos/123456789.jpg"],
+        serialization_alias="imagemURL",
     )
 
 
@@ -185,12 +195,16 @@ class ProdutosDadosBaseDTOPatch(BlingModel):
     situacao: str | None = Field(default="A", examples=["A"])
     formato: str | None = Field(default=None, examples=["S"])
     descricao_curta: str | None = Field(
-        default=None, alias="descricaoCurta", examples=["Descrição curta"]
+        default=None,
+        validation_alias=AliasChoices("descricao_curta", "descricaoCurta"),
+        examples=["Descrição curta"],
+        serialization_alias="descricaoCurta",
     )
     imagem_url: str | None = Field(
         default=None,
-        alias="imagemURL",
+        validation_alias=AliasChoices("imagem_url", "imagemURL"),
         examples=["https://www.bling.com.br/imagens/imagens-produtos/123456789.jpg"],
+        serialization_alias="imagemURL",
     )
 
 
@@ -209,7 +223,12 @@ class ProdutosDimensoesDTO(BlingModel):
     largura: float | None = Field(default=None, examples=[1])
     altura: float | None = Field(default=None, examples=[1])
     profundidade: float | None = Field(default=None, examples=[1])
-    unidade_medida: int | None = Field(default=None, alias="unidadeMedida", examples=[1])
+    unidade_medida: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("unidade_medida", "unidadeMedida"),
+        examples=[1],
+        serialization_alias="unidadeMedida",
+    )
 
 
 class ProdutosEstoqueDTO(BlingModel):
@@ -230,7 +249,10 @@ class ProdutosEstoqueDTO(BlingModel):
     crossdocking: int | None = Field(default=None, examples=[1])
     localizacao: str | None = Field(default=None, examples=["14A"])
     saldo_virtual_total: float | None = Field(
-        default=None, alias="saldoVirtualTotal", examples=["1.0"]
+        default=None,
+        validation_alias=AliasChoices("saldo_virtual_total", "saldoVirtualTotal"),
+        examples=["1.0"],
+        serialization_alias="saldoVirtualTotal",
     )
 
 
@@ -274,12 +296,19 @@ class ProdutosImagemInternaDTO(BlingModel):
 
     link: str = Field(..., examples=["https://www.bling.com.br/imagens/miniatura.jpg"])
     link_miniatura: str = Field(
-        ..., alias="linkMiniatura", examples=["https://www.bling.com.br/imagens/miniatura.jpg"]
+        ...,
+        validation_alias=AliasChoices("link_miniatura", "linkMiniatura"),
+        examples=["https://www.bling.com.br/imagens/miniatura.jpg"],
+        serialization_alias="linkMiniatura",
     )
     validade: str = Field(..., examples=["2020-01-01 00:00:00"])
     ordem: int = Field(..., examples=[1])
     anexo: ProdutosAnexoDTO
-    anexo_vinculo: ProdutosAnexoVinculoDTO = Field(..., alias="anexoVinculo")
+    anexo_vinculo: ProdutosAnexoVinculoDTO = Field(
+        ...,
+        validation_alias=AliasChoices("anexo_vinculo", "anexoVinculo"),
+        serialization_alias="anexoVinculo",
+    )
 
 
 class ProdutosImagensDTO(BlingModel):
@@ -293,7 +322,11 @@ class ProdutosImagensDTO(BlingModel):
         externas: Bling ``externas``; type ``list[ProdutosImagemDTO] | None``; opcional.
         internas: Bling ``internas``; type ``list[ProdutosImagemInternaDTO] | None``; opcional."""
 
-    imagens_url: list[ProdutosImagemDTO] | None = Field(default=None, alias="imagensURL")
+    imagens_url: list[ProdutosImagemDTO] | None = Field(
+        default=None,
+        validation_alias=AliasChoices("imagens_url", "imagensURL"),
+        serialization_alias="imagensURL",
+    )
     externas: list[ProdutosImagemDTO] | None = None
     internas: list[ProdutosImagemInternaDTO] | None = None
 
@@ -321,7 +354,12 @@ class ProdutosProdutoPaiDTO(BlingModel):
         clone_info: Bling ``cloneInfo``; type ``bool``; obrigatório."""
 
     id: int | None = Field(default=None, examples=[12345678])
-    clone_info: bool = Field(..., alias="cloneInfo", examples=[True])
+    clone_info: bool = Field(
+        ...,
+        validation_alias=AliasChoices("clone_info", "cloneInfo"),
+        examples=[True],
+        serialization_alias="cloneInfo",
+    )
 
 
 class ProdutosTributacaoDTO(BlingModel):
@@ -360,48 +398,151 @@ class ProdutosTributacaoDTO(BlingModel):
         grupo_produto: Bling ``grupoProduto``; type ``ProdutosGrupoProdutoDTO | None``; opcional."""
 
     origem: int | None = Field(default=None, examples=[0])
-    n_fci: str | None = Field(default=None, alias="nFCI", examples=[""])
+    n_fci: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("n_fci", "nFCI"),
+        examples=[""],
+        serialization_alias="nFCI",
+    )
     ncm: str | None = Field(default=None, examples=[""])
     cest: str | None = Field(default=None, examples=[""])
     codigo_lista_servicos: str | None = Field(
-        default=None, alias="codigoListaServicos", examples=[""]
+        default=None,
+        validation_alias=AliasChoices("codigo_lista_servicos", "codigoListaServicos"),
+        examples=[""],
+        serialization_alias="codigoListaServicos",
     )
-    sped_tipo_item: str | None = Field(default=None, alias="spedTipoItem", examples=[""])
-    codigo_item: str | None = Field(default=None, alias="codigoItem", examples=[""])
+    sped_tipo_item: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("sped_tipo_item", "spedTipoItem"),
+        examples=[""],
+        serialization_alias="spedTipoItem",
+    )
+    codigo_item: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("codigo_item", "codigoItem"),
+        examples=[""],
+        serialization_alias="codigoItem",
+    )
     percentual_tributos: float | None = Field(
-        default=None, alias="percentualTributos", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("percentual_tributos", "percentualTributos"),
+        examples=[0],
+        serialization_alias="percentualTributos",
     )
     valor_base_st_retencao: float | None = Field(
-        default=None, alias="valorBaseStRetencao", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("valor_base_st_retencao", "valorBaseStRetencao"),
+        examples=[0],
+        serialization_alias="valorBaseStRetencao",
     )
-    valor_st_retencao: float | None = Field(default=None, alias="valorStRetencao", examples=[0])
+    valor_st_retencao: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_st_retencao", "valorStRetencao"),
+        examples=[0],
+        serialization_alias="valorStRetencao",
+    )
     valor_icms_substituto: float | None = Field(
-        default=None, alias="valorICMSSubstituto", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("valor_icms_substituto", "valorICMSSubstituto"),
+        examples=[0],
+        serialization_alias="valorICMSSubstituto",
     )
-    codigo_excecao_tipi: str | None = Field(default=None, alias="codigoExcecaoTipi", examples=[""])
+    codigo_excecao_tipi: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("codigo_excecao_tipi", "codigoExcecaoTipi"),
+        examples=[""],
+        serialization_alias="codigoExcecaoTipi",
+    )
     classe_enquadramento_ipi: str | None = Field(
-        default=None, alias="classeEnquadramentoIpi", examples=[""]
+        default=None,
+        validation_alias=AliasChoices("classe_enquadramento_ipi", "classeEnquadramentoIpi"),
+        examples=[""],
+        serialization_alias="classeEnquadramentoIpi",
     )
-    valor_ipi_fixo: float | None = Field(default=None, alias="valorIpiFixo", examples=[0])
-    codigo_selo_ipi: str | None = Field(default=None, alias="codigoSeloIpi", examples=[""])
-    valor_pis_fixo: float | None = Field(default=None, alias="valorPisFixo", examples=[0])
-    valor_cofins_fixo: float | None = Field(default=None, alias="valorCofinsFixo", examples=[0])
-    codigo_anp: str | None = Field(default=None, alias="codigoANP", examples=[""])
-    descricao_anp: str | None = Field(default=None, alias="descricaoANP", examples=[""])
-    percentual_glp: float | None = Field(default=None, alias="percentualGLP", examples=[0])
+    valor_ipi_fixo: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_ipi_fixo", "valorIpiFixo"),
+        examples=[0],
+        serialization_alias="valorIpiFixo",
+    )
+    codigo_selo_ipi: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("codigo_selo_ipi", "codigoSeloIpi"),
+        examples=[""],
+        serialization_alias="codigoSeloIpi",
+    )
+    valor_pis_fixo: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_pis_fixo", "valorPisFixo"),
+        examples=[0],
+        serialization_alias="valorPisFixo",
+    )
+    valor_cofins_fixo: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_cofins_fixo", "valorCofinsFixo"),
+        examples=[0],
+        serialization_alias="valorCofinsFixo",
+    )
+    codigo_anp: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("codigo_anp", "codigoANP"),
+        examples=[""],
+        serialization_alias="codigoANP",
+    )
+    descricao_anp: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("descricao_anp", "descricaoANP"),
+        examples=[""],
+        serialization_alias="descricaoANP",
+    )
+    percentual_glp: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("percentual_glp", "percentualGLP"),
+        examples=[0],
+        serialization_alias="percentualGLP",
+    )
     percentual_gas_nacional: float | None = Field(
-        default=None, alias="percentualGasNacional", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("percentual_gas_nacional", "percentualGasNacional"),
+        examples=[0],
+        serialization_alias="percentualGasNacional",
     )
     percentual_gas_importado: float | None = Field(
-        default=None, alias="percentualGasImportado", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("percentual_gas_importado", "percentualGasImportado"),
+        examples=[0],
+        serialization_alias="percentualGasImportado",
     )
-    valor_partida: float | None = Field(default=None, alias="valorPartida", examples=[0])
-    tipo_armamento: int | None = Field(default=0, alias="tipoArmamento", examples=[0])
+    valor_partida: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_partida", "valorPartida"),
+        examples=[0],
+        serialization_alias="valorPartida",
+    )
+    tipo_armamento: int | None = Field(
+        default=0,
+        validation_alias=AliasChoices("tipo_armamento", "tipoArmamento"),
+        examples=[0],
+        serialization_alias="tipoArmamento",
+    )
     descricao_completa_armamento: str | None = Field(
-        default=None, alias="descricaoCompletaArmamento", examples=[""]
+        default=None,
+        validation_alias=AliasChoices("descricao_completa_armamento", "descricaoCompletaArmamento"),
+        examples=[""],
+        serialization_alias="descricaoCompletaArmamento",
     )
-    dados_adicionais: str | None = Field(default=None, alias="dadosAdicionais", examples=[""])
-    grupo_produto: ProdutosGrupoProdutoDTO | None = Field(default=None, alias="grupoProduto")
+    dados_adicionais: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("dados_adicionais", "dadosAdicionais"),
+        examples=[""],
+        serialization_alias="dadosAdicionais",
+    )
+    grupo_produto: ProdutosGrupoProdutoDTO | None = Field(
+        default=None,
+        validation_alias=AliasChoices("grupo_produto", "grupoProduto"),
+        serialization_alias="grupoProduto",
+    )
 
 
 class ProdutosVariacaoDTO(BlingModel):
@@ -417,7 +558,11 @@ class ProdutosVariacaoDTO(BlingModel):
 
     nome: str = Field(..., examples=["Tamanho:G;Cor:Verde"])
     ordem: int = Field(..., examples=[1])
-    produto_pai: ProdutosProdutoPaiDTO = Field(..., alias="produtoPai")
+    produto_pai: ProdutosProdutoPaiDTO = Field(
+        ...,
+        validation_alias=AliasChoices("produto_pai", "produtoPai"),
+        serialization_alias="produtoPai",
+    )
 
 
 class ProdutosVideoDTO(BlingModel):
@@ -514,7 +659,11 @@ class ProdutosSituacoesPostRequest(BlingModel):
         ids_produtos: Bling ``idsProdutos``; type ``list[int] | None``; opcional.
         situacao: Bling ``situacao``; type ``str | None``; opcional. Situação do produto <br> `A` Ativo <br> `I` Inativo <br> 'E' Excluído"""
 
-    ids_produtos: list[int] | None = Field(default=None, alias="idsProdutos")
+    ids_produtos: list[int] | None = Field(
+        default=None,
+        validation_alias=AliasChoices("ids_produtos", "idsProdutos"),
+        serialization_alias="idsProdutos",
+    )
     situacao: str | None = Field(default=None, examples=["A"])
 
 
@@ -553,22 +702,36 @@ class ProdutosDadosBaseDTO(BlingModel):
         imagem_url: Bling ``imagemURL``; type ``str | None``; opcional. Link da primeira imagem de acordo com tipo de armazenamento definido."""
 
     id: int | None = Field(default=None, examples=[123456789])
-    id_produto_pai: int | None = Field(default=None, alias="idProdutoPai", examples=[123456789])
+    id_produto_pai: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("id_produto_pai", "idProdutoPai"),
+        examples=[123456789],
+        serialization_alias="idProdutoPai",
+    )
     nome: str = Field(..., examples=["Produto 1"], max_length=120)
     codigo: str | None = Field(default=None, examples=["CODE_123"])
     preco: float | None = Field(default=None, examples=[1])
-    preco_custo: float | None = Field(default=None, alias="precoCusto", examples=[1])
+    preco_custo: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("preco_custo", "precoCusto"),
+        examples=[1],
+        serialization_alias="precoCusto",
+    )
     estoque: EstoqueGetAllResponseDTO | None = None
     tipo: str = Field(..., examples=["P"])
     situacao: str = Field(..., examples=["A"])
     formato: str = Field(..., examples=["S"])
     descricao_curta: str | None = Field(
-        default=None, alias="descricaoCurta", examples=["Descrição curta"]
+        default=None,
+        validation_alias=AliasChoices("descricao_curta", "descricaoCurta"),
+        examples=["Descrição curta"],
+        serialization_alias="descricaoCurta",
     )
     imagem_url: str | None = Field(
         default=None,
-        alias="imagemURL",
+        validation_alias=AliasChoices("imagem_url", "imagemURL"),
         examples=["https://www.bling.com.br/imagens/imagens-produtos/123456789.jpg"],
+        serialization_alias="imagemURL",
     )
 
 
@@ -607,8 +770,18 @@ class ProdutosEstruturaDTO(BlingModel):
         lancamento_estoque: Bling ``lancamentoEstoque``; type ``str``; obrigatório. `A` Produto e Componente<br> `M` Componente<br> `P` Produto
         componentes: Bling ``componentes``; type ``list[ProdutosComponenteDTO]``; obrigatório."""
 
-    tipo_estoque: str = Field(..., alias="tipoEstoque", examples=["F"])
-    lancamento_estoque: str = Field(..., alias="lancamentoEstoque", examples=["A"])
+    tipo_estoque: str = Field(
+        ...,
+        validation_alias=AliasChoices("tipo_estoque", "tipoEstoque"),
+        examples=["F"],
+        serialization_alias="tipoEstoque",
+    )
+    lancamento_estoque: str = Field(
+        ...,
+        validation_alias=AliasChoices("lancamento_estoque", "lancamentoEstoque"),
+        examples=["A"],
+        serialization_alias="lancamentoEstoque",
+    )
     componentes: list[ProdutosComponenteDTO]
 
 
@@ -673,43 +846,101 @@ class ProdutosDados(BlingModel):
         campos_customizados: Bling ``camposCustomizados``; type ``list[ProdutosCampoCustomizadoDTO] | None``; opcional.
         artigo_perigoso: Bling ``artigoPerigoso``; type ``bool | None``; opcional. Indica se o produto é um artigo perigoso conforme regulamentação ANAC. Quando habilitado, adiciona automaticamente o código de serviço 095 nas etiquetas de envio."""
 
-    data_validade: date | None = Field(default=None, alias="dataValidade", examples=["2020-01-01"])
+    data_validade: date | None = Field(
+        default=None,
+        validation_alias=AliasChoices("data_validade", "dataValidade"),
+        examples=["2020-01-01"],
+        serialization_alias="dataValidade",
+    )
     unidade: str | None = Field(default=None, examples=["UN"])
-    peso_liquido: float | None = Field(default=None, alias="pesoLiquido", examples=[1])
-    peso_bruto: float | None = Field(default=None, alias="pesoBruto", examples=[1])
+    peso_liquido: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("peso_liquido", "pesoLiquido"),
+        examples=[1],
+        serialization_alias="pesoLiquido",
+    )
+    peso_bruto: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("peso_bruto", "pesoBruto"),
+        examples=[1],
+        serialization_alias="pesoBruto",
+    )
     volumes: int | None = Field(default=None, examples=[1])
-    itens_por_caixa: float | None = Field(default=None, alias="itensPorCaixa", examples=["1.00"])
+    itens_por_caixa: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("itens_por_caixa", "itensPorCaixa"),
+        examples=["1.00"],
+        serialization_alias="itensPorCaixa",
+    )
     gtin: str | None = Field(default="", examples=["1234567890123"])
     gtin_embalagem: str | None = Field(
-        default="", alias="gtinEmbalagem", examples=["1234567890123"]
+        default="",
+        validation_alias=AliasChoices("gtin_embalagem", "gtinEmbalagem"),
+        examples=["1234567890123"],
+        serialization_alias="gtinEmbalagem",
     )
-    tipo_producao: str | None = Field(default="P", alias="tipoProducao", examples=["P"])
+    tipo_producao: str | None = Field(
+        default="P",
+        validation_alias=AliasChoices("tipo_producao", "tipoProducao"),
+        examples=["P"],
+        serialization_alias="tipoProducao",
+    )
     condicao: int | None = Field(default=0, examples=[0])
-    frete_gratis: bool | None = Field(default=None, alias="freteGratis", examples=[False])
+    frete_gratis: bool | None = Field(
+        default=None,
+        validation_alias=AliasChoices("frete_gratis", "freteGratis"),
+        examples=[False],
+        serialization_alias="freteGratis",
+    )
     marca: str | None = Field(default=None, examples=["Marca"])
     descricao_complementar: str | None = Field(
-        default=None, alias="descricaoComplementar", examples=["Descrição complementar"]
+        default=None,
+        validation_alias=AliasChoices("descricao_complementar", "descricaoComplementar"),
+        examples=["Descrição complementar"],
+        serialization_alias="descricaoComplementar",
     )
     link_externo: str | None = Field(
-        default=None, alias="linkExterno", examples=["https://www.google.com"]
+        default=None,
+        validation_alias=AliasChoices("link_externo", "linkExterno"),
+        examples=["https://www.google.com"],
+        serialization_alias="linkExterno",
     )
     observacoes: str | None = Field(default=None, examples=["Observações"])
     descricao_embalagem_discreta: str | None = Field(
-        default=None, alias="descricaoEmbalagemDiscreta", examples=["Produto teste"]
+        default=None,
+        validation_alias=AliasChoices("descricao_embalagem_discreta", "descricaoEmbalagemDiscreta"),
+        examples=["Produto teste"],
+        serialization_alias="descricaoEmbalagemDiscreta",
     )
     categoria: ProdutosCategoriaDTO | None = None
     estoque: ProdutosEstoqueDTO | None = None
     fornecedor: ProdutoFornecedorDTO | None = None
-    action_estoque: str | None = Field(default=None, alias="actionEstoque", examples=[""])
+    action_estoque: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("action_estoque", "actionEstoque"),
+        examples=[""],
+        serialization_alias="actionEstoque",
+    )
     dimensoes: ProdutosDimensoesDTO | None = None
     tributacao: ProdutosTributacaoDTO | None = None
     midia: ProdutosMidiaDTO | None = None
-    linha_produto: ProdutosLinhaProdutoDTO | None = Field(default=None, alias="linhaProduto")
+    linha_produto: ProdutosLinhaProdutoDTO | None = Field(
+        default=None,
+        validation_alias=AliasChoices("linha_produto", "linhaProduto"),
+        serialization_alias="linhaProduto",
+    )
     estrutura: ProdutosEstruturaDTO | None = None
     campos_customizados: list[ProdutosCampoCustomizadoDTO] | None = Field(
-        default=None, alias="camposCustomizados"
+        default=None,
+        validation_alias=AliasChoices("campos_customizados", "camposCustomizados"),
+        serialization_alias="camposCustomizados",
     )
-    artigo_perigoso: bool | None = Field(default=False, alias="artigoPerigoso", examples=[False])
+    artigo_perigoso: bool | None = Field(
+        default=False,
+        validation_alias=AliasChoices("artigo_perigoso", "artigoPerigoso"),
+        examples=[False],
+        serialization_alias="artigoPerigoso",
+    )
 
 
 class ProdutosDadosPatch(BlingModel):
@@ -747,43 +978,101 @@ class ProdutosDadosPatch(BlingModel):
         campos_customizados: Bling ``camposCustomizados``; type ``list[ProdutosCampoCustomizadoDTO] | None``; opcional.
         artigo_perigoso: Bling ``artigoPerigoso``; type ``bool | None``; opcional. Indica se o produto é um artigo perigoso conforme regulamentação ANAC. Quando habilitado, adiciona automaticamente o código de serviço 095 nas etiquetas de envio."""
 
-    data_validade: date | None = Field(default=None, alias="dataValidade", examples=["2020-01-01"])
+    data_validade: date | None = Field(
+        default=None,
+        validation_alias=AliasChoices("data_validade", "dataValidade"),
+        examples=["2020-01-01"],
+        serialization_alias="dataValidade",
+    )
     unidade: str | None = Field(default=None, examples=["UN"])
-    peso_liquido: float | None = Field(default=None, alias="pesoLiquido", examples=[1])
-    peso_bruto: float | None = Field(default=None, alias="pesoBruto", examples=[1])
+    peso_liquido: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("peso_liquido", "pesoLiquido"),
+        examples=[1],
+        serialization_alias="pesoLiquido",
+    )
+    peso_bruto: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("peso_bruto", "pesoBruto"),
+        examples=[1],
+        serialization_alias="pesoBruto",
+    )
     volumes: int | None = Field(default=None, examples=[1])
-    itens_por_caixa: float | None = Field(default=None, alias="itensPorCaixa", examples=["1.00"])
+    itens_por_caixa: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("itens_por_caixa", "itensPorCaixa"),
+        examples=["1.00"],
+        serialization_alias="itensPorCaixa",
+    )
     gtin: str | None = Field(default="", examples=["1234567890123"])
     gtin_embalagem: str | None = Field(
-        default="", alias="gtinEmbalagem", examples=["1234567890123"]
+        default="",
+        validation_alias=AliasChoices("gtin_embalagem", "gtinEmbalagem"),
+        examples=["1234567890123"],
+        serialization_alias="gtinEmbalagem",
     )
-    tipo_producao: str | None = Field(default="P", alias="tipoProducao", examples=["P"])
+    tipo_producao: str | None = Field(
+        default="P",
+        validation_alias=AliasChoices("tipo_producao", "tipoProducao"),
+        examples=["P"],
+        serialization_alias="tipoProducao",
+    )
     condicao: int | None = Field(default=0, examples=[0])
-    frete_gratis: bool | None = Field(default=None, alias="freteGratis", examples=[False])
+    frete_gratis: bool | None = Field(
+        default=None,
+        validation_alias=AliasChoices("frete_gratis", "freteGratis"),
+        examples=[False],
+        serialization_alias="freteGratis",
+    )
     marca: str | None = Field(default=None, examples=["Marca"])
     descricao_complementar: str | None = Field(
-        default=None, alias="descricaoComplementar", examples=["Descrição complementar"]
+        default=None,
+        validation_alias=AliasChoices("descricao_complementar", "descricaoComplementar"),
+        examples=["Descrição complementar"],
+        serialization_alias="descricaoComplementar",
     )
     link_externo: str | None = Field(
-        default=None, alias="linkExterno", examples=["https://www.google.com"]
+        default=None,
+        validation_alias=AliasChoices("link_externo", "linkExterno"),
+        examples=["https://www.google.com"],
+        serialization_alias="linkExterno",
     )
     observacoes: str | None = Field(default=None, examples=["Observações"])
     descricao_embalagem_discreta: str | None = Field(
-        default=None, alias="descricaoEmbalagemDiscreta", examples=["Produto teste"]
+        default=None,
+        validation_alias=AliasChoices("descricao_embalagem_discreta", "descricaoEmbalagemDiscreta"),
+        examples=["Produto teste"],
+        serialization_alias="descricaoEmbalagemDiscreta",
     )
     categoria: ProdutosCategoriaDTO | None = None
     estoque: ProdutosEstoqueDTO | None = None
     fornecedor: ProdutoFornecedorDTO | None = None
-    action_estoque: str | None = Field(default=None, alias="actionEstoque", examples=[""])
+    action_estoque: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("action_estoque", "actionEstoque"),
+        examples=[""],
+        serialization_alias="actionEstoque",
+    )
     dimensoes: ProdutosDimensoesDTO | None = None
     tributacao: ProdutosTributacaoDTO | None = None
     midia: ProdutosMidiaDTO | None = None
-    linha_produto: ProdutosLinhaProdutoDTO | None = Field(default=None, alias="linhaProduto")
+    linha_produto: ProdutosLinhaProdutoDTO | None = Field(
+        default=None,
+        validation_alias=AliasChoices("linha_produto", "linhaProduto"),
+        serialization_alias="linhaProduto",
+    )
     estrutura: ProdutosEstruturaDTO | None = None
     campos_customizados: list[ProdutosCampoCustomizadoDTO] | None = Field(
-        default=None, alias="camposCustomizados"
+        default=None,
+        validation_alias=AliasChoices("campos_customizados", "camposCustomizados"),
+        serialization_alias="camposCustomizados",
     )
-    artigo_perigoso: bool | None = Field(default=False, alias="artigoPerigoso", examples=[False])
+    artigo_perigoso: bool | None = Field(
+        default=False,
+        validation_alias=AliasChoices("artigo_perigoso", "artigoPerigoso"),
+        examples=[False],
+        serialization_alias="artigoPerigoso",
+    )
 
 
 class ProdutosDadosPatchDTO(ProdutosDadosBaseDTOPatch, ProdutosDadosPatch):

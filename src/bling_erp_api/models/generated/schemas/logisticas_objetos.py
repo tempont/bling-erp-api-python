@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -101,7 +101,10 @@ class LogisticasObjetosRastreamentoDTO(BlingModel):
     origem: str = Field(..., examples=["São Paulo, SP"])
     destino: str = Field(..., examples=["São Paulo, SP"])
     ultima_alteracao: AwareDatetime = Field(
-        ..., alias="ultimaAlteracao", examples=["2020-11-11 16:40:33"]
+        ...,
+        validation_alias=AliasChoices("ultima_alteracao", "ultimaAlteracao"),
+        examples=["2020-11-11 16:40:33"],
+        serialization_alias="ultimaAlteracao",
     )
     url: str = Field(..., examples=["https://www.rastreamento.exemplo.com.br/EC272330554BR"])
 
@@ -162,18 +165,56 @@ class LogisticasObjetosDadosDTO(BlingModel):
         aviso_recebimento: Bling ``avisoRecebimento``; type ``bool``; obrigatório.
         mao_propria: Bling ``maoPropria``; type ``bool``; obrigatório."""
 
-    pedido_venda: LogisticasObjetosPedidoVendaDTO = Field(..., alias="pedidoVenda")
-    nota_fiscal: LogisticasObjetosNotaFiscalDTO = Field(..., alias="notaFiscal")
+    pedido_venda: LogisticasObjetosPedidoVendaDTO = Field(
+        ...,
+        validation_alias=AliasChoices("pedido_venda", "pedidoVenda"),
+        serialization_alias="pedidoVenda",
+    )
+    nota_fiscal: LogisticasObjetosNotaFiscalDTO = Field(
+        ...,
+        validation_alias=AliasChoices("nota_fiscal", "notaFiscal"),
+        serialization_alias="notaFiscal",
+    )
     servico: LogisticasObjetosServicoDTO
     rastreamento: LogisticasObjetosRastreamentoDTO | None = None
     dimensao: LogisticasObjetosDimensaoDTO
     embalagem: LogisticasObjetosEmbalagemDTO
-    data_saida: date = Field(..., alias="dataSaida", examples=["2022-12-01"])
-    prazo_entrega_previsto: int = Field(..., alias="prazoEntregaPrevisto", examples=[15])
-    frete_previsto: float = Field(..., alias="fretePrevisto", examples=[59.9])
-    valor_declarado: float = Field(..., alias="valorDeclarado", examples=[55.9])
-    aviso_recebimento: bool = Field(..., alias="avisoRecebimento", examples=[False])
-    mao_propria: bool = Field(..., alias="maoPropria", examples=[False])
+    data_saida: date = Field(
+        ...,
+        validation_alias=AliasChoices("data_saida", "dataSaida"),
+        examples=["2022-12-01"],
+        serialization_alias="dataSaida",
+    )
+    prazo_entrega_previsto: int = Field(
+        ...,
+        validation_alias=AliasChoices("prazo_entrega_previsto", "prazoEntregaPrevisto"),
+        examples=[15],
+        serialization_alias="prazoEntregaPrevisto",
+    )
+    frete_previsto: float = Field(
+        ...,
+        validation_alias=AliasChoices("frete_previsto", "fretePrevisto"),
+        examples=[59.9],
+        serialization_alias="fretePrevisto",
+    )
+    valor_declarado: float = Field(
+        ...,
+        validation_alias=AliasChoices("valor_declarado", "valorDeclarado"),
+        examples=[55.9],
+        serialization_alias="valorDeclarado",
+    )
+    aviso_recebimento: bool = Field(
+        ...,
+        validation_alias=AliasChoices("aviso_recebimento", "avisoRecebimento"),
+        examples=[False],
+        serialization_alias="avisoRecebimento",
+    )
+    mao_propria: bool = Field(
+        ...,
+        validation_alias=AliasChoices("mao_propria", "maoPropria"),
+        examples=[False],
+        serialization_alias="maoPropria",
+    )
 
 
 class LogisticasObjetosUpdateRequestDTO(BlingModel):
@@ -196,12 +237,42 @@ class LogisticasObjetosUpdateRequestDTO(BlingModel):
     rastreamento: LogisticasObjetosRastreamentoDTO | None = None
     dimensoes: LogisticasObjetosDimensaoDTO | None = None
     embalagem: LogisticasObjetosEmbalagemDTO
-    data_saida: date = Field(..., alias="dataSaida", examples=["2022-12-01"])
-    prazo_entrega_previsto: int = Field(..., alias="prazoEntregaPrevisto", examples=[15])
-    frete_previsto: float = Field(..., alias="fretePrevisto", examples=[59.9])
-    valor_declarado: float = Field(..., alias="valorDeclarado", examples=[55.9])
-    aviso_recebimento: bool = Field(..., alias="avisoRecebimento", examples=[False])
-    mao_propria: bool = Field(..., alias="maoPropria", examples=[False])
+    data_saida: date = Field(
+        ...,
+        validation_alias=AliasChoices("data_saida", "dataSaida"),
+        examples=["2022-12-01"],
+        serialization_alias="dataSaida",
+    )
+    prazo_entrega_previsto: int = Field(
+        ...,
+        validation_alias=AliasChoices("prazo_entrega_previsto", "prazoEntregaPrevisto"),
+        examples=[15],
+        serialization_alias="prazoEntregaPrevisto",
+    )
+    frete_previsto: float = Field(
+        ...,
+        validation_alias=AliasChoices("frete_previsto", "fretePrevisto"),
+        examples=[59.9],
+        serialization_alias="fretePrevisto",
+    )
+    valor_declarado: float = Field(
+        ...,
+        validation_alias=AliasChoices("valor_declarado", "valorDeclarado"),
+        examples=[55.9],
+        serialization_alias="valorDeclarado",
+    )
+    aviso_recebimento: bool = Field(
+        ...,
+        validation_alias=AliasChoices("aviso_recebimento", "avisoRecebimento"),
+        examples=[False],
+        serialization_alias="avisoRecebimento",
+    )
+    mao_propria: bool = Field(
+        ...,
+        validation_alias=AliasChoices("mao_propria", "maoPropria"),
+        examples=[False],
+        serialization_alias="maoPropria",
+    )
 
 
 class LogisticasObjetosIdObjetoGetResponse200(BlingModel):
@@ -238,8 +309,16 @@ class LogisticasObjetosDadosCreateRequestDTO(LogisticasObjetosUpdateRequestDTO):
         nota_fiscal: Bling ``notaFiscal``; type ``LogisticasObjetosNotaFiscalDTO``; obrigatório.
         servico: Bling ``servico``; type ``LogisticasObjetosServicoDTO``; obrigatório."""
 
-    pedido_venda: LogisticasObjetosPedidoVendaDTO = Field(..., alias="pedidoVenda")
-    nota_fiscal: LogisticasObjetosNotaFiscalDTO = Field(..., alias="notaFiscal")
+    pedido_venda: LogisticasObjetosPedidoVendaDTO = Field(
+        ...,
+        validation_alias=AliasChoices("pedido_venda", "pedidoVenda"),
+        serialization_alias="pedidoVenda",
+    )
+    nota_fiscal: LogisticasObjetosNotaFiscalDTO = Field(
+        ...,
+        validation_alias=AliasChoices("nota_fiscal", "notaFiscal"),
+        serialization_alias="notaFiscal",
+    )
     servico: LogisticasObjetosServicoDTO
 
 

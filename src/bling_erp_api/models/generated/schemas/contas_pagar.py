@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -56,12 +56,32 @@ class ContasPagarDadosDTO(BlingModel):
         ocorrencia: Bling ``ocorrencia``; type ``ContasReceberOcorrenciaUnicaDTO | ContasReceberOcorrenciaParceladaDTO | ContasReceberOcorrenciaDTO | ContasReceberOcorrenciaSemanalDTO | None``; opcional."""
 
     saldo: float | None = Field(default=None, examples=[100.75])
-    data_emissao: date | None = Field(default=None, alias="dataEmissao", examples=["2023-01-12"])
-    vencimento_original: date = Field(..., alias="vencimentoOriginal", examples=["2023-01-12"])
-    numero_documento: str | None = Field(default=None, alias="numeroDocumento", examples=[""])
+    data_emissao: date | None = Field(
+        default=None,
+        validation_alias=AliasChoices("data_emissao", "dataEmissao"),
+        examples=["2023-01-12"],
+        serialization_alias="dataEmissao",
+    )
+    vencimento_original: date = Field(
+        ...,
+        validation_alias=AliasChoices("vencimento_original", "vencimentoOriginal"),
+        examples=["2023-01-12"],
+        serialization_alias="vencimentoOriginal",
+    )
+    numero_documento: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("numero_documento", "numeroDocumento"),
+        examples=[""],
+        serialization_alias="numeroDocumento",
+    )
     competencia: date | None = Field(default=None, examples=["2023-01-12"])
     historico: str | None = Field(default=None, examples=[""])
-    numero_banco: str = Field(..., alias="numeroBanco", examples=[""])
+    numero_banco: str = Field(
+        ...,
+        validation_alias=AliasChoices("numero_banco", "numeroBanco"),
+        examples=[""],
+        serialization_alias="numeroBanco",
+    )
     portador: ContasPortadorDTO | None = None
     categoria: ContasCategoriaDTO | None = None
     borderos: list[int]

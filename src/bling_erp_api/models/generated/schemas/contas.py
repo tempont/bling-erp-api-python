@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -79,14 +79,24 @@ class ContasBaixarContaDTO(BlingModel):
         tarifa: Bling ``tarifa``; type ``float | None``; opcional. O valor da tarifa deve ser preenchido caso a forma de pagamento possua taxas de alíquota ou de valor fixo."""
 
     data: date = Field(..., examples=["2023-01-12"])
-    usar_data_vencimento: bool = Field(..., alias="usarDataVencimento", examples=[False])
+    usar_data_vencimento: bool = Field(
+        ...,
+        validation_alias=AliasChoices("usar_data_vencimento", "usarDataVencimento"),
+        examples=[False],
+        serialization_alias="usarDataVencimento",
+    )
     portador: ContasPortadorDTO
     categoria: ContasCategoriaDTO
     historico: str = Field(..., examples=[""])
     juros: float | None = Field(default=0, examples=[10.5])
     desconto: float | None = Field(default=0, examples=[10.5])
     acrescimo: float | None = Field(default=0, examples=[10.5])
-    valor_recebido: float | None = Field(default=None, alias="valorRecebido", examples=[100.5])
+    valor_recebido: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_recebido", "valorRecebido"),
+        examples=[100.5],
+        serialization_alias="valorRecebido",
+    )
     tarifa: float | None = Field(default=0, examples=[5])
 
 
@@ -109,7 +119,11 @@ class ContasDadosBaseDTO(BlingModel):
     vencimento: date = Field(..., examples=["2023-01-12"])
     valor: float = Field(..., examples=[1500.75])
     contato: ContasContatoDTO
-    forma_pagamento: ContasFormaPagamentoDTO | None = Field(default=None, alias="formaPagamento")
+    forma_pagamento: ContasFormaPagamentoDTO | None = Field(
+        default=None,
+        validation_alias=AliasChoices("forma_pagamento", "formaPagamento"),
+        serialization_alias="formaPagamento",
+    )
 
 
 __all__ = [

@@ -12,7 +12,7 @@ def main() -> None:
     ids_contatos = [11111111, 22222222]
     # Model: ContatosSituacoesPostRequest  # noqa: ERA001
     #   Optional: ids_contatos (list[int]|None), situacao (str|None)
-    payload = ContatosSituacoesPostRequest.model_construct(idsContatos=ids_contatos, situacao="I")
+    payload = ContatosSituacoesPostRequest(ids_contatos=ids_contatos, situacao="I")
     with BlingClient.from_env() as client:
         response = client.contatos.alterar_situacao_varios(payload.ids_contatos, payload.situacao)  # type: ignore[arg-type]
         parsed = ContatosSituacoesPostResponse200(**response)  # type: ignore[reportArgumentType]

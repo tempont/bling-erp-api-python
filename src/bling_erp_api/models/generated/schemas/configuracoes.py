@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -23,9 +23,17 @@ class ConfiguracaoAproximadoNotaServicoDTO(BlingModel):
         percentual_aliq: Bling ``percentualAliq``; type ``float | None``; opcional. Alíquota para cálculo de impostos aproximados"""
 
     utilizar_aliq_ibpt: bool | None = Field(
-        default=None, alias="utilizarAliqIBPT", examples=["true"]
+        default=None,
+        validation_alias=AliasChoices("utilizar_aliq_ibpt", "utilizarAliqIBPT"),
+        examples=["true"],
+        serialization_alias="utilizarAliqIBPT",
     )
-    percentual_aliq: float | None = Field(default=None, alias="percentualAliq", examples=[0])
+    percentual_aliq: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("percentual_aliq", "percentualAliq"),
+        examples=[0],
+        serialization_alias="percentualAliq",
+    )
 
 
 class ConfiguracaoBasicaNotaServicoDTO(BlingModel):
@@ -38,8 +46,18 @@ class ConfiguracaoBasicaNotaServicoDTO(BlingModel):
         emissor_padrao: Bling ``emissorPadrao``; type ``int | None``; opcional.
         natureza_operacao: Bling ``naturezaOperacao``; type ``int | None``; opcional."""
 
-    emissor_padrao: int | None = Field(default=None, alias="emissorPadrao", examples=[3])
-    natureza_operacao: int | None = Field(default=None, alias="naturezaOperacao", examples=[1])
+    emissor_padrao: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("emissor_padrao", "emissorPadrao"),
+        examples=[3],
+        serialization_alias="emissorPadrao",
+    )
+    natureza_operacao: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("natureza_operacao", "naturezaOperacao"),
+        examples=[1],
+        serialization_alias="naturezaOperacao",
+    )
 
 
 class ConfiguracaoCSLLPISCOFINSNotaServicoDTO(BlingModel):
@@ -80,7 +98,12 @@ class ConfiguracaoCodigoTributoNotaServicoDTO(BlingModel):
         lista_servico: Bling ``listaServico``; type ``str``; obrigatório.
         tributacao: Bling ``tributacao``; type ``str | None``; opcional."""
 
-    lista_servico: str = Field(..., alias="listaServico", examples=["0107"])
+    lista_servico: str = Field(
+        ...,
+        validation_alias=AliasChoices("lista_servico", "listaServico"),
+        examples=["0107"],
+        serialization_alias="listaServico",
+    )
     tributacao: str | None = Field(default=None, examples=["0107"])
 
 
@@ -111,7 +134,12 @@ class ConfiguracaoEnvioEmailNotaServicoDTO(BlingModel):
         mensagem: Bling ``mensagem``; type ``str | None``; opcional.
         padrao: Bling ``padrao``; type ``ConfiguracaoEmailPadraoNotaFiscalServicoDTO | None``; opcional."""
 
-    enviar_boleto_rps: bool | None = Field(default=None, alias="enviarBoletoRPS", examples=["true"])
+    enviar_boleto_rps: bool | None = Field(
+        default=None,
+        validation_alias=AliasChoices("enviar_boleto_rps", "enviarBoletoRPS"),
+        examples=["true"],
+        serialization_alias="enviarBoletoRPS",
+    )
     remetente: str | None = Field(default=None, examples=["Nome remetente padrão"])
     assunto: str | None = Field(default=None, examples=["Assunto padrão"])
     mensagem: str | None = Field(default=None, examples=["Mensagem padrão e-mail"])
@@ -143,7 +171,10 @@ class ConfiguracaoNumeracaoRPSNotaServicoDTO(BlingModel):
         serie: Bling ``serie``; type ``int | None``; opcional."""
 
     cnpj_emitente: str | None = Field(
-        default=None, alias="cnpjEmitente", examples=["48.426.683/0001-70"]
+        default=None,
+        validation_alias=AliasChoices("cnpj_emitente", "cnpjEmitente"),
+        examples=["48.426.683/0001-70"],
+        serialization_alias="cnpjEmitente",
     )
     id: int | None = Field(default=None, examples=[1])
     numero: int | None = Field(default=None, examples=[1])
@@ -162,9 +193,13 @@ class ConfiguracaoOutrosNotaServicoDTO(BlingModel):
         aproximados: Bling ``aproximados``; type ``ConfiguracaoAproximadoNotaServicoDTO | None``; opcional."""
 
     csllpiscofinsdto: ConfiguracaoCSLLPISCOFINSNotaServicoDTO | None = Field(
-        default=None, alias="CSLLPISCOFINSDTO"
+        default=None,
+        validation_alias=AliasChoices("csllpiscofinsdto", "CSLLPISCOFINSDTO"),
+        serialization_alias="CSLLPISCOFINSDTO",
     )
-    inss: ConfiguracaoINSSNotaServicoDTO | None = Field(default=None, alias="INSS")
+    inss: ConfiguracaoINSSNotaServicoDTO | None = Field(
+        default=None, validation_alias=AliasChoices("inss", "INSS"), serialization_alias="INSS"
+    )
     aproximados: ConfiguracaoAproximadoNotaServicoDTO | None = None
 
 
@@ -198,14 +233,30 @@ class ConfiguracaoTributoNotaServicoDTO(BlingModel):
         codigo: Bling ``codigo``; type ``ConfiguracaoCodigoTributoNotaServicoDTO``; obrigatório."""
 
     id: int | None = Field(default=None, examples=[1])
-    percentual_iss: float | None = Field(default=None, alias="percentualISS", examples=[5])
-    cnae: str = Field(..., alias="CNAE", examples=["82.99"])
+    percentual_iss: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("percentual_iss", "percentualISS"),
+        examples=[5],
+        serialization_alias="percentualISS",
+    )
+    cnae: str = Field(
+        ...,
+        validation_alias=AliasChoices("cnae", "CNAE"),
+        examples=["82.99"],
+        serialization_alias="CNAE",
+    )
     descricao_servico: str = Field(
-        ..., alias="descricaoServico", examples=["Laudo de Vistoria Veicular"]
+        ...,
+        validation_alias=AliasChoices("descricao_servico", "descricaoServico"),
+        examples=["Laudo de Vistoria Veicular"],
+        serialization_alias="descricaoServico",
     )
     padrao: bool | None = Field(default=None, examples=["false"])
     indicador_operacao: str | None = Field(
-        default=None, alias="indicadorOperacao", examples=["010101"]
+        default=None,
+        validation_alias=AliasChoices("indicador_operacao", "indicadorOperacao"),
+        examples=["010101"],
+        serialization_alias="indicadorOperacao",
     )
     codigo: ConfiguracaoCodigoTributoNotaServicoDTO
 
@@ -232,33 +283,90 @@ class ConfiguracaoAdicionalNotaServicoDTO(BlingModel):
         considerar_data_ordem_servico: Bling ``considerarDataOrdemServico``; type ``bool | None``; opcional. Permite utilizar a data de vencimento da parcela da ordem de serviço na geração automática de parcelas da nota de serviço
         cadastro_prefeitura: Bling ``cadastroPrefeitura``; type ``ConfiguracaoCadastroPrefeituraNotaServicoDTO | None``; opcional."""
 
-    cfps: str | None = Field(default=None, alias="CFPS", examples=["9.001"])
-    cfop: str | None = Field(default=None, alias="CFOP", examples=["1.250"])
-    aedf: str | None = Field(default=None, alias="AEDF", examples=[""])
-    proximo_numero_lote: int | None = Field(default=None, alias="proximoNumeroLote", examples=[78])
+    cfps: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("cfps", "CFPS"),
+        examples=["9.001"],
+        serialization_alias="CFPS",
+    )
+    cfop: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("cfop", "CFOP"),
+        examples=["1.250"],
+        serialization_alias="CFOP",
+    )
+    aedf: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("aedf", "AEDF"),
+        examples=[""],
+        serialization_alias="AEDF",
+    )
+    proximo_numero_lote: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("proximo_numero_lote", "proximoNumeroLote"),
+        examples=[78],
+        serialization_alias="proximoNumeroLote",
+    )
     observacao_impressa_nota: str | None = Field(
-        default=None, alias="observacaoImpressaNota", examples=["OBS"]
+        default=None,
+        validation_alias=AliasChoices("observacao_impressa_nota", "observacaoImpressaNota"),
+        examples=["OBS"],
+        serialization_alias="observacaoImpressaNota",
     )
     descricao_complementar: str | None = Field(
-        default=None, alias="descricaoComplementar", examples=["OBS"]
+        default=None,
+        validation_alias=AliasChoices("descricao_complementar", "descricaoComplementar"),
+        examples=["OBS"],
+        serialization_alias="descricaoComplementar",
     )
-    tipo_emissao: str | None = Field(default=None, alias="tipoEmissao", examples=["R"])
+    tipo_emissao: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("tipo_emissao", "tipoEmissao"),
+        examples=["R"],
+        serialization_alias="tipoEmissao",
+    )
     campo_numero_doc_contas: bool | None = Field(
-        default=None, alias="campoNumeroDocContas", examples=["true"]
+        default=None,
+        validation_alias=AliasChoices("campo_numero_doc_contas", "campoNumeroDocContas"),
+        examples=["true"],
+        serialization_alias="campoNumeroDocContas",
     )
     incentivador_fiscal: bool | None = Field(
-        default=None, alias="incentivadorFiscal", examples=["true"]
+        default=None,
+        validation_alias=AliasChoices("incentivador_fiscal", "incentivadorFiscal"),
+        examples=["true"],
+        serialization_alias="incentivadorFiscal",
     )
-    alterar_situacao: bool | None = Field(default=None, alias="alterarSituacao", examples=["true"])
-    incluir_parcelas: bool | None = Field(default=None, alias="incluirParcelas", examples=["false"])
+    alterar_situacao: bool | None = Field(
+        default=None,
+        validation_alias=AliasChoices("alterar_situacao", "alterarSituacao"),
+        examples=["true"],
+        serialization_alias="alterarSituacao",
+    )
+    incluir_parcelas: bool | None = Field(
+        default=None,
+        validation_alias=AliasChoices("incluir_parcelas", "incluirParcelas"),
+        examples=["false"],
+        serialization_alias="incluirParcelas",
+    )
     considerar_data_parcela: bool | None = Field(
-        default=None, alias="considerarDataParcela", examples=["true"]
+        default=None,
+        validation_alias=AliasChoices("considerar_data_parcela", "considerarDataParcela"),
+        examples=["true"],
+        serialization_alias="considerarDataParcela",
     )
     considerar_data_ordem_servico: bool | None = Field(
-        default=None, alias="considerarDataOrdemServico", examples=["true"]
+        default=None,
+        validation_alias=AliasChoices(
+            "considerar_data_ordem_servico", "considerarDataOrdemServico"
+        ),
+        examples=["true"],
+        serialization_alias="considerarDataOrdemServico",
     )
     cadastro_prefeitura: ConfiguracaoCadastroPrefeituraNotaServicoDTO | None = Field(
-        default=None, alias="cadastroPrefeitura"
+        default=None,
+        validation_alias=AliasChoices("cadastro_prefeitura", "cadastroPrefeitura"),
+        serialization_alias="cadastroPrefeitura",
     )
 
 
@@ -272,7 +380,9 @@ class ConfiguracaoControleNotaServicoDTO(BlingModel):
         numeracao_rps: Bling ``numeracaoRPS``; type ``ConfiguracaoNumeracaoRPSNotaServicoDTO | None``; opcional."""
 
     numeracao_rps: ConfiguracaoNumeracaoRPSNotaServicoDTO | None = Field(
-        default=None, alias="numeracaoRPS"
+        default=None,
+        validation_alias=AliasChoices("numeracao_rps", "numeracaoRPS"),
+        serialization_alias="numeracaoRPS",
     )
 
 
@@ -290,7 +400,12 @@ class ConfiguracaoIRNotaServicoDTO(BlingModel):
 
     percentual: float | None = Field(default=None, examples=[0])
     valor_minimo_alternativo_descontol: float | None = Field(
-        default=None, alias="valorMinimoAlternativoDescontol", examples=[0]
+        default=None,
+        validation_alias=AliasChoices(
+            "valor_minimo_alternativo_descontol", "valorMinimoAlternativoDescontol"
+        ),
+        examples=[0],
+        serialization_alias="valorMinimoAlternativoDescontol",
     )
     descontar: bool | None = Field(default=None, examples=["false"])
     texto: ConfiguracaoTextoIRNotaServicoDTO | None = None
@@ -326,9 +441,16 @@ class ConfiguracaoImpostoNotaServicoDTO(BlingModel):
         outros: Bling ``outros``; type ``ConfiguracaoOutrosNotaServicoDTO | None``; opcional."""
 
     bloquear_retencao_pessoa_fisica: bool | None = Field(
-        default=None, alias="bloquearRetencaoPessoaFisica", examples=["true"]
+        default=None,
+        validation_alias=AliasChoices(
+            "bloquear_retencao_pessoa_fisica", "bloquearRetencaoPessoaFisica"
+        ),
+        examples=["true"],
+        serialization_alias="bloquearRetencaoPessoaFisica",
     )
-    ir: ConfiguracaoIRNotaServicoDTO | None = Field(default=None, alias="IR")
+    ir: ConfiguracaoIRNotaServicoDTO | None = Field(
+        default=None, validation_alias=AliasChoices("ir", "IR"), serialization_alias="IR"
+    )
     outros: ConfiguracaoOutrosNotaServicoDTO | None = None
 
 
@@ -347,11 +469,15 @@ class ConfiguracaoNotaServicoDadosBaseDTO(BlingModel):
         adicionais: Bling ``adicionais``; type ``ConfiguracaoAdicionalNotaServicoDTO | None``; opcional."""
 
     basicas: ConfiguracaoBasicaNotaServicoDTO | None = None
-    iss: ConfiguracaoISSNotaServicoDTO | None = Field(default=None, alias="ISS")
+    iss: ConfiguracaoISSNotaServicoDTO | None = Field(
+        default=None, validation_alias=AliasChoices("iss", "ISS"), serialization_alias="ISS"
+    )
     controle: ConfiguracaoControleNotaServicoDTO | None = None
     impostos: ConfiguracaoImpostoNotaServicoDTO | None = None
     envio_email: ConfiguracaoEnvioEmailNotaServicoDTO | None = Field(
-        default=None, alias="envioEmail"
+        default=None,
+        validation_alias=AliasChoices("envio_email", "envioEmail"),
+        serialization_alias="envioEmail",
     )
     adicionais: ConfiguracaoAdicionalNotaServicoDTO | None = None
 

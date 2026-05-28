@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -28,10 +28,16 @@ class NotificacoesEnquadramentosFiscaisDTO(BlingModel):
         crt: Bling ``crt``; type ``list[int] | None``; opcional. Código de Regime Tributário"""
 
     tamanho_empresa: list[str] | None = Field(
-        default=None, alias="tamanhoEmpresa", examples=[["micro", "pequena"]]
+        default=None,
+        validation_alias=AliasChoices("tamanho_empresa", "tamanhoEmpresa"),
+        examples=[["micro", "pequena"]],
+        serialization_alias="tamanhoEmpresa",
     )
     id_municipio: list[int] | None = Field(
-        default=None, alias="idMunicipio", examples=[["2704104", "2704203"]]
+        default=None,
+        validation_alias=AliasChoices("id_municipio", "idMunicipio"),
+        examples=[["2704104", "2704203"]],
+        serialization_alias="idMunicipio",
     )
     uf: list[str] | None = Field(default=None, examples=[["SP", "RS"]])
     crt: list[int] | None = Field(default=None, examples=[[1]])
@@ -101,17 +107,54 @@ class NotificacoesDadosBaseDTO(BlingModel):
     descricao: str
     titulo: str
     fonte: str | None = Field(default=None, examples=["SEFAZ"])
-    link_ajuda: str | None = Field(default=None, alias="linkAjuda")
-    acao: str | None = None
-    data_criacao: date | None = Field(default=None, alias="dataCriacao", examples=["2023-01-12"])
-    data_envio: str = Field(..., alias="dataEnvio", examples=["2023-01-12 00:00:00"])
-    data_vigencia: date | None = Field(default=None, alias="dataVigencia", examples=["2023-01-12"])
-    data_acao: date | None = Field(default=None, alias="dataAcao", examples=["2023-01-12"])
-    data_leitura: str | None = Field(
-        default=None, alias="dataLeitura", examples=["2023-01-12 11:50:00"]
+    link_ajuda: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("link_ajuda", "linkAjuda"),
+        serialization_alias="linkAjuda",
     )
-    data_alerta: date | None = Field(default=None, alias="dataAlerta", examples=["2023-01-12"])
-    data_perigo: date | None = Field(default=None, alias="dataPerigo", examples=["2023-01-12"])
+    acao: str | None = None
+    data_criacao: date | None = Field(
+        default=None,
+        validation_alias=AliasChoices("data_criacao", "dataCriacao"),
+        examples=["2023-01-12"],
+        serialization_alias="dataCriacao",
+    )
+    data_envio: str = Field(
+        ...,
+        validation_alias=AliasChoices("data_envio", "dataEnvio"),
+        examples=["2023-01-12 00:00:00"],
+        serialization_alias="dataEnvio",
+    )
+    data_vigencia: date | None = Field(
+        default=None,
+        validation_alias=AliasChoices("data_vigencia", "dataVigencia"),
+        examples=["2023-01-12"],
+        serialization_alias="dataVigencia",
+    )
+    data_acao: date | None = Field(
+        default=None,
+        validation_alias=AliasChoices("data_acao", "dataAcao"),
+        examples=["2023-01-12"],
+        serialization_alias="dataAcao",
+    )
+    data_leitura: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("data_leitura", "dataLeitura"),
+        examples=["2023-01-12 11:50:00"],
+        serialization_alias="dataLeitura",
+    )
+    data_alerta: date | None = Field(
+        default=None,
+        validation_alias=AliasChoices("data_alerta", "dataAlerta"),
+        examples=["2023-01-12"],
+        serialization_alias="dataAlerta",
+    )
+    data_perigo: date | None = Field(
+        default=None,
+        validation_alias=AliasChoices("data_perigo", "dataPerigo"),
+        examples=["2023-01-12"],
+        serialization_alias="dataPerigo",
+    )
     enquadramentos: list[NotificacoesEnquadramentosFiscaisDTO] | None = None
 
 

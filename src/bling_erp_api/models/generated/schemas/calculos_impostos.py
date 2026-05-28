@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -28,27 +28,63 @@ class CalculosImpostosIbsCbsRegDTO(BlingModel):
         valor_tributacao_regular_ibs_municipio: Bling ``valorTributacaoRegularIbsMunicipio``; type ``float | None``; opcional. Valor Tributação Regular IBS Município
         valor_tributacao_regular_cbs: Bling ``valorTributacaoRegularCbs``; type ``float | None``; opcional. Valor Tributação Regular CBS"""
 
-    cst_regular: str | None = Field(default=None, alias="cstRegular", examples=["000"])
+    cst_regular: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("cst_regular", "cstRegular"),
+        examples=["000"],
+        serialization_alias="cstRegular",
+    )
     classificacao_tributaria_regular: str | None = Field(
-        default=None, alias="classificacaoTributariaRegular", examples=["000001"]
+        default=None,
+        validation_alias=AliasChoices(
+            "classificacao_tributaria_regular", "classificacaoTributariaRegular"
+        ),
+        examples=["000001"],
+        serialization_alias="classificacaoTributariaRegular",
     )
     aliquota_efetiva_regular_ibs_uf: float | None = Field(
-        default=None, alias="aliquotaEfetivaRegularIbsUf", examples=[0]
+        default=None,
+        validation_alias=AliasChoices(
+            "aliquota_efetiva_regular_ibs_uf", "aliquotaEfetivaRegularIbsUf"
+        ),
+        examples=[0],
+        serialization_alias="aliquotaEfetivaRegularIbsUf",
     )
     aliquota_efetiva_regular_ibs_municipio: float | None = Field(
-        default=None, alias="aliquotaEfetivaRegularIbsMunicipio", examples=[0]
+        default=None,
+        validation_alias=AliasChoices(
+            "aliquota_efetiva_regular_ibs_municipio", "aliquotaEfetivaRegularIbsMunicipio"
+        ),
+        examples=[0],
+        serialization_alias="aliquotaEfetivaRegularIbsMunicipio",
     )
     aliquota_efetiva_regular_cbs: float | None = Field(
-        default=None, alias="aliquotaEfetivaRegularCbs", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("aliquota_efetiva_regular_cbs", "aliquotaEfetivaRegularCbs"),
+        examples=[0],
+        serialization_alias="aliquotaEfetivaRegularCbs",
     )
     valor_tributacao_regular_ibs_uf: float | None = Field(
-        default=None, alias="valorTributacaoRegularIbsUf", examples=[0]
+        default=None,
+        validation_alias=AliasChoices(
+            "valor_tributacao_regular_ibs_uf", "valorTributacaoRegularIbsUf"
+        ),
+        examples=[0],
+        serialization_alias="valorTributacaoRegularIbsUf",
     )
     valor_tributacao_regular_ibs_municipio: float | None = Field(
-        default=None, alias="valorTributacaoRegularIbsMunicipio", examples=[0]
+        default=None,
+        validation_alias=AliasChoices(
+            "valor_tributacao_regular_ibs_municipio", "valorTributacaoRegularIbsMunicipio"
+        ),
+        examples=[0],
+        serialization_alias="valorTributacaoRegularIbsMunicipio",
     )
     valor_tributacao_regular_cbs: float | None = Field(
-        default=None, alias="valorTributacaoRegularCbs", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("valor_tributacao_regular_cbs", "valorTributacaoRegularCbs"),
+        examples=[0],
+        serialization_alias="valorTributacaoRegularCbs",
     )
 
 
@@ -78,8 +114,18 @@ class CalculosImpostosProdutoDTO(BlingModel):
         quantidade: Bling ``quantidade``; type ``float``; obrigatório."""
 
     id: int = Field(..., examples=[12345678])
-    valor_unitario: float = Field(..., alias="valorUnitario", examples=[0])
-    cupom_fiscal: int = Field(..., alias="cupomFiscal", examples=[0])
+    valor_unitario: float = Field(
+        ...,
+        validation_alias=AliasChoices("valor_unitario", "valorUnitario"),
+        examples=[0],
+        serialization_alias="valorUnitario",
+    )
+    cupom_fiscal: int = Field(
+        ...,
+        validation_alias=AliasChoices("cupom_fiscal", "cupomFiscal"),
+        examples=[0],
+        serialization_alias="cupomFiscal",
+    )
     origem: int = Field(..., examples=[0])
     quantidade: float = Field(..., examples=[0])
 
@@ -124,21 +170,45 @@ class CalculosImpostosCbsDTO(BlingModel):
         percentual_credito_presumido: Bling ``percentualCreditoPresumido``; type ``float | None``; opcional. % Crédito Presumido CBS"""
 
     regra_operacao: CalculosImpostosRegraOperacaoDTO | None = Field(
-        default=None, alias="regraOperacao"
+        default=None,
+        validation_alias=AliasChoices("regra_operacao", "regraOperacao"),
+        serialization_alias="regraOperacao",
     )
-    percentual_cbs: float | None = Field(default=None, alias="percentualCbs", examples=[0.9])
+    percentual_cbs: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("percentual_cbs", "percentualCbs"),
+        examples=[0.9],
+        serialization_alias="percentualCbs",
+    )
     percentual_reducao_aliquota: float | None = Field(
-        default=None, alias="percentualReducaoAliquota", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("percentual_reducao_aliquota", "percentualReducaoAliquota"),
+        examples=[0],
+        serialization_alias="percentualReducaoAliquota",
     )
-    aliquota_efetiva: float | None = Field(default=None, alias="aliquotaEfetiva", examples=[0])
+    aliquota_efetiva: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("aliquota_efetiva", "aliquotaEfetiva"),
+        examples=[0],
+        serialization_alias="aliquotaEfetiva",
+    )
     percentual_diferimento: float | None = Field(
-        default=None, alias="percentualDiferimento", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("percentual_diferimento", "percentualDiferimento"),
+        examples=[0],
+        serialization_alias="percentualDiferimento",
     )
     codigo_credito_presumido: str | None = Field(
-        default=None, alias="codigoCreditoPresumido", examples=[""]
+        default=None,
+        validation_alias=AliasChoices("codigo_credito_presumido", "codigoCreditoPresumido"),
+        examples=[""],
+        serialization_alias="codigoCreditoPresumido",
     )
     percentual_credito_presumido: float | None = Field(
-        default=None, alias="percentualCreditoPresumido", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("percentual_credito_presumido", "percentualCreditoPresumido"),
+        examples=[0],
+        serialization_alias="percentualCreditoPresumido",
     )
 
 
@@ -155,13 +225,23 @@ class CalculosImpostosIbsCbsDTO(BlingModel):
         valor_base_calculo: Bling ``valorBaseCalculo``; type ``float | None``; opcional. Valor Base de Cálculo IBS/CBS"""
 
     regra_operacao: CalculosImpostosRegraOperacaoDTO | None = Field(
-        default=None, alias="regraOperacao"
+        default=None,
+        validation_alias=AliasChoices("regra_operacao", "regraOperacao"),
+        serialization_alias="regraOperacao",
     )
     cst: str | None = Field(default=None, examples=["000"])
     classificacao_tributaria: str | None = Field(
-        default=None, alias="classificacaoTributaria", examples=["000001"]
+        default=None,
+        validation_alias=AliasChoices("classificacao_tributaria", "classificacaoTributaria"),
+        examples=["000001"],
+        serialization_alias="classificacaoTributaria",
     )
-    valor_base_calculo: float | None = Field(default=None, alias="valorBaseCalculo", examples=[0])
+    valor_base_calculo: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_base_calculo", "valorBaseCalculo"),
+        examples=[0],
+        serialization_alias="valorBaseCalculo",
+    )
 
 
 class CalculosImpostosIbsDTO(BlingModel):
@@ -184,33 +264,75 @@ class CalculosImpostosIbsDTO(BlingModel):
         percentual_credito_presumido: Bling ``percentualCreditoPresumido``; type ``float | None``; opcional. % Crédito Presumido IBS"""
 
     regra_operacao: CalculosImpostosRegraOperacaoDTO | None = Field(
-        default=None, alias="regraOperacao"
+        default=None,
+        validation_alias=AliasChoices("regra_operacao", "regraOperacao"),
+        serialization_alias="regraOperacao",
     )
-    percentual_ibs_uf: float | None = Field(default=None, alias="percentualIbsUf", examples=[0.1])
+    percentual_ibs_uf: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("percentual_ibs_uf", "percentualIbsUf"),
+        examples=[0.1],
+        serialization_alias="percentualIbsUf",
+    )
     percentual_ibs_municipio: float | None = Field(
-        default=None, alias="percentualIbsMunicipio", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("percentual_ibs_municipio", "percentualIbsMunicipio"),
+        examples=[0],
+        serialization_alias="percentualIbsMunicipio",
     )
     percentual_reducao_aliquota_uf: float | None = Field(
-        default=None, alias="percentualReducaoAliquotaUf", examples=[0]
+        default=None,
+        validation_alias=AliasChoices(
+            "percentual_reducao_aliquota_uf", "percentualReducaoAliquotaUf"
+        ),
+        examples=[0],
+        serialization_alias="percentualReducaoAliquotaUf",
     )
     percentual_reducao_aliquota_municipio: float | None = Field(
-        default=None, alias="percentualReducaoAliquotaMunicipio", examples=[0]
+        default=None,
+        validation_alias=AliasChoices(
+            "percentual_reducao_aliquota_municipio", "percentualReducaoAliquotaMunicipio"
+        ),
+        examples=[0],
+        serialization_alias="percentualReducaoAliquotaMunicipio",
     )
-    aliquota_efetiva_uf: float | None = Field(default=None, alias="aliquotaEfetivaUf", examples=[0])
+    aliquota_efetiva_uf: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("aliquota_efetiva_uf", "aliquotaEfetivaUf"),
+        examples=[0],
+        serialization_alias="aliquotaEfetivaUf",
+    )
     aliquota_efetiva_municipio: float | None = Field(
-        default=None, alias="aliquotaEfetivaMunicipio", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("aliquota_efetiva_municipio", "aliquotaEfetivaMunicipio"),
+        examples=[0],
+        serialization_alias="aliquotaEfetivaMunicipio",
     )
     percentual_diferimento_uf: float | None = Field(
-        default=None, alias="percentualDiferimentoUf", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("percentual_diferimento_uf", "percentualDiferimentoUf"),
+        examples=[0],
+        serialization_alias="percentualDiferimentoUf",
     )
     percentual_diferimento_municipio: float | None = Field(
-        default=None, alias="percentualDiferimentoMunicipio", examples=[0]
+        default=None,
+        validation_alias=AliasChoices(
+            "percentual_diferimento_municipio", "percentualDiferimentoMunicipio"
+        ),
+        examples=[0],
+        serialization_alias="percentualDiferimentoMunicipio",
     )
     codigo_credito_presumido: str | None = Field(
-        default=None, alias="codigoCreditoPresumido", examples=[""]
+        default=None,
+        validation_alias=AliasChoices("codigo_credito_presumido", "codigoCreditoPresumido"),
+        examples=[""],
+        serialization_alias="codigoCreditoPresumido",
     )
     percentual_credito_presumido: float | None = Field(
-        default=None, alias="percentualCreditoPresumido", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("percentual_credito_presumido", "percentualCreditoPresumido"),
+        examples=[0],
+        serialization_alias="percentualCreditoPresumido",
     )
 
 
@@ -232,17 +354,32 @@ class CalculosImpostosDadosBaseDTO(BlingModel):
         informacoes_adicionais_fisco: Bling ``informacoesAdicionaisFisco``; type ``str | None``; opcional."""
 
     regra_operacao: CalculosImpostosRegraOperacaoDTO | None = Field(
-        default=None, alias="regraOperacao"
+        default=None,
+        validation_alias=AliasChoices("regra_operacao", "regraOperacao"),
+        serialization_alias="regraOperacao",
     )
     tributacao: int | None = Field(default=None, examples=[1])
     cst: str | None = Field(default=None, examples=["49"])
     aliquota: float | None = Field(default=None, examples=[0])
     base: float | None = Field(default=None, examples=[0])
-    valor_base_calculo: float | None = Field(default=None, alias="valorBaseCalculo", examples=[0])
-    valor_imposto: float | None = Field(default=None, alias="valorImposto", examples=[0])
+    valor_base_calculo: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_base_calculo", "valorBaseCalculo"),
+        examples=[0],
+        serialization_alias="valorBaseCalculo",
+    )
+    valor_imposto: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_imposto", "valorImposto"),
+        examples=[0],
+        serialization_alias="valorImposto",
+    )
     observacoes: str | None = Field(default=None, examples=[""])
     informacoes_adicionais_fisco: str | None = Field(
-        default=None, alias="informacoesAdicionaisFisco", examples=[""]
+        default=None,
+        validation_alias=AliasChoices("informacoes_adicionais_fisco", "informacoesAdicionaisFisco"),
+        examples=[""],
+        serialization_alias="informacoesAdicionaisFisco",
     )
 
 
@@ -271,16 +408,35 @@ class CalculosImpostosIpiDTO(CalculosImpostosDadosBaseDTO):
         codigo_ex_tipi: Bling ``codigoExTipi``; type ``int | None``; opcional."""
 
     valor_ipi_fixo_unitario: float | None = Field(
-        default=None, alias="valorIpiFixoUnitario", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("valor_ipi_fixo_unitario", "valorIpiFixoUnitario"),
+        examples=[0],
+        serialization_alias="valorIpiFixoUnitario",
     )
     classe_enquadramento_ipi: str | None = Field(
-        default=None, alias="classeEnquadramentoIpi", examples=[""]
+        default=None,
+        validation_alias=AliasChoices("classe_enquadramento_ipi", "classeEnquadramentoIpi"),
+        examples=[""],
+        serialization_alias="classeEnquadramentoIpi",
     )
     codigo_enquadramento_ipi: int | None = Field(
-        default=None, alias="codigoEnquadramentoIpi", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("codigo_enquadramento_ipi", "codigoEnquadramentoIpi"),
+        examples=[0],
+        serialization_alias="codigoEnquadramentoIpi",
     )
-    codigo_selo: str | None = Field(default=None, alias="codigoSelo", examples=[""])
-    codigo_ex_tipi: int | None = Field(default=None, alias="codigoExTipi", examples=[0])
+    codigo_selo: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("codigo_selo", "codigoSelo"),
+        examples=[""],
+        serialization_alias="codigoSelo",
+    )
+    codigo_ex_tipi: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("codigo_ex_tipi", "codigoExTipi"),
+        examples=[0],
+        serialization_alias="codigoExTipi",
+    )
 
 
 class CalculosImpostosIssqnDTO(CalculosImpostosDadosBaseDTO):
@@ -306,12 +462,23 @@ class CalculosImpostosIssqnDTO(CalculosImpostosDadosBaseDTO):
         reter_iss: Bling ``reterIss``; type ``bool | None``; opcional."""
 
     codigo_lista_servicos: str | None = Field(
-        default=None, alias="codigoListaServicos", examples=["01.04"]
+        default=None,
+        validation_alias=AliasChoices("codigo_lista_servicos", "codigoListaServicos"),
+        examples=["01.04"],
+        serialization_alias="codigoListaServicos",
     )
     descontar_iss_total_nota: bool | None = Field(
-        default=None, alias="descontarIssTotalNota", examples=[False]
+        default=None,
+        validation_alias=AliasChoices("descontar_iss_total_nota", "descontarIssTotalNota"),
+        examples=[False],
+        serialization_alias="descontarIssTotalNota",
     )
-    reter_iss: bool | None = Field(default=None, alias="reterIss", examples=[False])
+    reter_iss: bool | None = Field(
+        default=None,
+        validation_alias=AliasChoices("reter_iss", "reterIss"),
+        examples=[False],
+        serialization_alias="reterIss",
+    )
 
 
 class CalculosImpostosLojaDTO(BlingModel):
@@ -326,7 +493,9 @@ class CalculosImpostosLojaDTO(BlingModel):
 
     id: int = Field(..., examples=[12345678])
     unidade_negocio: CalculosImpostosUnidadeNegocioDTO | None = Field(
-        default=None, alias="unidadeNegocio"
+        default=None,
+        validation_alias=AliasChoices("unidade_negocio", "unidadeNegocio"),
+        serialization_alias="unidadeNegocio",
     )
 
 
@@ -350,7 +519,12 @@ class CalculosImpostosPisDTO(CalculosImpostosDadosBaseDTO):
         informacoes_adicionais_fisco: Bling ``informacoesAdicionaisFisco``; type ``str | None``; opcional.
         valor_pis_fixo: Bling ``valorPisFixo``; type ``float | None``; opcional."""
 
-    valor_pis_fixo: float | None = Field(default=None, alias="valorPisFixo", examples=[0])
+    valor_pis_fixo: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_pis_fixo", "valorPisFixo"),
+        examples=[0],
+        serialization_alias="valorPisFixo",
+    )
 
 
 class CalculosImpostosSimplesDTO(CalculosImpostosDadosBaseDTO):
@@ -387,34 +561,101 @@ class CalculosImpostosSimplesDTO(CalculosImpostosDadosBaseDTO):
         valor_unitario_icms_st_retencao: Bling ``valorUnitarioIcmsStRetencao``; type ``float | None``; opcional.
         valor_unitario_icms_substituto: Bling ``valorUnitarioIcmsSubstituto``; type ``float | None``; opcional."""
 
-    base_diferimento: float | None = Field(default=None, alias="baseDiferimento", examples=[0])
+    base_diferimento: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("base_diferimento", "baseDiferimento"),
+        examples=[0],
+        serialization_alias="baseDiferimento",
+    )
     modalidade_base_calculo: int | None = Field(
-        default=None, alias="modalidadeBaseCalculo", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("modalidade_base_calculo", "modalidadeBaseCalculo"),
+        examples=[0],
+        serialization_alias="modalidadeBaseCalculo",
     )
-    valor_pauta: float | None = Field(default=None, alias="valorPauta", examples=[0])
-    valor_imposto_st: float | None = Field(default=None, alias="valorImpostoSt", examples=[0])
+    valor_pauta: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_pauta", "valorPauta"),
+        examples=[0],
+        serialization_alias="valorPauta",
+    )
+    valor_imposto_st: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_imposto_st", "valorImpostoSt"),
+        examples=[0],
+        serialization_alias="valorImpostoSt",
+    )
     valor_base_calculo_st: float | None = Field(
-        default=None, alias="valorBaseCalculoSt", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("valor_base_calculo_st", "valorBaseCalculoSt"),
+        examples=[0],
+        serialization_alias="valorBaseCalculoSt",
     )
-    base_calculo_st: float | None = Field(default=None, alias="baseCalculoSt", examples=[0])
+    base_calculo_st: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("base_calculo_st", "baseCalculoSt"),
+        examples=[0],
+        serialization_alias="baseCalculoSt",
+    )
     percentual_adicionado_st: float | None = Field(
-        default=None, alias="percentualAdicionadoSt", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("percentual_adicionado_st", "percentualAdicionadoSt"),
+        examples=[0],
+        serialization_alias="percentualAdicionadoSt",
     )
     modalidade_base_calculo_st: float | None = Field(
-        default=None, alias="modalidadeBaseCalculoSt", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("modalidade_base_calculo_st", "modalidadeBaseCalculoSt"),
+        examples=[0],
+        serialization_alias="modalidadeBaseCalculoSt",
     )
-    valor_pauta_st: float | None = Field(default=None, alias="valorPautaSt", examples=[0])
-    aliquota_st: float | None = Field(default=None, alias="aliquotaSt", examples=[0])
-    aliquota_st_retido: float | None = Field(default=None, alias="aliquotaStRetido", examples=[0])
-    base_st_retido: float | None = Field(default=None, alias="baseStRetido", examples=[0])
+    valor_pauta_st: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_pauta_st", "valorPautaSt"),
+        examples=[0],
+        serialization_alias="valorPautaSt",
+    )
+    aliquota_st: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("aliquota_st", "aliquotaSt"),
+        examples=[0],
+        serialization_alias="aliquotaSt",
+    )
+    aliquota_st_retido: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("aliquota_st_retido", "aliquotaStRetido"),
+        examples=[0],
+        serialization_alias="aliquotaStRetido",
+    )
+    base_st_retido: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("base_st_retido", "baseStRetido"),
+        examples=[0],
+        serialization_alias="baseStRetido",
+    )
     valor_unitario_base_cst_retencao: float | None = Field(
-        default=None, alias="valorUnitarioBaseCstRetencao", examples=[0]
+        default=None,
+        validation_alias=AliasChoices(
+            "valor_unitario_base_cst_retencao", "valorUnitarioBaseCstRetencao"
+        ),
+        examples=[0],
+        serialization_alias="valorUnitarioBaseCstRetencao",
     )
     valor_unitario_icms_st_retencao: float | None = Field(
-        default=None, alias="valorUnitarioIcmsStRetencao", examples=[0]
+        default=None,
+        validation_alias=AliasChoices(
+            "valor_unitario_icms_st_retencao", "valorUnitarioIcmsStRetencao"
+        ),
+        examples=[0],
+        serialization_alias="valorUnitarioIcmsStRetencao",
     )
     valor_unitario_icms_substituto: float | None = Field(
-        default=None, alias="valorUnitarioIcmsSubstituto", examples=[0]
+        default=None,
+        validation_alias=AliasChoices(
+            "valor_unitario_icms_substituto", "valorUnitarioIcmsSubstituto"
+        ),
+        examples=[0],
+        serialization_alias="valorUnitarioIcmsSubstituto",
     )
 
 
@@ -433,10 +674,20 @@ class CalculosImpostosCalculoDTO(BlingModel):
         loja: Bling ``loja``; type ``CalculosImpostosLojaDTO``; obrigatório.
         produto: Bling ``produto``; type ``CalculosImpostosProdutoDTO``; obrigatório."""
 
-    tipo_nota: int = Field(..., alias="tipoNota", examples=[1])
+    tipo_nota: int = Field(
+        ...,
+        validation_alias=AliasChoices("tipo_nota", "tipoNota"),
+        examples=[1],
+        serialization_alias="tipoNota",
+    )
     uf: str = Field(..., examples=["RS"])
     municipio: CalculosImpostosMunicipioDTO
-    obter_regras: bool | None = Field(default=True, alias="obterRegras", examples=[True])
+    obter_regras: bool | None = Field(
+        default=True,
+        validation_alias=AliasChoices("obter_regras", "obterRegras"),
+        examples=[True],
+        serialization_alias="obterRegras",
+    )
     crt: int | None = Field(default=None, examples=[1])
     loja: CalculosImpostosLojaDTO
     produto: CalculosImpostosProdutoDTO
@@ -462,7 +713,12 @@ class CalculosImpostosCofinsDTO(CalculosImpostosDadosBaseDTO):
         informacoes_adicionais_fisco: Bling ``informacoesAdicionaisFisco``; type ``str | None``; opcional.
         valor_cofins_fixo: Bling ``valorCofinsFixo``; type ``float | None``; opcional."""
 
-    valor_cofins_fixo: float | None = Field(default=None, alias="valorCofinsFixo", examples=[0])
+    valor_cofins_fixo: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_cofins_fixo", "valorCofinsFixo"),
+        examples=[0],
+        serialization_alias="valorCofinsFixo",
+    )
 
 
 class CalculosImpostosIcmsDTO(CalculosImpostosDadosBaseDTO):
@@ -502,38 +758,109 @@ class CalculosImpostosIcmsDTO(CalculosImpostosDadosBaseDTO):
         aliquota_posicao: Bling ``aliquotaPosicao``; type ``float | None``; opcional."""
 
     porcentagem_fcp_difal: float | None = Field(
-        default=None, alias="porcentagemFcpDifal", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("porcentagem_fcp_difal", "porcentagemFcpDifal"),
+        examples=[0],
+        serialization_alias="porcentagemFcpDifal",
     )
-    valor_fcp_difal: float | None = Field(default=None, alias="valorFcpDifal", examples=[0])
-    valor_fcp_efetivo: float | None = Field(default=None, alias="valorFcpEfetivo", examples=[0])
-    porcentagem_fcp: float | None = Field(default=None, alias="porcentagemFcp", examples=[0])
+    valor_fcp_difal: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_fcp_difal", "valorFcpDifal"),
+        examples=[0],
+        serialization_alias="valorFcpDifal",
+    )
+    valor_fcp_efetivo: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_fcp_efetivo", "valorFcpEfetivo"),
+        examples=[0],
+        serialization_alias="valorFcpEfetivo",
+    )
+    porcentagem_fcp: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("porcentagem_fcp", "porcentagemFcp"),
+        examples=[0],
+        serialization_alias="porcentagemFcp",
+    )
     porcentagem_fcp_uf_destino: float | None = Field(
-        default=None, alias="porcentagemFcpUfDestino", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("porcentagem_fcp_uf_destino", "porcentagemFcpUfDestino"),
+        examples=[0],
+        serialization_alias="porcentagemFcpUfDestino",
     )
     modalidade_base_calculo: float | None = Field(
-        default=None, alias="modalidadeBaseCalculo", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("modalidade_base_calculo", "modalidadeBaseCalculo"),
+        examples=[0],
+        serialization_alias="modalidadeBaseCalculo",
     )
-    valor_pauta: float | None = Field(default=None, alias="valorPauta", examples=[0])
-    aliquota_presumido: float | None = Field(default=None, alias="aliquotaPresumido", examples=[0])
+    valor_pauta: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_pauta", "valorPauta"),
+        examples=[0],
+        serialization_alias="valorPauta",
+    )
+    aliquota_presumido: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("aliquota_presumido", "aliquotaPresumido"),
+        examples=[0],
+        serialization_alias="aliquotaPresumido",
+    )
     porcentagem_base_calculo_uf_destino: float | None = Field(
-        default=None, alias="porcentagemBaseCalculoUfDestino", examples=[0]
+        default=None,
+        validation_alias=AliasChoices(
+            "porcentagem_base_calculo_uf_destino", "porcentagemBaseCalculoUfDestino"
+        ),
+        examples=[0],
+        serialization_alias="porcentagemBaseCalculoUfDestino",
     )
     porcentagem_icms_uf_destino: float | None = Field(
-        default=None, alias="porcentagemIcmsUfDestino", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("porcentagem_icms_uf_destino", "porcentagemIcmsUfDestino"),
+        examples=[0],
+        serialization_alias="porcentagemIcmsUfDestino",
     )
-    tipo_partilha: int | None = Field(default=None, alias="tipoPartilha", examples=[0])
+    tipo_partilha: int | None = Field(
+        default=None,
+        validation_alias=AliasChoices("tipo_partilha", "tipoPartilha"),
+        examples=[0],
+        serialization_alias="tipoPartilha",
+    )
     valor_icms_desonerado: float | None = Field(
-        default=None, alias="valorIcmsDesonerado", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("valor_icms_desonerado", "valorIcmsDesonerado"),
+        examples=[0],
+        serialization_alias="valorIcmsDesonerado",
     )
     motivo_desoneracao_icms: int | None = Field(
-        default=None, alias="motivoDesoneracaoIcms", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("motivo_desoneracao_icms", "motivoDesoneracaoIcms"),
+        examples=[0],
+        serialization_alias="motivoDesoneracaoIcms",
     )
-    base_diferimento: float | None = Field(default=None, alias="baseDiferimento", examples=[0])
+    base_diferimento: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("base_diferimento", "baseDiferimento"),
+        examples=[0],
+        serialization_alias="baseDiferimento",
+    )
     valor_base_diferimento: float | None = Field(
-        default=None, alias="valorBaseDiferimento", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("valor_base_diferimento", "valorBaseDiferimento"),
+        examples=[0],
+        serialization_alias="valorBaseDiferimento",
     )
-    valor_presumido: float | None = Field(default=None, alias="valorPresumido", examples=[0])
-    aliquota_posicao: float | None = Field(default=None, alias="aliquotaPosicao", examples=[0])
+    valor_presumido: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_presumido", "valorPresumido"),
+        examples=[0],
+        serialization_alias="valorPresumido",
+    )
+    aliquota_posicao: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("aliquota_posicao", "aliquotaPosicao"),
+        examples=[0],
+        serialization_alias="aliquotaPosicao",
+    )
 
 
 class CalculosImpostosIcmsStDTO(CalculosImpostosDadosBaseDTO):
@@ -559,12 +886,23 @@ class CalculosImpostosIcmsStDTO(CalculosImpostosDadosBaseDTO):
         valor_pauta: Bling ``valorPauta``; type ``float | None``; opcional."""
 
     percentual_adicionado: float | None = Field(
-        default=None, alias="percentualAdicionado", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("percentual_adicionado", "percentualAdicionado"),
+        examples=[0],
+        serialization_alias="percentualAdicionado",
     )
     modalidade_base_calculo: int | None = Field(
-        default=None, alias="modalidadeBaseCalculo", examples=[0]
+        default=None,
+        validation_alias=AliasChoices("modalidade_base_calculo", "modalidadeBaseCalculo"),
+        examples=[0],
+        serialization_alias="modalidadeBaseCalculo",
     )
-    valor_pauta: float | None = Field(default=None, alias="valorPauta", examples=[0])
+    valor_pauta: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_pauta", "valorPauta"),
+        examples=[0],
+        serialization_alias="valorPauta",
+    )
 
 
 class CalculosImpostosDadosDTO(BlingModel):
@@ -617,54 +955,159 @@ class CalculosImpostosDadosDTO(BlingModel):
         default=None, examples=["Total aproximado de tributos: R$ [APROX_TRIB]. Fonte IBPT."]
     )
     pis_cofins_presumido: bool | None = Field(
-        default=None, alias="pisCofinsPresumido", examples=[False]
+        default=None,
+        validation_alias=AliasChoices("pis_cofins_presumido", "pisCofinsPresumido"),
+        examples=[False],
+        serialization_alias="pisCofinsPresumido",
     )
     soma_impostos_total: bool | None = Field(
-        default=None, alias="somaImpostosTotal", examples=[False]
+        default=None,
+        validation_alias=AliasChoices("soma_impostos_total", "somaImpostosTotal"),
+        examples=[False],
+        serialization_alias="somaImpostosTotal",
     )
-    soma_icms_total: bool | None = Field(default=None, alias="somaIcmsTotal", examples=[False])
-    aliquota_funrural: float | None = Field(default=None, alias="aliquotaFunrural", examples=[0])
-    desconta_funrural: bool | None = Field(default=None, alias="descontaFunrural", examples=[False])
-    consumidor_final: bool | None = Field(default=None, alias="consumidorFinal", examples=[False])
+    soma_icms_total: bool | None = Field(
+        default=None,
+        validation_alias=AliasChoices("soma_icms_total", "somaIcmsTotal"),
+        examples=[False],
+        serialization_alias="somaIcmsTotal",
+    )
+    aliquota_funrural: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("aliquota_funrural", "aliquotaFunrural"),
+        examples=[0],
+        serialization_alias="aliquotaFunrural",
+    )
+    desconta_funrural: bool | None = Field(
+        default=None,
+        validation_alias=AliasChoices("desconta_funrural", "descontaFunrural"),
+        examples=[False],
+        serialization_alias="descontaFunrural",
+    )
+    consumidor_final: bool | None = Field(
+        default=None,
+        validation_alias=AliasChoices("consumidor_final", "consumidorFinal"),
+        examples=[False],
+        serialization_alias="consumidorFinal",
+    )
     ret_imposto_retido: bool | None = Field(
-        default=None, alias="retImpostoRetido", examples=[False]
+        default=None,
+        validation_alias=AliasChoices("ret_imposto_retido", "retImpostoRetido"),
+        examples=[False],
+        serialization_alias="retImpostoRetido",
     )
-    ret_aliquota_ir: float | None = Field(default=None, alias="retAliquotaIr", examples=[0])
-    ret_valor_ir: float | None = Field(default=None, alias="retValorIr", examples=[0])
-    ret_aliquota_csll: float | None = Field(default=None, alias="retAliquotaCsll", examples=[0])
-    ret_valor_csll: float | None = Field(default=None, alias="retValorCsll", examples=[0])
+    ret_aliquota_ir: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("ret_aliquota_ir", "retAliquotaIr"),
+        examples=[0],
+        serialization_alias="retAliquotaIr",
+    )
+    ret_valor_ir: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("ret_valor_ir", "retValorIr"),
+        examples=[0],
+        serialization_alias="retValorIr",
+    )
+    ret_aliquota_csll: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("ret_aliquota_csll", "retAliquotaCsll"),
+        examples=[0],
+        serialization_alias="retAliquotaCsll",
+    )
+    ret_valor_csll: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("ret_valor_csll", "retValorCsll"),
+        examples=[0],
+        serialization_alias="retValorCsll",
+    )
     desconto_condicional: bool | None = Field(
-        default=None, alias="descontoCondicional", examples=[False]
+        default=None,
+        validation_alias=AliasChoices("desconto_condicional", "descontoCondicional"),
+        examples=[False],
+        serialization_alias="descontoCondicional",
     )
-    base_comissao: float | None = Field(default=None, alias="baseComissao", examples=[0])
+    base_comissao: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("base_comissao", "baseComissao"),
+        examples=[0],
+        serialization_alias="baseComissao",
+    )
     icms: CalculosImpostosIcmsDTO | None = None
-    valor_pmc: float | None = Field(default=None, alias="valorPmc", examples=[0])
+    valor_pmc: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("valor_pmc", "valorPmc"),
+        examples=[0],
+        serialization_alias="valorPmc",
+    )
     aliquota_valor_aprox_impostos: float | None = Field(
-        default=None, alias="aliquotaValorAproxImpostos", examples=[0]
+        default=None,
+        validation_alias=AliasChoices(
+            "aliquota_valor_aprox_impostos", "aliquotaValorAproxImpostos"
+        ),
+        examples=[0],
+        serialization_alias="aliquotaValorAproxImpostos",
     )
     informacoes_adicionais_fisco: str | None = Field(
-        default=None, alias="informacoesAdicionaisFisco", examples=[""]
+        default=None,
+        validation_alias=AliasChoices("informacoes_adicionais_fisco", "informacoesAdicionaisFisco"),
+        examples=[""],
+        serialization_alias="informacoesAdicionaisFisco",
     )
-    incluir_frete_ipi: bool | None = Field(default=None, alias="incluirFreteIpi", examples=[False])
+    incluir_frete_ipi: bool | None = Field(
+        default=None,
+        validation_alias=AliasChoices("incluir_frete_ipi", "incluirFreteIpi"),
+        examples=[False],
+        serialization_alias="incluirFreteIpi",
+    )
     simples: CalculosImpostosSimplesDTO | None = None
     ipi: CalculosImpostosIpiDTO | None = None
     issqn: CalculosImpostosIssqnDTO | None = None
     pis: CalculosImpostosPisDTO | None = None
     cofins: CalculosImpostosCofinsDTO | None = None
-    icms_st: CalculosImpostosIcmsStDTO | None = Field(default=None, alias="icmsSt")
-    pis_st: CalculosImpostosDadosBaseDTO | None = Field(default=None, alias="pisSt")
-    cofins_st: CalculosImpostosDadosBaseDTO | None = Field(default=None, alias="cofinsSt")
+    icms_st: CalculosImpostosIcmsStDTO | None = Field(
+        default=None,
+        validation_alias=AliasChoices("icms_st", "icmsSt"),
+        serialization_alias="icmsSt",
+    )
+    pis_st: CalculosImpostosDadosBaseDTO | None = Field(
+        default=None, validation_alias=AliasChoices("pis_st", "pisSt"), serialization_alias="pisSt"
+    )
+    cofins_st: CalculosImpostosDadosBaseDTO | None = Field(
+        default=None,
+        validation_alias=AliasChoices("cofins_st", "cofinsSt"),
+        serialization_alias="cofinsSt",
+    )
     ii: CalculosImpostosDadosBaseDTO | None = None
     codigo_beneficio_fiscal: str | None = Field(
-        default=None, alias="codigoBeneficioFiscal", examples=[""]
+        default=None,
+        validation_alias=AliasChoices("codigo_beneficio_fiscal", "codigoBeneficioFiscal"),
+        examples=[""],
+        serialization_alias="codigoBeneficioFiscal",
     )
-    porcentagem_fcp: float | None = Field(default=None, alias="porcentagemFcp", examples=[0])
+    porcentagem_fcp: float | None = Field(
+        default=None,
+        validation_alias=AliasChoices("porcentagem_fcp", "porcentagemFcp"),
+        examples=[0],
+        serialization_alias="porcentagemFcp",
+    )
     cfop: int | None = Field(default=None, examples=[0])
-    simples_st: CalculosImpostosDadosBaseDTO | None = Field(default=None, alias="simplesSt")
-    ibs_cbs: CalculosImpostosIbsCbsDTO | None = Field(default=None, alias="ibsCbs")
+    simples_st: CalculosImpostosDadosBaseDTO | None = Field(
+        default=None,
+        validation_alias=AliasChoices("simples_st", "simplesSt"),
+        serialization_alias="simplesSt",
+    )
+    ibs_cbs: CalculosImpostosIbsCbsDTO | None = Field(
+        default=None,
+        validation_alias=AliasChoices("ibs_cbs", "ibsCbs"),
+        serialization_alias="ibsCbs",
+    )
     ibs: CalculosImpostosIbsDTO | None = None
     cbs: CalculosImpostosCbsDTO | None = None
-    ibs_cbs_reg: CalculosImpostosIbsCbsRegDTO | None = Field(default=None, alias="ibsCbsReg")
+    ibs_cbs_reg: CalculosImpostosIbsCbsRegDTO | None = Field(
+        default=None,
+        validation_alias=AliasChoices("ibs_cbs_reg", "ibsCbsReg"),
+        serialization_alias="ibsCbsReg",
+    )
 
 
 __all__ = [

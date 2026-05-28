@@ -358,7 +358,7 @@ def _schema_module_content(
         "from datetime import date",
         "from typing import TYPE_CHECKING, Any",
         "",
-        "from pydantic import AwareDatetime, Field, RootModel",
+        "from pydantic import AliasChoices, AwareDatetime, Field, RootModel",
         "",
         "from bling_erp_api.models.base import BlingModel",
     ]
@@ -439,6 +439,7 @@ def _class_with_docstring(
     node = cast(
         "ast.ClassDef", ast.fix_missing_locations(ast.parse(ast.unparse(class_nodes[name])).body[0])
     )
+    _rewrite_field_aliases(node)
     docstring = _model_docstring(name, class_nodes)
     doc_node = ast.Expr(value=ast.Constant(value=docstring))
     existing_doc = ast.get_docstring(node, clean=False)
@@ -452,6 +453,44 @@ def _class_with_docstring(
         if index == 0 or _string_value_from_expr_stmt(stmt) is None
     ]
     return ast.fix_missing_locations(node)
+
+
+def _rewrite_field_aliases(node: ast.ClassDef) -> None:
+    """Keep Python field names public while preserving Bling wire aliases."""
+    for stmt in node.body:
+        if not isinstance(stmt, ast.AnnAssign) or not isinstance(stmt.target, ast.Name):
+            continue
+        if not isinstance(stmt.value, ast.Call) or _name_from_expr(stmt.value.func) != "Field":
+            continue
+
+        field_name = stmt.target.id
+        alias_keyword = next(
+            (
+                keyword
+                for keyword in stmt.value.keywords
+                if keyword.arg == "alias" and _string_value(keyword.value)
+            ),
+            None,
+        )
+        if alias_keyword is None:
+            continue
+
+        alias = _string_value(alias_keyword.value)
+        if alias is None or alias == field_name:
+            continue
+
+        alias_keyword.arg = "validation_alias"
+        alias_keyword.value = ast.Call(
+            func=ast.Name(id="AliasChoices", ctx=ast.Load()),
+            args=[
+                ast.Constant(value=field_name),
+                ast.Constant(value=alias),
+            ],
+            keywords=[],
+        )
+        stmt.value.keywords.append(
+            ast.keyword(arg="serialization_alias", value=ast.Constant(value=alias))
+        )
 
 
 def _model_docstring(name: str, class_nodes: Mapping[str, ast.ClassDef]) -> str:

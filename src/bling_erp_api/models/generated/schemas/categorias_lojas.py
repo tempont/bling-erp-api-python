@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -68,7 +68,11 @@ class CategoriasLojasDadosDTO(BlingModel):
     loja: CategoriasLojasLojaDTO
     descricao: str = Field(..., examples=["Categoria de produto vinculado à loja"])
     codigo: str = Field(..., examples=["12345678"])
-    categoria_produto: CategoriasLojasCategoriaProdutoDTO = Field(..., alias="categoriaProduto")
+    categoria_produto: CategoriasLojasCategoriaProdutoDTO = Field(
+        ...,
+        validation_alias=AliasChoices("categoria_produto", "categoriaProduto"),
+        serialization_alias="categoriaProduto",
+    )
 
 
 class CategoriasLojasGetResponse200(BlingModel):
