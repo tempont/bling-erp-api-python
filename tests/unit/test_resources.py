@@ -52,6 +52,7 @@ from bling_erp_api.resources.product_structures import ProductStructuresResource
 from bling_erp_api.resources.product_suppliers import ProductSuppliersResource
 from bling_erp_api.resources.product_variations import ProductVariationsResource
 from bling_erp_api.resources.products import ProductsResource
+from bling_erp_api.resources.purchase_orders import PurchaseOrdersResource
 from bling_erp_api.resources.sales_orders import SalesOrdersResource
 from bling_erp_api.resources.store_categories import StoreCategoriesResource
 from bling_erp_api.types import JsonObject, JsonPayload, QueryParams
@@ -3066,3 +3067,164 @@ class TestOrdensProducaoResourceMapping:
         resource.generate_on_demand()
         assert len(transport.calls) == 1
         assert transport.calls[0][1] == "/ordens-producao/gerar-sob-demanda"
+
+
+# --- Purchase Orders (Pedidos de Compra) mapping tests ---
+
+
+class TestPurchaseOrdersResourceMapping:
+    """Mapping tests for PurchaseOrdersResource (PedidosCompras endpoints)."""
+
+    def test_po_list_maps_to_bling_endpoint(self) -> None:
+        """listar() should map to GET /pedidos/compras with Bling camelCase params."""
+        transport = RecordingTransport()
+        resource = PurchaseOrdersResource(transport)
+        resource.listar(pagina=1, limite=10, id_fornecedor=500)
+        assert transport.calls == [
+            ("GET", "/pedidos/compras", {"pagina": 1, "limite": 10, "idFornecedor": 500}, None),
+        ]
+
+    def test_po_list_with_all_filters(self) -> None:
+        """listar() should map all optional filters to Bling camelCase keys."""
+        transport = RecordingTransport()
+        resource = PurchaseOrdersResource(transport)
+        resource.listar(
+            pagina=1,
+            limite=10,
+            id_fornecedor=500,
+            valor_situacao=1,
+            id_situacao=2,
+            data_inicial="2024-01-01",
+            data_final="2024-12-31",
+            ids_notas_fiscais=[100, 200],
+        )
+        assert transport.calls == [
+            (
+                "GET",
+                "/pedidos/compras",
+                {
+                    "pagina": 1,
+                    "limite": 10,
+                    "idFornecedor": 500,
+                    "valorSituacao": 1,
+                    "idSituacao": 2,
+                    "dataInicial": "2024-01-01",
+                    "dataFinal": "2024-12-31",
+                    "idsNotasFiscais[]": [100, 200],
+                },
+                None,
+            ),
+        ]
+
+    def test_po_obter_maps_to_bling_endpoint(self) -> None:
+        """obter() should map to GET /pedidos/compras/{id}."""
+        transport = RecordingTransport()
+        resource = PurchaseOrdersResource(transport)
+        resource.obter(1001)
+        assert transport.calls == [
+            ("GET", "/pedidos/compras/1001", None, None),
+        ]
+
+    def test_po_criar_maps_to_bling_endpoint(self) -> None:
+        """criar() should POST JSON body to /pedidos/compras."""
+        transport = RecordingTransport()
+        resource = PurchaseOrdersResource(transport)
+        resource.criar({"fornecedor": {"id": 500}})  # type: ignore[reportArgumentType]
+        assert transport.calls[0][:2] == ("POST", "/pedidos/compras")
+        assert transport.calls[0][3] is not None  # body was serialized
+
+    def test_po_alterar_maps_to_bling_endpoint(self) -> None:
+        """alterar() should PUT JSON body to /pedidos/compras/{id}."""
+        transport = RecordingTransport()
+        resource = PurchaseOrdersResource(transport)
+        resource.alterar(1001, {"fornecedor": {"id": 500}})  # type: ignore[reportArgumentType]
+        assert transport.calls[0][:2] == ("PUT", "/pedidos/compras/1001")
+        assert transport.calls[0][3] is not None
+
+    def test_po_remover_maps_to_bling_endpoint(self) -> None:
+        """remover() should send DELETE to /pedidos/compras/{id}."""
+        transport = RecordingTransport()
+        resource = PurchaseOrdersResource(transport)
+        resource.remover(1001)
+        assert transport.calls == [
+            ("DELETE", "/pedidos/compras/1001", None, None),
+        ]
+
+    def test_po_alterar_situacao_maps_to_bling_endpoint(self) -> None:
+        """alterar_situacao() should PATCH /pedidos/compras/{id}/situacoes/{situacao}."""
+        transport = RecordingTransport()
+        resource = PurchaseOrdersResource(transport)
+        resource.alterar_situacao(1001, 2)
+        assert transport.calls == [
+            ("PATCH", "/pedidos/compras/1001/situacoes/2", None, None),
+        ]
+
+    def test_po_lancar_contas_maps_to_bling_endpoint(self) -> None:
+        """lancar_contas() should POST to /pedidos/compras/{id}/lancar-contas."""
+        transport = RecordingTransport()
+        resource = PurchaseOrdersResource(transport)
+        resource.lancar_contas(1001)
+        assert transport.calls == [
+            ("POST", "/pedidos/compras/1001/lancar-contas", None, None),
+        ]
+
+    def test_po_estornar_contas_maps_to_bling_endpoint(self) -> None:
+        """estornar_contas() should POST to /pedidos/compras/{id}/estornar-contas."""
+        transport = RecordingTransport()
+        resource = PurchaseOrdersResource(transport)
+        resource.estornar_contas(1001)
+        assert transport.calls == [
+            ("POST", "/pedidos/compras/1001/estornar-contas", None, None),
+        ]
+
+    def test_po_lancar_estoque_maps_to_bling_endpoint(self) -> None:
+        """lancar_estoque() should POST to /pedidos/compras/{id}/lancar-estoque."""
+        transport = RecordingTransport()
+        resource = PurchaseOrdersResource(transport)
+        resource.lancar_estoque(1001)
+        assert transport.calls == [
+            ("POST", "/pedidos/compras/1001/lancar-estoque", None, None),
+        ]
+
+    def test_po_estornar_estoque_maps_to_bling_endpoint(self) -> None:
+        """estornar_estoque() should POST to /pedidos/compras/{id}/estornar-estoque."""
+        transport = RecordingTransport()
+        resource = PurchaseOrdersResource(transport)
+        resource.estornar_estoque(1001)
+        assert transport.calls == [
+            ("POST", "/pedidos/compras/1001/estornar-estoque", None, None),
+        ]
+
+    def test_po_english_alias_get(self) -> None:
+        """English alias get() should map to obter()."""
+        transport = RecordingTransport()
+        resource = PurchaseOrdersResource(transport)
+        resource.get(1001)
+        assert transport.calls == [
+            ("GET", "/pedidos/compras/1001", None, None),
+        ]
+
+    def test_po_english_alias_list(self) -> None:
+        """English alias list() should map to listar()."""
+        transport = RecordingTransport()
+        resource = PurchaseOrdersResource(transport)
+        resource.list(page=1)
+        assert transport.calls[0][:2] == ("GET", "/pedidos/compras")
+
+    def test_po_english_alias_delete(self) -> None:
+        """English alias delete() should map to remover()."""
+        transport = RecordingTransport()
+        resource = PurchaseOrdersResource(transport)
+        resource.delete(1001)
+        assert transport.calls == [
+            ("DELETE", "/pedidos/compras/1001", None, None),
+        ]
+
+    def test_po_english_alias_update_status(self) -> None:
+        """English alias update_status() should map to alterar_situacao()."""
+        transport = RecordingTransport()
+        resource = PurchaseOrdersResource(transport)
+        resource.update_status(1001, 3)
+        assert transport.calls == [
+            ("PATCH", "/pedidos/compras/1001/situacoes/3", None, None),
+        ]

@@ -47,6 +47,7 @@ from bling_erp_api.resources import (
     ProductStructuresResource,
     ProductSuppliersResource,
     ProductVariationsResource,
+    PurchaseOrdersResource,
     SalesOrdersResource,
     StoreCategoriesResource,
 )
@@ -96,6 +97,7 @@ class BlingClient:
         self._lotes_lancamentos = ProductBatchEntriesResource(self._transport)
         self._produtos_variacoes = ProductVariationsResource(self._transport)
         self._sales_orders = SalesOrdersResource(self._transport)
+        self._purchase_orders = PurchaseOrdersResource(self._transport)
         self._nfe = NfeResource(self._transport)
         self._nfce = NfceResource(self._transport)
         self._nfse = NfseResource(self._transport)
@@ -220,6 +222,16 @@ class BlingClient:
     def pedidos_vendas(self) -> SalesOrdersResource:
         """Alias pt-BR para ``sales_orders``. Operações de pedidos de venda (/pedidos/vendas)."""
         return self._sales_orders
+
+    @property
+    def pedidos_compras(self) -> PurchaseOrdersResource:
+        """Pedidos de compra — operações em ``/pedidos/compras``."""
+        return self._purchase_orders
+
+    @property
+    def purchase_orders(self) -> PurchaseOrdersResource:
+        """Alias for ``pedidos_compras``. Purchase order operations on ``/pedidos/compras``."""
+        return self._purchase_orders
 
     @property
     def notas_fiscais(self) -> NfeResource:

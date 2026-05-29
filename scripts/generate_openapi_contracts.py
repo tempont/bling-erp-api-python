@@ -86,6 +86,7 @@ ACTION_TO_SDK_METHOD = {
 PARAMETER_TO_SDK_NAME = {
     "pagina": "pagina",
     "limite": "limite",
+    "idPedidoCompra": "id_pedido_compra",
     "idPedidoVenda": "id_pedido_venda",
     "idSituacao": "id_situacao",
     "idDeposito": "id_deposito",
@@ -153,6 +154,7 @@ PARAMETER_TO_SDK_NAME = {
     "idNotaFiscalConsumidor": "id_nota_fiscal_consumidor",
     "idTransportador": "id_transportador",
     "idsNotas[]": "ids_notas",
+    "idsNotasFiscais[]": "ids_notas_fiscais",
     "numeroLoja": "numero_loja",
     "serie": "serie",
     "situacao": "situacao",
@@ -161,6 +163,7 @@ PARAMETER_TO_SDK_NAME = {
     "idsCategorias": "ids_categorias",
     "idContaFinanceira": "id_conta_financeira",
     "valor": "valor",
+    "valorSituacao": "valor_situacao",
     "situacaoConciliacao": "situacao_conciliacao",
     "idCategoriaLoja": "id_categoria_loja",
     "idCategoriaProdutoPai": "id_categoria_produto_pai",
@@ -206,6 +209,7 @@ DOCSTRING_ONLY_RESOURCES: list[ResourceConfig] = []
 
 _CLASS_NAME_MAP: dict[str, str] = {
     "sales_orders": "SalesOrdersResource",
+    "purchase_orders": "PurchaseOrdersResource",
     "products": "ProductsResource",
     "product_structures": "ProductStructuresResource",
     "product_suppliers": "ProductSuppliersResource",
@@ -250,6 +254,15 @@ RESOURCES: list[ResourceConfig] = [
             "    ids_situacoes=[123456],",
             ")",
             "pedido = client.pedidos_vendas.obter(123456)",
+        ],
+    },
+    {
+        "openapi_resource": "PedidosCompra",
+        "module": "purchase_orders",
+        "constant": "PURCHASE_ORDER_OPERATIONS",
+        "title": "Purchase Orders",
+        "example": [
+            "Lista os pedidos de compra.",
         ],
     },
     {
