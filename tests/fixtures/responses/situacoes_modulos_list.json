@@ -1,0 +1,17 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "nome": "Vendas",
+      "descricao": "Pedidos de Venda",
+      "criarSituacoes": true,
+      "campoNovoBling": "mantido"
+    },
+    {
+      "id": 2,
+      "nome": "Compras",
+      "descricao": "Pedidos de Compra",
+      "criarSituacoes": true
+    }
+  ]
+}

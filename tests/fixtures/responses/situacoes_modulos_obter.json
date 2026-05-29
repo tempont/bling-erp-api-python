@@ -1,0 +1,16 @@
+{
+  "data": [
+    {
+      "id": 10,
+      "nome": "Em aberto"
+    },
+    {
+      "id": 11,
+      "nome": "Atendido"
+    },
+    {
+      "id": 12,
+      "nome": "Cancelado"
+    }
+  ]
+}
