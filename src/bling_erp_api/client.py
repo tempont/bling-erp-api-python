@@ -50,6 +50,9 @@ from bling_erp_api.resources import (
     ProductVariationsResource,
     PurchaseOrdersResource,
     SalesOrdersResource,
+    SituacoesModulosResource,
+    SituacoesResource,
+    SituacoesTransicoesResource,
     StoreCategoriesResource,
 )
 from bling_erp_api.transport.sync import SyncTransport
@@ -133,6 +136,10 @@ class BlingClient:
         self._ordens_producao = OrdensProducaoResource(self._transport)
 
         self._commercial_proposals = CommercialProposalsResource(self._transport)
+
+        self._situacoes = SituacoesResource(self._transport)
+        self._situacoes_modulos = SituacoesModulosResource(self._transport)
+        self._situacoes_transicoes = SituacoesTransicoesResource(self._transport)
 
     # -- Resource namespace properties (with IDE-visible docstrings) --
 
@@ -510,6 +517,36 @@ class BlingClient:
     def commercial_proposals(self) -> CommercialProposalsResource:
         """Alias for ``propostas_comerciais``. Commercial proposals on ``/propostas-comerciais``."""
         return self._commercial_proposals
+
+    @property
+    def situacoes(self) -> SituacoesResource:
+        """Situações — operações em ``/situacoes``."""
+        return self._situacoes
+
+    @property
+    def situations(self) -> SituacoesResource:
+        """Alias for ``situacoes``. Situation operations on ``/situacoes``."""
+        return self._situacoes
+
+    @property
+    def situacoes_modulos(self) -> SituacoesModulosResource:
+        """Módulos de Situações — operações em ``/situacoes/modulos``."""
+        return self._situacoes_modulos
+
+    @property
+    def situation_modules(self) -> SituacoesModulosResource:
+        """Alias for ``situacoes_modulos``. Situation module operations on ``/situacoes/modulos``."""
+        return self._situacoes_modulos
+
+    @property
+    def situacoes_transicoes(self) -> SituacoesTransicoesResource:
+        """Transições de Situações — operações em ``/situacoes/transicoes``."""
+        return self._situacoes_transicoes
+
+    @property
+    def situation_transitions(self) -> SituacoesTransicoesResource:
+        """Alias for ``situacoes_transicoes``. Situation transition operations on ``/situacoes/transicoes``."""
+        return self._situacoes_transicoes
 
     @classmethod
     def from_env(  # noqa: PLR0913

@@ -81,6 +81,7 @@ ACTION_TO_SDK_METHOD = {
     "CriarRemessa": "criar_remessa",
     "ObterTributacao": "obter_tributacao",
     "ObterAcaoMultiplos": "listar",
+    "ObterTransicaoMultiplos": "listar_transicoes",
 }
 
 PARAMETER_TO_SDK_NAME = {
@@ -202,6 +203,8 @@ PARAMETER_TO_SDK_NAME = {
     "idRemessa": "id_remessa",
     "idsVendas[]": "ids_vendas",
     "idNaturezaOperacao": "id_natureza_operacao",
+    "idModuloSistema": "id_modulo_sistema",
+    "idTransicao": "id_transicao",
     "idNotificacao": "id_notificacao",
     "idOrdemProducao": "id_ordem_producao",
     "periodo": "periodo",
@@ -243,6 +246,9 @@ _CLASS_NAME_MAP: dict[str, str] = {
     "naturezas_operacoes": "NaturezasOperacoesResource",
     "notificacoes": "NotificacoesResource",
     "ordens_producao": "OrdensProducaoResource",
+    "situacoes": "SituacoesResource",
+    "situacoes_modulos": "SituacoesModulosResource",
+    "situacoes_transicoes": "SituacoesTransicoesResource",
 }
 
 RESOURCES: list[ResourceConfig] = [
@@ -597,6 +603,33 @@ RESOURCES: list[ResourceConfig] = [
         "title": "Commercial Proposals",
         "example": [
             "Lista as propostas comerciais.",
+        ],
+    },
+    {
+        "openapi_resource": "Situacoes",
+        "module": "situacoes",
+        "constant": "SITUATION_OPERATIONS",
+        "title": "Situations",
+        "example": [
+            "Lista as situacoes.",
+        ],
+    },
+    {
+        "openapi_resource": "SituacoesModulos",
+        "module": "situacoes_modulos",
+        "constant": "SITUATION_MODULE_OPERATIONS",
+        "title": "Situation Modules",
+        "example": [
+            "Lista os modulos de situacoes.",
+        ],
+    },
+    {
+        "openapi_resource": "SituacoesTransicoes",
+        "module": "situacoes_transicoes",
+        "constant": "SITUATION_TRANSITION_OPERATIONS",
+        "title": "Situation Transitions",
+        "example": [
+            "Lista as transicoes de situacoes.",
         ],
     },
 ]

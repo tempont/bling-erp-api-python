@@ -55,6 +55,9 @@ from bling_erp_api.resources.products import ProductsResource
 from bling_erp_api.resources.propostas_comerciais import CommercialProposalsResource
 from bling_erp_api.resources.purchase_orders import PurchaseOrdersResource
 from bling_erp_api.resources.sales_orders import SalesOrdersResource
+from bling_erp_api.resources.situacoes import SituacoesResource
+from bling_erp_api.resources.situacoes_modulos import SituacoesModulosResource
+from bling_erp_api.resources.situacoes_transicoes import SituacoesTransicoesResource
 from bling_erp_api.resources.store_categories import StoreCategoriesResource
 from bling_erp_api.types import JsonObject, JsonPayload, QueryParams
 
@@ -3366,3 +3369,129 @@ class TestCommercialProposalsResourceMapping:
         assert transport.calls == [
             ("PATCH", "/propostas-comerciais/5001/situacoes", None, {"situacao": "Concluido"}),
         ]
+
+
+# --- Situacoes (Situações) mapping tests ---
+
+
+class TestSituacoesResourceMapping:
+    """Mapping tests for SituacoesResource."""
+
+    def test_criar(self) -> None:
+        """Situacoes criar should POST /situacoes with JSON body."""
+        t = RecordingTransport()
+        r = SituacoesResource(t)
+        dados: JsonObject = {"nome": "Teste", "idModuloSistema": 1}
+        r.criar(dados)
+        assert t.calls[0][:2] == ("POST", "/situacoes")
+        assert t.calls[0][3] is not None
+
+    def test_obter(self) -> None:
+        """Situacoes obter should GET /situacoes/{id}."""
+        t = RecordingTransport()
+        r = SituacoesResource(t)
+        r.obter(10)
+        assert t.calls == [("GET", "/situacoes/10", None, None)]
+
+    def test_alterar(self) -> None:
+        """Situacoes alterar should PUT /situacoes/{id} with JSON body."""
+        t = RecordingTransport()
+        r = SituacoesResource(t)
+        r.alterar(10, {"nome": "Novo"})
+        assert t.calls[0][:2] == ("PUT", "/situacoes/10")
+        assert t.calls[0][3] is not None
+
+    def test_remover(self) -> None:
+        """Situacoes remover should DELETE /situacoes/{id}."""
+        t = RecordingTransport()
+        r = SituacoesResource(t)
+        r.remover(10)
+        assert t.calls == [("DELETE", "/situacoes/10", None, None)]
+
+    def test_english_get(self) -> None:
+        """English alias get should map to obter."""
+        t = RecordingTransport()
+        r = SituacoesResource(t)
+        r.get(10)
+        assert t.calls == [("GET", "/situacoes/10", None, None)]
+
+
+class TestSituacoesModulosResourceMapping:
+    """Mapping tests for SituacoesModulosResource."""
+
+    def test_listar(self) -> None:
+        """SituacoesModulos listar should GET /situacoes/modulos."""
+        t = RecordingTransport()
+        r = SituacoesModulosResource(t)
+        r.listar()
+        assert t.calls == [("GET", "/situacoes/modulos", None, None)]
+
+    def test_obter(self) -> None:
+        """SituacoesModulos obter should GET /situacoes/modulos/{id}."""
+        t = RecordingTransport()
+        r = SituacoesModulosResource(t)
+        r.obter(1)
+        assert t.calls == [("GET", "/situacoes/modulos/1", None, None)]
+
+    def test_listar_acoes(self) -> None:
+        """SituacoesModulos listar_acoes should GET /situacoes/modulos/{id}/acoes."""
+        t = RecordingTransport()
+        r = SituacoesModulosResource(t)
+        r.listar_acoes(1)
+        assert t.calls == [("GET", "/situacoes/modulos/1/acoes", None, None)]
+
+    def test_listar_transicoes(self) -> None:
+        """SituacoesModulos listar_transicoes should GET /situacoes/modulos/{id}/transicoes."""
+        t = RecordingTransport()
+        r = SituacoesModulosResource(t)
+        r.listar_transicoes(1)
+        assert t.calls == [("GET", "/situacoes/modulos/1/transicoes", None, None)]
+
+    def test_english_list(self) -> None:
+        """English alias list should map to listar."""
+        t = RecordingTransport()
+        r = SituacoesModulosResource(t)
+        r.list()
+        assert t.calls == [("GET", "/situacoes/modulos", None, None)]
+
+
+class TestSituacoesTransicoesResourceMapping:
+    """Mapping tests for SituacoesTransicoesResource."""
+
+    def test_criar(self) -> None:
+        """SituacoesTransicoes criar should POST /situacoes/transicoes with JSON body."""
+        t = RecordingTransport()
+        r = SituacoesTransicoesResource(t)
+        dados: JsonObject = {"situacaoOrigem": {"id": 10}, "situacaoDestino": {"id": 11}}
+        r.criar(dados)
+        assert t.calls[0][:2] == ("POST", "/situacoes/transicoes")
+        assert t.calls[0][3] is not None
+
+    def test_obter(self) -> None:
+        """SituacoesTransicoes obter should GET /situacoes/transicoes/{id}."""
+        t = RecordingTransport()
+        r = SituacoesTransicoesResource(t)
+        r.obter(100)
+        assert t.calls == [("GET", "/situacoes/transicoes/100", None, None)]
+
+    def test_alterar(self) -> None:
+        """SituacoesTransicoes alterar should PUT /situacoes/transicoes/{id} with JSON body."""
+        t = RecordingTransport()
+        r = SituacoesTransicoesResource(t)
+        r.alterar(100, {"ativo": False})
+        assert t.calls[0][:2] == ("PUT", "/situacoes/transicoes/100")
+        assert t.calls[0][3] is not None
+
+    def test_remover(self) -> None:
+        """SituacoesTransicoes remover should DELETE /situacoes/transicoes/{id}."""
+        t = RecordingTransport()
+        r = SituacoesTransicoesResource(t)
+        r.remover(100)
+        assert t.calls == [("DELETE", "/situacoes/transicoes/100", None, None)]
+
+    def test_english_get(self) -> None:
+        """English alias get should map to obter."""
+        t = RecordingTransport()
+        r = SituacoesTransicoesResource(t)
+        r.get(100)
+        assert t.calls == [("GET", "/situacoes/transicoes/100", None, None)]

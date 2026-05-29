@@ -39,6 +39,9 @@ from bling_erp_api.resources.products import ProductsResource
 from bling_erp_api.resources.propostas_comerciais import CommercialProposalsResource
 from bling_erp_api.resources.purchase_orders import PurchaseOrdersResource
 from bling_erp_api.resources.sales_orders import SalesOrdersResource
+from bling_erp_api.resources.situacoes import SituacoesResource
+from bling_erp_api.resources.situacoes_modulos import SituacoesModulosResource
+from bling_erp_api.resources.situacoes_transicoes import SituacoesTransicoesResource
 from bling_erp_api.resources.store_categories import StoreCategoriesResource
 
 __all__ = [
@@ -79,5 +82,8 @@ __all__ = [
     "ProductsResource",
     "PurchaseOrdersResource",
     "SalesOrdersResource",
+    "SituacoesModulosResource",
+    "SituacoesResource",
+    "SituacoesTransicoesResource",
     "StoreCategoriesResource",
 ]
