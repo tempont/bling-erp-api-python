@@ -17,6 +17,7 @@ from bling_erp_api.resources import (
     AdsResource,
     BorderosResource,
     CaixasBancosResource,
+    CommercialProposalsResource,
     ContactsResource,
     ContasContabeisResource,
     ContasPagarResource,
@@ -130,6 +131,8 @@ class BlingClient:
 
         self._notificacoes = NotificacoesResource(self._transport)
         self._ordens_producao = OrdensProducaoResource(self._transport)
+
+        self._commercial_proposals = CommercialProposalsResource(self._transport)
 
     # -- Resource namespace properties (with IDE-visible docstrings) --
 
@@ -497,6 +500,16 @@ class BlingClient:
     def tax_natures(self) -> NaturezasOperacoesResource:
         """Naturezas de Operações (EN alias)."""
         return self._naturezas_operacoes
+
+    @property
+    def propostas_comerciais(self) -> CommercialProposalsResource:
+        """Propostas Comerciais — operações em ``/propostas-comerciais``."""
+        return self._commercial_proposals
+
+    @property
+    def commercial_proposals(self) -> CommercialProposalsResource:
+        """Alias for ``propostas_comerciais``. Commercial proposals on ``/propostas-comerciais``."""
+        return self._commercial_proposals
 
     @classmethod
     def from_env(  # noqa: PLR0913

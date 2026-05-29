@@ -52,6 +52,7 @@ from bling_erp_api.resources.product_structures import ProductStructuresResource
 from bling_erp_api.resources.product_suppliers import ProductSuppliersResource
 from bling_erp_api.resources.product_variations import ProductVariationsResource
 from bling_erp_api.resources.products import ProductsResource
+from bling_erp_api.resources.propostas_comerciais import CommercialProposalsResource
 from bling_erp_api.resources.purchase_orders import PurchaseOrdersResource
 from bling_erp_api.resources.sales_orders import SalesOrdersResource
 from bling_erp_api.resources.store_categories import StoreCategoriesResource
@@ -3227,4 +3228,141 @@ class TestPurchaseOrdersResourceMapping:
         resource.update_status(1001, 3)
         assert transport.calls == [
             ("PATCH", "/pedidos/compras/1001/situacoes/3", None, None),
+        ]
+
+
+# --- Propostas Comerciais mapping tests ---
+
+
+class TestCommercialProposalsResourceMapping:
+    """Mapping tests for CommercialProposalsResource (Propostas Comerciais endpoints)."""
+
+    def test_cp_list_maps_to_bling_endpoint(self) -> None:
+        """listar() should map to GET /propostas-comerciais with Bling camelCase params."""
+        transport = RecordingTransport()
+        resource = CommercialProposalsResource(transport)
+        resource.listar(pagina=1, limite=10, situacao="Pendente")
+        assert transport.calls == [
+            (
+                "GET",
+                "/propostas-comerciais",
+                {"pagina": 1, "limite": 10, "situacao": "Pendente"},
+                None,
+            ),
+        ]
+
+    def test_cp_list_with_all_filters(self) -> None:
+        """listar() should map all optional filters to Bling camelCase keys."""
+        transport = RecordingTransport()
+        resource = CommercialProposalsResource(transport)
+        resource.listar(
+            pagina=1,
+            limite=10,
+            situacao="Aprovado",
+            id_contato=800,
+            data_inicial="2024-01-01",
+            data_final="2024-12-31",
+        )
+        assert transport.calls == [
+            (
+                "GET",
+                "/propostas-comerciais",
+                {
+                    "pagina": 1,
+                    "limite": 10,
+                    "situacao": "Aprovado",
+                    "idContato": 800,
+                    "dataInicial": "2024-01-01",
+                    "dataFinal": "2024-12-31",
+                },
+                None,
+            ),
+        ]
+
+    def test_cp_obter_maps_to_bling_endpoint(self) -> None:
+        """obter() should map to GET /propostas-comerciais/{id}."""
+        transport = RecordingTransport()
+        resource = CommercialProposalsResource(transport)
+        resource.obter(5001)
+        assert transport.calls == [
+            ("GET", "/propostas-comerciais/5001", None, None),
+        ]
+
+    def test_cp_criar_maps_to_bling_endpoint(self) -> None:
+        """criar() should POST JSON body to /propostas-comerciais."""
+        transport = RecordingTransport()
+        resource = CommercialProposalsResource(transport)
+        dados: JsonObject = {"contato": {"id": 800}}
+        resource.criar(dados)
+        assert transport.calls[0][:2] == ("POST", "/propostas-comerciais")
+        assert transport.calls[0][3] is not None  # body was serialized
+
+    def test_cp_alterar_maps_to_bling_endpoint(self) -> None:
+        """alterar() should PUT JSON body to /propostas-comerciais/{id}."""
+        transport = RecordingTransport()
+        resource = CommercialProposalsResource(transport)
+        dados: JsonObject = {"contato": {"id": 800}}
+        resource.alterar(5001, dados)
+        assert transport.calls[0][:2] == ("PUT", "/propostas-comerciais/5001")
+        assert transport.calls[0][3] is not None
+
+    def test_cp_remover_maps_to_bling_endpoint(self) -> None:
+        """remover() should send DELETE to /propostas-comerciais/{id}."""
+        transport = RecordingTransport()
+        resource = CommercialProposalsResource(transport)
+        resource.remover(5001)
+        assert transport.calls == [
+            ("DELETE", "/propostas-comerciais/5001", None, None),
+        ]
+
+    def test_cp_remover_varios_maps_to_bling_endpoint(self) -> None:
+        """remover_varios() should DELETE /propostas-comerciais with idsPropostasComerciais[]."""
+        transport = RecordingTransport()
+        resource = CommercialProposalsResource(transport)
+        resource.remover_varios([1, 2, 3])
+        assert transport.calls == [
+            ("DELETE", "/propostas-comerciais", {"idsPropostasComerciais[]": [1, 2, 3]}, None),
+        ]
+
+    def test_cp_alterar_situacao_maps_to_bling_endpoint(self) -> None:
+        """alterar_situacao() should PATCH /propostas-comerciais/{id}/situacoes with body."""
+        transport = RecordingTransport()
+        resource = CommercialProposalsResource(transport)
+        resource.alterar_situacao(5001, "Aprovado")
+        assert transport.calls == [
+            ("PATCH", "/propostas-comerciais/5001/situacoes", None, {"situacao": "Aprovado"}),
+        ]
+
+    def test_cp_english_alias_get(self) -> None:
+        """English alias get() should map to obter()."""
+        transport = RecordingTransport()
+        resource = CommercialProposalsResource(transport)
+        resource.get(5001)
+        assert transport.calls == [
+            ("GET", "/propostas-comerciais/5001", None, None),
+        ]
+
+    def test_cp_english_alias_list(self) -> None:
+        """English alias list() should map to listar()."""
+        transport = RecordingTransport()
+        resource = CommercialProposalsResource(transport)
+        resource.list(page=1)
+        assert transport.calls[0][:2] == ("GET", "/propostas-comerciais")
+
+    def test_cp_english_alias_delete(self) -> None:
+        """English alias delete() should map to remover()."""
+        transport = RecordingTransport()
+        resource = CommercialProposalsResource(transport)
+        resource.delete(5001)
+        assert transport.calls == [
+            ("DELETE", "/propostas-comerciais/5001", None, None),
+        ]
+
+    def test_cp_english_alias_update_status(self) -> None:
+        """English alias update_status() should map to alterar_situacao()."""
+        transport = RecordingTransport()
+        resource = CommercialProposalsResource(transport)
+        resource.update_status(5001, "Concluido")
+        assert transport.calls == [
+            ("PATCH", "/propostas-comerciais/5001/situacoes", None, {"situacao": "Concluido"}),
         ]

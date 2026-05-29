@@ -36,6 +36,7 @@ from bling_erp_api.resources.product_structures import ProductStructuresResource
 from bling_erp_api.resources.product_suppliers import ProductSuppliersResource
 from bling_erp_api.resources.product_variations import ProductVariationsResource
 from bling_erp_api.resources.products import ProductsResource
+from bling_erp_api.resources.propostas_comerciais import CommercialProposalsResource
 from bling_erp_api.resources.purchase_orders import PurchaseOrdersResource
 from bling_erp_api.resources.sales_orders import SalesOrdersResource
 from bling_erp_api.resources.store_categories import StoreCategoriesResource
@@ -45,6 +46,7 @@ __all__ = [
     "AdsResource",
     "BorderosResource",
     "CaixasBancosResource",
+    "CommercialProposalsResource",
     "ContactsResource",
     "ContasContabeisResource",
     "ContasPagarResource",
