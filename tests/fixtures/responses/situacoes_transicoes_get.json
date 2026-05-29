@@ -1,0 +1,18 @@
+{
+  "data": {
+    "id": 100,
+    "ativo": true,
+    "acoes": [1, 2],
+    "modulo": {
+      "id": 1
+    },
+    "situacaoOrigem": {
+      "id": 10,
+      "nome": "Em aberto"
+    },
+    "situacaoDestino": {
+      "id": 11,
+      "nome": "Atendido"
+    }
+  }
+}
