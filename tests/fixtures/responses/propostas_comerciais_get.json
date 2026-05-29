@@ -1,0 +1,50 @@
+{
+  "data": {
+    "id": 5001,
+    "data": "2024-05-10",
+    "situacao": "Pendente",
+    "total": 3500.00,
+    "totalProdutos": 3000.00,
+    "numero": 15,
+    "contato": {
+      "id": 800
+    },
+    "loja": {
+      "id": 1
+    },
+    "desconto": 100.00,
+    "outrasDespesas": 50.00,
+    "observacoes": "Proposta válida por 30 dias",
+    "observacaoInterna": "Cliente VIP",
+    "prazoEntrega": "15 dias úteis",
+    "itens": [
+      {
+        "produto": {
+          "id": 300,
+          "descricao": "Serviço de Consultoria"
+        },
+        "codigo": "CONS-001",
+        "unidade": "UN",
+        "quantidade": 1.0,
+        "desconto": 0,
+        "valor": 3000.00,
+        "descricaoDetalhada": "Consultoria em TI - 40 horas"
+      }
+    ],
+    "parcelas": [
+      {
+        "numeroDias": 30,
+        "dataVencimento": "2024-06-10",
+        "valor": 3500.00,
+        "observacoes": "Pagamento único",
+        "formaPagamento": {
+          "id": 1
+        }
+      }
+    ],
+    "vendedor": {
+      "id": 50
+    },
+    "campoNovoBling": "mantido"
+  }
+}
