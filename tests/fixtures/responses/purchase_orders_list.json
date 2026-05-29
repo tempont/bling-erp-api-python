@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "id": 1001,
+      "numero": 55,
+      "data": "2024-03-15",
+      "dataPrevista": "2024-03-30",
+      "totalProdutos": 1500.00,
+      "total": 1650.00,
+      "fornecedor": {
+        "id": 500
+      },
+      "situacao": {
+        "id": 1,
+        "valor": 0
+      },
+      "campoNovoBling": "mantido"
+    },
+    {
+      "id": 1002,
+      "numero": 56,
+      "data": "2024-03-16",
+      "fornecedor": {
+        "id": 501
+      }
+    }
+  ]
+}

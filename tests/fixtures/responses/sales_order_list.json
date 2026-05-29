@@ -57,6 +57,8 @@
       "id": 12345679,
       "numero": 43,
       "data": "2024-01-11",
+      "dataSaida": "2024-01-11",
+      "dataPrevista": "2024-01-13",
       "contato": {
         "id": 87654322,
         "nome": "Cliente Opcional"

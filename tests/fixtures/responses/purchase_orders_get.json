@@ -1,0 +1,52 @@
+{
+  "data": {
+    "id": 1001,
+    "numero": 55,
+    "data": "2024-03-15",
+    "dataPrevista": "2024-03-30",
+    "totalProdutos": 1500.00,
+    "total": 1650.00,
+    "fornecedor": {
+      "id": 500
+    },
+    "situacao": {
+      "id": 1,
+      "valor": 0
+    },
+    "ordemCompra": "OC-2024-001",
+    "observacoes": "Pedido urgente",
+    "observacoesInternas": "Aprovado pelo gestor",
+    "desconto": {
+      "valor": 50.00,
+      "unidade": "REAL"
+    },
+    "categoria": {
+      "id": 10
+    },
+    "itens": [
+      {
+        "descricao": "Matéria-prima A",
+        "codigoFornecedor": "MP-A-001",
+        "unidade": "KG",
+        "valor": 750.00,
+        "quantidade": 2.0,
+        "aliquotaIPI": 5.0,
+        "produto": {
+          "id": 200,
+          "codigo": "MP001"
+        }
+      }
+    ],
+    "parcelas": [
+      {
+        "valor": 1650.00,
+        "dataVencimento": "2024-04-15",
+        "observacao": "Pagamento único",
+        "formaPagamento": {
+          "id": 1
+        }
+      }
+    ],
+    "campoNovoBling": "mantido"
+  }
+}
