@@ -207,7 +207,9 @@ PARAMETER_TO_SDK_NAME = {
     "idTransicao": "id_transicao",
     "idNotificacao": "id_notificacao",
     "idOrdemProducao": "id_ordem_producao",
+    "nomeContato": "nome_contato",
     "periodo": "periodo",
+    "situacaoContato": "situacao_contato",
 }
 
 DOCSTRING_ONLY_RESOURCES: list[ResourceConfig] = []
@@ -249,6 +251,7 @@ _CLASS_NAME_MAP: dict[str, str] = {
     "situacoes": "SituacoesResource",
     "situacoes_modulos": "SituacoesModulosResource",
     "situacoes_transicoes": "SituacoesTransicoesResource",
+    "vendedores": "VendedoresResource",
 }
 
 RESOURCES: list[ResourceConfig] = [
@@ -630,6 +633,15 @@ RESOURCES: list[ResourceConfig] = [
         "title": "Situation Transitions",
         "example": [
             "Lista as transicoes de situacoes.",
+        ],
+    },
+    {
+        "openapi_resource": "Vendedores",
+        "module": "vendedores",
+        "constant": "VENDEDOR_OPERATIONS",
+        "title": "Vendedores",
+        "example": [
+            "Lista os vendedores.",
         ],
     },
 ]

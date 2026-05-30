@@ -59,6 +59,8 @@ from bling_erp_api.resources.situacoes import SituacoesResource
 from bling_erp_api.resources.situacoes_modulos import SituacoesModulosResource
 from bling_erp_api.resources.situacoes_transicoes import SituacoesTransicoesResource
 from bling_erp_api.resources.store_categories import StoreCategoriesResource
+from bling_erp_api.resources.usuarios import UsuariosResource
+from bling_erp_api.resources.vendedores import VendedoresResource
 from bling_erp_api.types import JsonObject, JsonPayload, QueryParams
 
 
@@ -3495,3 +3497,104 @@ class TestSituacoesTransicoesResourceMapping:
         r = SituacoesTransicoesResource(t)
         r.get(100)
         assert t.calls == [("GET", "/situacoes/transicoes/100", None, None)]
+
+
+# --- Vendedores mapping tests ---
+
+
+class TestVendedoresResourceMapping:
+    """Mapping tests for VendedoresResource (Vendedores endpoints)."""
+
+    def test_list(self) -> None:
+        """Vendedores listar maps pagination and nome_contato to GET /vendedores."""
+        t = RecordingTransport()
+        r = VendedoresResource(t)
+        r.listar(pagina=1, limite=10, nome_contato="Joao")
+        assert t.calls == [
+            ("GET", "/vendedores", {"pagina": 1, "limite": 10, "nomeContato": "Joao"}, None)
+        ]
+
+    def test_list_all_filters(self) -> None:
+        """Vendedores listar maps all optional filters to Bling camelCase."""
+        t = RecordingTransport()
+        r = VendedoresResource(t)
+        r.listar(
+            nome_contato="Maria",
+            situacao_contato="A",
+            id_contato=100,
+            id_loja=1,
+            data_alteracao_inicial="2024-01-01",
+            data_alteracao_final="2024-01-31",
+        )
+        assert t.calls == [
+            (
+                "GET",
+                "/vendedores",
+                {
+                    "nomeContato": "Maria",
+                    "situacaoContato": "A",
+                    "idContato": 100,
+                    "idLoja": 1,
+                    "dataAlteracaoInicial": "2024-01-01",
+                    "dataAlteracaoFinal": "2024-01-31",
+                },
+                None,
+            )
+        ]
+
+    def test_obter(self) -> None:
+        """Vendedores obter maps ID to GET /vendedores/{idVendedor}."""
+        t = RecordingTransport()
+        r = VendedoresResource(t)
+        r.obter(12345678)
+        assert t.calls == [("GET", "/vendedores/12345678", None, None)]
+
+    def test_english_get(self) -> None:
+        """English alias 'get' should map to 'obter'."""
+        t = RecordingTransport()
+        r = VendedoresResource(t)
+        r.get(12345678)
+        assert t.calls == [("GET", "/vendedores/12345678", None, None)]
+
+
+class TestUsuariosResourceMapping:
+    """Mapping tests for UsuariosResource (Usuarios endpoints)."""
+
+    def test_recuperar_senha(self) -> None:
+        """Usuarios recuperar_senha posts email to POST /usuarios/recuperar-senha."""
+        t = RecordingTransport()
+        r = UsuariosResource(t)
+        r.recuperar_senha("user@example.com")
+        assert t.calls == [
+            ("POST", "/usuarios/recuperar-senha", None, {"email": "user@example.com"})
+        ]
+
+    def test_redefinir_senha(self) -> None:
+        """Usuarios redefinir_senha patches hash and password to PATCH /usuarios/redefinir-senha."""
+        t = RecordingTransport()
+        r = UsuariosResource(t)
+        r.redefinir_senha("abc123hash", "newpassword")
+        assert t.calls == [
+            (
+                "PATCH",
+                "/usuarios/redefinir-senha",
+                None,
+                {"hash": "abc123hash", "password": "newpassword"},
+            )
+        ]
+
+    def test_verificar_hash(self) -> None:
+        """Usuarios verificar_hash sends hash param to GET /usuarios/verificar-hash."""
+        t = RecordingTransport()
+        r = UsuariosResource(t)
+        r.verificar_hash("abc123hash")
+        assert t.calls == [("GET", "/usuarios/verificar-hash", {"hash": "abc123hash"}, None)]
+
+    def test_english_recover_password(self) -> None:
+        """English alias 'recover_password' should map to 'recuperar_senha'."""
+        t = RecordingTransport()
+        r = UsuariosResource(t)
+        r.recover_password("user@example.com")
+        assert t.calls == [
+            ("POST", "/usuarios/recuperar-senha", None, {"email": "user@example.com"})
+        ]

@@ -54,6 +54,8 @@ from bling_erp_api.resources import (
     SituacoesResource,
     SituacoesTransicoesResource,
     StoreCategoriesResource,
+    UsuariosResource,
+    VendedoresResource,
 )
 from bling_erp_api.transport.sync import SyncTransport
 
@@ -140,6 +142,9 @@ class BlingClient:
         self._situacoes = SituacoesResource(self._transport)
         self._situacoes_modulos = SituacoesModulosResource(self._transport)
         self._situacoes_transicoes = SituacoesTransicoesResource(self._transport)
+
+        self._vendedores = VendedoresResource(self._transport)
+        self._usuarios = UsuariosResource(self._transport)
 
     # -- Resource namespace properties (with IDE-visible docstrings) --
 
@@ -547,6 +552,26 @@ class BlingClient:
     def situation_transitions(self) -> SituacoesTransicoesResource:
         """Alias for ``situacoes_transicoes``. Situation transition operations on ``/situacoes/transicoes``."""
         return self._situacoes_transicoes
+
+    @property
+    def vendedores(self) -> VendedoresResource:
+        """Vendedores — operações em ``/vendedores``."""
+        return self._vendedores
+
+    @property
+    def sellers(self) -> VendedoresResource:
+        """Alias for ``vendedores``. Seller operations on ``/vendedores``."""
+        return self._vendedores
+
+    @property
+    def usuarios(self) -> UsuariosResource:
+        """Usuários — operações em ``/usuarios``."""
+        return self._usuarios
+
+    @property
+    def users(self) -> UsuariosResource:
+        """Alias for ``usuarios``. User operations on ``/usuarios``."""
+        return self._usuarios
 
     @classmethod
     def from_env(  # noqa: PLR0913

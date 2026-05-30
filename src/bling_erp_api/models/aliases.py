@@ -25,6 +25,12 @@ from bling_erp_api.models.generated.situacoes import (
     SituacoesModuloDTO,
     SituacoesTransicaoDTO,
 )
+from bling_erp_api.models.generated.vendedores import (
+    VendedoresDadosBaseDTO,
+    VendedoresDadosDTO,
+    VendedoresGetResponse200,
+    VendedoresIdVendedorGetResponse200,
+)
 
 __all__ = [
     "OrcamentosDadosBaseDTO",
@@ -46,4 +52,8 @@ __all__ = [
     "SituacoesDadosDTO",
     "SituacoesModuloDTO",
     "SituacoesTransicaoDTO",
+    "VendedoresDadosBaseDTO",
+    "VendedoresDadosDTO",
+    "VendedoresGetResponse200",
+    "VendedoresIdVendedorGetResponse200",
 ]

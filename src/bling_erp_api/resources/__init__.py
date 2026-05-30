@@ -43,6 +43,8 @@ from bling_erp_api.resources.situacoes import SituacoesResource
 from bling_erp_api.resources.situacoes_modulos import SituacoesModulosResource
 from bling_erp_api.resources.situacoes_transicoes import SituacoesTransicoesResource
 from bling_erp_api.resources.store_categories import StoreCategoriesResource
+from bling_erp_api.resources.usuarios import UsuariosResource
+from bling_erp_api.resources.vendedores import VendedoresResource
 
 __all__ = [
     "AdCategoriesResource",
@@ -86,4 +88,6 @@ __all__ = [
     "SituacoesResource",
     "SituacoesTransicoesResource",
     "StoreCategoriesResource",
+    "UsuariosResource",
+    "VendedoresResource",
 ]
