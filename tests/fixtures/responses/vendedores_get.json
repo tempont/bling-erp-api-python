@@ -1,0 +1,21 @@
+{
+  "data": {
+    "id": 12345678,
+    "descontoLimite": 10.0,
+    "loja": {
+      "id": 1
+    },
+    "contato": {
+      "id": 100,
+      "nome": "Vendedor Teste",
+      "situacao": "A"
+    },
+    "comissoes": [
+      {
+        "descontoMaximo": 15.0,
+        "aliquota": 2.5
+      }
+    ],
+    "campoNovoBling": "mantido"
+  }
+}
