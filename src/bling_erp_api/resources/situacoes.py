@@ -4,6 +4,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+from pydantic import ValidationError
+
+from bling_erp_api.models.generated.situacoes import (
+    SituacoesIdSituacaoGetResponse200,
+    SituacoesIdSituacaoPutResponse200,
+    SituacoesPostResponse201,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.serialization import to_json_object
 
@@ -25,7 +32,7 @@ class SituacoesResource(BaseResource):
     # criar / create
     # ------------------------------------------------------------------
 
-    def criar(self, dados: Any) -> JsonObject:
+    def criar(self, dados: Any) -> SituacoesPostResponse201:
         """Cria uma nova situação.
 
         Endpoint: POST /situacoes
@@ -40,9 +47,10 @@ class SituacoesResource(BaseResource):
             Bling API response. Response schemas: 201: SituacoesPostResponse201;
             400: ErrorResponse
         """
-        return self._post(self.BASE_PATH, json=to_json_object(dados))
+        raw = self._post(self.BASE_PATH, json=to_json_object(dados))
+        return SituacoesPostResponse201.model_validate(raw)
 
-    def create(self, data: Any) -> JsonObject:
+    def create(self, data: Any) -> SituacoesPostResponse201:
         """Compatibility alias for ``criar()``.
 
         Cria uma nova situação.
@@ -63,7 +71,7 @@ class SituacoesResource(BaseResource):
     # obter / get
     # ------------------------------------------------------------------
 
-    def obter(self, id_situacao: int) -> JsonObject:
+    def obter(self, id_situacao: int) -> SituacoesIdSituacaoGetResponse200:
         """Obtém uma situação pelo ID.
 
         Endpoint: GET /situacoes/{idSituacao}
@@ -77,9 +85,15 @@ class SituacoesResource(BaseResource):
             Bling API response. Response schemas: 200: SituacoesIdSituacaoGetResponse200;
             404: ErrorResponse
         """
-        return self._get(f"{self.BASE_PATH}/{id_situacao}")
+        raw = self._get(f"{self.BASE_PATH}/{id_situacao}")
+        try:
+            return SituacoesIdSituacaoGetResponse200.model_validate(raw)
+        except ValidationError:
+            if raw == {"data": []}:
+                return SituacoesIdSituacaoGetResponse200(data=None)
+            raise
 
-    def get(self, situation_id: int) -> JsonObject:
+    def get(self, situation_id: int) -> SituacoesIdSituacaoGetResponse200:
         """Compatibility alias for ``obter()``.
 
         Obtém uma situação pelo ID.
@@ -99,7 +113,7 @@ class SituacoesResource(BaseResource):
     # alterar / update
     # ------------------------------------------------------------------
 
-    def alterar(self, id_situacao: int, dados: Any) -> JsonObject:
+    def alterar(self, id_situacao: int, dados: Any) -> SituacoesIdSituacaoPutResponse200:
         """Altera uma situação.
 
         Endpoint: PUT /situacoes/{idSituacao}
@@ -115,9 +129,10 @@ class SituacoesResource(BaseResource):
             Bling API response. Response schemas: 200: SituacoesIdSituacaoPutResponse200;
             400: ErrorResponse; 404: ErrorResponse
         """
-        return self._put(f"{self.BASE_PATH}/{id_situacao}", json=to_json_object(dados))
+        raw = self._put(f"{self.BASE_PATH}/{id_situacao}", json=to_json_object(dados))
+        return SituacoesIdSituacaoPutResponse200.model_validate(raw)
 
-    def update(self, situation_id: int, data: Any) -> JsonObject:
+    def update(self, situation_id: int, data: Any) -> SituacoesIdSituacaoPutResponse200:
         """Compatibility alias for ``alterar()``.
 
         Altera uma situação.

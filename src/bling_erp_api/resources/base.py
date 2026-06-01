@@ -232,13 +232,31 @@ def _response_item_model(method: str, path: str) -> type[BaseModel] | None:
 
 def _operation_entry(method: str, path: str) -> dict[str, object] | None:
     normalized = path.split("?", maxsplit=1)[0].rstrip("/") or "/"
+    matches: list[dict[str, object]] = []
     for entry in OPERATION_MODELS:
         if entry.get("method") != method:
             continue
         pattern = entry.get("pattern")
         if isinstance(pattern, str) and re.fullmatch(pattern, normalized):
-            return entry
-    return None
+            matches.append(entry)
+    if not matches:
+        return None
+    return max(matches, key=_operation_specificity)
+
+
+def _operation_specificity(entry: dict[str, object]) -> tuple[int, int, int]:
+    path = entry.get("path")
+    if not isinstance(path, str):
+        return (0, 0, 0)
+
+    segments = [segment for segment in path.strip("/").split("/") if segment]
+    literal_segments = [segment for segment in segments if not _is_path_parameter(segment)]
+    literal_length = sum(len(segment) for segment in literal_segments)
+    return (len(literal_segments), literal_length, len(segments))
+
+
+def _is_path_parameter(segment: str) -> bool:
+    return segment.startswith("{") and segment.endswith("}")
 
 
 def _load_model(model_path: str) -> type[BaseModel]:

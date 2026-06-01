@@ -710,7 +710,7 @@ class Datum6(SituacoesModuloBaseDTO, SituacoesModuloDTO):
     Fields:
         id: Bling ``id``; type ``int``; obrigatório.
         nome: Bling ``nome``; type ``str``; obrigatório. Nome do módulo.
-        descricao: Bling ``descricao``; type ``str``; obrigatório. Descrição do módulo.
+        descricao: Bling ``descricao``; type ``str | None``; opcional. Descrição do módulo.
         criar_situacoes: Bling ``criarSituacoes``; type ``bool``; obrigatório. Identifica a possibilidade de criar situações."""
 
     pass

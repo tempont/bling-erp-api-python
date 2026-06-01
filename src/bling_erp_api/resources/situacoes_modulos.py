@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
+from bling_erp_api.models.generated.situacoes_modulos import (
+    SituacoesModulosGetResponse200,
+    SituacoesModulosIdModuloSistemaAcoesGetResponse200,
+    SituacoesModulosIdModuloSistemaGetResponse200,
+    SituacoesModulosIdModuloSistemaTransicoesGetResponse200,
+)
 from bling_erp_api.resources.base import BaseResource
-
-if TYPE_CHECKING:
-    from bling_erp_api.types import JsonObject
 
 
 class SituacoesModulosResource(BaseResource):
@@ -24,7 +25,7 @@ class SituacoesModulosResource(BaseResource):
     # listar / list
     # ------------------------------------------------------------------
 
-    def listar(self) -> JsonObject:
+    def listar(self) -> SituacoesModulosGetResponse200:
         """Lista todos os módulos de situações.
 
         Endpoint: GET /situacoes/modulos
@@ -34,9 +35,10 @@ class SituacoesModulosResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: SituacoesModulosGetResponse200
         """
-        return self._get(self.BASE_PATH)
+        raw = self._get(self.BASE_PATH)
+        return SituacoesModulosGetResponse200.model_validate(raw)
 
-    def list(self) -> JsonObject:
+    def list(self) -> SituacoesModulosGetResponse200:
         """Compatibility alias for ``listar()``.
 
         Lista todos os módulos de situações.
@@ -52,7 +54,7 @@ class SituacoesModulosResource(BaseResource):
     # obter / get
     # ------------------------------------------------------------------
 
-    def obter(self, id_modulo_sistema: int) -> JsonObject:
+    def obter(self, id_modulo_sistema: int) -> SituacoesModulosIdModuloSistemaGetResponse200:
         """Obtém as situações de um módulo específico.
 
         Endpoint: GET /situacoes/modulos/{idModuloSistema}
@@ -67,9 +69,10 @@ class SituacoesModulosResource(BaseResource):
             Bling API response. Response schemas: 200: SituacoesModulosIdModuloSistemaGetResponse200;
             404: ErrorResponse
         """
-        return self._get(f"{self.BASE_PATH}/{id_modulo_sistema}")
+        raw = self._get(f"{self.BASE_PATH}/{id_modulo_sistema}")
+        return SituacoesModulosIdModuloSistemaGetResponse200.model_validate(raw)
 
-    def get(self, module_id: int) -> JsonObject:
+    def get(self, module_id: int) -> SituacoesModulosIdModuloSistemaGetResponse200:
         """Compatibility alias for ``obter()``.
 
         Obtém as situações de um módulo específico.
@@ -90,7 +93,9 @@ class SituacoesModulosResource(BaseResource):
     # listar_acoes / list_actions
     # ------------------------------------------------------------------
 
-    def listar_acoes(self, id_modulo_sistema: int) -> JsonObject:
+    def listar_acoes(
+        self, id_modulo_sistema: int
+    ) -> SituacoesModulosIdModuloSistemaAcoesGetResponse200:
         """Lista as ações disponíveis para um módulo.
 
         Endpoint: GET /situacoes/modulos/{idModuloSistema}/acoes
@@ -105,9 +110,10 @@ class SituacoesModulosResource(BaseResource):
             Bling API response. Response schemas: 200: SituacoesModulosIdModuloSistemaAcoesGetResponse200;
             404: ErrorResponse
         """
-        return self._get(f"{self.BASE_PATH}/{id_modulo_sistema}/acoes")
+        raw = self._get(f"{self.BASE_PATH}/{id_modulo_sistema}/acoes")
+        return SituacoesModulosIdModuloSistemaAcoesGetResponse200.model_validate(raw)
 
-    def list_actions(self, module_id: int) -> JsonObject:
+    def list_actions(self, module_id: int) -> SituacoesModulosIdModuloSistemaAcoesGetResponse200:
         """Compatibility alias for ``listar_acoes()``.
 
         Lista as ações disponíveis para um módulo.
@@ -128,7 +134,9 @@ class SituacoesModulosResource(BaseResource):
     # listar_transicoes / list_transitions
     # ------------------------------------------------------------------
 
-    def listar_transicoes(self, id_modulo_sistema: int) -> JsonObject:
+    def listar_transicoes(
+        self, id_modulo_sistema: int
+    ) -> SituacoesModulosIdModuloSistemaTransicoesGetResponse200:
         """Lista as transições de um módulo.
 
         Endpoint: GET /situacoes/modulos/{idModuloSistema}/transicoes
@@ -143,9 +151,12 @@ class SituacoesModulosResource(BaseResource):
             Bling API response. Response schemas: 200: SituacoesModulosIdModuloSistemaTransicoesGetResponse200;
             404: ErrorResponse
         """
-        return self._get(f"{self.BASE_PATH}/{id_modulo_sistema}/transicoes")
+        raw = self._get(f"{self.BASE_PATH}/{id_modulo_sistema}/transicoes")
+        return SituacoesModulosIdModuloSistemaTransicoesGetResponse200.model_validate(raw)
 
-    def list_transitions(self, module_id: int) -> JsonObject:
+    def list_transitions(
+        self, module_id: int
+    ) -> SituacoesModulosIdModuloSistemaTransicoesGetResponse200:
         """Compatibility alias for ``listar_transicoes()``.
 
         Lista as transições de um módulo.

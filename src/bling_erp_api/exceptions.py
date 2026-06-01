@@ -5,6 +5,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping
+
     import httpx
 
     from bling_erp_api.types import JsonValue
@@ -95,12 +97,60 @@ def _extract_error_message(payload: JsonValue | None) -> str | None:
     if isinstance(error, str):
         return error
     if isinstance(error, dict):
-        message = error.get("message") or error.get("description")
-        if isinstance(message, str):
+        message = _error_text(cast("Mapping[str, object]", error))
+        if message is not None:
             return message
 
-    message = payload.get("message") or payload.get("descricao") or payload.get("description")
-    return message if isinstance(message, str) else None
+    return _error_text(cast("Mapping[str, object]", payload))
+
+
+def _error_text(error: Mapping[str, object]) -> str | None:
+    message = _string_value(error.get("message") or error.get("descricao"))
+    description = _string_value(error.get("description"))
+    error_type = _string_value(error.get("type"))
+    fields = _format_error_fields(error.get("fields"))
+
+    parts: list[str] = []
+    if error_type is not None:
+        parts.append(error_type)
+    if message is not None:
+        parts.append(message)
+    if description is not None and description != message:
+        parts.append(description)
+    if fields is not None:
+        parts.append(f"fields: {fields}")
+
+    return "; ".join(parts) if parts else None
+
+
+def _format_error_fields(value: object) -> str | None:
+    if not isinstance(value, list):
+        return None
+
+    fields = [_format_error_field(item) for item in cast("list[object]", value)]
+    fields = [field for field in fields if field is not None]
+    return "; ".join(fields) if fields else None
+
+
+def _format_error_field(value: object) -> str | None:
+    if not isinstance(value, dict):
+        return None
+
+    field = cast("Mapping[str, object]", value)
+    message = _string_value(field.get("msg") or field.get("message"))
+    element = _string_value(field.get("element") or field.get("namespace"))
+    code = field.get("code")
+
+    label = element or "field"
+    if isinstance(code, int):
+        label = f"{label} ({code})"
+    if message is None:
+        return label
+    return f"{label}: {message}"
+
+
+def _string_value(value: object) -> str | None:
+    return value if isinstance(value, str) and value else None
 
 
 def _format_error_message(

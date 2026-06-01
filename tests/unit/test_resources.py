@@ -16,6 +16,9 @@ from bling_erp_api.models.generated.sales_orders import (
     PedidosVendasPostRequest,
 )
 from bling_erp_api.models.generated.schemas import ContasBaixarContaDTO
+from bling_erp_api.models.generated.situacoes_modulos import (
+    SituacoesModulosGetResponse200,
+)
 from bling_erp_api.resources.ad_categories import AdCategoriesResource
 from bling_erp_api.resources.ads import AdsResource
 from bling_erp_api.resources.borderos import BorderosResource
@@ -83,6 +86,27 @@ class RecordingTransport:
         self.calls.append((method, path, params, json))
 
         return {"data": []}
+
+
+class StaticPayloadTransport(RecordingTransport):
+    """Transport test double that returns a fixed response payload."""
+
+    def __init__(self, payload: JsonObject) -> None:
+        """Create a recorder with a fixed response payload."""
+        super().__init__()
+        self.payload = payload
+
+    def request(
+        self,
+        method: str,
+        path: str,
+        *,
+        params: QueryParams | None = None,
+        json: JsonPayload | None = None,
+    ) -> JsonObject:
+        """Record a request and return the fixed response."""
+        self.calls.append((method, path, params, json))
+        return self.payload
 
 
 def test_contacts_list_maps_to_bling_endpoint() -> None:
@@ -3381,7 +3405,7 @@ class TestSituacoesResourceMapping:
 
     def test_criar(self) -> None:
         """Situacoes criar should POST /situacoes with JSON body."""
-        t = RecordingTransport()
+        t = StaticPayloadTransport({"data": {"id": 10}})
         r = SituacoesResource(t)
         dados: JsonObject = {"nome": "Teste", "idModuloSistema": 1}
         r.criar(dados)
@@ -3397,7 +3421,7 @@ class TestSituacoesResourceMapping:
 
     def test_alterar(self) -> None:
         """Situacoes alterar should PUT /situacoes/{id} with JSON body."""
-        t = RecordingTransport()
+        t = StaticPayloadTransport({"data": {"id": 10}})
         r = SituacoesResource(t)
         r.alterar(10, {"nome": "Novo"})
         assert t.calls[0][:2] == ("PUT", "/situacoes/10")
@@ -3428,6 +3452,29 @@ class TestSituacoesModulosResourceMapping:
         r.listar()
         assert t.calls == [("GET", "/situacoes/modulos", None, None)]
 
+    def test_listar_uses_specific_operation_model(self) -> None:
+        """SituacoesModulos listar should not be parsed as /situacoes/{idSituacao}."""
+        t = StaticPayloadTransport(
+            {
+                "data": [
+                    {
+                        "id": 98310,
+                        "nome": "Vendas",
+                        "agrupador": "Vendas",
+                        "criarSituacoes": True,
+                    }
+                ]
+            }
+        )
+        r = SituacoesModulosResource(t)
+
+        response = r.listar()
+
+        assert isinstance(response, SituacoesModulosGetResponse200)
+        assert response.data
+        assert response.data[0].nome == "Vendas"
+        assert t.calls == [("GET", "/situacoes/modulos", None, None)]
+
     def test_obter(self) -> None:
         """SituacoesModulos obter should GET /situacoes/modulos/{id}."""
         t = RecordingTransport()
@@ -3441,6 +3488,28 @@ class TestSituacoesModulosResourceMapping:
         r = SituacoesModulosResource(t)
         r.listar_acoes(1)
         assert t.calls == [("GET", "/situacoes/modulos/1/acoes", None, None)]
+
+    def test_listar_acoes_accepts_actions_without_descricao(self) -> None:
+        """SituacoesModulos listar_acoes should accept Bling action payloads."""
+        t = StaticPayloadTransport(
+            {
+                "data": [
+                    {
+                        "id": 6,
+                        "nome": "estornarEstoque",
+                        "rotulo": "Estornar estoque",
+                    }
+                ]
+            }
+        )
+        r = SituacoesModulosResource(t)
+
+        response = r.listar_acoes(98310)
+
+        assert response.data
+        assert response.data[0].descricao is None
+        assert response.data[0].nome == "estornarEstoque"
+        assert t.calls == [("GET", "/situacoes/modulos/98310/acoes", None, None)]
 
     def test_listar_transicoes(self) -> None:
         """SituacoesModulos listar_transicoes should GET /situacoes/modulos/{id}/transicoes."""

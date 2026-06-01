@@ -24,11 +24,11 @@ class SituacoesAcaoDTO(BlingModel):
     Fields:
         id: Bling ``id``; type ``int``; obrigatório.
         nome: Bling ``nome``; type ``str``; obrigatório. Nome da ação.
-        descricao: Bling ``descricao``; type ``str``; obrigatório. Descrição da ação."""
+        descricao: Bling ``descricao``; type ``str | None``; opcional. Descrição da ação."""
 
     id: int = Field(..., examples=[6])
     nome: str = Field(..., examples=["estornarEstoque"])
-    descricao: str = Field(..., examples=["Estornar estoque"])
+    descricao: str | None = Field(default=None, examples=["Estornar estoque"])
 
 
 class SituacoesModuloBaseDTO(BlingModel):
@@ -51,11 +51,11 @@ class SituacoesModuloDTO(BlingModel):
 
     Fields:
         nome: Bling ``nome``; type ``str``; obrigatório. Nome do módulo.
-        descricao: Bling ``descricao``; type ``str``; obrigatório. Descrição do módulo.
+        descricao: Bling ``descricao``; type ``str | None``; opcional. Descrição do módulo.
         criar_situacoes: Bling ``criarSituacoes``; type ``bool``; obrigatório. Identifica a possibilidade de criar situações."""
 
     nome: str = Field(..., examples=["Vendas"])
-    descricao: str = Field(..., examples=["Pedidos de Venda"])
+    descricao: str | None = Field(default=None, examples=["Pedidos de Venda"])
     criar_situacoes: bool = Field(
         ...,
         validation_alias=AliasChoices("criar_situacoes", "criarSituacoes"),

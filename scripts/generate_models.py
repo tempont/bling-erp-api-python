@@ -130,7 +130,13 @@ BUILTIN_TYPE_NAMES = {
     "str",
 }
 FIELD_ANNOTATION_OVERRIDES = {
+    ("SituacoesAcaoDTO", "descricao"): "str | None",
+    ("SituacoesModuloDTO", "descricao"): "str | None",
     ("VendedoresGetResponse200", "data"): "list[VendedoresDadosBaseDTO] | None",
+}
+FIELD_NONE_DEFAULT_OVERRIDES = {
+    ("SituacoesAcaoDTO", "descricao"),
+    ("SituacoesModuloDTO", "descricao"),
 }
 
 
@@ -470,6 +476,28 @@ def _apply_field_overrides(name: str, node: ast.ClassDef) -> None:
         annotation = FIELD_ANNOTATION_OVERRIDES.get((name, stmt.target.id))
         if annotation is not None:
             stmt.annotation = ast.parse(annotation, mode="eval").body
+
+        if (name, stmt.target.id) in FIELD_NONE_DEFAULT_OVERRIDES:
+            _set_field_default_none(stmt)
+
+
+def _set_field_default_none(stmt: ast.AnnAssign) -> None:
+    default = ast.Constant(value=None)
+    if isinstance(stmt.value, ast.Call) and _name_from_expr(stmt.value.func) == "Field":
+        stmt.value.args = [
+            arg
+            for arg in stmt.value.args
+            if not (isinstance(arg, ast.Constant) and arg.value is Ellipsis)
+        ]
+        for keyword in stmt.value.keywords:
+            if keyword.arg == "default":
+                keyword.value = default
+                break
+        else:
+            stmt.value.keywords.insert(0, ast.keyword(arg="default", value=default))
+        return
+
+    stmt.value = default
 
 
 def _rewrite_field_aliases(node: ast.ClassDef) -> None:
