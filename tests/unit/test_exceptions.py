@@ -69,3 +69,48 @@ def test_validation_error_message_includes_description_and_fields() -> None:
         "O módulo informado não permite criar situações.; "
         "fields: idModuloSistema (49): ID do módulo do sistema inválido."
     )
+
+
+def test_validation_error_message_includes_nested_collection_fields() -> None:
+    """Bling validation errors should expose nested collection item details."""
+    request = httpx.Request("POST", "https://api.bling.com.br/Api/v3/propostas-comerciais")
+    response = httpx.Response(
+        400,
+        json={
+            "error": {
+                "type": "VALIDATION_ERROR",
+                "message": "Não foi possível salvar a proposta comercial",
+                "description": (
+                    "A proposta comercial não pode ser salva, pois ocorreram problemas "
+                    "em sua validação."
+                ),
+                "fields": [
+                    {
+                        "code": 21,
+                        "msg": "Uma ou mais parcelas da proposta possuem erros de validação",
+                        "element": "parcelas",
+                        "collection": [
+                            {
+                                "index": 0,
+                                "code": 12,
+                                "msg": "Id da forma de pagamento inválido.",
+                                "element": "formaPagamento",
+                            }
+                        ],
+                    }
+                ],
+            }
+        },
+        request=request,
+    )
+
+    with pytest.raises(BlingValidationError) as exc_info:
+        raise_for_error_response(response)
+
+    assert str(exc_info.value) == (
+        "POST /Api/v3/propostas-comerciais returned 400: VALIDATION_ERROR; "
+        "Não foi possível salvar a proposta comercial; "
+        "A proposta comercial não pode ser salva, pois ocorreram problemas em sua validação.; "
+        "fields: parcelas (21): Uma ou mais parcelas da proposta possuem erros de validação; "
+        "formaPagamento[0] (12): Id da forma de pagamento inválido."
+    )

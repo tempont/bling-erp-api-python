@@ -140,8 +140,39 @@ def _format_error_field(value: object) -> str | None:
     message = _string_value(field.get("msg") or field.get("message"))
     element = _string_value(field.get("element") or field.get("namespace"))
     code = field.get("code")
+    collection = _format_error_collection(field.get("collection"))
 
     label = element or "field"
+    if isinstance(code, int):
+        label = f"{label} ({code})"
+    formatted = label if message is None else f"{label}: {message}"
+    if collection is not None:
+        return f"{formatted}; {collection}"
+    return formatted
+
+
+def _format_error_collection(value: object) -> str | None:
+    if not isinstance(value, list):
+        return None
+
+    items = [_format_error_collection_item(item) for item in cast("list[object]", value)]
+    items = [item for item in items if item is not None]
+    return "; ".join(items) if items else None
+
+
+def _format_error_collection_item(value: object) -> str | None:
+    if not isinstance(value, dict):
+        return None
+
+    item = cast("Mapping[str, object]", value)
+    message = _string_value(item.get("msg") or item.get("message"))
+    element = _string_value(item.get("element") or item.get("namespace"))
+    index = item.get("index")
+    code = item.get("code")
+
+    label = element or "item"
+    if isinstance(index, int):
+        label = f"{label}[{index}]"
     if isinstance(code, int):
         label = f"{label} ({code})"
     if message is None:

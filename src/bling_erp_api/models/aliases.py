@@ -4,9 +4,11 @@ from bling_erp_api.models.generated.propostas_comerciais import (
     OrcamentosDadosBaseDTO,
     OrcamentosDadosDTO,
     OrcamentosSituacaoDTO,
+    PropostasComerciaisDeleteResponse200,
     PropostasComerciaisGetResponse200,
     PropostasComerciaisIdPropostaComercialGetResponse200,
     PropostasComerciaisPostRequest,
+    PropostasComerciaisPostResponse201,
 )
 from bling_erp_api.models.generated.purchase_orders import (
     PedidosCompraResponsePOSTPUT,
@@ -49,9 +51,11 @@ __all__ = [
     "PedidosComprasIdPedidoCompraPutResponse200",
     "PedidosComprasPostRequest",
     "PedidosComprasPostResponse201",
+    "PropostasComerciaisDeleteResponse200",
     "PropostasComerciaisGetResponse200",
     "PropostasComerciaisIdPropostaComercialGetResponse200",
     "PropostasComerciaisPostRequest",
+    "PropostasComerciaisPostResponse201",
     "SituacoesDTO",
     "SituacoesDadosDTO",
     "SituacoesModuloDTO",

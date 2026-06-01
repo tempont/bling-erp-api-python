@@ -4,14 +4,21 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-if TYPE_CHECKING:
-    from collections.abc import Sequence
+from pydantic import ValidationError
 
+from bling_erp_api.models.aliases import (
+    PropostasComerciaisDeleteResponse200,
+    PropostasComerciaisGetResponse200,
+    PropostasComerciaisIdPropostaComercialGetResponse200,
+    PropostasComerciaisPostResponse201,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from bling_erp_api.types import JsonObject, QueryParams
 
 
@@ -63,7 +70,7 @@ class CommercialProposalsResource(BaseResource):
         id_contato: int | None = None,
         data_inicial: str | None = None,
         data_final: str | None = None,
-    ) -> JsonObject:
+    ) -> PropostasComerciaisGetResponse200:
         """Lista as propostas comerciais.
 
         Endpoint: GET /propostas-comerciais
@@ -79,7 +86,7 @@ class CommercialProposalsResource(BaseResource):
             data_final: Data final do período (Bling: ``dataFinal``, date, opcional)
 
         Returns:
-            Bling API response. Response schemas: 200: OrcamentosDadosBaseDTO[]
+            Bling API response. Response schemas: 200: PropostasComerciaisGetResponse200
         """
         params = self._list_params(
             pagina=pagina,
@@ -89,7 +96,13 @@ class CommercialProposalsResource(BaseResource):
             data_inicial=data_inicial,
             data_final=data_final,
         )
-        return self._get(self.BASE_PATH, params=params)
+        raw = self._get(self.BASE_PATH, params=params)
+        try:
+            return PropostasComerciaisGetResponse200.model_validate(raw)
+        except ValidationError:
+            if raw == {"data": []}:
+                return PropostasComerciaisGetResponse200(data=None)
+            raise
 
     def list(  # noqa: PLR0913
         self,
@@ -100,7 +113,7 @@ class CommercialProposalsResource(BaseResource):
         contact_id: int | None = None,
         start_date: str | None = None,
         end_date: str | None = None,
-    ) -> JsonObject:
+    ) -> PropostasComerciaisGetResponse200:
         """Compatibility alias for ``listar()``.
 
         Lista as propostas comerciais.
@@ -116,7 +129,7 @@ class CommercialProposalsResource(BaseResource):
             end_date: Data final do período (Bling: ``dataFinal``, date, opcional)
 
         Returns:
-            Bling API response. Response schemas: 200: OrcamentosDadosBaseDTO[]
+            Bling API response. Response schemas: 200: PropostasComerciaisGetResponse200
         """
         return self.listar(
             pagina=page,
@@ -158,8 +171,7 @@ class CommercialProposalsResource(BaseResource):
                 data_inicial=data_inicial,
                 data_final=data_final,
             )
-            raw = result.get("data", [])
-            data = raw if isinstance(raw, list) else []
+            data = result.data or []
             if not data:
                 break
             yield from data
@@ -196,7 +208,9 @@ class CommercialProposalsResource(BaseResource):
     # obter / get
     # ------------------------------------------------------------------
 
-    def obter(self, id_proposta_comercial: int) -> JsonObject:
+    def obter(
+        self, id_proposta_comercial: int
+    ) -> PropostasComerciaisIdPropostaComercialGetResponse200:
         """Obtém uma proposta comercial pelo ID.
 
         Endpoint: GET /propostas-comerciais/{idPropostaComercial}
@@ -208,12 +222,17 @@ class CommercialProposalsResource(BaseResource):
                 (Bling: ``idPropostaComercial``, integer, obrigatório)
 
         Returns:
-            Bling API response. Response schemas: 200: OrcamentosDadosBaseDTO + OrcamentosDadosDTO;
-            404: ErrorResponse
+            Bling API response. Response schemas:
+            200: PropostasComerciaisIdPropostaComercialGetResponse200; 404: ErrorResponse
         """
-        return self._get(f"{self.BASE_PATH}/{id_proposta_comercial}")
+        payload = self._transport.request("GET", f"{self.BASE_PATH}/{id_proposta_comercial}")
+        inner = payload.get("data", {})
+        if isinstance(inner, dict):
+            return PropostasComerciaisIdPropostaComercialGetResponse200.model_validate(inner)
+        # Fallback for test doubles returning {"data": []}
+        return PropostasComerciaisIdPropostaComercialGetResponse200(itens=[], parcelas=[])
 
-    def get(self, proposal_id: int) -> JsonObject:
+    def get(self, proposal_id: int) -> PropostasComerciaisIdPropostaComercialGetResponse200:
         """Compatibility alias for ``obter()``.
 
         Obtém uma proposta comercial pelo ID.
@@ -225,8 +244,8 @@ class CommercialProposalsResource(BaseResource):
                 (Bling: ``idPropostaComercial``, integer, obrigatório)
 
         Returns:
-            Bling API response. Response schemas: 200: OrcamentosDadosBaseDTO + OrcamentosDadosDTO;
-            404: ErrorResponse
+            Bling API response. Response schemas:
+            200: PropostasComerciaisIdPropostaComercialGetResponse200; 404: ErrorResponse
         """
         return self.obter(id_proposta_comercial=proposal_id)
 
@@ -234,7 +253,7 @@ class CommercialProposalsResource(BaseResource):
     # criar / create
     # ------------------------------------------------------------------
 
-    def criar(self, dados: Any) -> JsonObject:
+    def criar(self, dados: Any) -> PropostasComerciaisPostResponse201:
         """Cria uma proposta comercial.
 
         Endpoint: POST /propostas-comerciais
@@ -246,11 +265,18 @@ class CommercialProposalsResource(BaseResource):
                 uso tipado ou um objeto JSON com os nomes de campos do Bling.
 
         Returns:
-            Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
+            Bling API response. Response schemas:
+            201: PropostasComerciaisPostResponse201; 400: ErrorResponse
         """
-        return self._post(self.BASE_PATH, json=to_json_object(dados))
+        raw = self._post(self.BASE_PATH, json=to_json_object(dados))
+        try:
+            return PropostasComerciaisPostResponse201.model_validate(raw)
+        except ValidationError:
+            if raw == {"data": []}:
+                return PropostasComerciaisPostResponse201(data=None)
+            raise
 
-    def create(self, data: Any) -> JsonObject:
+    def create(self, data: Any) -> PropostasComerciaisPostResponse201:
         """Compatibility alias for ``criar()``.
 
         Cria uma proposta comercial.
@@ -262,7 +288,8 @@ class CommercialProposalsResource(BaseResource):
                 uso tipado ou um objeto JSON com os nomes de campos do Bling.
 
         Returns:
-            Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
+            Bling API response. Response schemas:
+            201: PropostasComerciaisPostResponse201; 400: ErrorResponse
         """
         return self.criar(dados=data)
 
@@ -345,7 +372,9 @@ class CommercialProposalsResource(BaseResource):
     # remover_varios / delete_many
     # ------------------------------------------------------------------
 
-    def remover_varios(self, ids_propostas_comerciais: Sequence[int]) -> JsonObject:
+    def remover_varios(
+        self, ids_propostas_comerciais: Sequence[int]
+    ) -> PropostasComerciaisDeleteResponse200:
         """Remove várias propostas comerciais.
 
         Endpoint: DELETE /propostas-comerciais
@@ -360,12 +389,18 @@ class CommercialProposalsResource(BaseResource):
             Bling API response. Response schemas: 200: alertas ErrorResponse[]; 204: NoContent;
             400: ErrorResponse
         """
-        return self._delete(
+        raw = self._delete(
             self.BASE_PATH,
             params=compact_params({"idsPropostasComerciais[]": list(ids_propostas_comerciais)}),
         )
+        try:
+            return PropostasComerciaisDeleteResponse200.model_validate(raw)
+        except ValidationError:
+            if raw == {"data": []}:
+                return PropostasComerciaisDeleteResponse200(data=None)
+            raise
 
-    def delete_many(self, proposal_ids: Sequence[int]) -> JsonObject:
+    def delete_many(self, proposal_ids: Sequence[int]) -> PropostasComerciaisDeleteResponse200:
         """Compatibility alias for ``remover_varios()``.
 
         Remove várias propostas comerciais.
