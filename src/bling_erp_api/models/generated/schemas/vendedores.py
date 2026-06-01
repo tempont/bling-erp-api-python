@@ -104,9 +104,9 @@ class VendedoresGetResponse200(BlingModel):
     quando ele aparecer como request body ou response schema nos métodos do SDK.
 
     Fields:
-        data: Bling ``data``; type ``VendedoresDadosBaseDTO | None``; opcional."""
+        data: Bling ``data``; type ``list[VendedoresDadosBaseDTO] | None``; opcional."""
 
-    data: VendedoresDadosBaseDTO | None = None
+    data: list[VendedoresDadosBaseDTO] | None = None
 
 
 class VendedoresIdVendedorGetResponse200(BlingModel):

@@ -129,6 +129,9 @@ BUILTIN_TYPE_NAMES = {
     "list",
     "str",
 }
+FIELD_ANNOTATION_OVERRIDES = {
+    ("VendedoresGetResponse200", "data"): "list[VendedoresDadosBaseDTO] | None",
+}
 
 
 @dataclass(frozen=True)
@@ -440,7 +443,10 @@ def _class_with_docstring(
         "ast.ClassDef", ast.fix_missing_locations(ast.parse(ast.unparse(class_nodes[name])).body[0])
     )
     _rewrite_field_aliases(node)
-    docstring = _model_docstring(name, class_nodes)
+    _apply_field_overrides(name, node)
+    docstring_nodes = dict(class_nodes)
+    docstring_nodes[name] = node
+    docstring = _model_docstring(name, docstring_nodes)
     doc_node = ast.Expr(value=ast.Constant(value=docstring))
     existing_doc = ast.get_docstring(node, clean=False)
     if existing_doc is not None and node.body:
@@ -453,6 +459,17 @@ def _class_with_docstring(
         if index == 0 or _string_value_from_expr_stmt(stmt) is None
     ]
     return ast.fix_missing_locations(node)
+
+
+def _apply_field_overrides(name: str, node: ast.ClassDef) -> None:
+    """Apply known runtime-contract fixes for inaccurate OpenAPI schemas."""
+    for stmt in node.body:
+        if not isinstance(stmt, ast.AnnAssign) or not isinstance(stmt.target, ast.Name):
+            continue
+
+        annotation = FIELD_ANNOTATION_OVERRIDES.get((name, stmt.target.id))
+        if annotation is not None:
+            stmt.annotation = ast.parse(annotation, mode="eval").body
 
 
 def _rewrite_field_aliases(node: ast.ClassDef) -> None:

@@ -22,7 +22,11 @@ from bling_erp_api.models.generated.purchase_orders import (
 from bling_erp_api.models.generated.situacoes import (
     SituacoesDadosDTO,
     SituacoesDTO,
+)
+from bling_erp_api.models.generated.situacoes_modulos import (
     SituacoesModuloDTO,
+)
+from bling_erp_api.models.generated.situacoes_transicoes import (
     SituacoesTransicaoDTO,
 )
 from bling_erp_api.models.generated.vendedores import (

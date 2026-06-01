@@ -4,11 +4,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from pydantic import ValidationError
+
+from bling_erp_api.models.aliases import (
+    VendedoresGetResponse200,
+    VendedoresIdVendedorGetResponse200,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 
 if TYPE_CHECKING:
-    from bling_erp_api.types import JsonObject, QueryParams
+    from bling_erp_api.types import QueryParams
 
 
 def _vendedores_list_params(  # noqa: PLR0913
@@ -61,7 +67,7 @@ class VendedoresResource(BaseResource):
         id_loja: int | None = None,
         data_alteracao_inicial: str | None = None,
         data_alteracao_final: str | None = None,
-    ) -> JsonObject:
+    ) -> VendedoresGetResponse200:
         """Lista os vendedores.
 
         Endpoint: GET /vendedores
@@ -73,7 +79,7 @@ class VendedoresResource(BaseResource):
             pagina: N° da página da listagem (Bling: ``pagina``, integer, opcional)
             limite: Quantidade de registros por página (Bling: ``limite``, integer, opcional)
             nome_contato: Nome do contato para filtro (Bling: ``nomeContato``, string, opcional)
-            situacao_contato: Situação do contato para filtro (Bling: ``situacaoContato``, string, opcional)
+            situacao_contato: Situação do contato para filtro (Bling: ``situacaoContato``, string, opcional, [`A` Ativo, `I` Inativo, `S` Sem movimento, `E` Excluído, `T` Todos])
             id_contato: ID do contato para filtro (Bling: ``idContato``, integer, opcional)
             id_loja: ID da loja para filtro (Bling: ``idLoja``, integer, opcional)
             data_alteracao_inicial: Data de alteração inicial (Bling: ``dataAlteracaoInicial``, string, opcional)
@@ -92,7 +98,8 @@ class VendedoresResource(BaseResource):
             data_alteracao_inicial=data_alteracao_inicial,
             data_alteracao_final=data_alteracao_final,
         )
-        return self._get(self.BASE_PATH, params=params)
+        raw = self._get(self.BASE_PATH, params=params)
+        return VendedoresGetResponse200.model_validate(raw)
 
     def list(  # noqa: PLR0913
         self,
@@ -105,7 +112,7 @@ class VendedoresResource(BaseResource):
         id_loja: int | None = None,
         data_alteracao_inicial: str | None = None,
         data_alteracao_final: str | None = None,
-    ) -> JsonObject:
+    ) -> VendedoresGetResponse200:
         """Compatibility alias for ``listar()``.
 
         Lista os vendedores.
@@ -143,7 +150,7 @@ class VendedoresResource(BaseResource):
     # obter / get
     # ------------------------------------------------------------------
 
-    def obter(self, id_vendedor: int) -> JsonObject:
+    def obter(self, id_vendedor: int) -> VendedoresIdVendedorGetResponse200:
         """Obtém um vendedor pelo ID.
 
         Endpoint: GET /vendedores/{idVendedor}
@@ -157,9 +164,15 @@ class VendedoresResource(BaseResource):
             Bling API response. Response schemas: 200: VendedoresIdVendedorGetResponse200;
             404: ErrorResponse
         """
-        return self._get(f"{self.BASE_PATH}/{id_vendedor}")
+        raw = self._get(f"{self.BASE_PATH}/{id_vendedor}")
+        try:
+            return VendedoresIdVendedorGetResponse200.model_validate(raw)
+        except ValidationError:
+            if raw == {"data": []}:
+                return VendedoresIdVendedorGetResponse200(data=None)
+            raise
 
-    def get(self, seller_id: int) -> JsonObject:
+    def get(self, seller_id: int) -> VendedoresIdVendedorGetResponse200:
         """Compatibility alias for ``obter()``.
 
         Obtém um vendedor pelo ID.

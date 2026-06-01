@@ -65,7 +65,12 @@ def raise_for_error_response(response: httpx.Response) -> None:
         return
 
     payload = _safe_json(response)
-    message = _extract_error_message(payload) or response.text or response.reason_phrase
+    api_message = _extract_error_message(payload) or response.text or response.reason_phrase
+    message = _format_error_message(
+        api_message,
+        status_code=response.status_code,
+        request_target=_request_target(response),
+    )
     error_type = _error_type_for_status(response.status_code)
     raise error_type(
         message,
@@ -96,6 +101,27 @@ def _extract_error_message(payload: JsonValue | None) -> str | None:
 
     message = payload.get("message") or payload.get("descricao") or payload.get("description")
     return message if isinstance(message, str) else None
+
+
+def _format_error_message(
+    api_message: str,
+    *,
+    status_code: int,
+    request_target: str | None,
+) -> str:
+    if request_target is None:
+        return f"Bling API returned {status_code}: {api_message}"
+    return f"{request_target} returned {status_code}: {api_message}"
+
+
+def _request_target(response: httpx.Response) -> str | None:
+    try:
+        request = response.request
+    except RuntimeError:
+        return None
+
+    path = request.url.raw_path.decode("ascii", errors="replace")
+    return f"{request.method} {path}"
 
 
 def _error_type_for_status(status_code: int) -> type[BlingAPIError]:

@@ -5,10 +5,14 @@ from pathlib import Path
 from typing import Any
 
 from bling_erp_api.models.generated.situacoes import (
-    SituacoesAcaoDTO,
     SituacoesDadosDTO,
     SituacoesDTO,
+)
+from bling_erp_api.models.generated.situacoes_modulos import (
+    SituacoesAcaoDTO,
     SituacoesModuloDTO,
+)
+from bling_erp_api.models.generated.situacoes_transicoes import (
     SituacoesTransicaoDTO,
 )
 

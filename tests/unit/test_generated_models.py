@@ -18,6 +18,7 @@ from bling_erp_api.models.generated.products import (
 from bling_erp_api.models.generated.sales_orders import (
     PedidosVendasPostRequest,
 )
+from bling_erp_api.models.generated.vendedores import VendedoresGetResponse200
 from bling_erp_api.utils.serialization import to_json_object
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -125,6 +126,13 @@ def test_generated_list_response_wraps_data_items() -> None:
 
     assert response.data
     assert response.data[0].nome == "Produto"
+
+
+def test_generated_vendedores_list_response_accepts_empty_data_list() -> None:
+    """Vendedores list responses should preserve an empty result list."""
+    response = VendedoresGetResponse200.model_validate({"data": []})
+
+    assert response.data == []
 
 
 def test_generated_detail_response_wraps_data_item() -> None:
