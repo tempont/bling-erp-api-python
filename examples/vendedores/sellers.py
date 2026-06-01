@@ -2,8 +2,13 @@
 
 Demonstrates listing and retrieving sellers.
 
+Endpoints:
+    - GET /vendedores
+    - GET /vendedores/{idVendedor}
+
 Docs:
-- https://developer.bling.com.br/referencia#/Vendedores/get_vendedores
+    - https://developer.bling.com.br/referencia#/Vendedores/get_vendedores
+    - https://developer.bling.com.br/referencia#/Vendedores/get_vendedores__idVendedor_
 """
 
 from __future__ import annotations
