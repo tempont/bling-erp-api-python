@@ -39,6 +39,6 @@ def order_details(id_pedido_venda: int) -> None:
 
 
 if __name__ == "__main__":
-    # list_orders() # noqa: ERA001
-    # order_details(id_pedido_venda=1)  # noqa: ERA001
+    # list_orders()
+    # order_details(id_pedido_venda=1)
     print("Done.")

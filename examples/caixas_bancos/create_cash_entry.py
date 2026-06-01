@@ -17,13 +17,13 @@ from bling_erp_api.models.generated.schemas.contas_financeiras import (
 
 def main() -> None:
     """Create a new cash/bank entry (credit)."""
-    # Model: CaixasBancosSalvarLancamentoDTO  # noqa: ERA001
+    # Model: CaixasBancosSalvarLancamentoDTO
     #   Required: data (date), valor (float), deb_cred (str), competencia (date), observacoes (str)
     #   Optional: id (int|None), transferencia (str|None),
-    #             conta_financeira (ContasFinanceirasDadosBasicosDTO|None),  # noqa: ERA001
-    #             categoria (CaixasBancosDadosBasicosCategoriaDTO|None),  # noqa: ERA001
-    #             origem (CaixasBancosDadosBasicosOrigemDTO|None),  # noqa: ERA001
-    #             contato (CaixasBancosDadosBasicoContatoDTO|None)  # noqa: ERA001
+    #             conta_financeira (ContasFinanceirasDadosBasicosDTO|None),
+    #             categoria (CaixasBancosDadosBasicosCategoriaDTO|None),
+    #             origem (CaixasBancosDadosBasicosOrigemDTO|None),
+    #             contato (CaixasBancosDadosBasicoContatoDTO|None)
     payload = CaixasBancosSalvarLancamentoDTO(
         data=date(2025, 2, 1),
         valor=350.00,

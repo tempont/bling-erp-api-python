@@ -12,13 +12,13 @@ def main() -> None:
         msg = "PRODUCT_ID is required"
         raise ValueError(msg)
 
-    # Model: AnunciosSaveRequest  # noqa: ERA001
+    # Model: AnunciosSaveRequest
     #   Required: produto (Produto1), integracao (Integracao), loja (Loja)
     #   Optional: nome (str|None), descricao (str|None), preco (Preco|None),
-    #             anuncio_loja (AnuncioLoja|None), estoques (Estoques|None),  # noqa: ERA001
-    #             categoria (Categoria|None), atributos (list[Atributo]|None),  # noqa: ERA001
-    #             imagens (list[Imagen]|None), mercado_livre (MercadoLivre|None),  # noqa: ERA001
-    #             variacoes (list[AnunciosSaveRequestBase]|None)  # noqa: ERA001
+    #             anuncio_loja (AnuncioLoja|None), estoques (Estoques|None),
+    #             categoria (Categoria|None), atributos (list[Atributo]|None),
+    #             imagens (list[Imagen]|None), mercado_livre (MercadoLivre|None),
+    #             variacoes (list[AnunciosSaveRequestBase]|None)
     payload = AnunciosSaveRequest.model_construct(
         produto={"id": PRODUCT_ID},
         integracao={"tipo": "MercadoLivre"},

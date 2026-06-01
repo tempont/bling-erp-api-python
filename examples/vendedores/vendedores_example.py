@@ -15,12 +15,11 @@ def main() -> None:
     """Run the sellers example."""
     client = BlingClient.from_env()
 
-    # pt-BR canonical: client.vendedores
-    # EN alias: client.sellers
-    vendedores = client.vendedores
+    # client.vendedores / client sellers
+    vendors = client.vendedores
 
     # List sellers with filters
-    result = vendedores.listar(
+    result = vendors.listar(
         pagina=1,
         limite=10,
         situacao_contato="A",  # A = Ativo

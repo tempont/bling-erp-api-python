@@ -14,9 +14,9 @@ from bling_erp_api.models.generated.schemas.calculos_impostos import (
 client = BlingClient.from_env()
 tributacao = client.naturezas_operacoes.obter_tributacao(
     id_natureza_operacao=12345678,
-    # Model: CalculosImpostosCalculoDTO  # noqa: ERA001
+    # Model: CalculosImpostosCalculoDTO
     #   Required: tipo_nota (int), uf (str), municipio (CalculosImpostosMunicipioDTO),
-    #             loja (CalculosImpostosLojaDTO), produto (CalculosImpostosProdutoDTO)  # noqa: ERA001
+    #             loja (CalculosImpostosLojaDTO), produto (CalculosImpostosProdutoDTO)
     #   Optional: obter_regras (bool|None), crt (int|None)
     calculo=CalculosImpostosCalculoDTO(
         tipo_nota=1,

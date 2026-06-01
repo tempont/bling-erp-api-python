@@ -10,7 +10,7 @@ from bling_erp_api.models.generated.contacts import (
 def main() -> None:
     """Atualiza situação em massa (ex.: ``I`` inativo)."""
     ids_contatos = [11111111, 22222222]
-    # Model: ContatosSituacoesPostRequest  # noqa: ERA001
+    # Model: ContatosSituacoesPostRequest
     #   Optional: ids_contatos (list[int]|None), situacao (str|None)
     payload = ContatosSituacoesPostRequest(ids_contatos=ids_contatos, situacao="I")
     with BlingClient.from_env() as client:
