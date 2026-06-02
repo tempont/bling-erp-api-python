@@ -157,6 +157,19 @@ class BaseResource:
         payload = self._transport.request("DELETE", path, params=params)
         return cast("JsonObject", _parse_response("DELETE", path, payload))
 
+    def _validate_response[TResponse: BaseModel](
+        self,
+        model: type[TResponse],
+        payload: object,
+    ) -> TResponse:
+        """Validate a parsed response against a concrete response model."""
+        try:
+            return model.model_validate(payload)
+        except ValidationError:
+            if payload == {"data": []}:
+                return model.model_validate({"data": None})
+            raise
+
     def _iterate(
         self,
         path: str,

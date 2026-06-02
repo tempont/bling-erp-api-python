@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.product_structures import (
+    ProdutosEstruturaDTO,
+    ProdutosEstruturasDeleteResponse200,
+    ProdutosEstruturasIdProdutoEstruturaGetResponse200,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
@@ -13,15 +18,18 @@ if TYPE_CHECKING:
 
     from bling_erp_api.models.generated.product_structures import (
         ProdutosComponenteDTO,
-        ProdutosEstruturaDTO,
     )
     from bling_erp_api.types import JsonObject
 
 
 class ProductStructuresResource(BaseResource):
-    """Operações em ``/produtos/estruturas``."""
+    """Resource for Bling product structure endpoints.
 
-    def remover_varios(self, ids_produtos: Sequence[int]) -> JsonObject:
+    Maps ``/produtos/estruturas`` operations for product composition
+    structures and their components.
+    """
+
+    def remover_varios(self, ids_produtos: Sequence[int]) -> ProdutosEstruturasDeleteResponse200:
         """Remove a estrutura de múltiplos produtos.
 
         Endpoint: DELETE /produtos/estruturas
@@ -34,12 +42,15 @@ class ProductStructuresResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: Error; 400: ErrorResponse
         """
-        return self._delete(
+        raw = self._delete(
             "/produtos/estruturas",
             params=compact_params({"idsProdutos[]": list(ids_produtos)}),
         )
+        return self._validate_response(ProdutosEstruturasDeleteResponse200, raw)
 
-    def obter(self, id_produto_estrutura: int) -> JsonObject:
+    def obter(
+        self, id_produto_estrutura: int
+    ) -> ProdutosEstruturasIdProdutoEstruturaGetResponse200:
         """Obtém a estrutura de um produto com composição.
 
         Endpoint: GET /produtos/estruturas/{idProdutoEstrutura}
@@ -52,7 +63,8 @@ class ProductStructuresResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ProdutosEstruturaDTO; 404: ErrorResponse
         """
-        return self._get(f"/produtos/estruturas/{id_produto_estrutura}")
+        raw = self._get(f"/produtos/estruturas/{id_produto_estrutura}")
+        return self._validate_response(ProdutosEstruturasIdProdutoEstruturaGetResponse200, raw)
 
     def alterar(
         self,

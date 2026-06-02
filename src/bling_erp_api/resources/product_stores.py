@@ -5,6 +5,15 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.product_stores import (
+    ProdutosLojasDadosDTO,
+    ProdutosLojasGetResponse200,
+    ProdutosLojasIdProdutoLojaGetResponse200,
+    ProdutosLojasIdProdutoLojaPutRequest,
+    ProdutosLojasIdProdutoLojaPutResponse200,
+    ProdutosLojasPostRequest,
+    ProdutosLojasPostResponse201,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
@@ -12,17 +21,17 @@ from bling_erp_api.utils.serialization import to_json_object
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from bling_erp_api.models.generated.product_stores import (
-        ProdutosLojasIdProdutoLojaPutRequest,
-        ProdutosLojasPostRequest,
-    )
     from bling_erp_api.types import JsonObject, QueryParams
 
 type DateFilter = date | datetime | str
 
 
 class ProductStoresResource(BaseResource):
-    """Operações em ``/produtos/lojas``."""
+    """Resource for Bling product-store link endpoints.
+
+    Maps ``/produtos/lojas`` operations for listing, retrieving, creating,
+    updating, and removing product links to stores.
+    """
 
     def listar(  # noqa: PLR0913
         self,
@@ -34,7 +43,7 @@ class ProductStoresResource(BaseResource):
         id_categoria_produto: int | None = None,
         data_alteracao_inicial: DateFilter | None = None,
         data_alteracao_final: DateFilter | None = None,
-    ) -> JsonObject:
+    ) -> ProdutosLojasGetResponse200:
         """Obtém vínculos de produtos com lojas.
 
         Endpoint: GET /produtos/lojas
@@ -53,7 +62,7 @@ class ProductStoresResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ProdutosLojasDadosDTO; 400: ErrorResponse
         """
-        return self._get(
+        raw = self._get(
             "/produtos/lojas",
             params=_store_list_params(
                 pagina=pagina,
@@ -65,8 +74,9 @@ class ProductStoresResource(BaseResource):
                 data_alteracao_final=data_alteracao_final,
             ),
         )
+        return self._validate_response(ProdutosLojasGetResponse200, raw)
 
-    def iterar(self, *, pagina: int = 1, limite: int = 100) -> Iterator[JsonObject]:
+    def iterar(self, *, pagina: int = 1, limite: int = 100) -> Iterator[ProdutosLojasDadosDTO]:
         """Itera pelos registros página a página, mantendo os mesmos filtros.
 
         Obtém vínculos de produtos com lojas
@@ -87,9 +97,10 @@ class ProductStoresResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ProdutosLojasDadosDTO; 400: ErrorResponse
         """
-        return self._iterate("/produtos/lojas", page=pagina, limit=limite)
+        for item in self._iterate("/produtos/lojas", page=pagina, limit=limite):
+            yield ProdutosLojasDadosDTO.model_validate(item)
 
-    def criar(self, dados: ProdutosLojasPostRequest) -> JsonObject:
+    def criar(self, dados: ProdutosLojasPostRequest) -> ProdutosLojasPostResponse201:
         """Cria o vínculo de um produto com uma loja.
 
         Endpoint: POST /produtos/lojas
@@ -101,9 +112,10 @@ class ProductStoresResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: BasePostResponse, ProdutosLojasResponse_POST_PUT; 400: ErrorResponse
         """
-        return self._post("/produtos/lojas", json=to_json_object(dados))
+        raw = self._post("/produtos/lojas", json=to_json_object(dados))
+        return self._validate_response(ProdutosLojasPostResponse201, raw)
 
-    def obter(self, id_produto_loja: int) -> JsonObject:
+    def obter(self, id_produto_loja: int) -> ProdutosLojasIdProdutoLojaGetResponse200:
         """Obtém um vínculo de produto com loja.
 
         Endpoint: GET /produtos/lojas/{idProdutoLoja}
@@ -116,11 +128,12 @@ class ProductStoresResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ProdutosLojasDadosBaseDTO, ProdutosLojasDadosDTO; 404: ErrorResponse
         """
-        return self._get(f"/produtos/lojas/{id_produto_loja}")
+        raw = self._get(f"/produtos/lojas/{id_produto_loja}")
+        return self._validate_response(ProdutosLojasIdProdutoLojaGetResponse200, raw)
 
     def alterar(
         self, id_produto_loja: int, dados: ProdutosLojasIdProdutoLojaPutRequest
-    ) -> JsonObject:
+    ) -> ProdutosLojasIdProdutoLojaPutResponse200:
         """Altera o vínculo de um produto com uma loja.
 
         Endpoint: PUT /produtos/lojas/{idProdutoLoja}
@@ -136,7 +149,8 @@ class ProductStoresResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: BasePostResponse, ProdutosLojasResponse_POST_PUT; 400: ErrorResponse; 404: ErrorResponse
         """
-        return self._put(f"/produtos/lojas/{id_produto_loja}", json=to_json_object(dados))
+        raw = self._put(f"/produtos/lojas/{id_produto_loja}", json=to_json_object(dados))
+        return self._validate_response(ProdutosLojasIdProdutoLojaPutResponse200, raw)
 
     def remover(self, id_produto_loja: int) -> JsonObject:
         """Remove o vínculo de um produto com uma loja.

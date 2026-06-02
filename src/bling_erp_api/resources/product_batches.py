@@ -5,6 +5,13 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.product_batches import (
+    LotesDTO,
+    ProdutosLotesControlaLoteGetResponse200,
+    ProdutosLotesGetResponse200,
+    ProdutosLotesIdLoteGetResponse200,
+    ProdutosLotesPutResponse200,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
@@ -14,7 +21,6 @@ if TYPE_CHECKING:
 
     from bling_erp_api.models.generated.product_batches import (
         LotePutRequestDTO,
-        LotesDTO,
         LoteStatusDTO,
     )
     from bling_erp_api.types import JsonObject, QueryParams
@@ -23,7 +29,11 @@ type DateFilter = date | datetime | str
 
 
 class ProductBatchesResource(BaseResource):
-    """Operações em ``/produtos/lotes`` e rotas relacionadas."""
+    """Resource for Bling product batch endpoints.
+
+    Maps ``/produtos/lotes`` and related lot-control endpoints for listing,
+    retrieving, saving, and status operations for product batches.
+    """
 
     def remover_varios(self, ids_lotes: Sequence[int]) -> JsonObject:
         """Remove lotes de produtos.
@@ -59,7 +69,7 @@ class ProductBatchesResource(BaseResource):
         data_fabricacao_final: DateFilter | None = None,
         data_criacao_inicial: DateFilter | None = None,
         data_criacao_final: DateFilter | None = None,
-    ) -> JsonObject:
+    ) -> ProdutosLotesGetResponse200:
         """Obtém lotes de produtos.
 
         Endpoint: GET /produtos/lotes
@@ -84,7 +94,7 @@ class ProductBatchesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: LotesDTO; 400: ErrorResponse
         """
-        return self._get(
+        raw = self._get(
             "/produtos/lotes",
             params=_batch_list_params(
                 pagina=pagina,
@@ -102,6 +112,7 @@ class ProductBatchesResource(BaseResource):
                 data_criacao_final=data_criacao_final,
             ),
         )
+        return self._validate_response(ProdutosLotesGetResponse200, raw)
 
     def iterar(  # noqa: PLR0913
         self,
@@ -119,7 +130,7 @@ class ProductBatchesResource(BaseResource):
         data_fabricacao_final: DateFilter | None = None,
         data_criacao_inicial: DateFilter | None = None,
         data_criacao_final: DateFilter | None = None,
-    ) -> Iterator[JsonObject]:
+    ) -> Iterator[LotesDTO]:
         """Itera pelos registros página a página, mantendo os mesmos filtros.
 
         Obtém lotes de produtos
@@ -162,9 +173,12 @@ class ProductBatchesResource(BaseResource):
             },
         )
 
-        return self._iterate("/produtos/lotes", page=pagina, limit=limite, params=merged or {})
+        for item in self._iterate(
+            "/produtos/lotes", page=pagina, limit=limite, params=merged or {}
+        ):
+            yield LotesDTO.model_validate(item)
 
-    def criar_varios(self, lotes: Sequence[LotesDTO]) -> JsonObject:
+    def criar_varios(self, lotes: Sequence[LotesDTO]) -> ProdutosLotesPutResponse200:
         """Salva lotes de produtos.
 
         Endpoint: PUT /produtos/lotes
@@ -177,9 +191,12 @@ class ProductBatchesResource(BaseResource):
             Bling API response. Response schemas: 200: SaveResponseLotsDTO; 400: ErrorResponse
         """
         payload = [to_json_object(lote) for lote in lotes]
-        return self._put("/produtos/lotes", json=payload)
+        raw = self._put("/produtos/lotes", json=payload)
+        return self._validate_response(ProdutosLotesPutResponse200, raw)
 
-    def listar_produtos_controlam_lote(self, ids_produtos: Sequence[int]) -> JsonObject:
+    def listar_produtos_controlam_lote(
+        self, ids_produtos: Sequence[int]
+    ) -> ProdutosLotesControlaLoteGetResponse200:
         """Obtém a informação se determinados produtos possuem controle de lote.
 
         Endpoint: GET /produtos/lotes/controla-lote
@@ -192,12 +209,13 @@ class ProductBatchesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ProdutoControlaLotesDTO; 400: ErrorResponse
         """
-        return self._get(
+        raw = self._get(
             "/produtos/lotes/controla-lote",
             params=compact_params({"idsProdutos[]": list(ids_produtos)}),
         )
+        return self._validate_response(ProdutosLotesControlaLoteGetResponse200, raw)
 
-    def obter(self, id_lote: int) -> JsonObject:
+    def obter(self, id_lote: int) -> ProdutosLotesIdLoteGetResponse200:
         """Obtém um lote de um produto.
 
         Endpoint: GET /produtos/lotes/{idLote}
@@ -210,7 +228,8 @@ class ProductBatchesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: LotesDTO; 404: ErrorResponse
         """
-        return self._get(f"/produtos/lotes/{id_lote}")
+        raw = self._get(f"/produtos/lotes/{id_lote}")
+        return self._validate_response(ProdutosLotesIdLoteGetResponse200, raw)
 
     def alterar(self, id_lote: int, dados: LotePutRequestDTO) -> JsonObject:
         """Altera um lote de um produto.

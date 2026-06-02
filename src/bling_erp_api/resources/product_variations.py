@@ -2,23 +2,27 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
+from bling_erp_api.models.generated.product_variations import (
+    ProdutosVariacoesAtributosGerarCombinacoesPostResponse200,
+    ProdutosVariacoesCombinacaoDadosDTO,
+    ProdutosVariacoesDadosAtributoDTO,
+    ProdutosVariacoesIdProdutoPaiAtributosPatchResponse200,
+    ProdutosVariacoesIdProdutoPaiGetResponse200,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.serialization import to_json_object
 
-if TYPE_CHECKING:
-    from bling_erp_api.models.generated.product_variations import (
-        ProdutosVariacoesCombinacaoDadosDTO,
-        ProdutosVariacoesDadosAtributoDTO,
-    )
-    from bling_erp_api.types import JsonObject
-
 
 class ProductVariationsResource(BaseResource):
-    """Operações em ``/produtos/variacoes``."""
+    """Resource for Bling product variation endpoints.
 
-    def gerar_combinacoes(self, dados: ProdutosVariacoesCombinacaoDadosDTO) -> JsonObject:
+    Maps ``/produtos/variacoes`` operations for listing variations, generating
+    combinations, and updating variation attributes.
+    """
+
+    def gerar_combinacoes(
+        self, dados: ProdutosVariacoesCombinacaoDadosDTO
+    ) -> ProdutosVariacoesAtributosGerarCombinacoesPostResponse200:
         """Retorna o produto pai com combinações de novas variações.
 
         Endpoint: POST /produtos/variacoes/atributos/gerar-combinacoes
@@ -30,12 +34,15 @@ class ProductVariationsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ProdutosDadosDTO; 400: ErrorResponse
         """
-        return self._post(
+        raw = self._post(
             "/produtos/variacoes/atributos/gerar-combinacoes",
             json=to_json_object(dados),
         )
+        return self._validate_response(
+            ProdutosVariacoesAtributosGerarCombinacoesPostResponse200, raw
+        )
 
-    def listar(self, id_produto_pai: int) -> JsonObject:
+    def listar(self, id_produto_pai: int) -> ProdutosVariacoesIdProdutoPaiGetResponse200:
         """Obtém o produto e variações.
 
         Endpoint: GET /produtos/variacoes/{idProdutoPai}
@@ -48,13 +55,14 @@ class ProductVariationsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ProdutosDadosDTO; 404: ErrorResponse
         """
-        return self._get(f"/produtos/variacoes/{id_produto_pai}")
+        raw = self._get(f"/produtos/variacoes/{id_produto_pai}")
+        return self._validate_response(ProdutosVariacoesIdProdutoPaiGetResponse200, raw)
 
     def alterar_atributo(
         self,
         id_produto_pai: int,
         dados: ProdutosVariacoesDadosAtributoDTO,
-    ) -> JsonObject:
+    ) -> ProdutosVariacoesIdProdutoPaiAtributosPatchResponse200:
         """Altera o nome do atributo nas variações.
 
         Endpoint: PATCH /produtos/variacoes/{idProdutoPai}/atributos
@@ -70,7 +78,8 @@ class ProductVariationsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: BasePostResponse; 400: ErrorResponse
         """
-        return self._patch(
+        raw = self._patch(
             f"/produtos/variacoes/{id_produto_pai}/atributos",
             json=to_json_object(dados),
         )
+        return self._validate_response(ProdutosVariacoesIdProdutoPaiAtributosPatchResponse200, raw)

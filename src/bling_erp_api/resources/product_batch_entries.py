@@ -4,6 +4,16 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.product_batch_entries import (
+    LoteLancamentoDTO,
+    ProdutosIdProdutoLotesDepositosIdDepositoSaldoGetResponse200,
+    ProdutosIdProdutoLotesDepositosIdDepositoSaldoSomaGetResponse200,
+    ProdutosIdProdutoLotesIdLoteDepositosIdDepositoSaldoGetResponse200,
+    ProdutosIdProdutoLotesSaldoSomaGetResponse200,
+    ProdutosLotesIdLoteLancamentosGetResponse200,
+    ProdutosLotesIdLoteLancamentosPostResponse200,
+    ProdutosLotesLancamentosIdLancamentoGetResponse200,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
@@ -12,16 +22,19 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from bling_erp_api.models.generated.product_batch_entries import (
-        LoteLancamentoDTO,
         LoteLancamentoObservacaoDTO,
     )
     from bling_erp_api.types import JsonObject
 
 
 class ProductBatchEntriesResource(BaseResource):
-    """Operações em ``/produtos/lotes/lancamentos`` e saldos de lote."""
+    """Resource for Bling product batch entry and balance endpoints.
 
-    def obter(self, id_lancamento: int) -> JsonObject:
+    Maps lot entry endpoints under ``/produtos/lotes/lancamentos`` and stock
+    balance endpoints under product lot paths.
+    """
+
+    def obter(self, id_lancamento: int) -> ProdutosLotesLancamentosIdLancamentoGetResponse200:
         """Obtém um lançamento de um lote de produto.
 
         Endpoint: GET /produtos/lotes/lancamentos/{idLancamento}
@@ -34,7 +47,8 @@ class ProductBatchEntriesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: LoteLancamentoDTO; 400: ErrorResponse; 404: ErrorResponse
         """
-        return self._get(f"/produtos/lotes/lancamentos/{id_lancamento}")
+        raw = self._get(f"/produtos/lotes/lancamentos/{id_lancamento}")
+        return self._validate_response(ProdutosLotesLancamentosIdLancamentoGetResponse200, raw)
 
     def alterar_atributo(
         self,
@@ -57,7 +71,7 @@ class ProductBatchEntriesResource(BaseResource):
             json=to_json_object(dados),
         )
 
-    def listar(self, id_lote: int) -> JsonObject:
+    def listar(self, id_lote: int) -> ProdutosLotesIdLoteLancamentosGetResponse200:
         """Obtém os lançamentos de um lote de produto.
 
         Endpoint: GET /produtos/lotes/{idLote}/lancamentos
@@ -70,9 +84,12 @@ class ProductBatchEntriesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: LoteLancamentoDTO; 400: ErrorResponse; 404: ErrorResponse
         """
-        return self._get(f"/produtos/lotes/{id_lote}/lancamentos")
+        raw = self._get(f"/produtos/lotes/{id_lote}/lancamentos")
+        return self._validate_response(ProdutosLotesIdLoteLancamentosGetResponse200, raw)
 
-    def criar(self, id_lote: int, dados: LoteLancamentoDTO) -> JsonObject:
+    def criar(
+        self, id_lote: int, dados: LoteLancamentoDTO
+    ) -> ProdutosLotesIdLoteLancamentosPostResponse200:
         """Cria um lançamento de um lote.
 
         Endpoint: POST /produtos/lotes/{idLote}/lancamentos
@@ -88,7 +105,8 @@ class ProductBatchEntriesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: LoteLancamentoDTO; 400: ErrorResponse; 404: ErrorResponse
         """
-        return self._post(f"/produtos/lotes/{id_lote}/lancamentos", json=to_json_object(dados))
+        raw = self._post(f"/produtos/lotes/{id_lote}/lancamentos", json=to_json_object(dados))
+        return self._validate_response(ProdutosLotesIdLoteLancamentosPostResponse200, raw)
 
     def obter_saldos(
         self,
@@ -96,7 +114,7 @@ class ProductBatchEntriesResource(BaseResource):
         id_deposito: int,
         *,
         ids_lotes: Sequence[int],
-    ) -> JsonObject:
+    ) -> ProdutosIdProdutoLotesDepositosIdDepositoSaldoGetResponse200:
         """Obtém os saldos dos lotes de um produto por depósito.
 
         Endpoint: GET /produtos/{idProduto}/lotes/depositos/{idDeposito}/saldo
@@ -111,12 +129,15 @@ class ProductBatchEntriesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: SaldoLoteDTO; 400: ErrorResponse; 404: ErrorResponse
         """
-        return self._get(
+        raw = self._get(
             f"/produtos/{id_produto}/lotes/depositos/{id_deposito}/saldo",
             params=compact_params({"idsLotes[]": list(ids_lotes)}),
         )
+        return self._validate_response(
+            ProdutosIdProdutoLotesDepositosIdDepositoSaldoGetResponse200, raw
+        )
 
-    def obter_saldos_soma(self, id_produto: int) -> JsonObject:
+    def obter_saldos_soma(self, id_produto: int) -> ProdutosIdProdutoLotesSaldoSomaGetResponse200:
         """Obtém o saldo total dos lotes de um produto.
 
         Endpoint: GET /produtos/{idProduto}/lotes/saldo/soma
@@ -129,9 +150,12 @@ class ProductBatchEntriesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: SaldoSomaLotesTodosDepositosDTO; 404: ErrorResponse
         """
-        return self._get(f"/produtos/{id_produto}/lotes/saldo/soma")
+        raw = self._get(f"/produtos/{id_produto}/lotes/saldo/soma")
+        return self._validate_response(ProdutosIdProdutoLotesSaldoSomaGetResponse200, raw)
 
-    def obter_saldos_soma_deposito(self, id_produto: int, id_deposito: int) -> JsonObject:
+    def obter_saldos_soma_deposito(
+        self, id_produto: int, id_deposito: int
+    ) -> ProdutosIdProdutoLotesDepositosIdDepositoSaldoSomaGetResponse200:
         """Obtém a soma dos saldos dos lotes de um produto em um depósito.
 
         Endpoint: GET /produtos/{idProduto}/lotes/depositos/{idDeposito}/saldo/soma
@@ -145,9 +169,14 @@ class ProductBatchEntriesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: SaldoSomaLotesDTO; 400: ErrorResponse; 404: ErrorResponse
         """
-        return self._get(f"/produtos/{id_produto}/lotes/depositos/{id_deposito}/saldo/soma")
+        raw = self._get(f"/produtos/{id_produto}/lotes/depositos/{id_deposito}/saldo/soma")
+        return self._validate_response(
+            ProdutosIdProdutoLotesDepositosIdDepositoSaldoSomaGetResponse200, raw
+        )
 
-    def obter_saldos_saldo(self, id_produto: int, id_lote: int, id_deposito: int) -> JsonObject:
+    def obter_saldos_saldo(
+        self, id_produto: int, id_lote: int, id_deposito: int
+    ) -> ProdutosIdProdutoLotesIdLoteDepositosIdDepositoSaldoGetResponse200:
         """Obtém o saldo de um lote de produto.
 
         Endpoint: GET /produtos/{idProduto}/lotes/{idLote}/depositos/{idDeposito}/saldo
@@ -162,6 +191,9 @@ class ProductBatchEntriesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: SaldoLoteDTO; 404: ErrorResponse
         """
-        return self._get(
+        raw = self._get(
             f"/produtos/{id_produto}/lotes/{id_lote}/depositos/{id_deposito}/saldo",
+        )
+        return self._validate_response(
+            ProdutosIdProdutoLotesIdLoteDepositosIdDepositoSaldoGetResponse200, raw
         )

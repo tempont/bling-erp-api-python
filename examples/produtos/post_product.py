@@ -8,10 +8,10 @@ from bling_erp_api import BlingClient
 from bling_erp_api.models.generated.products import ProdutosDadosDTO
 
 if TYPE_CHECKING:
-    from bling_erp_api.types import JsonObject
+    from bling_erp_api.models.generated.products import ProdutosResponsePOSTPUT
 
 
-def create_product(data: ProdutosDadosDTO) -> JsonObject:
+def create_product(data: ProdutosDadosDTO) -> ProdutosResponsePOSTPUT:
     """Cria um produto no Bling."""
     with BlingClient.from_env() as client:
         return client.products.create(data)
@@ -30,7 +30,7 @@ def main() -> None:
     )
 
     product = create_product(product_data)
-    print(product)
+    print(product.model_dump_json(indent=2, by_alias=True))
 
 
 if __name__ == "__main__":

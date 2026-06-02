@@ -6,10 +6,13 @@ from datetime import UTC, date, datetime
 from typing import cast
 
 from bling_erp_api.models.generated.contacts import ContatosGetResponse200
+from bling_erp_api.models.generated.product_groups import (
+    GruposProdutosDadosDTO,
+    GruposProdutosPostRequest,
+)
 from bling_erp_api.models.generated.products import (
     ProdutosDadosDTO,
     ProdutosDadosPatchDTO,
-    ProdutosGetResponse200,
 )
 from bling_erp_api.models.generated.sales_orders import (
     PedidosVendasGetResponse200,
@@ -169,7 +172,7 @@ def test_products_list_maps_to_bling_endpoint() -> None:
         data_alteracao_inicial=datetime(2024, 1, 2, 10, 30, 45, tzinfo=UTC),
     )
 
-    assert cast("ProdutosGetResponse200", response).data == []
+    assert response.data == []
     assert transport.calls == [
         (
             "GET",
@@ -2309,7 +2312,7 @@ class TestProductGroupsResourceMapping:
         """Product groups criar posts JSON body to POST /grupos-produtos."""
         transport = RecordingTransport()
         resource = ProductGroupsResource(transport)
-        dados: JsonObject = {"nome": "Novo Grupo"}
+        dados = GruposProdutosPostRequest(GruposProdutosDadosDTO(nome="Novo Grupo"))
         resource.criar(dados)
         assert transport.calls[0][:2] == ("POST", "/grupos-produtos")
         assert transport.calls[0][3] is not None

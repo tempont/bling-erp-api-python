@@ -5,6 +5,16 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import TYPE_CHECKING, Literal
 
+from bling_erp_api.models.generated.products import (
+    ProdutosDadosBaseDTO,
+    ProdutosDadosDTO,
+    ProdutosDadosPatchDTO,
+    ProdutosDeleteResponse200,
+    ProdutosGetResponse200,
+    ProdutosIdProdutoGetResponse200,
+    ProdutosResponsePOSTPUT,
+    ProdutosSituacoesPostResponse200,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
@@ -12,10 +22,6 @@ from bling_erp_api.utils.serialization import to_json_object
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
 
-    from bling_erp_api.models.generated.products import (
-        ProdutosDadosDTO,
-        ProdutosDadosPatchDTO,
-    )
     from bling_erp_api.types import JsonObject, QueryParams
 
 type DateFilter = date | datetime | str
@@ -26,11 +32,12 @@ type ProductStatus = Literal["A", "I", "E"]
 
 
 class ProductsResource(BaseResource):
-    """Operações de produtos do Bling.
+    """Resource for Bling product endpoints.
 
-    Este recurso mapeia os endpoints ``/produtos``. Os métodos canônicos usam
-    português para acompanhar a documentação oficial; os métodos em inglês
-    continuam disponíveis como aliases de compatibilidade.
+    Maps the main ``/produtos`` endpoints, including listing, retrieval,
+    creation, full and partial updates, removal, and status changes. Canonical
+    methods use pt-BR names aligned with the official Bling documentation;
+    English methods are thin compatibility aliases.
     """
 
     def listar(  # noqa: PLR0913
@@ -53,7 +60,7 @@ class ProductsResource(BaseResource):
         gtins: Sequence[str] | None = None,
         filtro_saldo_estoque: ProductStockBalanceFilter | None = None,
         filtro_saldo_estoque_deposito: int | None = None,
-    ) -> JsonObject:
+    ) -> ProdutosGetResponse200:
         """Lista produtos.
 
         Args:
@@ -75,7 +82,7 @@ class ProductsResource(BaseResource):
             filtro_saldo_estoque: Filtro de saldo, enviado como ``filtroSaldoEstoque``.
             filtro_saldo_estoque_deposito: Depósito para filtro de saldo.
         """
-        return self._get(
+        raw = self._get(
             "/produtos",
             params=_product_list_params(
                 pagina=pagina,
@@ -97,6 +104,7 @@ class ProductsResource(BaseResource):
                 filtro_saldo_estoque_deposito=filtro_saldo_estoque_deposito,
             ),
         )
+        return self._validate_response(ProdutosGetResponse200, raw)
 
     def list(  # noqa: PLR0913
         self,
@@ -118,7 +126,7 @@ class ProductsResource(BaseResource):
         gtins: Sequence[str] | None = None,
         stock_balance_filter: ProductStockBalanceFilter | None = None,
         stock_balance_deposit_id: int | None = None,
-    ) -> JsonObject:
+    ) -> ProdutosGetResponse200:
         """Compatibility alias for ``listar()``.
 
         Obtém produtos
@@ -169,15 +177,16 @@ class ProductsResource(BaseResource):
             filtro_saldo_estoque_deposito=stock_balance_deposit_id,
         )
 
-    def iterar(self, *, pagina: int = 1, limite: int = 100) -> Iterator[JsonObject]:
+    def iterar(self, *, pagina: int = 1, limite: int = 100) -> Iterator[ProdutosDadosBaseDTO]:
         """Itera pelos produtos página a página."""
-        return self._iterate("/produtos", page=pagina, limit=limite)
+        for item in self._iterate("/produtos", page=pagina, limit=limite):
+            yield ProdutosDadosBaseDTO.model_validate(item)
 
-    def iterate(self, *, page: int = 1, limit: int = 100) -> Iterator[JsonObject]:
+    def iterate(self, *, page: int = 1, limit: int = 100) -> Iterator[ProdutosDadosBaseDTO]:
         """Compatibility alias for ``iterar()``."""
         return self.iterar(pagina=page, limite=limit)
 
-    def obter(self, id_produto: int) -> JsonObject:
+    def obter(self, id_produto: int) -> ProdutosIdProdutoGetResponse200:
         """Obtém um produto.
 
         Endpoint: GET /produtos/{idProduto}
@@ -190,9 +199,10 @@ class ProductsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ProdutosDadosDTO; 403: ErrorResponse; 404: ErrorResponse
         """
-        return self._get(f"/produtos/{id_produto}")
+        raw = self._get(f"/produtos/{id_produto}")
+        return self._validate_response(ProdutosIdProdutoGetResponse200, raw)
 
-    def get(self, product_id: int) -> JsonObject:
+    def get(self, product_id: int) -> ProdutosIdProdutoGetResponse200:
         """Compatibility alias for ``obter()``.
 
         Obtém um produto
@@ -209,7 +219,7 @@ class ProductsResource(BaseResource):
         """
         return self.obter(product_id)
 
-    def criar(self, dados: ProdutosDadosDTO) -> JsonObject:
+    def criar(self, dados: ProdutosDadosDTO) -> ProdutosResponsePOSTPUT:
         """Cria um produto.
 
         Endpoint: POST /produtos
@@ -221,9 +231,10 @@ class ProductsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: ProdutosResponse_POST_PUT; 400: ErrorResponse; 403: ErrorResponse
         """
-        return self._post("/produtos", json=to_json_object(dados))
+        raw = self._post("/produtos", json=to_json_object(dados))
+        return self._validate_response(ProdutosResponsePOSTPUT, raw)
 
-    def create(self, data: ProdutosDadosDTO) -> JsonObject:
+    def create(self, data: ProdutosDadosDTO) -> ProdutosResponsePOSTPUT:
         """Compatibility alias for ``criar()``.
 
         Cria um produto
@@ -466,7 +477,7 @@ class ProductsResource(BaseResource):
         """
         return self.criar(data)
 
-    def alterar(self, id_produto: int, dados: ProdutosDadosDTO) -> JsonObject:
+    def alterar(self, id_produto: int, dados: ProdutosDadosDTO) -> ProdutosResponsePOSTPUT:
         """Altera um produto.
 
         Endpoint: PUT /produtos/{idProduto}
@@ -482,9 +493,10 @@ class ProductsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ProdutosResponse_POST_PUT; 400: ErrorResponse; 403: ErrorResponse
         """
-        return self._put(f"/produtos/{id_produto}", json=to_json_object(dados))
+        raw = self._put(f"/produtos/{id_produto}", json=to_json_object(dados))
+        return self._validate_response(ProdutosResponsePOSTPUT, raw)
 
-    def update(self, product_id: int, data: ProdutosDadosDTO) -> JsonObject:
+    def update(self, product_id: int, data: ProdutosDadosDTO) -> ProdutosResponsePOSTPUT:
         """Compatibility alias for ``alterar()``.
 
         Altera um produto
@@ -504,7 +516,9 @@ class ProductsResource(BaseResource):
         """
         return self.alterar(product_id, data)
 
-    def alterar_parcialmente(self, id_produto: int, dados: ProdutosDadosPatchDTO) -> JsonObject:
+    def alterar_parcialmente(
+        self, id_produto: int, dados: ProdutosDadosPatchDTO
+    ) -> ProdutosResponsePOSTPUT:
         """Altera parcialmente um produto.
 
         Endpoint: PATCH /produtos/{idProduto}
@@ -520,9 +534,10 @@ class ProductsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ProdutosResponse_POST_PUT; 400: ErrorResponse; 403: ErrorResponse
         """
-        return self._patch(f"/produtos/{id_produto}", json=to_json_object(dados))
+        raw = self._patch(f"/produtos/{id_produto}", json=to_json_object(dados))
+        return self._validate_response(ProdutosResponsePOSTPUT, raw)
 
-    def patch(self, product_id: int, data: ProdutosDadosPatchDTO) -> JsonObject:
+    def patch(self, product_id: int, data: ProdutosDadosPatchDTO) -> ProdutosResponsePOSTPUT:
         """Compatibility alias for ``alterar_parcialmente()``.
 
         Altera parcialmente um produto
@@ -574,7 +589,7 @@ class ProductsResource(BaseResource):
         """
         return self.remover(product_id)
 
-    def remover_varios(self, ids_produtos: Sequence[int]) -> JsonObject:
+    def remover_varios(self, ids_produtos: Sequence[int]) -> ProdutosDeleteResponse200:
         """Remove múltiplos produtos.
 
         Endpoint: DELETE /produtos
@@ -587,9 +602,10 @@ class ProductsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ProdutosAlertasResponse; 400: ErrorResponse
         """
-        return self._delete("/produtos", params={"idsProdutos[]": list(ids_produtos)})
+        raw = self._delete("/produtos", params={"idsProdutos[]": list(ids_produtos)})
+        return self._validate_response(ProdutosDeleteResponse200, raw)
 
-    def delete_many(self, product_ids: Sequence[int]) -> JsonObject:
+    def delete_many(self, product_ids: Sequence[int]) -> ProdutosDeleteResponse200:
         """Compatibility alias for ``remover_varios()``.
 
         Remove múltiplos produtos
@@ -642,7 +658,7 @@ class ProductsResource(BaseResource):
 
     def alterar_situacao_varios(
         self, ids_produtos: Sequence[int], situacao: ProductStatus
-    ) -> JsonObject:
+    ) -> ProdutosSituacoesPostResponse200:
         """Altera a situação de múltiplos produtos.
 
         Endpoint: POST /produtos/situacoes
@@ -652,12 +668,15 @@ class ProductsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ProdutosAlertasResponse; 400: ErrorResponse
         """
-        return self._post(
+        raw = self._post(
             "/produtos/situacoes",
             json={"idsProdutos": list(ids_produtos), "situacao": situacao},
         )
+        return self._validate_response(ProdutosSituacoesPostResponse200, raw)
 
-    def update_many_status(self, product_ids: Sequence[int], status: ProductStatus) -> JsonObject:
+    def update_many_status(
+        self, product_ids: Sequence[int], status: ProductStatus
+    ) -> ProdutosSituacoesPostResponse200:
         """Compatibility alias for ``alterar_situacao_varios()``.
 
         Altera a situação de múltiplos produtos

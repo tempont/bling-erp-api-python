@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.product_categories import (
+    CategoriasProdutosGetResponse200,
+    CategoriasProdutosIdCategoriaProdutoGetResponse200,
+    CategoriasProdutosPostResponse201,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.serialization import to_json_object
 
@@ -15,11 +20,11 @@ if TYPE_CHECKING:
 
 
 class ProductCategoriesResource(BaseResource):
-    """Operações de categorias de produtos do Bling.
+    """Resource for Bling product category endpoints.
 
-    Este recurso mapeia os endpoints ``/categorias/produtos``. Os métodos
-    canônicos usam português para acompanhar a documentação oficial; os
-    métodos em inglês continuam disponíveis como aliases de compatibilidade.
+    Maps ``/categorias/produtos`` operations for product category listing,
+    retrieval, creation, update, and removal. Canonical methods use pt-BR names
+    aligned with the official API; English methods remain compatibility aliases.
     """
 
     def listar(
@@ -27,7 +32,7 @@ class ProductCategoriesResource(BaseResource):
         *,
         pagina: int = 1,
         limite: int = 100,
-    ) -> JsonObject:
+    ) -> CategoriasProdutosGetResponse200:
         """Lista categorias de produtos.
 
         Endpoint: GET /categorias/produtos
@@ -41,14 +46,15 @@ class ProductCategoriesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: CategoriasProdutosDadosDTO
         """
-        return self._get(f"/categorias/produtos?pagina={pagina}&limite={limite}")
+        raw = self._get(f"/categorias/produtos?pagina={pagina}&limite={limite}")
+        return self._validate_response(CategoriasProdutosGetResponse200, raw)
 
     def list(
         self,
         *,
         page: int = 1,
         limit: int = 100,
-    ) -> JsonObject:
+    ) -> CategoriasProdutosGetResponse200:
         """Compatibility alias for ``listar()``.
 
         Lista categorias de produtos.
@@ -64,7 +70,9 @@ class ProductCategoriesResource(BaseResource):
         """
         return self.listar(pagina=page, limite=limit)
 
-    def obter(self, id_categoria_produto: int) -> JsonObject:
+    def obter(
+        self, id_categoria_produto: int
+    ) -> CategoriasProdutosIdCategoriaProdutoGetResponse200:
         """Obtém uma categoria de produto.
 
         Endpoint: GET /categorias/produtos/{idCategoriaProduto}
@@ -77,9 +85,10 @@ class ProductCategoriesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: CategoriasProdutosDadosDTO; 404: ErrorResponse
         """
-        return self._get(f"/categorias/produtos/{id_categoria_produto}")
+        raw = self._get(f"/categorias/produtos/{id_categoria_produto}")
+        return self._validate_response(CategoriasProdutosIdCategoriaProdutoGetResponse200, raw)
 
-    def get(self, product_category_id: int) -> JsonObject:
+    def get(self, product_category_id: int) -> CategoriasProdutosIdCategoriaProdutoGetResponse200:
         """Compatibility alias for ``obter()``.
 
         Obtém uma categoria de produto.
@@ -97,7 +106,7 @@ class ProductCategoriesResource(BaseResource):
     def criar(
         self,
         dados: CategoriasProdutosDadosDTO,
-    ) -> JsonObject:
+    ) -> CategoriasProdutosPostResponse201:
         """Cria uma categoria de produto.
 
         Endpoint: POST /categorias/produtos
@@ -110,12 +119,13 @@ class ProductCategoriesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
         """
-        return self._post("/categorias/produtos", json=to_json_object(dados))
+        raw = self._post("/categorias/produtos", json=to_json_object(dados))
+        return self._validate_response(CategoriasProdutosPostResponse201, raw)
 
     def create(
         self,
         data: CategoriasProdutosDadosDTO,
-    ) -> JsonObject:
+    ) -> CategoriasProdutosPostResponse201:
         """Compatibility alias for ``criar()``.
 
         Cria uma categoria de produto.

@@ -4,6 +4,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.product_suppliers import (
+    ProdutosFornecedoresDadosBaseDTO,
+    ProdutosFornecedoresGetResponse200,
+    ProdutosFornecedoresIdProdutoFornecedorGetResponse200,
+    ProdutosFornecedoresIdProdutoFornecedorPutRequest,
+    ProdutosFornecedoresIdProdutoFornecedorPutResponse200,
+    ProdutosFornecedoresPostRequest,
+    ProdutosFornecedoresPostResponse201,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
@@ -11,15 +20,15 @@ from bling_erp_api.utils.serialization import to_json_object
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from bling_erp_api.models.generated.product_suppliers import (
-        ProdutosFornecedoresIdProdutoFornecedorPutRequest,
-        ProdutosFornecedoresPostRequest,
-    )
     from bling_erp_api.types import JsonObject, QueryParams
 
 
 class ProductSuppliersResource(BaseResource):
-    """Operações em ``/produtos/fornecedores``."""
+    """Resource for Bling product-supplier endpoints.
+
+    Maps ``/produtos/fornecedores`` operations for listing, retrieving,
+    creating, updating, and removing product supplier links.
+    """
 
     def listar(
         self,
@@ -28,7 +37,7 @@ class ProductSuppliersResource(BaseResource):
         limite: int = 100,
         id_produto: int | None = None,
         id_fornecedor: int | None = None,
-    ) -> JsonObject:
+    ) -> ProdutosFornecedoresGetResponse200:
         """Obtém produtos fornecedores.
 
         Endpoint: GET /produtos/fornecedores
@@ -44,7 +53,7 @@ class ProductSuppliersResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ProdutosFornecedoresDadosBaseDTO
         """
-        return self._get(
+        raw = self._get(
             "/produtos/fornecedores",
             params=_supplier_list_params(
                 pagina=pagina,
@@ -53,8 +62,11 @@ class ProductSuppliersResource(BaseResource):
                 id_fornecedor=id_fornecedor,
             ),
         )
+        return self._validate_response(ProdutosFornecedoresGetResponse200, raw)
 
-    def iterar(self, *, pagina: int = 1, limite: int = 100) -> Iterator[JsonObject]:
+    def iterar(
+        self, *, pagina: int = 1, limite: int = 100
+    ) -> Iterator[ProdutosFornecedoresDadosBaseDTO]:
         """Itera pelos registros página a página, mantendo os mesmos filtros.
 
         Obtém produtos fornecedores
@@ -72,9 +84,10 @@ class ProductSuppliersResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ProdutosFornecedoresDadosBaseDTO
         """
-        return self._iterate("/produtos/fornecedores", page=pagina, limit=limite)
+        for item in self._iterate("/produtos/fornecedores", page=pagina, limit=limite):
+            yield ProdutosFornecedoresDadosBaseDTO.model_validate(item)
 
-    def criar(self, dados: ProdutosFornecedoresPostRequest) -> JsonObject:
+    def criar(self, dados: ProdutosFornecedoresPostRequest) -> ProdutosFornecedoresPostResponse201:
         """Cria um produto fornecedor.
 
         Endpoint: POST /produtos/fornecedores
@@ -86,9 +99,12 @@ class ProductSuppliersResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
         """
-        return self._post("/produtos/fornecedores", json=to_json_object(dados))
+        raw = self._post("/produtos/fornecedores", json=to_json_object(dados))
+        return self._validate_response(ProdutosFornecedoresPostResponse201, raw)
 
-    def obter(self, id_produto_fornecedor: int) -> JsonObject:
+    def obter(
+        self, id_produto_fornecedor: int
+    ) -> ProdutosFornecedoresIdProdutoFornecedorGetResponse200:
         """Obtém um produto fornecedor.
 
         Endpoint: GET /produtos/fornecedores/{idProdutoFornecedor}
@@ -101,13 +117,14 @@ class ProductSuppliersResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ProdutosFornecedoresDadosBaseDTO, ProdutosFornecedoresDadosDTO; 404: ErrorResponse
         """
-        return self._get(f"/produtos/fornecedores/{id_produto_fornecedor}")
+        raw = self._get(f"/produtos/fornecedores/{id_produto_fornecedor}")
+        return self._validate_response(ProdutosFornecedoresIdProdutoFornecedorGetResponse200, raw)
 
     def alterar(
         self,
         id_produto_fornecedor: int,
         dados: ProdutosFornecedoresIdProdutoFornecedorPutRequest,
-    ) -> JsonObject:
+    ) -> ProdutosFornecedoresIdProdutoFornecedorPutResponse200:
         """Altera um produto fornecedor.
 
         Endpoint: PUT /produtos/fornecedores/{idProdutoFornecedor}
@@ -123,10 +140,11 @@ class ProductSuppliersResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: BasePostResponse; 400: ErrorResponse; 404: ErrorResponse
         """
-        return self._put(
+        raw = self._put(
             f"/produtos/fornecedores/{id_produto_fornecedor}",
             json=to_json_object(dados),
         )
+        return self._validate_response(ProdutosFornecedoresIdProdutoFornecedorPutResponse200, raw)
 
     def remover(self, id_produto_fornecedor: int) -> JsonObject:
         """Remove um produto fornecedor.
