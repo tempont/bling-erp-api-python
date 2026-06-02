@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from bling_erp_api.models.fields import BlingDate
 from typing import TYPE_CHECKING, Any
 
 from pydantic import AliasChoices, AwareDatetime, Field, RootModel
@@ -710,7 +710,7 @@ class Datum6(SituacoesModuloBaseDTO, SituacoesModuloDTO):
     Fields:
         id: Bling ``id``; type ``int``; obrigatório.
         nome: Bling ``nome``; type ``str``; obrigatório. Nome do módulo.
-        descricao: Bling ``descricao``; type ``str | None``; opcional. Descrição do módulo.
+        descricao: Bling ``descricao``; type ``str``; obrigatório. Descrição do módulo.
         criar_situacoes: Bling ``criarSituacoes``; type ``bool``; obrigatório. Identifica a possibilidade de criar situações."""
 
     pass
@@ -1216,7 +1216,7 @@ class Variaco(BlingModel):
         formato: Bling ``formato``; type ``str``; obrigatório. Formato do produto <br> `S` Simples <br> `E` Com composição <br>
         descricao_curta: Bling ``descricaoCurta``; type ``str | None``; opcional.
         imagem_url: Bling ``imagemURL``; type ``str | None``; opcional. Link da primeira imagem de acordo com tipo de armazenamento definido.
-        data_validade: Bling ``dataValidade``; type ``date | None``; opcional.
+        data_validade: Bling ``dataValidade``; type ``BlingDate | None``; opcional.
         unidade: Bling ``unidade``; type ``str | None``; opcional.
         peso_liquido: Bling ``pesoLiquido``; type ``float | None``; opcional. Peso líquido em KG
         peso_bruto: Bling ``pesoBruto``; type ``float | None``; opcional. Peso bruto em KG
@@ -1264,7 +1264,7 @@ class Variaco(BlingModel):
         examples=["https://www.bling.com.br/imagens/imagens-produtos/123456789.jpg"],
         serialization_alias="imagemURL",
     )
-    data_validade: date | None = Field(
+    data_validade: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_validade", "dataValidade"),
         examples=["2020-01-01"],
@@ -1378,7 +1378,7 @@ class Variaco1(BlingModel):
         formato: Bling ``formato``; type ``str | None``; opcional. Formato do produto <br> `S` Simples <br> `E` Com composição <br>
         descricao_curta: Bling ``descricaoCurta``; type ``str | None``; opcional.
         imagem_url: Bling ``imagemURL``; type ``str | None``; opcional. Link da primeira imagem de acordo com tipo de armazenamento definido.
-        data_validade: Bling ``dataValidade``; type ``date | None``; opcional.
+        data_validade: Bling ``dataValidade``; type ``BlingDate | None``; opcional.
         unidade: Bling ``unidade``; type ``str | None``; opcional.
         peso_liquido: Bling ``pesoLiquido``; type ``float | None``; opcional. Peso líquido em KG
         peso_bruto: Bling ``pesoBruto``; type ``float | None``; opcional. Peso bruto em KG
@@ -1426,7 +1426,7 @@ class Variaco1(BlingModel):
         examples=["https://www.bling.com.br/imagens/imagens-produtos/123456789.jpg"],
         serialization_alias="imagemURL",
     )
-    data_validade: date | None = Field(
+    data_validade: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_validade", "dataValidade"),
         examples=["2020-01-01"],

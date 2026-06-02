@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from bling_erp_api.models.fields import BlingDate
 from typing import TYPE_CHECKING, Any
 
 from pydantic import AliasChoices, AwareDatetime, Field, RootModel
@@ -818,7 +818,7 @@ class ProdutosDados(BlingModel):
     quando ele aparecer como request body ou response schema nos métodos do SDK.
 
     Fields:
-        data_validade: Bling ``dataValidade``; type ``date | None``; opcional.
+        data_validade: Bling ``dataValidade``; type ``BlingDate | None``; opcional.
         unidade: Bling ``unidade``; type ``str | None``; opcional.
         peso_liquido: Bling ``pesoLiquido``; type ``float | None``; opcional. Peso líquido em KG
         peso_bruto: Bling ``pesoBruto``; type ``float | None``; opcional. Peso bruto em KG
@@ -846,7 +846,7 @@ class ProdutosDados(BlingModel):
         campos_customizados: Bling ``camposCustomizados``; type ``list[ProdutosCampoCustomizadoDTO] | None``; opcional.
         artigo_perigoso: Bling ``artigoPerigoso``; type ``bool | None``; opcional. Indica se o produto é um artigo perigoso conforme regulamentação ANAC. Quando habilitado, adiciona automaticamente o código de serviço 095 nas etiquetas de envio."""
 
-    data_validade: date | None = Field(
+    data_validade: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_validade", "dataValidade"),
         examples=["2020-01-01"],
@@ -950,7 +950,7 @@ class ProdutosDadosPatch(BlingModel):
     quando ele aparecer como request body ou response schema nos métodos do SDK.
 
     Fields:
-        data_validade: Bling ``dataValidade``; type ``date | None``; opcional.
+        data_validade: Bling ``dataValidade``; type ``BlingDate | None``; opcional.
         unidade: Bling ``unidade``; type ``str | None``; opcional.
         peso_liquido: Bling ``pesoLiquido``; type ``float | None``; opcional. Peso líquido em KG
         peso_bruto: Bling ``pesoBruto``; type ``float | None``; opcional. Peso bruto em KG
@@ -978,7 +978,7 @@ class ProdutosDadosPatch(BlingModel):
         campos_customizados: Bling ``camposCustomizados``; type ``list[ProdutosCampoCustomizadoDTO] | None``; opcional.
         artigo_perigoso: Bling ``artigoPerigoso``; type ``bool | None``; opcional. Indica se o produto é um artigo perigoso conforme regulamentação ANAC. Quando habilitado, adiciona automaticamente o código de serviço 095 nas etiquetas de envio."""
 
-    data_validade: date | None = Field(
+    data_validade: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_validade", "dataValidade"),
         examples=["2020-01-01"],

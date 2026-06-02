@@ -212,3 +212,17 @@ def test_generated_schemas_are_split_into_schema_modules() -> None:
     assert not (generated_dir / "schemas.py").exists()
     assert (generated_dir / "schemas" / "produtos.py").exists()
     assert (generated_dir / "schemas" / "produtos_lojas.py").exists()
+
+
+def test_generated_model_accepts_zero_date_sentinel() -> None:
+    """Bling API zero-date sentinel (``0000-00-00``) should be accepted as None."""
+    model = ProdutosDadosDTO.model_validate(
+        {
+            "nome": "Produto Teste",
+            "tipo": "P",
+            "situacao": "A",
+            "formato": "S",
+            "dataValidade": "0000-00-00",
+        }
+    )
+    assert model.data_validade is None

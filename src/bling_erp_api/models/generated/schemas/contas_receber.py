@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from bling_erp_api.models.fields import BlingDate
 from typing import TYPE_CHECKING, Any
 
 from pydantic import AliasChoices, AwareDatetime, Field, RootModel
@@ -228,7 +228,7 @@ class ContasReceberOcorrenciaDTO(BlingModel):
         tipo: Bling ``tipo``; type ``int``; obrigatório. `3` Mensal<br> `4` Bimestral<br> `5` Trimestral<br> `6` Semestral<br> `7` Anual<br> `8` Quinzenal<br> Ignorado no método PUT
         considerar_dias_uteis: Bling ``considerarDiasUteis``; type ``bool | None``; opcional. Ignorado no método PUT
         dia_vencimento: Bling ``diaVencimento``; type ``int``; obrigatório.
-        data_limite: Bling ``dataLimite``; type ``date | None``; opcional."""
+        data_limite: Bling ``dataLimite``; type ``BlingDate | None``; opcional."""
 
     tipo: int = Field(..., examples=[3])
     considerar_dias_uteis: bool | None = Field(
@@ -243,7 +243,7 @@ class ContasReceberOcorrenciaDTO(BlingModel):
         examples=["25"],
         serialization_alias="diaVencimento",
     )
-    data_limite: date | None = Field(
+    data_limite: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_limite", "dataLimite"),
         examples=["2023-01-12"],
@@ -261,7 +261,7 @@ class ContasReceberOcorrenciaSemanalDTO(BlingModel):
         tipo: Bling ``tipo``; type ``int``; obrigatório. `9` Semanal<br> Ignorado no método PUT
         considerar_dias_uteis: Bling ``considerarDiasUteis``; type ``bool | None``; opcional. Ignorado no método PUT
         dia_semana_vencimento: Bling ``diaSemanaVencimento``; type ``int``; obrigatório.
-        data_limite: Bling ``dataLimite``; type ``date | None``; opcional."""
+        data_limite: Bling ``dataLimite``; type ``BlingDate | None``; opcional."""
 
     tipo: int = Field(..., examples=[9])
     considerar_dias_uteis: bool | None = Field(
@@ -276,7 +276,7 @@ class ContasReceberOcorrenciaSemanalDTO(BlingModel):
         examples=["25"],
         serialization_alias="diaSemanaVencimento",
     )
-    data_limite: date | None = Field(
+    data_limite: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_limite", "dataLimite"),
         examples=["2023-01-12"],
@@ -432,10 +432,10 @@ class ContasReceberDadosBaseDTO(BlingModel):
 
     Fields:
         saldo: Bling ``saldo``; type ``float``; obrigatório. É calculado subtraindo os valores dos recebimentos do valor da conta
-        data_emissao: Bling ``dataEmissao``; type ``date | None``; opcional.
-        vencimento_original: Bling ``vencimentoOriginal``; type ``date``; obrigatório.
+        data_emissao: Bling ``dataEmissao``; type ``BlingDate | None``; opcional.
+        vencimento_original: Bling ``vencimentoOriginal``; type ``BlingDate``; obrigatório.
         numero_documento: Bling ``numeroDocumento``; type ``str | None``; opcional. Número para controle interno da empresa
-        competencia: Bling ``competencia``; type ``date | None``; opcional.
+        competencia: Bling ``competencia``; type ``BlingDate | None``; opcional.
         historico: Bling ``historico``; type ``str | None``; opcional. Descriçao da conta para controle interno da empresa
         numero_banco: Bling ``numeroBanco``; type ``str``; obrigatório. Adicionado automaticamente com o número preenchido no cadastro do banco
         portador: Bling ``portador``; type ``ContasPortadorDTO | None``; opcional.
@@ -444,13 +444,13 @@ class ContasReceberDadosBaseDTO(BlingModel):
         borderos: Bling ``borderos``; type ``list[int]``; obrigatório. IDs de borderos relacionados à conta caso ela possua pagamentos"""
 
     saldo: float = Field(..., examples=[100.75])
-    data_emissao: date | None = Field(
+    data_emissao: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_emissao", "dataEmissao"),
         examples=["2023-01-12"],
         serialization_alias="dataEmissao",
     )
-    vencimento_original: date = Field(
+    vencimento_original: BlingDate = Field(
         ...,
         validation_alias=AliasChoices("vencimento_original", "vencimentoOriginal"),
         examples=["2023-01-12"],
@@ -462,7 +462,7 @@ class ContasReceberDadosBaseDTO(BlingModel):
         examples=[""],
         serialization_alias="numeroDocumento",
     )
-    competencia: date | None = Field(default=None, examples=["2023-01-12"])
+    competencia: BlingDate | None = Field(default=None, examples=["2023-01-12"])
     historico: str | None = Field(default=None, examples=[""])
     numero_banco: str = Field(
         ...,
@@ -503,12 +503,12 @@ class ContasReceberDadosListDTO(BlingModel):
     Fields:
         id: Bling ``id``; type ``int | None``; opcional.
         situacao: Bling ``situacao``; type ``int``; obrigatório. `1` Aberto <br>`2` Pago<br>`3` Parcial<br>`4` Devolvido<br>`5` Cancelado<br>`6` Devolvido parcial<br>`7` Confirmado
-        vencimento: Bling ``vencimento``; type ``date``; obrigatório.
+        vencimento: Bling ``vencimento``; type ``BlingDate``; obrigatório.
         valor: Bling ``valor``; type ``float``; obrigatório.
         id_transacao: Bling ``idTransacao``; type ``str | None``; opcional.
         link_qr_code_pix: Bling ``linkQRCodePix``; type ``str | None``; opcional.
         link_boleto: Bling ``linkBoleto``; type ``str | None``; opcional.
-        data_emissao: Bling ``dataEmissao``; type ``date | None``; opcional.
+        data_emissao: Bling ``dataEmissao``; type ``BlingDate | None``; opcional.
         contato: Bling ``contato``; type ``ContasReceberContatoDTO``; obrigatório.
         forma_pagamento: Bling ``formaPagamento``; type ``ContasReceberFormaPagamentoDTO | None``; opcional.
         conta_contabil: Bling ``contaContabil``; type ``ContasReceberContaContabilDTO | None``; opcional.
@@ -516,7 +516,7 @@ class ContasReceberDadosListDTO(BlingModel):
 
     id: int | None = Field(default=None, examples=[12345678])
     situacao: int = Field(..., examples=[1])
-    vencimento: date = Field(..., examples=["2023-01-12"])
+    vencimento: BlingDate = Field(..., examples=["2023-01-12"])
     valor: float = Field(..., examples=[1500.75])
     id_transacao: str | None = Field(
         default=None,
@@ -536,7 +536,7 @@ class ContasReceberDadosListDTO(BlingModel):
         examples=["doc.view.php?id=9ab1671b3f05765cb49fee83ee0f2496"],
         serialization_alias="linkBoleto",
     )
-    data_emissao: date | None = Field(
+    data_emissao: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_emissao", "dataEmissao"),
         examples=["2023-01-12"],

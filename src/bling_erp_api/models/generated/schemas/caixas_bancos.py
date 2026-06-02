@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from bling_erp_api.models.fields import BlingDate
 from typing import TYPE_CHECKING, Any
 
 from pydantic import AliasChoices, AwareDatetime, Field, RootModel
@@ -147,8 +147,8 @@ class CaixasBancosLancamentoDTO(BlingModel):
         situacao: Bling ``situacao``; type ``str | None``; opcional. Situação do lançamento <br> `R` - Registrado <br> `E` - Excluído <br> `H` - Escondido <br> `N` - Não registrado <br> `P` - Processando (externa) <br> `C` - Cancelado (externa)
         transferencia: Bling ``transferencia``; type ``str | None``; opcional. Indica se o lançamento é uma transferência <br> `1` - Sim <br> `0` - Não
         tipo_lancamento: Bling ``tipoLancamento``; type ``str | None``; opcional. Tipo do lançamento <br> `1` - Débito <br> `2` - Crédito
-        data: Bling ``data``; type ``date | None``; opcional. Data do lançamento
-        competencia: Bling ``competencia``; type ``date | None``; opcional. Data de competência do lançamento
+        data: Bling ``data``; type ``BlingDate | None``; opcional. Data do lançamento
+        competencia: Bling ``competencia``; type ``BlingDate | None``; opcional. Data de competência do lançamento
         valor: Bling ``valor``; type ``float | None``; opcional. Valor do lançamento
         observacoes: Bling ``observacoes``; type ``str | None``; opcional. Observações adicionais sobre o lançamento
         parcela: Bling ``parcela``; type ``CaixasBancosLancamentoParcelaDTO | None``; opcional.
@@ -174,8 +174,8 @@ class CaixasBancosLancamentoDTO(BlingModel):
         examples=["1"],
         serialization_alias="tipoLancamento",
     )
-    data: date | None = Field(default=None, examples=["2025-01-01"])
-    competencia: date | None = Field(default=None, examples=["2025-01-01"])
+    data: BlingDate | None = Field(default=None, examples=["2025-01-01"])
+    competencia: BlingDate | None = Field(default=None, examples=["2025-01-01"])
     valor: float | None = Field(default=None, examples=[100])
     observacoes: str | None = Field(default=None, examples=["Observações"])
     parcela: CaixasBancosLancamentoParcelaDTO | None = None
@@ -202,10 +202,10 @@ class CaixasBancosSalvarLancamentoDTO(BlingModel):
 
     Fields:
         id: Bling ``id``; type ``int | None``; opcional. ID do lançamento (deve corresponder ao ID da URL)
-        data: Bling ``data``; type ``date``; obrigatório. Data do lançamento
+        data: Bling ``data``; type ``BlingDate``; obrigatório. Data do lançamento
         valor: Bling ``valor``; type ``float``; obrigatório. Valor do lançamento
         deb_cred: Bling ``debCred``; type ``str``; obrigatório. Tipo de lançamento: <br> `C` - Crédito <br> `D` - Débito
-        competencia: Bling ``competencia``; type ``date``; obrigatório. Data de competência
+        competencia: Bling ``competencia``; type ``BlingDate``; obrigatório. Data de competência
         observacoes: Bling ``observacoes``; type ``str``; obrigatório. Observações do lançamento
         transferencia: Bling ``transferencia``; type ``str | None``; opcional. Indica se é uma transferência
         conta_financeira: Bling ``contaFinanceira``; type ``ContasFinanceirasDadosBasicosDTO | None``; opcional.
@@ -214,7 +214,7 @@ class CaixasBancosSalvarLancamentoDTO(BlingModel):
         contato: Bling ``contato``; type ``CaixasBancosDadosBasicoContatoDTO | None``; opcional."""
 
     id: int | None = Field(default=None, examples=[12345678])
-    data: date = Field(..., examples=["2025-01-01"])
+    data: BlingDate = Field(..., examples=["2025-01-01"])
     valor: float = Field(..., examples=["123.00"])
     deb_cred: str = Field(
         ...,
@@ -222,7 +222,7 @@ class CaixasBancosSalvarLancamentoDTO(BlingModel):
         examples=["C"],
         serialization_alias="debCred",
     )
-    competencia: date = Field(..., examples=["2025-01-01"])
+    competencia: BlingDate = Field(..., examples=["2025-01-01"])
     observacoes: str = Field(..., examples=["Lançamento atualizado"])
     transferencia: str | None = Field(default=None, examples=[""])
     conta_financeira: ContasFinanceirasDadosBasicosDTO | None = Field(

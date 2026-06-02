@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from bling_erp_api.models.fields import BlingDate
 from typing import TYPE_CHECKING, Any
 
 from pydantic import AliasChoices, AwareDatetime, Field, RootModel
@@ -90,14 +90,14 @@ class BorderosDadosDTO(BlingModel):
 
     Fields:
         id: Bling ``id``; type ``int``; obrigatório.
-        data: Bling ``data``; type ``date``; obrigatório.
+        data: Bling ``data``; type ``BlingDate``; obrigatório.
         historico: Bling ``historico``; type ``str``; obrigatório.
         portador: Bling ``portador``; type ``BorderosPortadorDTO``; obrigatório.
         categoria: Bling ``categoria``; type ``BorderosCategoriaDTO``; obrigatório.
         pagamentos: Bling ``pagamentos``; type ``list[BorderosPagamentoDTO]``; obrigatório."""
 
     id: int = Field(..., examples=[12345678])
-    data: date = Field(..., examples=["2023-01-12"])
+    data: BlingDate = Field(..., examples=["2023-01-12"])
     historico: str = Field(..., examples=["Referente ao pedido nº 12345678"])
     portador: BorderosPortadorDTO
     categoria: BorderosCategoriaDTO

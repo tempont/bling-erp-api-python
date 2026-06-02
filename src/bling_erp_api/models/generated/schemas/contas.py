@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from bling_erp_api.models.fields import BlingDate
 from typing import TYPE_CHECKING, Any
 
 from pydantic import AliasChoices, AwareDatetime, Field, RootModel
@@ -67,7 +67,7 @@ class ContasBaixarContaDTO(BlingModel):
     quando ele aparecer como request body ou response schema nos métodos do SDK.
 
     Fields:
-        data: Bling ``data``; type ``date``; obrigatório.
+        data: Bling ``data``; type ``BlingDate``; obrigatório.
         usar_data_vencimento: Bling ``usarDataVencimento``; type ``bool``; obrigatório.
         portador: Bling ``portador``; type ``ContasPortadorDTO``; obrigatório.
         categoria: Bling ``categoria``; type ``ContasCategoriaDTO``; obrigatório.
@@ -78,7 +78,7 @@ class ContasBaixarContaDTO(BlingModel):
         valor_recebido: Bling ``valorRecebido``; type ``float | None``; opcional. Valor bruto da conta, incluindo a taxa do marketplace se aplicável. Se não for especificado, o valor total da conta será usado
         tarifa: Bling ``tarifa``; type ``float | None``; opcional. O valor da tarifa deve ser preenchido caso a forma de pagamento possua taxas de alíquota ou de valor fixo."""
 
-    data: date = Field(..., examples=["2023-01-12"])
+    data: BlingDate = Field(..., examples=["2023-01-12"])
     usar_data_vencimento: bool = Field(
         ...,
         validation_alias=AliasChoices("usar_data_vencimento", "usarDataVencimento"),
@@ -109,14 +109,14 @@ class ContasDadosBaseDTO(BlingModel):
     Fields:
         id: Bling ``id``; type ``int | None``; opcional.
         situacao: Bling ``situacao``; type ``int``; obrigatório. `1` Aberto <br>`2` Pago<br>`3` Parcial<br>`4` Devolvido<br>`5` Cancelado<br>`6` Devolvido parcial<br>`7` Confirmado
-        vencimento: Bling ``vencimento``; type ``date``; obrigatório.
+        vencimento: Bling ``vencimento``; type ``BlingDate``; obrigatório.
         valor: Bling ``valor``; type ``float``; obrigatório.
         contato: Bling ``contato``; type ``ContasContatoDTO``; obrigatório.
         forma_pagamento: Bling ``formaPagamento``; type ``ContasFormaPagamentoDTO | None``; opcional."""
 
     id: int | None = Field(default=None, examples=[12345678])
     situacao: int = Field(..., examples=[1])
-    vencimento: date = Field(..., examples=["2023-01-12"])
+    vencimento: BlingDate = Field(..., examples=["2023-01-12"])
     valor: float = Field(..., examples=[1500.75])
     contato: ContasContatoDTO
     forma_pagamento: ContasFormaPagamentoDTO | None = Field(

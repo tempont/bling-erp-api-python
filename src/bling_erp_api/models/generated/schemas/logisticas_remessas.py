@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from bling_erp_api.models.fields import BlingDate
 from typing import TYPE_CHECKING, Any
 
 from pydantic import AliasChoices, AwareDatetime, Field, RootModel
@@ -225,7 +225,7 @@ class LogisticasRemessasObjetosDTO(BlingModel):
         rastreamento: Bling ``rastreamento``; type ``LogisticasRemessasRastreamentoDTO``; obrigatório.
         dimensao: Bling ``dimensao``; type ``LogisticasRemessasDimensaoDTO``; obrigatório.
         embalagem: Bling ``embalagem``; type ``LogisticasRemessasEmbalagemDTO``; obrigatório.
-        data_saida: Bling ``dataSaida``; type ``date``; obrigatório.
+        data_saida: Bling ``dataSaida``; type ``BlingDate``; obrigatório.
         prazo_entrega_previsto: Bling ``prazoEntregaPrevisto``; type ``int``; obrigatório.
         frete_previsto: Bling ``fretePrevisto``; type ``float``; obrigatório.
         valor_declarado: Bling ``valorDeclarado``; type ``float``; obrigatório.
@@ -248,7 +248,7 @@ class LogisticasRemessasObjetosDTO(BlingModel):
     rastreamento: LogisticasRemessasRastreamentoDTO
     dimensao: LogisticasRemessasDimensaoDTO
     embalagem: LogisticasRemessasEmbalagemDTO
-    data_saida: date = Field(
+    data_saida: BlingDate = Field(
         ...,
         validation_alias=AliasChoices("data_saida", "dataSaida"),
         examples=["2022-12-01"],

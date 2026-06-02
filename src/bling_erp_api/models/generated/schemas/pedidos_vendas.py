@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from bling_erp_api.models.fields import BlingDate
 from typing import TYPE_CHECKING, Any
 
 from pydantic import AliasChoices, AwareDatetime, Field, RootModel
@@ -372,9 +372,9 @@ class VendasDadosBaseDTO(BlingModel):
         id: Bling ``id``; type ``int | None``; opcional.
         numero: Bling ``numero``; type ``int | None``; opcional.
         numero_loja: Bling ``numeroLoja``; type ``str | None``; opcional.
-        data: Bling ``data``; type ``date``; obrigatório. Valor obrigatório caso parâmetro de geração de parcelas seja este
-        data_saida: Bling ``dataSaida``; type ``date``; obrigatório. Valor obrigatório caso parâmetro de geração de parcelas seja este
-        data_prevista: Bling ``dataPrevista``; type ``date``; obrigatório. Valor obrigatório caso parâmetro de geração de parcelas seja este
+        data: Bling ``data``; type ``BlingDate``; obrigatório. Valor obrigatório caso parâmetro de geração de parcelas seja este
+        data_saida: Bling ``dataSaida``; type ``BlingDate``; obrigatório. Valor obrigatório caso parâmetro de geração de parcelas seja este
+        data_prevista: Bling ``dataPrevista``; type ``BlingDate``; obrigatório. Valor obrigatório caso parâmetro de geração de parcelas seja este
         total_produtos: Bling ``totalProdutos``; type ``float | None``; opcional.
         total: Bling ``total``; type ``float | None``; opcional.
         contato: Bling ``contato``; type ``VendasContatoDTO``; obrigatório.
@@ -389,14 +389,14 @@ class VendasDadosBaseDTO(BlingModel):
         examples=["Loja_123"],
         serialization_alias="numeroLoja",
     )
-    data: date = Field(..., examples=["2023-01-12"])
-    data_saida: date = Field(
+    data: BlingDate = Field(..., examples=["2023-01-12"])
+    data_saida: BlingDate = Field(
         ...,
         validation_alias=AliasChoices("data_saida", "dataSaida"),
         examples=["2023-01-12"],
         serialization_alias="dataSaida",
     )
-    data_prevista: date = Field(
+    data_prevista: BlingDate = Field(
         ...,
         validation_alias=AliasChoices("data_prevista", "dataPrevista"),
         examples=["2023-01-12"],
@@ -424,9 +424,9 @@ class VendasDadosBaseDTOPUT(BlingModel):
         id: Bling ``id``; type ``int | None``; opcional.
         numero: Bling ``numero``; type ``int | None``; opcional.
         numero_loja: Bling ``numeroLoja``; type ``str | None``; opcional.
-        data: Bling ``data``; type ``date``; obrigatório. Valor obrigatório caso parâmetro de geração de parcelas seja este
-        data_saida: Bling ``dataSaida``; type ``date``; obrigatório. Valor obrigatório caso parâmetro de geração de parcelas seja este
-        data_prevista: Bling ``dataPrevista``; type ``date``; obrigatório. Valor obrigatório caso parâmetro de geração de parcelas seja este
+        data: Bling ``data``; type ``BlingDate``; obrigatório. Valor obrigatório caso parâmetro de geração de parcelas seja este
+        data_saida: Bling ``dataSaida``; type ``BlingDate``; obrigatório. Valor obrigatório caso parâmetro de geração de parcelas seja este
+        data_prevista: Bling ``dataPrevista``; type ``BlingDate``; obrigatório. Valor obrigatório caso parâmetro de geração de parcelas seja este
         total_produtos: Bling ``totalProdutos``; type ``float | None``; opcional.
         total: Bling ``total``; type ``float | None``; opcional.
         contato: Bling ``contato``; type ``VendasContatoDTO``; obrigatório.
@@ -441,14 +441,14 @@ class VendasDadosBaseDTOPUT(BlingModel):
         examples=["Loja_123"],
         serialization_alias="numeroLoja",
     )
-    data: date = Field(..., examples=["2023-01-12"])
-    data_saida: date = Field(
+    data: BlingDate = Field(..., examples=["2023-01-12"])
+    data_saida: BlingDate = Field(
         ...,
         validation_alias=AliasChoices("data_saida", "dataSaida"),
         examples=["2023-01-12"],
         serialization_alias="dataSaida",
     )
-    data_prevista: date = Field(
+    data_prevista: BlingDate = Field(
         ...,
         validation_alias=AliasChoices("data_prevista", "dataPrevista"),
         examples=["2023-01-12"],
@@ -522,14 +522,14 @@ class VendasParcelaDTO(BlingModel):
 
     Fields:
         id: Bling ``id``; type ``int``; obrigatório. Ignorado no método POST.
-        data_vencimento: Bling ``dataVencimento``; type ``date``; obrigatório.
+        data_vencimento: Bling ``dataVencimento``; type ``BlingDate``; obrigatório.
         valor: Bling ``valor``; type ``float``; obrigatório.
         observacoes: Bling ``observacoes``; type ``str | None``; opcional.
         caut: Bling ``caut``; type ``str | None``; opcional. cAut (ou NSU): código de autorização da operação financeira
         forma_pagamento: Bling ``formaPagamento``; type ``VendasParcelaFormaPagamentoDTO``; obrigatório."""
 
     id: int = Field(..., examples=[12345678])
-    data_vencimento: date = Field(
+    data_vencimento: BlingDate = Field(
         ...,
         validation_alias=AliasChoices("data_vencimento", "dataVencimento"),
         examples=["2023-01-12"],

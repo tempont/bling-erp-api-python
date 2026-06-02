@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from bling_erp_api.models.fields import BlingDate
 from typing import TYPE_CHECKING, Any
 
 from pydantic import AliasChoices, AwareDatetime, Field, RootModel
@@ -47,7 +47,7 @@ class OrcamentosParcelaDTO(BlingModel):
 
     Fields:
         numero_dias: Bling ``numeroDias``; type ``int | None``; opcional.
-        data_vencimento: Bling ``dataVencimento``; type ``date | None``; opcional.
+        data_vencimento: Bling ``dataVencimento``; type ``BlingDate | None``; opcional.
         valor: Bling ``valor``; type ``float | None``; opcional.
         observacoes: Bling ``observacoes``; type ``str | None``; opcional.
         forma_pagamento: Bling ``formaPagamento``; type ``OrcamentosFormaPagamentoDTO | None``; opcional."""
@@ -58,7 +58,7 @@ class OrcamentosParcelaDTO(BlingModel):
         examples=[10],
         serialization_alias="numeroDias",
     )
-    data_vencimento: date | None = Field(
+    data_vencimento: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_vencimento", "dataVencimento"),
         examples=["2024-04-29"],
@@ -245,7 +245,7 @@ class OrcamentosDadosBaseDTO(BlingModel):
 
     Fields:
         id: Bling ``id``; type ``int | None``; opcional.
-        data: Bling ``data``; type ``date | None``; opcional.
+        data: Bling ``data``; type ``BlingDate | None``; opcional.
         situacao: Bling ``situacao``; type ``str | None``; opcional.
         total: Bling ``total``; type ``float | None``; opcional.
         total_produtos: Bling ``totalProdutos``; type ``float | None``; opcional.
@@ -254,7 +254,7 @@ class OrcamentosDadosBaseDTO(BlingModel):
         loja: Bling ``loja``; type ``OrcamentosLojaDTO | None``; opcional."""
 
     id: int | None = Field(default=None, examples=[123456789])
-    data: date | None = Field(default=None, examples=["2024-04-29"])
+    data: BlingDate | None = Field(default=None, examples=["2024-04-29"])
     situacao: str | None = Field(default=None, examples=["Concluído"])
     total: float | None = Field(default=None, examples=[251])
     total_produtos: float | None = Field(

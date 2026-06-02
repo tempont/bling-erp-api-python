@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from bling_erp_api.models.fields import BlingDate
 from typing import TYPE_CHECKING, Any
 
 from pydantic import AliasChoices, AwareDatetime, Field, RootModel
@@ -147,35 +147,35 @@ class OrdensProducaoDadosBaseDTO(BlingModel):
 
     Fields:
         id: Bling ``id``; type ``int``; obrigatório.
-        data_previsao_inicio: Bling ``dataPrevisaoInicio``; type ``date | None``; opcional.
-        data_previsao_final: Bling ``dataPrevisaoFinal``; type ``date | None``; opcional.
-        data_inicio: Bling ``dataInicio``; type ``date | None``; opcional.
-        data_fim: Bling ``dataFim``; type ``date | None``; opcional.
+        data_previsao_inicio: Bling ``dataPrevisaoInicio``; type ``BlingDate | None``; opcional.
+        data_previsao_final: Bling ``dataPrevisaoFinal``; type ``BlingDate | None``; opcional.
+        data_inicio: Bling ``dataInicio``; type ``BlingDate | None``; opcional.
+        data_fim: Bling ``dataFim``; type ``BlingDate | None``; opcional.
         numero: Bling ``numero``; type ``int``; obrigatório.
         responsavel: Bling ``responsavel``; type ``str | None``; opcional.
         deposito: Bling ``deposito``; type ``OrdensProducaoDepositoDTO``; obrigatório.
         situacao: Bling ``situacao``; type ``OrdensProducaoSituacaoDTO``; obrigatório."""
 
     id: int = Field(..., examples=[12345678])
-    data_previsao_inicio: date | None = Field(
+    data_previsao_inicio: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_previsao_inicio", "dataPrevisaoInicio"),
         examples=["2021-01-01"],
         serialization_alias="dataPrevisaoInicio",
     )
-    data_previsao_final: date | None = Field(
+    data_previsao_final: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_previsao_final", "dataPrevisaoFinal"),
         examples=["2021-01-01"],
         serialization_alias="dataPrevisaoFinal",
     )
-    data_inicio: date | None = Field(
+    data_inicio: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_inicio", "dataInicio"),
         examples=["2021-01-01"],
         serialization_alias="dataInicio",
     )
-    data_fim: date | None = Field(
+    data_fim: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_fim", "dataFim"),
         examples=["2021-01-01"],

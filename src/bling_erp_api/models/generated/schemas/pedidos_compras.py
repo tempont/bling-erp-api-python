@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from bling_erp_api.models.fields import BlingDate
 from typing import TYPE_CHECKING, Any
 
 from pydantic import AliasChoices, AwareDatetime, Field, RootModel
@@ -87,12 +87,12 @@ class PedidosComprasParcelaDTO(BlingModel):
 
     Fields:
         valor: Bling ``valor``; type ``float``; obrigatório.
-        data_vencimento: Bling ``dataVencimento``; type ``date``; obrigatório.
+        data_vencimento: Bling ``dataVencimento``; type ``BlingDate``; obrigatório.
         observacao: Bling ``observacao``; type ``str | None``; opcional.
         forma_pagamento: Bling ``formaPagamento``; type ``PedidosComprasFormaPagamentoDTO | None``; opcional."""
 
     valor: float = Field(..., examples=[2090.66])
-    data_vencimento: date = Field(
+    data_vencimento: BlingDate = Field(
         ...,
         validation_alias=AliasChoices("data_vencimento", "dataVencimento"),
         examples=["2020-09-23"],
@@ -243,8 +243,8 @@ class PedidosComprasDadosBaseDTO(BlingModel):
     Fields:
         id: Bling ``id``; type ``int | None``; opcional.
         numero: Bling ``numero``; type ``int | None``; opcional.
-        data: Bling ``data``; type ``date | None``; opcional.
-        data_prevista: Bling ``dataPrevista``; type ``date | None``; opcional.
+        data: Bling ``data``; type ``BlingDate | None``; opcional.
+        data_prevista: Bling ``dataPrevista``; type ``BlingDate | None``; opcional.
         total_produtos: Bling ``totalProdutos``; type ``float | None``; opcional.
         total: Bling ``total``; type ``float | None``; opcional.
         fornecedor: Bling ``fornecedor``; type ``PedidosComprasFornecedorDTO``; obrigatório.
@@ -252,8 +252,8 @@ class PedidosComprasDadosBaseDTO(BlingModel):
 
     id: int | None = Field(default=None, examples=[12345678])
     numero: int | None = Field(default=None, examples=[12])
-    data: date | None = Field(default=None, examples=["2020-08-24"])
-    data_prevista: date | None = Field(
+    data: BlingDate | None = Field(default=None, examples=["2020-08-24"])
+    data_prevista: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_prevista", "dataPrevista"),
         examples=["2020-08-30"],

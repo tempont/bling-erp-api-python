@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from bling_erp_api.models.fields import BlingDate
 from typing import TYPE_CHECKING, Any
 
 from pydantic import AliasChoices, AwareDatetime, Field, RootModel
@@ -313,11 +313,11 @@ class NotasFiscaisNotaFiscalProdutorRuralReferenciadaDTO(BlingModel):
     Fields:
         numero: Bling ``numero``; type ``str``; obrigatório. Número da NF referenciada.
         serie: Bling ``serie``; type ``str``; obrigatório. Série da NF referenciada.
-        data: Bling ``data``; type ``date``; obrigatório."""
+        data: Bling ``data``; type ``BlingDate``; obrigatório."""
 
     numero: str = Field(..., examples=["125"])
     serie: str = Field(..., examples=["1"])
-    data: date = Field(..., examples=["2023-01-12"])
+    data: BlingDate = Field(..., examples=["2023-01-12"])
 
 
 class NotasFiscaisParcelaFormaPagamentoDTO(BlingModel):
@@ -666,13 +666,13 @@ class NotasFiscaisParcelaDTO(BlingModel):
     quando ele aparecer como request body ou response schema nos métodos do SDK.
 
     Fields:
-        data: Bling ``data``; type ``date``; obrigatório.
+        data: Bling ``data``; type ``BlingDate``; obrigatório.
         valor: Bling ``valor``; type ``float``; obrigatório.
         observacoes: Bling ``observacoes``; type ``str | None``; opcional.
         caut: Bling ``caut``; type ``str | None``; opcional. cAut (ou NSU): código de autorização da operação financeira.
         forma_pagamento: Bling ``formaPagamento``; type ``NotasFiscaisParcelaFormaPagamentoDTO | None``; opcional."""
 
-    data: date = Field(..., examples=["2023-01-12"])
+    data: BlingDate = Field(..., examples=["2023-01-12"])
     valor: float = Field(..., examples=[123.45])
     observacoes: str | None = Field(default=None, examples=["Observação da parcela."])
     caut: str | None = Field(default=None, examples=["123456789"])

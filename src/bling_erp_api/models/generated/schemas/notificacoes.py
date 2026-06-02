@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from bling_erp_api.models.fields import BlingDate
 from typing import TYPE_CHECKING, Any
 
 from pydantic import AliasChoices, AwareDatetime, Field, RootModel
@@ -93,13 +93,13 @@ class NotificacoesDadosBaseDTO(BlingModel):
         fonte: Bling ``fonte``; type ``str | None``; opcional. Nome do orgão ou entidade em que se baseia a informação.
         link_ajuda: Bling ``linkAjuda``; type ``str | None``; opcional. Link para direcionar o cliente à mais informações.
         acao: Bling ``acao``; type ``str | None``; opcional. Ação executada na notificação.
-        data_criacao: Bling ``dataCriacao``; type ``date | None``; opcional. Data de criação da notificação.
+        data_criacao: Bling ``dataCriacao``; type ``BlingDate | None``; opcional. Data de criação da notificação.
         data_envio: Bling ``dataEnvio``; type ``str``; obrigatório. Data de publicação da notificação.
-        data_vigencia: Bling ``dataVigencia``; type ``date | None``; opcional. Data em que uma possível alteração informada entrará em vigor.
-        data_acao: Bling ``dataAcao``; type ``date | None``; opcional. Data em que a ação foi realizada pelo usuário.
+        data_vigencia: Bling ``dataVigencia``; type ``BlingDate | None``; opcional. Data em que uma possível alteração informada entrará em vigor.
+        data_acao: Bling ``dataAcao``; type ``BlingDate | None``; opcional. Data em que a ação foi realizada pelo usuário.
         data_leitura: Bling ``dataLeitura``; type ``str | None``; opcional. Data em que o usuário leu a notificação.
-        data_alerta: Bling ``dataAlerta``; type ``date | None``; opcional. Data em que a notificação ficará com a cor amarela para alertar usuário.
-        data_perigo: Bling ``dataPerigo``; type ``date | None``; opcional. Data em que a notificação ficará com a cor vermelha para alertar usuário.
+        data_alerta: Bling ``dataAlerta``; type ``BlingDate | None``; opcional. Data em que a notificação ficará com a cor amarela para alertar usuário.
+        data_perigo: Bling ``dataPerigo``; type ``BlingDate | None``; opcional. Data em que a notificação ficará com a cor vermelha para alertar usuário.
         enquadramentos: Bling ``enquadramentos``; type ``list[NotificacoesEnquadramentosFiscaisDTO] | None``; opcional."""
 
     emitente: str
@@ -113,7 +113,7 @@ class NotificacoesDadosBaseDTO(BlingModel):
         serialization_alias="linkAjuda",
     )
     acao: str | None = None
-    data_criacao: date | None = Field(
+    data_criacao: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_criacao", "dataCriacao"),
         examples=["2023-01-12"],
@@ -125,13 +125,13 @@ class NotificacoesDadosBaseDTO(BlingModel):
         examples=["2023-01-12 00:00:00"],
         serialization_alias="dataEnvio",
     )
-    data_vigencia: date | None = Field(
+    data_vigencia: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_vigencia", "dataVigencia"),
         examples=["2023-01-12"],
         serialization_alias="dataVigencia",
     )
-    data_acao: date | None = Field(
+    data_acao: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_acao", "dataAcao"),
         examples=["2023-01-12"],
@@ -143,13 +143,13 @@ class NotificacoesDadosBaseDTO(BlingModel):
         examples=["2023-01-12 11:50:00"],
         serialization_alias="dataLeitura",
     )
-    data_alerta: date | None = Field(
+    data_alerta: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_alerta", "dataAlerta"),
         examples=["2023-01-12"],
         serialization_alias="dataAlerta",
     )
-    data_perigo: date | None = Field(
+    data_perigo: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_perigo", "dataPerigo"),
         examples=["2023-01-12"],

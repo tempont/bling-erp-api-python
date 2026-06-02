@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from bling_erp_api.models.fields import BlingDate
 from typing import TYPE_CHECKING, Any
 
 from pydantic import AliasChoices, AwareDatetime, Field, RootModel
@@ -88,7 +88,7 @@ class ContratosDadosBaseDTO(BlingModel):
     Fields:
         id: Bling ``id``; type ``int | None``; opcional.
         descricao: Bling ``descricao``; type ``str``; obrigatório.
-        data: Bling ``data``; type ``date``; obrigatório. Data de criação do contrato.
+        data: Bling ``data``; type ``BlingDate``; obrigatório. Data de criação do contrato.
         numero: Bling ``numero``; type ``str``; obrigatório.
         valor: Bling ``valor``; type ``float``; obrigatório.
         situacao: Bling ``situacao``; type ``int``; obrigatório. `0` Inativo<br>`1` Ativo<br>`2` Baixado<br>`3` Isento<br>`4` Em avaliação
@@ -96,7 +96,7 @@ class ContratosDadosBaseDTO(BlingModel):
 
     id: int | None = Field(default=None, examples=[123455678])
     descricao: str = Field(..., examples=["Alugel do apartamento A102"])
-    data: date = Field(..., examples=["2023-02-19"])
+    data: BlingDate = Field(..., examples=["2023-02-19"])
     numero: str = Field(..., examples=["25"])
     valor: float = Field(..., examples=[59.99])
     situacao: int = Field(..., examples=[1])
@@ -236,11 +236,11 @@ class ContratosCobrancaDTO(BlingModel):
     quando ele aparecer como request body ou response schema nos métodos do SDK.
 
     Fields:
-        data_base: Bling ``dataBase``; type ``date | None``; opcional.
+        data_base: Bling ``dataBase``; type ``BlingDate | None``; opcional.
         contato: Bling ``contato``; type ``ContratosCobrancaContatoDTO | None``; opcional.
         vencimento: Bling ``vencimento``; type ``ContratosCobrancaVencimentoDTO | None``; opcional."""
 
-    data_base: date | None = Field(
+    data_base: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_base", "dataBase"),
         examples=["2023-02-22"],

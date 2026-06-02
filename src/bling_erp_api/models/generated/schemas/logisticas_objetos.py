@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from bling_erp_api.models.fields import BlingDate
 from typing import TYPE_CHECKING, Any
 
 from pydantic import AliasChoices, AwareDatetime, Field, RootModel
@@ -158,7 +158,7 @@ class LogisticasObjetosDadosDTO(BlingModel):
         rastreamento: Bling ``rastreamento``; type ``LogisticasObjetosRastreamentoDTO | None``; opcional.
         dimensao: Bling ``dimensao``; type ``LogisticasObjetosDimensaoDTO``; obrigatório.
         embalagem: Bling ``embalagem``; type ``LogisticasObjetosEmbalagemDTO``; obrigatório.
-        data_saida: Bling ``dataSaida``; type ``date``; obrigatório.
+        data_saida: Bling ``dataSaida``; type ``BlingDate``; obrigatório.
         prazo_entrega_previsto: Bling ``prazoEntregaPrevisto``; type ``int``; obrigatório.
         frete_previsto: Bling ``fretePrevisto``; type ``float``; obrigatório.
         valor_declarado: Bling ``valorDeclarado``; type ``float``; obrigatório.
@@ -179,7 +179,7 @@ class LogisticasObjetosDadosDTO(BlingModel):
     rastreamento: LogisticasObjetosRastreamentoDTO | None = None
     dimensao: LogisticasObjetosDimensaoDTO
     embalagem: LogisticasObjetosEmbalagemDTO
-    data_saida: date = Field(
+    data_saida: BlingDate = Field(
         ...,
         validation_alias=AliasChoices("data_saida", "dataSaida"),
         examples=["2022-12-01"],
@@ -227,7 +227,7 @@ class LogisticasObjetosUpdateRequestDTO(BlingModel):
         rastreamento: Bling ``rastreamento``; type ``LogisticasObjetosRastreamentoDTO | None``; opcional.
         dimensoes: Bling ``dimensoes``; type ``LogisticasObjetosDimensaoDTO | None``; opcional.
         embalagem: Bling ``embalagem``; type ``LogisticasObjetosEmbalagemDTO``; obrigatório.
-        data_saida: Bling ``dataSaida``; type ``date``; obrigatório.
+        data_saida: Bling ``dataSaida``; type ``BlingDate``; obrigatório.
         prazo_entrega_previsto: Bling ``prazoEntregaPrevisto``; type ``int``; obrigatório.
         frete_previsto: Bling ``fretePrevisto``; type ``float``; obrigatório.
         valor_declarado: Bling ``valorDeclarado``; type ``float``; obrigatório.
@@ -237,7 +237,7 @@ class LogisticasObjetosUpdateRequestDTO(BlingModel):
     rastreamento: LogisticasObjetosRastreamentoDTO | None = None
     dimensoes: LogisticasObjetosDimensaoDTO | None = None
     embalagem: LogisticasObjetosEmbalagemDTO
-    data_saida: date = Field(
+    data_saida: BlingDate = Field(
         ...,
         validation_alias=AliasChoices("data_saida", "dataSaida"),
         examples=["2022-12-01"],

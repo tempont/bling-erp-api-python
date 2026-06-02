@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from bling_erp_api.models.fields import BlingDate
 from typing import TYPE_CHECKING, Any
 
 from pydantic import AliasChoices, AwareDatetime, Field, RootModel
@@ -70,7 +70,7 @@ class NotasServicosDadosBase(BlingModel):
         numero_rps: Bling ``numeroRPS``; type ``str``; obrigatório.
         serie: Bling ``serie``; type ``str``; obrigatório.
         situacao: Bling ``situacao``; type ``int | None``; opcional. `0` Pendente <br> `1` Emitida <br> `2` Disponível para consulta <br> `3` Cancelada
-        data_emissao: Bling ``dataEmissao``; type ``date | None``; opcional.
+        data_emissao: Bling ``dataEmissao``; type ``BlingDate | None``; opcional.
         valor: Bling ``valor``; type ``float | None``; opcional."""
 
     id: int = Field(..., examples=[12345678])
@@ -83,7 +83,7 @@ class NotasServicosDadosBase(BlingModel):
     )
     serie: str = Field(..., examples=["1"])
     situacao: int | None = Field(default=None, examples=[0])
-    data_emissao: date | None = Field(
+    data_emissao: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_emissao", "dataEmissao"),
         examples=["2023-01-12"],
@@ -360,12 +360,12 @@ class NotasServicosParcelaDTO(BlingModel):
     quando ele aparecer como request body ou response schema nos métodos do SDK.
 
     Fields:
-        data: Bling ``data``; type ``date``; obrigatório.
+        data: Bling ``data``; type ``BlingDate``; obrigatório.
         valor: Bling ``valor``; type ``float``; obrigatório.
         observacoes: Bling ``observacoes``; type ``str | None``; opcional.
         forma_pagamento: Bling ``formaPagamento``; type ``NotasServicosParcelaFormaPagamentoDTO | None``; opcional."""
 
-    data: date = Field(..., examples=["2023-01-12"])
+    data: BlingDate = Field(..., examples=["2023-01-12"])
     valor: float = Field(..., examples=[123.45])
     observacoes: str | None = Field(default=None, examples=["Observação da parcela"])
     forma_pagamento: NotasServicosParcelaFormaPagamentoDTO | None = Field(
@@ -455,7 +455,7 @@ class NotasServicosDadosDTOPOST(NotasServicosDados):
     Fields:
         link: Bling ``link``; type ``str | None``; opcional. Link para acesso e impressão da NFS-e.
         codigo_verificacao: Bling ``codigoVerificacao``; type ``str | None``; opcional.
-        data: Bling ``data``; type ``date | None``; opcional. Utilizado no POST.
+        data: Bling ``data``; type ``BlingDate | None``; opcional. Utilizado no POST.
         base_calculo: Bling ``baseCalculo``; type ``float | None``; opcional.
         reter_iss: Bling ``reterISS``; type ``bool | None``; opcional. Utilizado no POST. Caso não seja informado, será levado em consideração o valor do parâmetro no sistema.
         desconto: Bling ``desconto``; type ``float | None``; opcional.
@@ -464,7 +464,7 @@ class NotasServicosDadosDTOPOST(NotasServicosDados):
         parcelas: Bling ``parcelas``; type ``list[NotasServicosParcelaDTO] | None``; opcional.
         tributacao_ibs_cbs: Bling ``tributacaoIbsCbs``; type ``NotasServicosTributacaoIbsCbsDTO | None``; opcional."""
 
-    data: date | None = Field(default=None, examples=["2023-01-12"])
+    data: BlingDate | None = Field(default=None, examples=["2023-01-12"])
     base_calculo: float | None = Field(
         default=None,
         validation_alias=AliasChoices("base_calculo", "baseCalculo"),

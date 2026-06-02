@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from bling_erp_api.models.fields import BlingDate
 from typing import TYPE_CHECKING, Any
 
 from pydantic import AliasChoices, AwareDatetime, Field, RootModel
@@ -22,11 +22,11 @@ class ContatosDadoAdicionalDTO(BlingModel):
     quando ele aparecer como request body ou response schema nos métodos do SDK.
 
     Fields:
-        data_nascimento: Bling ``dataNascimento``; type ``date | None``; opcional.
+        data_nascimento: Bling ``dataNascimento``; type ``BlingDate | None``; opcional.
         sexo: Bling ``sexo``; type ``str | None``; opcional. `M` Masculino <br> `F` Feminino
         naturalidade: Bling ``naturalidade``; type ``str | None``; opcional."""
 
-    data_nascimento: date | None = Field(
+    data_nascimento: BlingDate | None = Field(
         default=None,
         validation_alias=AliasChoices("data_nascimento", "dataNascimento"),
         examples=["1990-08-24"],

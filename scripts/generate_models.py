@@ -117,6 +117,7 @@ SCHEMA_FAMILY_PREFIXES = (
 BUILTIN_TYPE_NAMES = {
     "Any",
     "AwareDatetime",
+    "BlingDate",
     "BlingModel",
     "Field",
     "None",
@@ -138,6 +139,10 @@ FIELD_NONE_DEFAULT_OVERRIDES = {
     ("SituacoesAcaoDTO", "descricao"),
     ("SituacoesModuloDTO", "descricao"),
 }
+
+# Type that replaces bare ``date`` in all generated annotations.
+DATE_TYPE_REWRITE = "BlingDate"
+DATE_IMPORT = "from bling_erp_api.models.fields import BlingDate"
 
 
 @dataclass(frozen=True)
@@ -364,7 +369,7 @@ def _schema_module_content(
         "",
         "from __future__ import annotations",
         "",
-        "from datetime import date",
+        "from bling_erp_api.models.fields import BlingDate",
         "from typing import TYPE_CHECKING, Any",
         "",
         "from pydantic import AliasChoices, AwareDatetime, Field, RootModel",
@@ -413,7 +418,7 @@ def _schema_init_content(
         "",
         "from __future__ import annotations",
         "",
-        "from datetime import date",
+        "from bling_erp_api.models.fields import BlingDate",
         "from typing import Any",
         "",
         "from pydantic import AwareDatetime",
@@ -431,7 +436,7 @@ def _schema_init_content(
             exports + "]",
             "",
             "_MODEL_NAMESPACE = {name: globals()[name] for name in __all__}",
-            "_MODEL_NAMESPACE.update({'Any': Any, 'AwareDatetime': AwareDatetime, 'date': date})",
+            "_MODEL_NAMESPACE.update({'Any': Any, 'AwareDatetime': AwareDatetime, 'BlingDate': BlingDate})",
             "for _model in _MODEL_NAMESPACE.values():",
             "    if isinstance(_model, type) and hasattr(_model, 'model_rebuild'):",
             "        _model.model_rebuild(_types_namespace=_MODEL_NAMESPACE)",
@@ -450,6 +455,7 @@ def _class_with_docstring(
     )
     _rewrite_field_aliases(node)
     _apply_field_overrides(name, node)
+    _rewrite_date_types(node)
     docstring_nodes = dict(class_nodes)
     docstring_nodes[name] = node
     docstring = _model_docstring(name, docstring_nodes)
@@ -479,6 +485,13 @@ def _apply_field_overrides(name: str, node: ast.ClassDef) -> None:
 
         if (name, stmt.target.id) in FIELD_NONE_DEFAULT_OVERRIDES:
             _set_field_default_none(stmt)
+
+
+def _rewrite_date_types(node: ast.ClassDef) -> None:
+    """Replace ``date`` with ``BlingDate`` in all field annotations."""
+    for stmt in ast.walk(node):
+        if isinstance(stmt, ast.Name) and stmt.id == "date":
+            stmt.id = "BlingDate"
 
 
 def _set_field_default_none(stmt: ast.AnnAssign) -> None:
