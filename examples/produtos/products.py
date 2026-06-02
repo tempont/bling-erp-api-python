@@ -16,20 +16,54 @@ Docs:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+import time
+from typing import TYPE_CHECKING, Any
 
 from bling_erp_api import BlingClient
+from bling_erp_api.models.generated.products import ProdutosDadosDTO
 
 if TYPE_CHECKING:
-    from bling_erp_api.models.generated.products import ProdutosGetResponse200
+    from bling_erp_api.models.generated.products import (
+        ProdutosGetResponse200,
+        ProdutosResponsePOSTPUT,
+    )
 
 SKU_LIST: list[str] = []
 
+## ---------------------------------------------------------------------------
+## GET ALL PRODUCTS WITH AUTO PAGINATION
+## ---------------------------------------------------------------------------
 
-def get_all_products() -> ProdutosGetResponse200:
-    """Return all products (max 100)."""
+
+def get_all_products() -> list[ProdutosGetResponse200]:
+    """Return products with filters."""
+    product_list: list[Any] = []
     with BlingClient.from_env() as client:
-        return client.produtos.listar()
+        for produto in client.produtos.iterar():
+            product_dict = produto.model_dump()
+            product_list.append(product_dict)
+
+    return product_list
+
+
+## ---------------------------------------------------------------------------
+## GET PRODUCT PAGES
+## ---------------------------------------------------------------------------
+
+
+def get_product_pages() -> ProdutosGetResponse200:
+    """Return products with filters."""
+    with BlingClient.from_env() as client:
+        return client.produtos.listar(
+            limite=100,
+            pagina=1,
+            criterio=1,
+        )
+
+
+## ---------------------------------------------------------------------------
+## GET PRODUCTS FILTERED BY ANY SUPPORTED BLING FIELD
+## ---------------------------------------------------------------------------
 
 
 def get_filtered_products(skus: list[str]) -> ProdutosGetResponse200:
@@ -41,22 +75,54 @@ def get_filtered_products(skus: list[str]) -> ProdutosGetResponse200:
         )
 
 
-def get_product_page() -> ProdutosGetResponse200:
-    """Retornar páginas de produtos."""
-    with BlingClient.from_env() as client:
-        return client.produtos.listar(limite=10)
+## ---------------------------------------------------------------------------
+## POST PRODUCT
+## ---------------------------------------------------------------------------
+
+
+def post_product() -> ProdutosResponsePOSTPUT:
+    """Creating a minimal test product."""
+    client = BlingClient.from_env()
+
+    payload = ProdutosDadosDTO(
+        nome="Produto teste 1",
+        descricao_curta="Um produto para testes.",
+        tipo="P",
+        formato="S",
+        situacao="A",
+        preco=10.0,
+    )
+
+    return client.products.create(data=payload)
+
+
+## ---------------------------------------------------------------------------
+## DELETE PRODUCT
+## ---------------------------------------------------------------------------
+
+
+def delete_product(product_id: int) -> None:
+    """Delete a product by ID."""
+    client = BlingClient.from_env()
+    client.products.delete(product_id)
 
 
 def main() -> None:
-    """Endpoint: GET /produtos.
+    """Code executions."""
+    print(get_all_products())
+    time.sleep(1)
 
-    Products examples.
-    """
-    if SKU_LIST:
-        response = get_filtered_products(skus=SKU_LIST)
-        print(response.model_dump_json(indent=2, by_alias=True))
-    response = get_product_page()
-    print(response.model_dump_json(indent=2, by_alias=True))
+    print(post_product())
+    time.sleep(1)
+
+    print(get_product_pages().model_dump_json(indent=2, by_alias=True))
+    time.sleep(1)
+
+    print(get_filtered_products(SKU_LIST).model_dump_json(indent=2, by_alias=True))
+    time.sleep(1)
+
+    # delete_product(123456)
+    # time.sleep(1)
 
 
 if __name__ == "__main__":
