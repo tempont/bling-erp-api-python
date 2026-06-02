@@ -97,14 +97,14 @@ def post_product() -> ProdutosResponsePOSTPUT:
 
 
 ## ---------------------------------------------------------------------------
-## DELETE PRODUCT
+## DELETE PRODUCTS
 ## ---------------------------------------------------------------------------
 
 
-def delete_product(product_id: int) -> None:
+def delete_product(product_ids: list[int]) -> None:
     """Delete a product by ID."""
     client = BlingClient.from_env()
-    client.products.delete(product_id)
+    client.products.delete_many(product_ids=product_ids)
 
 
 def main() -> None:
@@ -121,7 +121,7 @@ def main() -> None:
     print(get_filtered_products(SKU_LIST).model_dump_json(indent=2, by_alias=True))
     time.sleep(1)
 
-    # delete_product(123456)
+    # delete_product([123456])
     # time.sleep(1)
 
 
