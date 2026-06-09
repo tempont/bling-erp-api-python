@@ -1,0 +1,1 @@
+"""Notas Fiscais (invoice) operations."""
