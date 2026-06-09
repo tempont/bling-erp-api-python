@@ -1,0 +1,1 @@
+"""Estoque (stock) operations."""
