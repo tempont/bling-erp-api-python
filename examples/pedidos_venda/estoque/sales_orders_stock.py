@@ -8,9 +8,9 @@ Endpoints:
     - POST /pedidos/vendas/{idPedidoVenda}/estornar-estoque
 
 Docs:
-    - https://developer.bling.com.br/referencia#/Pedidos%20de%20Venda/post_pedidos_vendas__idPedidoVenda__lancar-estoque
-    - https://developer.bling.com.br/referencia#/Pedidos%20de%20Venda/post_pedidos_vendas__idPedidoVenda__lancar-estoque__idDeposito_
-    - https://developer.bling.com.br/referencia#/Pedidos%20de%20Venda/post_pedidos_vendas__idPedidoVenda__estornar-estoque
+    - https://developer.bling.com.br/referencia#/Pedidos%20-%20Vendas/post_pedidos_vendas__idPedidoVenda__lancar_estoque
+    - https://developer.bling.com.br/referencia#/Pedidos%20-%20Vendas/post_pedidos_vendas__idPedidoVenda__lancar_estoque__idDeposito_
+    - https://developer.bling.com.br/referencia#/Pedidos%20-%20Vendas/post_pedidos_vendas__idPedidoVenda__lancar_estoque
 """
 
 from __future__ import annotations

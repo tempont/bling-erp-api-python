@@ -7,8 +7,8 @@ Endpoints:
     - POST /pedidos/vendas/{idPedidoVenda}/estornar-contas
 
 Docs:
-    - https://developer.bling.com.br/referencia#/Pedidos%20de%20Venda/post_pedidos_vendas__idPedidoVenda__lancar-contas
-    - https://developer.bling.com.br/referencia#/Pedidos%20de%20Venda/post_pedidos_vendas__idPedidoVenda__estornar-contas
+    - https://developer.bling.com.br/referencia#/Pedidos%20-%20Vendas/post_pedidos_vendas__idPedidoVenda__lancar_contas
+    - https://developer.bling.com.br/referencia#/Pedidos%20-%20Vendas/post_pedidos_vendas__idPedidoVenda__estornar_contas
 """
 
 from __future__ import annotations

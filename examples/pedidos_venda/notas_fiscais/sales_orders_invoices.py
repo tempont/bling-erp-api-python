@@ -7,8 +7,8 @@ Endpoints:
     - POST /pedidos/vendas/{idPedidoVenda}/gerar-nfce
 
 Docs:
-    - https://developer.bling.com.br/referencia#/Pedidos%20de%20Venda/post_pedidos_vendas__idPedidoVenda__gerar-nfe
-    - https://developer.bling.com.br/referencia#/Pedidos%20de%20Venda/post_pedidos_vendas__idPedidoVenda__gerar-nfce
+    - https://developer.bling.com.br/referencia#/Pedidos%20-%20Vendas/post_pedidos_vendas__idPedidoVenda__gerar_nfe
+    - https://developer.bling.com.br/referencia#/Pedidos%20-%20Vendas/post_pedidos_vendas__idPedidoVenda__gerar_nfce
 """
 
 from __future__ import annotations
