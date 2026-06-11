@@ -12,6 +12,14 @@ Mapeia os endpoints da API Bling:
 Canonical methods are in pt-BR. English aliases available for compatibility.
 """
 
+from __future__ import annotations
+
+from bling_erp_api.models.generated.ordens_producao import (
+    OrdensProducaoGerarSobDemandaPostResponse201,
+    OrdensProducaoGetResponse200,
+    OrdensProducaoIdOrdemProducaoGetResponse200,
+    OrdensProducaoPostResponse201,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.types import JsonObject
 from bling_erp_api.utils.query import compact_params
@@ -39,7 +47,7 @@ class OrdensProducaoResource(BaseResource):
         pagina: int | None = None,
         limite: int | None = None,
         ids_situacoes: list[int] | None = None,
-    ) -> JsonObject:
+    ) -> OrdensProducaoGetResponse200:
         """Lista ordens de produção.
 
         Endpoint: GET /ordens-producao
@@ -61,9 +69,10 @@ class OrdensProducaoResource(BaseResource):
                 "idsSituacoes[]": ids_situacoes,
             }
         )
-        return self._get("/ordens-producao", params=params)
+        raw = self._get("/ordens-producao", params=params)
+        return self._validate_response(OrdensProducaoGetResponse200, raw)
 
-    def criar(self, dados: JsonObject) -> JsonObject:
+    def criar(self, dados: JsonObject) -> OrdensProducaoPostResponse201:
         """Cria uma ordem de produção.
 
         Endpoint: POST /ordens-producao
@@ -76,9 +85,10 @@ class OrdensProducaoResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
         """
-        return self._post("/ordens-producao", json=to_json_object(dados))
+        raw = self._post("/ordens-producao", json=to_json_object(dados))
+        return self._validate_response(OrdensProducaoPostResponse201, raw)
 
-    def obter(self, id_ordem_producao: int) -> JsonObject:
+    def obter(self, id_ordem_producao: int) -> OrdensProducaoIdOrdemProducaoGetResponse200:
         """Obtém uma ordem de produção.
 
         Endpoint: GET /ordens-producao/{idOrdemProducao}
@@ -91,7 +101,8 @@ class OrdensProducaoResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: OrdensProducaoDetailResponseDTO; 404: ErrorResponse
         """
-        return self._get(f"/ordens-producao/{id_ordem_producao}")
+        raw = self._get(f"/ordens-producao/{id_ordem_producao}")
+        return self._validate_response(OrdensProducaoIdOrdemProducaoGetResponse200, raw)
 
     def alterar(self, id_ordem_producao: int, dados: JsonObject) -> JsonObject:
         """Altera uma ordem de produção.
@@ -150,7 +161,7 @@ class OrdensProducaoResource(BaseResource):
             json=to_json_object(dados),
         )
 
-    def criar_multiplos(self) -> JsonObject:
+    def criar_multiplos(self) -> OrdensProducaoGerarSobDemandaPostResponse201:
         """Gera ordens de produção sob demanda.
 
         Endpoint: POST /ordens-producao/gerar-sob-demanda
@@ -160,7 +171,8 @@ class OrdensProducaoResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: OrdensProducaoDadosGeradosPorDemandaDTO[]; 400: ErrorResponse
         """
-        return self._post("/ordens-producao/gerar-sob-demanda")
+        raw = self._post("/ordens-producao/gerar-sob-demanda")
+        return self._validate_response(OrdensProducaoGerarSobDemandaPostResponse201, raw)
 
     # --- English aliases ---
 
@@ -170,7 +182,7 @@ class OrdensProducaoResource(BaseResource):
         page: int | None = None,
         limit: int | None = None,
         status_ids: list[int] | None = None,
-    ) -> JsonObject:
+    ) -> OrdensProducaoGetResponse200:
         """Compatibility alias for ``listar()``.
 
         Lista ordens de produção.
@@ -187,7 +199,7 @@ class OrdensProducaoResource(BaseResource):
         """
         return self.listar(pagina=page, limite=limit, ids_situacoes=status_ids)
 
-    def create(self, data: JsonObject) -> JsonObject:
+    def create(self, data: JsonObject) -> OrdensProducaoPostResponse201:
         """Compatibility alias for ``criar()``.
 
         Cria uma ordem de produção.
@@ -202,7 +214,7 @@ class OrdensProducaoResource(BaseResource):
         """
         return self.criar(dados=data)
 
-    def get(self, production_order_id: int) -> JsonObject:
+    def get(self, production_order_id: int) -> OrdensProducaoIdOrdemProducaoGetResponse200:
         """Compatibility alias for ``obter()``.
 
         Obtém uma ordem de produção.
@@ -264,7 +276,7 @@ class OrdensProducaoResource(BaseResource):
         """
         return self.alterar_situacao(id_ordem_producao=production_order_id, dados=data)
 
-    def generate_on_demand(self) -> JsonObject:
+    def generate_on_demand(self) -> OrdensProducaoGerarSobDemandaPostResponse201:
         """Compatibility alias for ``criar_multiplos()``.
 
         Gera ordens de produção sob demanda.

@@ -167,7 +167,10 @@ class BaseResource:
             return model.model_validate(payload)
         except ValidationError:
             if payload == {"data": []}:
-                return model.model_validate({"data": None})
+                try:
+                    return model.model_validate({"data": None})
+                except ValidationError:
+                    return cast("TResponse", payload)
             raise
 
     def _iterate(
