@@ -4,6 +4,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.invoices import (
+    NfeDeleteResponse200,
+    NfeDocumentoChaveAcessoGetResponse200,
+    NfeGetResponse200,
+    NfeIdNotaFiscalEnviarPostResponse200,
+    NfeIdNotaFiscalGetResponse200,
+    NfeIdNotaFiscalPutRequest,
+    NfeIdNotaFiscalPutResponse200,
+    NfePostRequest,
+    NfePostResponse201,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
@@ -38,7 +49,7 @@ class NfeResource(BaseResource):
         tipo: int | None = None,
         data_emissao_inicial: str | None = None,
         data_emissao_final: str | None = None,
-    ) -> JsonObject:
+    ) -> NfeGetResponse200:
         """Lista notas fiscais eletrônicas (NF-e).
 
         Endpoint: GET /nfe
@@ -61,7 +72,7 @@ class NfeResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: NotasFiscaisDadosBaseDTO; 404: ErrorResponse
         """
-        return self._get(
+        raw = self._get(
             "/nfe",
             params=_nfe_list_params(
                 pagina=pagina,
@@ -77,6 +88,7 @@ class NfeResource(BaseResource):
                 data_emissao_final=data_emissao_final,
             ),
         )
+        return self._validate_response(NfeGetResponse200, raw)
 
     def list(  # noqa: PLR0913
         self,
@@ -92,7 +104,7 @@ class NfeResource(BaseResource):
         kind: int | None = None,
         issued_start: str | None = None,
         issued_end: str | None = None,
-    ) -> JsonObject:
+    ) -> NfeGetResponse200:
         """Compatibility alias for ``listar()``.
 
         Lista notas fiscais eletrônicas (NF-e).
@@ -238,7 +250,7 @@ class NfeResource(BaseResource):
             data_emissao_final=issued_end,
         )
 
-    def obter(self, id_nota_fiscal: int) -> JsonObject:
+    def obter(self, id_nota_fiscal: int) -> NfeIdNotaFiscalGetResponse200:
         """Obtém uma NF-e.
 
         Endpoint: GET /nfe/{idNotaFiscal}
@@ -251,9 +263,10 @@ class NfeResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: NotasFiscaisDadosGetDTO; 404: ErrorResponse
         """
-        return self._get(f"/nfe/{id_nota_fiscal}")
+        raw = self._get(f"/nfe/{id_nota_fiscal}")
+        return self._validate_response(NfeIdNotaFiscalGetResponse200, raw)
 
-    def get(self, invoice_id: int) -> JsonObject:
+    def get(self, invoice_id: int) -> NfeIdNotaFiscalGetResponse200:
         """Compatibility alias for ``obter()``.
 
         Obtém uma NF-e.
@@ -270,7 +283,7 @@ class NfeResource(BaseResource):
         """
         return self.obter(invoice_id)
 
-    def criar(self, dados: JsonObject) -> JsonObject:
+    def criar(self, dados: NfePostRequest) -> NfePostResponse201:
         """Cria uma NF-e.
 
         Endpoint: POST /nfe
@@ -283,9 +296,10 @@ class NfeResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
         """
-        return self._post("/nfe", json=to_json_object(dados))
+        raw = self._post("/nfe", json=to_json_object(dados))
+        return self._validate_response(NfePostResponse201, raw)
 
-    def create(self, data: JsonObject) -> JsonObject:
+    def create(self, data: NfePostRequest) -> NfePostResponse201:
         """Compatibility alias for ``criar()``.
 
         Cria uma NF-e.
@@ -302,7 +316,9 @@ class NfeResource(BaseResource):
         """
         return self.criar(data)
 
-    def alterar(self, id_nota_fiscal: int, dados: JsonObject) -> JsonObject:
+    def alterar(
+        self, id_nota_fiscal: int, dados: NfeIdNotaFiscalPutRequest
+    ) -> NfeIdNotaFiscalPutResponse200:
         """Altera uma NF-e.
 
         Endpoint: PUT /nfe/{idNotaFiscal}
@@ -316,9 +332,12 @@ class NfeResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: NotasFiscaisDadosGetDTO; 400: ErrorResponse; 404: ErrorResponse
         """
-        return self._put(f"/nfe/{id_nota_fiscal}", json=to_json_object(dados))
+        raw = self._put(f"/nfe/{id_nota_fiscal}", json=to_json_object(dados))
+        return self._validate_response(NfeIdNotaFiscalPutResponse200, raw)
 
-    def update(self, invoice_id: int, data: JsonObject) -> JsonObject:
+    def update(
+        self, invoice_id: int, data: NfeIdNotaFiscalPutRequest
+    ) -> NfeIdNotaFiscalPutResponse200:
         """Compatibility alias for ``alterar()``.
 
         Altera uma NF-e.
@@ -336,7 +355,7 @@ class NfeResource(BaseResource):
         """
         return self.alterar(invoice_id, data)
 
-    def remover_varios(self, ids_notas: Sequence[int]) -> JsonObject:
+    def remover_varios(self, ids_notas: Sequence[int]) -> NfeDeleteResponse200:
         """Remove múltiplas NF-e.
 
         Endpoint: DELETE /nfe
@@ -349,9 +368,10 @@ class NfeResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: NotasFiscaisExclusaoDTO; 204: NoContent; 400: ErrorResponse
         """
-        return self._delete("/nfe", params={"idsNotas[]": list(ids_notas)})
+        raw = self._delete("/nfe", params={"idsNotas[]": list(ids_notas)})
+        return self._validate_response(NfeDeleteResponse200, raw)
 
-    def delete_many(self, invoice_ids: Sequence[int]) -> JsonObject:
+    def delete_many(self, invoice_ids: Sequence[int]) -> NfeDeleteResponse200:
         """Compatibility alias for ``remover_varios()``.
 
         Remove múltiplas NF-e.
@@ -368,7 +388,9 @@ class NfeResource(BaseResource):
         """
         return self.remover_varios(invoice_ids)
 
-    def autorizar(self, id_nota_fiscal: int, *, enviar_email: bool | None = None) -> JsonObject:
+    def autorizar(
+        self, id_nota_fiscal: int, *, enviar_email: bool | None = None
+    ) -> NfeIdNotaFiscalEnviarPostResponse200:
         """Autoriza (envia para a SEFAZ) uma NF-e.
 
         Endpoint: POST /nfe/{idNotaFiscal}/enviar
@@ -383,9 +405,12 @@ class NfeResource(BaseResource):
             Bling API response. Response schemas: 200: NotasFiscaisDadosGetDTO; 400: ErrorResponse; 404: ErrorResponse
         """
         params = compact_params({"enviarEmail": enviar_email})
-        return self._post(f"/nfe/{id_nota_fiscal}/enviar", params=params)
+        raw = self._post(f"/nfe/{id_nota_fiscal}/enviar", params=params)
+        return self._validate_response(NfeIdNotaFiscalEnviarPostResponse200, raw)
 
-    def authorize(self, invoice_id: int, *, send_email: bool | None = None) -> JsonObject:
+    def authorize(
+        self, invoice_id: int, *, send_email: bool | None = None
+    ) -> NfeIdNotaFiscalEnviarPostResponse200:
         """Compatibility alias for ``autorizar()``.
 
         Autoriza (envia para a SEFAZ) uma NF-e.
@@ -539,7 +564,7 @@ class NfeResource(BaseResource):
 
     def obter_documento_nota_fiscal(
         self, chave_acesso: str, *, formato: str | None = None
-    ) -> JsonObject:
+    ) -> NfeDocumentoChaveAcessoGetResponse200:
         """Obtém o documento (XML/DANFE) de uma NF-e.
 
         Endpoint: GET /nfe/documento/{chaveAcesso}
@@ -554,9 +579,12 @@ class NfeResource(BaseResource):
             Bling API response. Response schemas: 200: NotasFiscaisDocumentoDTO; 400: ErrorResponse; 404: ErrorResponse
         """
         params = compact_params({"formato": formato})
-        return self._get(f"/nfe/documento/{chave_acesso}", params=params)
+        raw = self._get(f"/nfe/documento/{chave_acesso}", params=params)
+        return self._validate_response(NfeDocumentoChaveAcessoGetResponse200, raw)
 
-    def get_document(self, access_key: str, *, output_format: str | None = None) -> JsonObject:
+    def get_document(
+        self, access_key: str, *, output_format: str | None = None
+    ) -> NfeDocumentoChaveAcessoGetResponse200:
         """Compatibility alias for ``obter_documento_nota_fiscal()``.
 
         Obtém o documento (XML/DANFE) de uma NF-e.

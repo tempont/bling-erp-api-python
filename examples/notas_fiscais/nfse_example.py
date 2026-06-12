@@ -1,104 +1,117 @@
-"""Example: NFS-e (Nota Fiscal de Serviço Eletrônica) workflow.
+"""Example: NFS-e (Service Invoice) Operations.
 
-Demonstrates listing, creating, retrieving, authorizing, and canceling NFS-e invoices,
-plus managing NFS-e configuration.
+Demonstrates listing, retrieving, and configuring NFS-e through the Bling
+service invoice API.
 
-Usage:
-    BLING_API_KEY="your_key" python examples/invoices/nfse_example.py
+Endpoints:
+    - GET /nfse
+    - GET /nfse/{idNotaServico}
+    - POST /nfse
+    - POST /nfse/{idNotaServico}/enviar
+    - GET /nfse/configuracoes
+
+Docs:
+    - https://developer.bling.com.br/referencia#/NFS-e
 """
 
+from __future__ import annotations
+
+import json
+import time
+from typing import TYPE_CHECKING
+
 from bling_erp_api import BlingClient
-from bling_erp_api.models.generated.nfse import (
-    ConfiguracaoNotaServicoDadosBaseDTO,
-    NfseGetResponse200,
-)
+
+if TYPE_CHECKING:
+    from bling_erp_api.types import JsonObject
+
+## ---------------------------------------------------------------------------
+## LIST NFS-E INVOICES
+## ---------------------------------------------------------------------------
+
+
+def listar_nfse(
+    *,
+    pagina: int = 1,
+    limite: int = 10,
+    situacao: int | None = None,
+    data_emissao_inicial: str | None = None,
+    data_emissao_final: str | None = None,
+) -> JsonObject:
+    """Lista notas fiscais de serviço (NFS-e)."""
+    with BlingClient.from_env() as client:
+        return client.notas_servicos.listar(
+            pagina=pagina,
+            limite=limite,
+            situacao=situacao,
+            data_emissao_inicial=data_emissao_inicial,
+            data_emissao_final=data_emissao_final,
+        )
+
+
+## ---------------------------------------------------------------------------
+## GET AN NFS-E INVOICE BY ID
+## ---------------------------------------------------------------------------
+
+
+def obter_nfse(id_nota_servico: int) -> JsonObject:
+    """Obtém uma NFS-e pelo ID."""
+    with BlingClient.from_env() as client:
+        return client.notas_servicos.obter(id_nota_servico=id_nota_servico)
+
+
+## ---------------------------------------------------------------------------
+## GET NFS-E CONFIGURATION
+## ---------------------------------------------------------------------------
+
+
+def obter_configuracoes() -> JsonObject:
+    """Obtém as configurações de NFS-e."""
+    with BlingClient.from_env() as client:
+        return client.notas_servicos.obter_configuracoes()
+
+
+## ---------------------------------------------------------------------------
+## CREATE AN NFS-E INVOICE
+## ---------------------------------------------------------------------------
+
+
+def criar_nfse(dados: JsonObject) -> JsonObject:
+    """Cria uma nova NFS-e."""
+    with BlingClient.from_env() as client:
+        return client.notas_servicos.criar(dados=dados)
+
+
+## ---------------------------------------------------------------------------
+## AUTHORIZE (SEND) AN NFS-E INVOICE
+## ---------------------------------------------------------------------------
+
+
+def enviar_nfse(id_nota_servico: int) -> JsonObject:
+    """Autoriza (envia) uma NFS-e."""
+    with BlingClient.from_env() as client:
+        return client.notas_servicos.autorizar(id_nota_servico=id_nota_servico)
 
 
 def main() -> None:
-    """Run the NFS-e example workflow."""
-    client = BlingClient.from_env()
+    """Demonstrate NFS-e operations."""
+    # Read operations
+    print(json.dumps(listar_nfse(pagina=1, limite=5), indent=2, ensure_ascii=False))
+    time.sleep(1)
 
-    # Access the NFS-e resource
-    nfse = client.notas_servicos
-    # Or use the English alias: client.service_invoices
+    nfse_id = 123456789  # Exemplo — substitua pelo ID real.
+    print(json.dumps(obter_nfse(id_nota_servico=nfse_id), indent=2, ensure_ascii=False))
+    time.sleep(1)
 
-    # 1. List NFS-e invoices
-    print("Listing NFS-e invoices...")
-    result = nfse.listar(
-        pagina=1,
-        limite=10,
-        situacao=3,  # 3 = Autorizada
-        data_emissao_inicial="2024-01-01",
-        data_emissao_final="2024-12-31",
-    )
-    parsed = NfseGetResponse200(**result)  # type: ignore[reportArgumentType]
-    print(parsed.model_dump_json(indent=2, by_alias=True))
+    print(json.dumps(obter_configuracoes(), indent=2, ensure_ascii=False))
+    time.sleep(1)
 
-    # NOTE: Uncomment and replace raw dict with NfsePostRequest(...) for typed payload construction.
-    # 2. Create a new NFS-e
-    # nfse_data = {
-    #     "numero": "111",
-    #     "numeroRPS": "RPS-001",
-    #     "serie": "1",
-    #     "contato": {
-    #         "nome": "Service Client Ltda",
-    #         "numeroDocumento": "98765432000111",
-    #         "email": "client@example.com",
-    #         "ie": "123456789",
-    #         "telefone": "1133334444",
-    #         "endereco": {
-    #             "endereco": "Av Principal",
-    #             "numero": "1000",
-    #             "bairro": "Centro",
-    #             "municipio": "São Paulo",
-    #             "uf": "SP",
-    #         },
-    #     },
-    #     "data": "2024-06-01",
-    #     "servicos": [
-    #         {"codigo": "SERV-001", "descricao": "IT Consulting", "valor": 5000.00}
-    #     ],
-    #     "parcelas": [
-    #         {"data": "2024-07-01", "valor": 5000.00, "formaPagamento": {"id": 1}}
-    #     ],
-    # }
-    # created = nfse.criar(nfse_data)
-    # print(f"Created NFS-e: {created}")
-
-    # NOTE: Uncomment and parse response with NfseIdNotaServicoGetResponse200 for typed output.
-    # 3. Get a specific NFS-e
-    # invoice = nfse.obter(111)
-    # print(f"NFS-e details: {invoice}")
-
-    # NOTE: Uncomment and use typed model for typed payload construction.
-    # 4. Authorize (send) NFS-e
-    # nfse.autorizar(111)
-
-    # NOTE: Uncomment and use NotasServicosCancelamentoDTO for typed payload construction.
-    # 5. Cancel NFS-e
-    # cancel_data = {
-    #     "codigoMotivo": 1,  # 1 = Erro na emissão
-    #     "justificativa": "Incorrect service value",
-    # }
-    # nfse.cancelar(111, cancel_data)
-
-    # 6. Get NFS-e configuration
-    print("Getting NFS-e configuration...")
-    config = nfse.obter_configuracoes()
-    parsed_config = ConfiguracaoNotaServicoDadosBaseDTO(**config)  # type: ignore[reportArgumentType]
-    print(parsed_config.model_dump_json(indent=2, by_alias=True))
-
-    # NOTE: Uncomment and use appropriate config model for typed payload construction.
-    # 7. Update NFS-e configuration
-    # new_config = {
-    #     "basicas": {"emissorPadrao": 1, "naturezaOperacao": 2},
-    #     "ISS": {"zerar": False, "reter": True, "descontar": False},
-    # }
-    # nfse.alterar_configuracoes(new_config)
-
-    # NOTE: Uncomment for typed payload handling.
-    # 8. Delete NFS-e
-    # nfse.remover(111)
+    # Write operations (commented out)
+    # payload = NfsePostRequest(...)
+    # print(json.dumps(criar_nfse(payload), indent=2, ensure_ascii=False))
+    # time.sleep(1)
+    # print(json.dumps(enviar_nfse(nfse_id), indent=2, ensure_ascii=False))
+    # time.sleep(1)
 
 
 if __name__ == "__main__":

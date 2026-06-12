@@ -6,6 +6,10 @@ from datetime import UTC, date, datetime
 from typing import cast
 
 from bling_erp_api.models.generated.contacts import ContatosGetResponse200
+from bling_erp_api.models.generated.invoices import (
+    NfeIdNotaFiscalPutRequest,
+    NfePostRequest,
+)
 from bling_erp_api.models.generated.product_groups import (
     GruposProdutosDadosDTO,
     GruposProdutosPostRequest,
@@ -725,7 +729,7 @@ class TestNfeResourceMapping:
         """NF-e criar posts JSON body to /nfe."""
         transport = RecordingTransport()
         resource = NfeResource(transport)
-        dados: JsonObject = {"tipo": 1, "numero": "123"}
+        dados = cast("NfePostRequest", {"tipo": 1, "numero": "123"})
         resource.criar(dados)
         assert len(transport.calls) == 1
         assert transport.calls[0][:2] == ("POST", "/nfe")
@@ -735,7 +739,7 @@ class TestNfeResourceMapping:
         """NF-e alterar puts JSON body to /nfe/{id}."""
         transport = RecordingTransport()
         resource = NfeResource(transport)
-        dados: JsonObject = {"tipo": 1}
+        dados = cast("NfeIdNotaFiscalPutRequest", {"tipo": 1})
         resource.alterar(12345, dados)
         assert transport.calls[0][:2] == ("PUT", "/nfe/12345")
         assert transport.calls[0][3] is not None
