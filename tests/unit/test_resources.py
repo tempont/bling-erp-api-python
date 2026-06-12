@@ -14,6 +14,10 @@ from bling_erp_api.models.generated.product_groups import (
     GruposProdutosDadosDTO,
     GruposProdutosPostRequest,
 )
+from bling_erp_api.models.generated.product_variations import (
+    ProdutosVariacoesCombinacaoDadosDTO,
+    ProdutosVariacoesDadosAtributoDTO,
+)
 from bling_erp_api.models.generated.products import (
     ProdutosDadosDTO,
     ProdutosDadosPatchDTO,
@@ -652,10 +656,19 @@ def test_product_variations_map_requests_to_bling() -> None:
     resource = ProductVariationsResource(transport)
 
     resource.gerar_combinacoes(
-        {"produtoPai": {"id": 9}, "atributos": [{"nome": "Cor", "opcoes": ["Azul"]}]}  # type: ignore[reportArgumentType]
+        cast(
+            "ProdutosVariacoesCombinacaoDadosDTO",
+            {"produtoPai": {"id": 9}, "atributos": [{"nome": "Cor", "opcoes": ["Azul"]}]},
+        )
     )
     resource.listar(10)
-    resource.alterar_atributo(10, {"atributoAntigo": "Cor", "atributoNovo": "Coloração"})  # type: ignore[reportArgumentType]
+    resource.alterar_atributo(
+        10,
+        cast(
+            "ProdutosVariacoesDadosAtributoDTO",
+            {"atributoAntigo": "Cor", "atributoNovo": "Coloração"},
+        ),
+    )
 
     assert transport.calls == [
         (

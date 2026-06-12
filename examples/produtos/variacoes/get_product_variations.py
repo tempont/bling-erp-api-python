@@ -21,12 +21,14 @@ import time
 from typing import TYPE_CHECKING
 
 from bling_erp_api import BlingClient
+from bling_erp_api.models.generated.product_variations import (
+    ProdutosVariacoesCombinacaoDadosDTO,  # noqa: TC001 — runtime import for write ops
+    ProdutosVariacoesDadosAtributoDTO,  # noqa: TC001 — runtime import for write ops
+)
 
 if TYPE_CHECKING:
     from bling_erp_api.models.generated.product_variations import (
         ProdutosVariacoesAtributosGerarCombinacoesPostResponse200,
-        ProdutosVariacoesCombinacaoDadosDTO,
-        ProdutosVariacoesDadosAtributoDTO,
         ProdutosVariacoesIdProdutoPaiAtributosPatchResponse200,
         ProdutosVariacoesIdProdutoPaiGetResponse200,
     )
@@ -85,10 +87,6 @@ def main() -> None:
     time.sleep(1)
 
     # Write operations (commented out)
-    # from bling_erp_api.models.generated.product_variations import (
-    #     ProdutosVariacoesCombinacaoDadosDTO,
-    #     ProdutosVariacoesDadosAtributoDTO,
-    # )
     # combinacao = ProdutosVariacoesCombinacaoDadosDTO(
     #     id_produto_pai=id_produto_pai,
     #     atributos=[{"nome": "Cor", "valor": "Azul"}],
