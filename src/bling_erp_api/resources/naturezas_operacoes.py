@@ -11,6 +11,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+from bling_erp_api.models.generated.naturezas_operacoes import (
+    NaturezasOperacoesGetResponse200,
+    NaturezasOperacoesIdNaturezaOperacaoObterTributacaoPostResponse200,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
@@ -36,7 +40,7 @@ class NaturezasOperacoesResource(BaseResource):
         limite: int | None = None,
         situacao: int | None = None,
         descricao: str | None = None,
-    ) -> JsonObject:
+    ) -> NaturezasOperacoesGetResponse200:
         """Lista naturezas de operação.
 
         Endpoint: GET /naturezas-operacoes
@@ -55,13 +59,14 @@ class NaturezasOperacoesResource(BaseResource):
         params = compact_params(
             {"pagina": pagina, "limite": limite, "situacao": situacao, "descricao": descricao}
         )
-        return self._get("/naturezas-operacoes", params=params)
+        raw = self._get("/naturezas-operacoes", params=params)
+        return self._validate_response(NaturezasOperacoesGetResponse200, raw)
 
     def obter_tributacao(
         self,
         id_natureza_operacao: int,
         calculo: JsonObject,
-    ) -> JsonObject:
+    ) -> NaturezasOperacoesIdNaturezaOperacaoObterTributacaoPostResponse200:
         """Obtém regras de tributação para uma natureza de operação.
 
         Endpoint: POST /naturezas-operacoes/{idNaturezaOperacao}/obter-tributacao
@@ -76,14 +81,17 @@ class NaturezasOperacoesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: CalculosImpostosDadosDTO; 400: ErrorResponse; 404: ErrorResponse
         """
-        return self._post(
+        raw = self._post(
             f"/naturezas-operacoes/{id_natureza_operacao}/obter-tributacao",
             json=to_json_object(calculo),
+        )
+        return self._validate_response(
+            NaturezasOperacoesIdNaturezaOperacaoObterTributacaoPostResponse200, raw
         )
 
     # --- English aliases ---
 
-    def list(self, **kwargs: Any) -> JsonObject:
+    def list(self, **kwargs: Any) -> NaturezasOperacoesGetResponse200:
         """Compatibility alias for ``listar()``.
 
         Lista naturezas de operação.
@@ -101,7 +109,7 @@ class NaturezasOperacoesResource(BaseResource):
         self,
         tax_nature_id: int,
         calculation: JsonObject,
-    ) -> JsonObject:
+    ) -> NaturezasOperacoesIdNaturezaOperacaoObterTributacaoPostResponse200:
         """Compatibility alias for ``obter_tributacao()``.
 
         Obtém regras de tributação para uma natureza de operação.
