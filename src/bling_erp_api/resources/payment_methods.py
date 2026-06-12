@@ -4,6 +4,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.payment_methods import (
+    FormasPagamentosGetResponse200,
+    FormasPagamentosIdFormaPagamentoGetResponse200,
+    FormasPagamentosIdFormaPagamentoPutRequest,
+    FormasPagamentosIdFormaPagamentoPutResponse200,
+    FormasPagamentosPostRequest,
+    FormasPagamentosPostResponse201,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
@@ -43,7 +51,7 @@ class PaymentMethodsResource(BaseResource):
         descricao: str | None = None,
         tipos_pagamentos: list[int] | None = None,
         situacao: int | None = None,
-    ) -> JsonObject:
+    ) -> FormasPagamentosGetResponse200:
         """Obtém formas de pagamentos paginadas.
 
         Endpoint: GET /formas-pagamentos
@@ -65,7 +73,8 @@ class PaymentMethodsResource(BaseResource):
             tipos_pagamentos=tipos_pagamentos,
             situacao=situacao,
         )
-        return self._get(f"/formas-pagamentos?pagina={pagina}&limite={limite}", params=params)
+        raw = self._get(f"/formas-pagamentos?pagina={pagina}&limite={limite}", params=params)
+        return self._validate_response(FormasPagamentosGetResponse200, raw)
 
     def list(
         self,
@@ -75,7 +84,7 @@ class PaymentMethodsResource(BaseResource):
         description: str | None = None,
         payment_types: list[int] | None = None,
         status: int | None = None,
-    ) -> JsonObject:
+    ) -> FormasPagamentosGetResponse200:
         """Compatibility alias for ``listar()``.
 
         Obtém formas de pagamentos paginadas.
@@ -102,7 +111,7 @@ class PaymentMethodsResource(BaseResource):
             situacao=status,
         )
 
-    def obter(self, id_forma_pagamento: int) -> JsonObject:
+    def obter(self, id_forma_pagamento: int) -> FormasPagamentosIdFormaPagamentoGetResponse200:
         """Obtém uma forma de pagamento.
 
         Endpoint: GET /formas-pagamentos/{idFormaPagamento}
@@ -115,9 +124,10 @@ class PaymentMethodsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: FormasPagamentosDadosBaseDTO, FormasPagamentosDadosDTO; 404: ErrorResponse
         """
-        return self._get(f"/formas-pagamentos/{id_forma_pagamento}")
+        raw = self._get(f"/formas-pagamentos/{id_forma_pagamento}")
+        return self._validate_response(FormasPagamentosIdFormaPagamentoGetResponse200, raw)
 
-    def get(self, payment_method_id: int) -> JsonObject:
+    def get(self, payment_method_id: int) -> FormasPagamentosIdFormaPagamentoGetResponse200:
         """Compatibility alias for ``obter()``.
 
         Obtém uma forma de pagamento.
@@ -134,7 +144,7 @@ class PaymentMethodsResource(BaseResource):
         """
         return self.obter(id_forma_pagamento=payment_method_id)
 
-    def criar(self, dados: JsonObject) -> JsonObject:
+    def criar(self, dados: FormasPagamentosPostRequest) -> FormasPagamentosPostResponse201:
         """Cria uma forma de pagamento.
 
         Endpoint: POST /formas-pagamentos
@@ -147,9 +157,10 @@ class PaymentMethodsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
         """
-        return self._post("/formas-pagamentos", json=to_json_object(dados))
+        raw = self._post("/formas-pagamentos", json=to_json_object(dados))
+        return self._validate_response(FormasPagamentosPostResponse201, raw)
 
-    def create(self, data: JsonObject) -> JsonObject:
+    def create(self, data: FormasPagamentosPostRequest) -> FormasPagamentosPostResponse201:
         """Compatibility alias for ``criar()``.
 
         Cria uma forma de pagamento.
@@ -166,7 +177,9 @@ class PaymentMethodsResource(BaseResource):
         """
         return self.criar(dados=data)
 
-    def alterar(self, id_forma_pagamento: int, dados: JsonObject) -> JsonObject:
+    def alterar(
+        self, id_forma_pagamento: int, dados: FormasPagamentosIdFormaPagamentoPutRequest
+    ) -> FormasPagamentosIdFormaPagamentoPutResponse200:
         """Altera uma forma de pagamento.
 
         Endpoint: PUT /formas-pagamentos/{idFormaPagamento}
@@ -180,12 +193,15 @@ class PaymentMethodsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: BasePostResponse; 400: ErrorResponse; 404: ErrorResponse
         """
-        return self._put(
+        raw = self._put(
             f"/formas-pagamentos/{id_forma_pagamento}",
             json=to_json_object(dados),
         )
+        return self._validate_response(FormasPagamentosIdFormaPagamentoPutResponse200, raw)
 
-    def update(self, payment_method_id: int, data: JsonObject) -> JsonObject:
+    def update(
+        self, payment_method_id: int, data: FormasPagamentosIdFormaPagamentoPutRequest
+    ) -> FormasPagamentosIdFormaPagamentoPutResponse200:
         """Compatibility alias for ``alterar()``.
 
         Altera uma forma de pagamento.

@@ -10,6 +10,10 @@ from bling_erp_api.models.generated.invoices import (
     NfeIdNotaFiscalPutRequest,
     NfePostRequest,
 )
+from bling_erp_api.models.generated.payment_methods import (
+    FormasPagamentosIdFormaPagamentoPutRequest,
+    FormasPagamentosPostRequest,
+)
 from bling_erp_api.models.generated.product_groups import (
     GruposProdutosDadosDTO,
     GruposProdutosPostRequest,
@@ -2232,7 +2236,7 @@ class TestPaymentMethodsResourceMapping:
         transport = RecordingTransport()
         resource = PaymentMethodsResource(transport)
         dados: JsonObject = {"descricao": "Boleto", "tipoPagamento": 2}
-        resource.criar(dados)
+        resource.criar(cast("FormasPagamentosPostRequest", dados))
         assert transport.calls[0][:2] == ("POST", "/formas-pagamentos")
         assert transport.calls[0][3] is not None
 
@@ -2241,7 +2245,7 @@ class TestPaymentMethodsResourceMapping:
         transport = RecordingTransport()
         resource = PaymentMethodsResource(transport)
         dados: JsonObject = {"descricao": "Boleto Atualizado"}
-        resource.alterar(5, dados)
+        resource.alterar(5, cast("FormasPagamentosIdFormaPagamentoPutRequest", dados))
         assert transport.calls[0][:2] == ("PUT", "/formas-pagamentos/5")
         assert transport.calls[0][3] is not None
 
