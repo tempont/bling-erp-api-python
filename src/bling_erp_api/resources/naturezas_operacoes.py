@@ -107,7 +107,7 @@ class NaturezasOperacoesResource(BaseResource):
 
     def get_taxation(
         self,
-        tax_nature_id: int,
+        nature_of_operation_id: int,
         calculation: JsonObject,
     ) -> NaturezasOperacoesIdNaturezaOperacaoObterTributacaoPostResponse200:
         """Compatibility alias for ``obter_tributacao()``.
@@ -117,10 +117,12 @@ class NaturezasOperacoesResource(BaseResource):
         Endpoint: POST /naturezas-operacoes/{idNaturezaOperacao}/obter-tributacao
 
         Args:
-            tax_nature_id: ID da natureza de operação (Bling: ``idNaturezaOperacao``, integer, obrigatório)
+            nature_of_operation_id: ID da natureza de operação (Bling: ``idNaturezaOperacao``, integer, obrigatório)
             calculation: Dados para cálculo da tributação (Bling: ``CalculosImpostosCalculoDTO``, obrigatório)
 
         Returns:
             Bling API response. Response schemas: 200: CalculosImpostosDadosDTO; 400: ErrorResponse; 404: ErrorResponse
         """
-        return self.obter_tributacao(id_natureza_operacao=tax_nature_id, calculo=calculation)
+        return self.obter_tributacao(
+            id_natureza_operacao=nature_of_operation_id, calculo=calculation
+        )

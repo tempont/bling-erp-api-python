@@ -2884,7 +2884,7 @@ class TestNaturezasOperacoesResourceMapping:
                 "quantidade": 2.0,
             },
         }
-        resource.get_taxation(tax_nature_id=999, calculation=body)
+        resource.get_taxation(nature_of_operation_id=999, calculation=body)
         assert len(transport.calls) == 1
         method, path, params, req_body = transport.calls[0]
         assert method == "POST"

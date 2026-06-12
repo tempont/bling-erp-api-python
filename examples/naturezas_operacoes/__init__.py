@@ -1,0 +1,1 @@
+"""Natureza de Operações examples."""

@@ -509,7 +509,7 @@ class BlingClient:
         return self._naturezas_operacoes
 
     @property
-    def tax_natures(self) -> NaturezasOperacoesResource:
+    def natures_of_operations(self) -> NaturezasOperacoesResource:
         """Naturezas de Operações (EN alias)."""
         return self._naturezas_operacoes
 
