@@ -5,6 +5,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from bling_erp_api.models.generated.logisticas import (
+    LogisticasServicosDadosCreateRequestDTO,
+    LogisticasServicosDadosSaveRequestDTO,
     LogisticasServicosGetResponse200,
     LogisticasServicosIdLogisticaServicoGetResponse200,
     LogisticasServicosIdLogisticaServicoPutResponse200,
@@ -105,7 +107,9 @@ class LogisticasServicosResource(BaseResource):
         """
         return self.obter(id_logistica_servico=service_id)
 
-    def criar(self, dados: JsonObject) -> LogisticasServicosPostResponse201:
+    def criar(
+        self, dados: LogisticasServicosDadosCreateRequestDTO
+    ) -> LogisticasServicosPostResponse201:
         """Cria um serviço de logística.
 
         Endpoint: POST /logisticas/servicos
@@ -121,7 +125,9 @@ class LogisticasServicosResource(BaseResource):
         raw = self._post("/logisticas/servicos", json=to_json_object(dados))
         return self._validate_response(LogisticasServicosPostResponse201, raw)
 
-    def create(self, data: JsonObject) -> LogisticasServicosPostResponse201:
+    def create(
+        self, data: LogisticasServicosDadosCreateRequestDTO
+    ) -> LogisticasServicosPostResponse201:
         """Compatibility alias for ``criar()``.
 
         Cria um serviço de logística.
@@ -137,7 +143,7 @@ class LogisticasServicosResource(BaseResource):
         return self.criar(dados=data)
 
     def alterar(
-        self, id_logistica_servico: int, dados: JsonObject
+        self, id_logistica_servico: int, dados: LogisticasServicosDadosSaveRequestDTO
     ) -> LogisticasServicosIdLogisticaServicoPutResponse200:
         """Altera um serviço de logística.
 
@@ -156,7 +162,7 @@ class LogisticasServicosResource(BaseResource):
         return self._validate_response(LogisticasServicosIdLogisticaServicoPutResponse200, raw)
 
     def update(
-        self, service_id: int, data: JsonObject
+        self, service_id: int, data: LogisticasServicosDadosSaveRequestDTO
     ) -> LogisticasServicosIdLogisticaServicoPutResponse200:
         """Compatibility alias for ``alterar()``.
 

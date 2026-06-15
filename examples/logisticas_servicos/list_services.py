@@ -21,6 +21,8 @@ from bling_erp_api import BlingClient
 
 if TYPE_CHECKING:
     from bling_erp_api.models.generated.logisticas import (
+        LogisticasServicosDadosCreateRequestDTO,
+        LogisticasServicosDadosSaveRequestDTO,
         LogisticasServicosGetResponse200,
         LogisticasServicosIdLogisticaServicoGetResponse200,
         LogisticasServicosIdLogisticaServicoPutResponse200,
@@ -57,7 +59,9 @@ def obter_servico(
 ## ---------------------------------------------------------------------------
 
 
-def criar_servico(dados: JsonObject) -> LogisticasServicosPostResponse201:
+def criar_servico(
+    dados: LogisticasServicosDadosCreateRequestDTO,
+) -> LogisticasServicosPostResponse201:
     """Cria um novo serviço de logística."""
     with BlingClient.from_env() as client:
         return client.logisticas_servicos.criar(dados=dados)
@@ -70,13 +74,53 @@ def criar_servico(dados: JsonObject) -> LogisticasServicosPostResponse201:
 
 def alterar_servico(
     id_logistica_servico: int,
-    dados: JsonObject,
+    dados: LogisticasServicosDadosSaveRequestDTO,
 ) -> LogisticasServicosIdLogisticaServicoPutResponse200:
     """Altera um serviço de logística."""
     with BlingClient.from_env() as client:
         return client.logisticas_servicos.alterar(
             id_logistica_servico=id_logistica_servico, dados=dados
         )
+
+
+## ---------------------------------------------------------------------------
+## UPDATE SITUATION (PATCH)
+## ---------------------------------------------------------------------------
+
+
+def alterar_situacao_servico(id_logistica_servico: int, ativo: bool) -> JsonObject:  # noqa: FBT001
+    """Altera a situação de um serviço de logística.
+
+    Endpoint: PATCH /logisticas/servicos/{idLogisticaServico}/situacoes
+
+    Args:
+        id_logistica_servico: ID do serviço de logística (Bling: ``idLogisticaServico``, integer, obrigatório)
+        ativo: Situação ativo/inativo (Bling: ``ativo``, boolean, obrigatório)
+
+    Returns:
+        Bling API response.
+    """
+    with BlingClient.from_env() as client:
+        return client.logisticas_servicos.alterar_situacao(
+            id_logistica_servico=id_logistica_servico, ativo=ativo
+        )
+
+
+def set_status(service_id: int, active: bool) -> JsonObject:  # noqa: FBT001
+    """Compatibility alias for ``alterar_situacao_servico()``.
+
+    Altera a situação de um serviço de logística.
+
+    Endpoint: PATCH /logisticas/servicos/{idLogisticaServico}/situacoes
+
+    Args:
+        service_id: ID do serviço de logística (Bling: ``idLogisticaServico``, integer, obrigatório)
+        active: Situação ativo/inativo (Bling: ``ativo``, boolean, obrigatório)
+
+    Returns:
+        Bling API response.
+    """
+    return alterar_situacao_servico(id_logistica_servico=service_id, ativo=active)
 
 
 def main() -> None:
@@ -89,24 +133,25 @@ def main() -> None:
     time.sleep(1)
 
     # Write operations (commented out)
-    # payload: JsonObject = {
-    #     "descricao": "Serviço de frete personalizado",
-    #     "codigo": "FRETE001",
-    #     "aliases": ["frete", "frete personalizado"],
-    #     "ativo": True,
-    #     "freteItem": 15.50,
-    #     "estimativaEntrega": 5,
-    #     "logistica": {"id": 123},
-    #     "transportador": {"id": 456},
-    # }
-    # print(criar_servico(payload).model_dump_json(indent=2, by_alias=True))
-    # time.sleep(1)
+    # payload = LogisticasServicosDadosSaveRequestDTO(
+    #     descricao="PAC",
+    #     frete_item=15.50,
+    #     estimativa_entrega=5,
+    #     transportador=LogisticasServicosTransportadorDTO(id=1001),
+    # )
     # print(
     #     alterar_servico(id_logistica_servico=201, dados=payload).model_dump_json(
     #         indent=2,
     #         by_alias=True,
     #     )
     # )
+    # time.sleep(1)
+
+    # create_payload = LogisticasServicosDadosCreateRequestDTO(
+    #     logistica=LogisticasServicosLogisticaDTO(id=101),
+    #     servicos=[payload],
+    # )
+    # print(criar_servico(create_payload).model_dump_json(indent=2, by_alias=True))
     # time.sleep(1)
 
 

@@ -10,6 +10,10 @@ from bling_erp_api.models.generated.invoices import (
     NfeIdNotaFiscalPutRequest,
     NfePostRequest,
 )
+from bling_erp_api.models.generated.logisticas import (
+    LogisticasServicosDadosCreateRequestDTO,
+    LogisticasServicosDadosSaveRequestDTO,
+)
 from bling_erp_api.models.generated.payment_methods import (
     FormasPagamentosIdFormaPagamentoPutRequest,
     FormasPagamentosPostRequest,
@@ -2552,10 +2556,10 @@ class TestLogisticasServicosResourceMapping:
         """Servicos criar posts JSON body to POST /logisticas/servicos."""
         transport = RecordingTransport()
         resource = LogisticasServicosResource(transport)
-        dados: JsonObject = {
-            "logistica": {"id": 101},
-            "servicos": [{"descricao": "PAC", "codigo": "04510"}],
-        }
+        dados = cast(
+            "LogisticasServicosDadosCreateRequestDTO",
+            {"logistica": {"id": 101}, "servicos": [{"descricao": "PAC", "codigo": "04510"}]},
+        )
         resource.criar(dados)
         assert transport.calls[0][0] == "POST"
         assert transport.calls[0][1] == "/logisticas/servicos"
@@ -2566,7 +2570,10 @@ class TestLogisticasServicosResourceMapping:
         """Servicos alterar puts JSON body to PUT /logisticas/servicos/{id}."""
         transport = RecordingTransport()
         resource = LogisticasServicosResource(transport)
-        dados: JsonObject = {"descricao": "PAC Atualizado"}
+        dados = cast(
+            "LogisticasServicosDadosSaveRequestDTO",
+            {"descricao": "PAC Atualizado"},
+        )
         resource.alterar(201, dados)
         assert transport.calls[0][0] == "PUT"
         assert transport.calls[0][1] == "/logisticas/servicos/201"
