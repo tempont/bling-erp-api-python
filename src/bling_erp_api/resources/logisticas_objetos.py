@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.logisticas import (
+    LogisticasObjetosIdObjetoGetResponse200,
+    LogisticasObjetosIdObjetoPutResponse200,
+    LogisticasObjetosPostResponse201,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.serialization import to_json_object
 
@@ -17,7 +22,7 @@ class LogisticasObjetosResource(BaseResource):
     Métodos canônicos em pt-BR. Aliases em inglês disponíveis para compatibilidade.
     """
 
-    def criar(self, dados: JsonObject) -> JsonObject:
+    def criar(self, dados: JsonObject) -> LogisticasObjetosPostResponse201:
         """Cria um objeto de logística.
 
         Endpoint: POST /logisticas/objetos
@@ -30,9 +35,10 @@ class LogisticasObjetosResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: LogisticasObjetosObjetoDTO; 400: ErrorResponse
         """
-        return self._post("/logisticas/objetos", json=to_json_object(dados))
+        raw = self._post("/logisticas/objetos", json=to_json_object(dados))
+        return self._validate_response(LogisticasObjetosPostResponse201, raw)
 
-    def create(self, data: JsonObject) -> JsonObject:
+    def create(self, data: JsonObject) -> LogisticasObjetosPostResponse201:
         """Compatibility alias for ``criar()``.
 
         Cria um objeto de logística.
@@ -47,7 +53,7 @@ class LogisticasObjetosResource(BaseResource):
         """
         return self.criar(dados=data)
 
-    def obter(self, id_objeto: int) -> JsonObject:
+    def obter(self, id_objeto: int) -> LogisticasObjetosIdObjetoGetResponse200:
         """Obtém um objeto de logística.
 
         Endpoint: GET /logisticas/objetos/{idObjeto}
@@ -60,9 +66,10 @@ class LogisticasObjetosResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: LogisticasObjetosDadosDTO; 404: ErrorResponse
         """
-        return self._get(f"/logisticas/objetos/{id_objeto}")
+        raw = self._get(f"/logisticas/objetos/{id_objeto}")
+        return self._validate_response(LogisticasObjetosIdObjetoGetResponse200, raw)
 
-    def get(self, object_id: int) -> JsonObject:
+    def get(self, object_id: int) -> LogisticasObjetosIdObjetoGetResponse200:
         """Compatibility alias for ``obter()``.
 
         Obtém um objeto de logística.
@@ -77,7 +84,7 @@ class LogisticasObjetosResource(BaseResource):
         """
         return self.obter(id_objeto=object_id)
 
-    def alterar(self, id_objeto: int, dados: JsonObject) -> JsonObject:
+    def alterar(self, id_objeto: int, dados: JsonObject) -> LogisticasObjetosIdObjetoPutResponse200:
         """Altera um objeto de logística.
 
         Endpoint: PUT /logisticas/objetos/{idObjeto}
@@ -91,9 +98,10 @@ class LogisticasObjetosResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: LogisticasObjetosObjetoDTO; 400: ErrorResponse; 404: ErrorResponse
         """
-        return self._put(f"/logisticas/objetos/{id_objeto}", json=to_json_object(dados))
+        raw = self._put(f"/logisticas/objetos/{id_objeto}", json=to_json_object(dados))
+        return self._validate_response(LogisticasObjetosIdObjetoPutResponse200, raw)
 
-    def update(self, object_id: int, data: JsonObject) -> JsonObject:
+    def update(self, object_id: int, data: JsonObject) -> LogisticasObjetosIdObjetoPutResponse200:
         """Compatibility alias for ``alterar()``.
 
         Altera um objeto de logística.
