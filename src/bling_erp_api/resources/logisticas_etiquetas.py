@@ -2,12 +2,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
+from bling_erp_api.models.generated.logisticas import LogisticasEtiquetasGetResponse200
 from bling_erp_api.resources.base import BaseResource
-
-if TYPE_CHECKING:
-    from bling_erp_api.types import JsonObject
 
 
 class LogisticasEtiquetasResource(BaseResource):
@@ -16,7 +12,7 @@ class LogisticasEtiquetasResource(BaseResource):
     Métodos canônicos em pt-BR. Aliases em inglês disponíveis para compatibilidade.
     """
 
-    def obter(self, *, formato: str, ids_vendas: list[int]) -> JsonObject:
+    def obter(self, *, formato: str, ids_vendas: list[int]) -> LogisticasEtiquetasGetResponse200:
         """Obtém etiquetas das vendas.
 
         Endpoint: GET /logisticas/etiquetas
@@ -30,11 +26,12 @@ class LogisticasEtiquetasResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: LogisticasEtiquetasDadosResponseDTO; 400: ErrorResponse; 404: ErrorResponse
         """
-        return self._get(
+        raw = self._get(
             "/logisticas/etiquetas", params={"formato": formato, "idsVendas[]": ids_vendas}
         )
+        return self._validate_response(LogisticasEtiquetasGetResponse200, raw)
 
-    def get(self, *, format: str, sale_ids: list[int]) -> JsonObject:  # noqa: A002
+    def get(self, *, format: str, sale_ids: list[int]) -> LogisticasEtiquetasGetResponse200:  # noqa: A002
         """Compatibility alias for ``obter()``.
 
         Obtém etiquetas das vendas.
