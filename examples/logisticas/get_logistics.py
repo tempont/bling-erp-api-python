@@ -1,15 +1,34 @@
-"""Example: Get a single logistics entry by ID."""
+"""Example: Get a Logistics by ID.
+
+Endpoints:
+    - GET /logisticas/{idLogistica}
+
+Docs:
+    - https://developer.bling.com.br/referencia#/Logisticas/get_logisticas__idLogistica_
+
+"""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from bling_erp_api import BlingClient
-from bling_erp_api.models.generated.logisticas import LogisticasIdLogisticaGetResponse200
+
+if TYPE_CHECKING:
+    from bling_erp_api.models.generated.logisticas import (
+        LogisticasIdLogisticaGetResponse200,
+    )
+
+
+def obter_logistica(logistics_id: int) -> LogisticasIdLogisticaGetResponse200:
+    """Obtém uma logística pelo ID."""
+    with BlingClient.from_env() as client:
+        return client.logisticas.obter(id_logistica=logistics_id)
 
 
 def main() -> None:
-    """Retrieve logistics details by ID."""
-    with BlingClient.from_env() as client:
-        response = client.logisticas.obter(101)
-        parsed = LogisticasIdLogisticaGetResponse200(**response)  # type: ignore[reportArgumentType]
-        print(parsed.model_dump_json(indent=2, by_alias=True))
+    """Demonstrate a logistics retrieval."""
+    print(obter_logistica(101).model_dump_json(indent=2, by_alias=True))
 
 
 if __name__ == "__main__":

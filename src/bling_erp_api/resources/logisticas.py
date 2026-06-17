@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.logisticas import (
+    LogisticasGetResponse200,
+    LogisticasIdLogisticaGetResponse200,
+    LogisticasPostResponse201,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
@@ -44,7 +49,7 @@ class LogisticasResource(BaseResource):
         tipos_integracoes: list[str] | None = None,
         situacao: str | None = None,
         logisticas_reversas: bool | None = None,
-    ) -> JsonObject:
+    ) -> LogisticasGetResponse200:
         """Lista logísticas.
 
         Endpoint: GET /logisticas
@@ -68,7 +73,8 @@ class LogisticasResource(BaseResource):
             situacao=situacao,
             logisticas_reversas=logisticas_reversas,
         )
-        return self._get(f"/logisticas?pagina={pagina}&limite={limite}", params=params)
+        raw = self._get(f"/logisticas?pagina={pagina}&limite={limite}", params=params)
+        return self._validate_response(LogisticasGetResponse200, raw)
 
     def list(  # noqa: PLR0913
         self,
@@ -79,7 +85,7 @@ class LogisticasResource(BaseResource):
         integration_types: list[str] | None = None,
         status: str | None = None,
         reverse_logistics: bool | None = None,
-    ) -> JsonObject:
+    ) -> LogisticasGetResponse200:
         """Compatibility alias for ``listar()``.
 
         Lista logísticas.
@@ -108,7 +114,7 @@ class LogisticasResource(BaseResource):
 
     def obter(
         self, id_logistica: int, *, listar_servicos_inativos: bool | None = None
-    ) -> JsonObject:
+    ) -> LogisticasIdLogisticaGetResponse200:
         """Obtém uma logística.
 
         Endpoint: GET /logisticas/{idLogistica}
@@ -123,9 +129,12 @@ class LogisticasResource(BaseResource):
             Bling API response. Response schemas: 200: LogisticasDadosDTO; 404: ErrorResponse
         """
         params = compact_params({"listarServicosInativos": listar_servicos_inativos})
-        return self._get(f"/logisticas/{id_logistica}", params=params)
+        raw = self._get(f"/logisticas/{id_logistica}", params=params)
+        return self._validate_response(LogisticasIdLogisticaGetResponse200, raw)
 
-    def get(self, logistics_id: int, *, list_inactive_services: bool | None = None) -> JsonObject:
+    def get(
+        self, logistics_id: int, *, list_inactive_services: bool | None = None
+    ) -> LogisticasIdLogisticaGetResponse200:
         """Compatibility alias for ``obter()``.
 
         Obtém uma logística.
@@ -143,7 +152,7 @@ class LogisticasResource(BaseResource):
             id_logistica=logistics_id, listar_servicos_inativos=list_inactive_services
         )
 
-    def criar(self, dados: JsonObject) -> JsonObject:
+    def criar(self, dados: JsonObject) -> LogisticasPostResponse201:
         """Cria uma logística.
 
         Endpoint: POST /logisticas
@@ -156,9 +165,10 @@ class LogisticasResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: LogisticasLogisticaDTO; 400: ErrorResponse
         """
-        return self._post("/logisticas", json=to_json_object(dados))
+        raw = self._post("/logisticas", json=to_json_object(dados))
+        return self._validate_response(LogisticasPostResponse201, raw)
 
-    def create(self, data: JsonObject) -> JsonObject:
+    def create(self, data: JsonObject) -> LogisticasPostResponse201:
         """Compatibility alias for ``criar()``.
 
         Cria uma logística.
