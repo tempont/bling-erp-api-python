@@ -4,6 +4,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.homologation import (
+    HomologacaoProdutosGetResponse200,
+    HomologacaoProdutosPostResponse201,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.serialization import to_json_object
 
@@ -19,7 +23,7 @@ class HomologationResource(BaseResource):
     para compatibilidade.
     """
 
-    def obter(self) -> JsonObject:
+    def obter(self) -> HomologacaoProdutosGetResponse200:
         """Obtém o produto da homologação.
 
         Endpoint: GET /homologacao/produtos
@@ -30,9 +34,10 @@ class HomologationResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: HomologacaoDadosBaseDTO
         """
-        return self._get("/homologacao/produtos")
+        raw = self._get("/homologacao/produtos")
+        return self._validate_response(HomologacaoProdutosGetResponse200, raw)
 
-    def get(self) -> JsonObject:
+    def get(self) -> HomologacaoProdutosGetResponse200:
         """Compatibility alias for ``obter()``.
 
         Obtém o produto da homologação.
@@ -47,7 +52,7 @@ class HomologationResource(BaseResource):
         """
         return self.obter()
 
-    def criar(self, dados: JsonObject) -> JsonObject:
+    def criar(self, dados: JsonObject) -> HomologacaoProdutosPostResponse201:
         """Cria o produto da homologação.
 
         Endpoint: POST /homologacao/produtos
@@ -60,9 +65,10 @@ class HomologationResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: HomologacaoDadosBaseDTO, HomologacaoDadosDTO; 400: ErrorResponse
         """
-        return self._post("/homologacao/produtos", json=to_json_object(dados))
+        raw = self._post("/homologacao/produtos", json=to_json_object(dados))
+        return self._validate_response(HomologacaoProdutosPostResponse201, raw)
 
-    def create(self, data: JsonObject) -> JsonObject:
+    def create(self, data: JsonObject) -> HomologacaoProdutosPostResponse201:
         """Compatibility alias for ``criar()``.
 
         Cria o produto da homologação.
