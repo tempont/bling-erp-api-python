@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.estoques import (
+    EstoquesPostResponse201,
+    EstoquesSaldosGetResponse200,
+    EstoquesSaldosIdDepositoGetResponse200,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
@@ -42,7 +47,7 @@ class EstoquesResource(BaseResource):
         ids_produtos: list[int],
         codigos: list[str] | None = None,
         filtro_saldo_estoque: int | None = None,
-    ) -> JsonObject:
+    ) -> EstoquesSaldosGetResponse200:
         """Obtém saldo em estoque de produtos.
 
         Endpoint: GET /estoques/saldos
@@ -62,7 +67,8 @@ class EstoquesResource(BaseResource):
             codigos=codigos,
             filtro_saldo_estoque=filtro_saldo_estoque,
         )
-        return self._get("/estoques/saldos", params=params)
+        raw = self._get("/estoques/saldos", params=params)
+        return self._validate_response(EstoquesSaldosGetResponse200, raw)
 
     def get_balances(
         self,
@@ -70,7 +76,7 @@ class EstoquesResource(BaseResource):
         product_ids: list[int],
         codes: list[str] | None = None,
         stock_balance_filter: int | None = None,
-    ) -> JsonObject:
+    ) -> EstoquesSaldosGetResponse200:
         """Compatibility alias for ``obter_saldos()``.
 
         Gets stock balances for products.
@@ -98,7 +104,7 @@ class EstoquesResource(BaseResource):
         ids_produtos: list[int],
         codigos: list[str] | None = None,
         filtro_saldo_estoque: int | None = None,
-    ) -> JsonObject:
+    ) -> EstoquesSaldosIdDepositoGetResponse200:
         """Obtém saldo em estoque por depósito.
 
         Endpoint: GET /estoques/saldos/{idDeposito}
@@ -119,7 +125,8 @@ class EstoquesResource(BaseResource):
             codigos=codigos,
             filtro_saldo_estoque=filtro_saldo_estoque,
         )
-        return self._get(f"/estoques/saldos/{id_deposito}", params=params)
+        raw = self._get(f"/estoques/saldos/{id_deposito}", params=params)
+        return self._validate_response(EstoquesSaldosIdDepositoGetResponse200, raw)
 
     def get_balances_by_deposit(
         self,
@@ -128,7 +135,7 @@ class EstoquesResource(BaseResource):
         product_ids: list[int],
         codes: list[str] | None = None,
         stock_balance_filter: int | None = None,
-    ) -> JsonObject:
+    ) -> EstoquesSaldosIdDepositoGetResponse200:
         """Compatibility alias for ``obter_saldos_por_deposito()``.
 
         Gets stock balances by deposit.
@@ -151,7 +158,7 @@ class EstoquesResource(BaseResource):
             filtro_saldo_estoque=stock_balance_filter,
         )
 
-    def criar(self, dados: JsonObject) -> JsonObject:
+    def criar(self, dados: JsonObject) -> EstoquesPostResponse201:
         """Cria um registro de estoque.
 
         Endpoint: POST /estoques
@@ -164,9 +171,10 @@ class EstoquesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
         """
-        return self._post("/estoques", json=to_json_object(dados))
+        raw = self._post("/estoques", json=to_json_object(dados))
+        return self._validate_response(EstoquesPostResponse201, raw)
 
-    def create(self, data: JsonObject) -> JsonObject:
+    def create(self, data: JsonObject) -> EstoquesPostResponse201:
         """Compatibility alias for ``criar()``.
 
         Creates a stock entry.
