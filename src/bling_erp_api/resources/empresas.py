@@ -2,12 +2,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
+from bling_erp_api.models.generated.empresas import EmpresasMeDadosBasicosGetResponse200
 from bling_erp_api.resources.base import BaseResource
-
-if TYPE_CHECKING:
-    from bling_erp_api.types import JsonObject
 
 
 class EmpresasResource(BaseResource):
@@ -18,7 +14,7 @@ class EmpresasResource(BaseResource):
     os métodos em inglês continuam disponíveis como aliases de compatibilidade.
     """
 
-    def obter_dados_basicos(self) -> JsonObject:
+    def obter_dados_basicos(self) -> EmpresasMeDadosBasicosGetResponse200:
         """Obtém dados básicos da empresa.
 
         Endpoint: GET /empresas/me/dados-basicos
@@ -28,9 +24,10 @@ class EmpresasResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: EmpresasDadosBasicosDTO
         """
-        return self._get("/empresas/me/dados-basicos")
+        raw = self._get("/empresas/me/dados-basicos")
+        return self._validate_response(EmpresasMeDadosBasicosGetResponse200, raw)
 
-    def get_basic_data(self) -> JsonObject:
+    def get_basic_data(self) -> EmpresasMeDadosBasicosGetResponse200:
         """Compatibility alias for ``obter_dados_basicos()``.
 
         Gets basic company data.
