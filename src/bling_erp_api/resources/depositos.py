@@ -4,6 +4,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.depositos import (
+    DepositosGetResponse200,
+    DepositosIdDepositoGetResponse200,
+    DepositosIdDepositoPutResponse200,
+    DepositosPostResponse201,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
@@ -36,7 +42,7 @@ class DepositosResource(BaseResource):
         limite: int = 100,
         descricao: str | None = None,
         situacao: int | None = None,
-    ) -> JsonObject:
+    ) -> DepositosGetResponse200:
         """Lista depósitos.
 
         Endpoint: GET /depositos
@@ -53,7 +59,8 @@ class DepositosResource(BaseResource):
             Bling API response. Response schemas: 200: DepositosDadosDTO
         """
         params = _depositos_list_params(descricao=descricao, situacao=situacao)
-        return self._get(f"/depositos?pagina={pagina}&limite={limite}", params=params)
+        raw = self._get(f"/depositos?pagina={pagina}&limite={limite}", params=params)
+        return self._validate_response(DepositosGetResponse200, raw)
 
     def list(
         self,
@@ -62,7 +69,7 @@ class DepositosResource(BaseResource):
         limit: int = 100,
         description: str | None = None,
         status: int | None = None,
-    ) -> JsonObject:
+    ) -> DepositosGetResponse200:
         """Compatibility alias for ``listar()``.
 
         Lists deposits.
@@ -80,7 +87,7 @@ class DepositosResource(BaseResource):
         """
         return self.listar(pagina=page, limite=limit, descricao=description, situacao=status)
 
-    def obter(self, id_deposito: int) -> JsonObject:
+    def obter(self, id_deposito: int) -> DepositosIdDepositoGetResponse200:
         """Obtém um depósito.
 
         Endpoint: GET /depositos/{idDeposito}
@@ -93,9 +100,10 @@ class DepositosResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: DepositosDadosDTO; 404: ErrorResponse
         """
-        return self._get(f"/depositos/{id_deposito}")
+        raw = self._get(f"/depositos/{id_deposito}")
+        return self._validate_response(DepositosIdDepositoGetResponse200, raw)
 
-    def get(self, deposit_id: int) -> JsonObject:
+    def get(self, deposit_id: int) -> DepositosIdDepositoGetResponse200:
         """Compatibility alias for ``obter()``.
 
         Gets a deposit.
@@ -110,7 +118,7 @@ class DepositosResource(BaseResource):
         """
         return self.obter(id_deposito=deposit_id)
 
-    def criar(self, dados: JsonObject) -> JsonObject:
+    def criar(self, dados: JsonObject) -> DepositosPostResponse201:
         """Cria um depósito.
 
         Endpoint: POST /depositos
@@ -123,9 +131,10 @@ class DepositosResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
         """
-        return self._post("/depositos", json=to_json_object(dados))
+        raw = self._post("/depositos", json=to_json_object(dados))
+        return self._validate_response(DepositosPostResponse201, raw)
 
-    def create(self, data: JsonObject) -> JsonObject:
+    def create(self, data: JsonObject) -> DepositosPostResponse201:
         """Compatibility alias for ``criar()``.
 
         Creates a deposit.
@@ -140,7 +149,7 @@ class DepositosResource(BaseResource):
         """
         return self.criar(dados=data)
 
-    def alterar(self, id_deposito: int, dados: JsonObject) -> JsonObject:
+    def alterar(self, id_deposito: int, dados: JsonObject) -> DepositosIdDepositoPutResponse200:
         """Altera um depósito.
 
         Endpoint: PUT /depositos/{idDeposito}
@@ -154,9 +163,10 @@ class DepositosResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: BasePostResponse; 400: ErrorResponse; 404: ErrorResponse
         """
-        return self._put(f"/depositos/{id_deposito}", json=to_json_object(dados))
+        raw = self._put(f"/depositos/{id_deposito}", json=to_json_object(dados))
+        return self._validate_response(DepositosIdDepositoPutResponse200, raw)
 
-    def update(self, deposit_id: int, data: JsonObject) -> JsonObject:
+    def update(self, deposit_id: int, data: JsonObject) -> DepositosIdDepositoPutResponse200:
         """Compatibility alias for ``alterar()``.
 
         Updates a deposit.

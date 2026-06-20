@@ -54,7 +54,7 @@ codegen = [
 target-version = "py314"
 line-length = 100
 indent-width = 4
-exclude = [".git", ".ruff_cache", ".venv"]
+exclude = [".git", ".ruff_cache", ".venv", "typings"]
 show-fixes = true
 
 [tool.ruff.format]
@@ -130,4 +130,5 @@ extraPaths = ["src", "scripts"]
 exclude = [
     "**/.venv",
     ".venv",
+    "typings/**",
 ]

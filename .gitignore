@@ -68,3 +68,4 @@ scripts/dev_test*
 examples/dev/
 .opencode
 site
+typings/
