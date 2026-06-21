@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from bling_erp_api.models.generated.depositos import (
+    DepositosDadosDTO,
     DepositosGetResponse200,
     DepositosIdDepositoGetResponse200,
     DepositosIdDepositoPutResponse200,
@@ -15,7 +16,7 @@ from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
 
 if TYPE_CHECKING:
-    from bling_erp_api.types import JsonObject, QueryParams
+    from bling_erp_api.types import QueryParams
 
 
 def _depositos_list_params(
@@ -118,7 +119,7 @@ class DepositosResource(BaseResource):
         """
         return self.obter(id_deposito=deposit_id)
 
-    def criar(self, dados: JsonObject) -> DepositosPostResponse201:
+    def criar(self, dados: DepositosDadosDTO) -> DepositosPostResponse201:
         """Cria um depósito.
 
         Endpoint: POST /depositos
@@ -126,7 +127,7 @@ class DepositosResource(BaseResource):
         Cria um novo depósito.
 
         Args:
-            dados: Dados do depósito (Bling: request body)
+            dados: Dados do depósito (Bling: request body, ``DepositosDadosDTO``)
 
         Returns:
             Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
@@ -134,7 +135,7 @@ class DepositosResource(BaseResource):
         raw = self._post("/depositos", json=to_json_object(dados))
         return self._validate_response(DepositosPostResponse201, raw)
 
-    def create(self, data: JsonObject) -> DepositosPostResponse201:
+    def create(self, data: DepositosDadosDTO) -> DepositosPostResponse201:
         """Compatibility alias for ``criar()``.
 
         Creates a deposit.
@@ -142,14 +143,16 @@ class DepositosResource(BaseResource):
         Endpoint: POST /depositos
 
         Args:
-            data: Deposit data (Bling: request body)
+            data: Deposit data (Bling: request body, ``DepositosDadosDTO``)
 
         Returns:
             Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
         """
         return self.criar(dados=data)
 
-    def alterar(self, id_deposito: int, dados: JsonObject) -> DepositosIdDepositoPutResponse200:
+    def alterar(
+        self, id_deposito: int, dados: DepositosDadosDTO
+    ) -> DepositosIdDepositoPutResponse200:
         """Altera um depósito.
 
         Endpoint: PUT /depositos/{idDeposito}
@@ -158,7 +161,7 @@ class DepositosResource(BaseResource):
 
         Args:
             id_deposito: ID do depósito (Bling: ``idDeposito``, integer, obrigatório)
-            dados: Dados do depósito para atualização (Bling: request body)
+            dados: Dados do depósito para atualização (Bling: request body, ``DepositosDadosDTO``)
 
         Returns:
             Bling API response. Response schemas: 200: BasePostResponse; 400: ErrorResponse; 404: ErrorResponse
@@ -166,7 +169,7 @@ class DepositosResource(BaseResource):
         raw = self._put(f"/depositos/{id_deposito}", json=to_json_object(dados))
         return self._validate_response(DepositosIdDepositoPutResponse200, raw)
 
-    def update(self, deposit_id: int, data: JsonObject) -> DepositosIdDepositoPutResponse200:
+    def update(self, deposit_id: int, data: DepositosDadosDTO) -> DepositosIdDepositoPutResponse200:
         """Compatibility alias for ``alterar()``.
 
         Updates a deposit.
@@ -175,7 +178,7 @@ class DepositosResource(BaseResource):
 
         Args:
             deposit_id: Deposit ID (Bling: ``idDeposito``, integer, obrigatório)
-            data: Deposit update data (Bling: request body)
+            data: Deposit update data (Bling: request body, ``DepositosDadosDTO``)
 
         Returns:
             Bling API response. Response schemas: 200: BasePostResponse; 400: ErrorResponse; 404: ErrorResponse

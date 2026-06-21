@@ -6,6 +6,7 @@ from datetime import UTC, date, datetime
 from typing import cast
 
 from bling_erp_api.models.generated.contacts import ContatosGetResponse200
+from bling_erp_api.models.generated.depositos import DepositosDadosDTO
 from bling_erp_api.models.generated.invoices import (
     NfeIdNotaFiscalPutRequest,
     NfePostRequest,
@@ -2075,7 +2076,7 @@ class TestDepositosResourceMapping:
         """Depositos criar posts JSON body to POST /depositos."""
         transport = RecordingTransport()
         resource = DepositosResource(transport)
-        dados: JsonObject = {"descricao": "Novo Depósito", "situacao": 1}
+        dados = cast("DepositosDadosDTO", {"descricao": "Novo Depósito", "situacao": 1})
         resource.criar(dados=dados)
         assert len(transport.calls) == 1
         assert transport.calls[0][0] == "POST"
@@ -2086,7 +2087,7 @@ class TestDepositosResourceMapping:
         """Depositos alterar puts JSON body to PUT /depositos/{id}."""
         transport = RecordingTransport()
         resource = DepositosResource(transport)
-        dados: JsonObject = {"descricao": "Depósito Alterado", "situacao": 1}
+        dados = cast("DepositosDadosDTO", {"descricao": "Depósito Alterado", "situacao": 1})
         resource.alterar(1, dados=dados)
         assert transport.calls[0][0] == "PUT"
         assert transport.calls[0][1] == "/depositos/1"
