@@ -4,6 +4,16 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.contas_receber import (
+    ContasReceberBoletosCancelarDTO,
+    ContasReceberBoletosDadosBaseDTO,
+    ContasReceberGetResponse200,
+    ContasReceberIdContaReceberBaixarPostResponse200,
+    ContasReceberIdContaReceberGetResponse200,
+    ContasReceberIdContaReceberPutRequest,
+    ContasReceberPostRequest,
+    ContasReceberPostResponse201,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
@@ -66,7 +76,7 @@ class ContasReceberResource(BaseResource):
         id_vendedor: int | None = None,
         id_forma_pagamento: int | None = None,
         boleto_gerado: int | None = None,
-    ) -> JsonObject:
+    ) -> ContasReceberGetResponse200:
         """Lista contas a receber.
 
         Endpoint: GET /contas/receber
@@ -102,7 +112,8 @@ class ContasReceberResource(BaseResource):
             id_forma_pagamento=id_forma_pagamento,
             boleto_gerado=boleto_gerado,
         )
-        return self._get(f"/contas/receber?pagina={pagina}&limite={limite}", params=params)
+        raw = self._get(f"/contas/receber?pagina={pagina}&limite={limite}", params=params)
+        return self._validate_response(ContasReceberGetResponse200, raw)
 
     def list(  # noqa: PLR0913
         self,
@@ -119,7 +130,7 @@ class ContasReceberResource(BaseResource):
         salesperson_id: int | None = None,
         payment_method_id: int | None = None,
         boleto_generated: int | None = None,
-    ) -> JsonObject:
+    ) -> ContasReceberGetResponse200:
         """Compatibility alias for ``listar()``."""
         return self.listar(
             pagina=page,
@@ -136,7 +147,7 @@ class ContasReceberResource(BaseResource):
             boleto_gerado=boleto_generated,
         )
 
-    def obter(self, id_conta_receber: int) -> JsonObject:
+    def obter(self, id_conta_receber: int) -> ContasReceberIdContaReceberGetResponse200:
         """Obtém uma conta a receber.
 
         Endpoint: GET /contas/receber/{idContaReceber}
@@ -147,13 +158,14 @@ class ContasReceberResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ContasReceberDadosListDTO; 404: ErrorResponse
         """
-        return self._get(f"/contas/receber/{id_conta_receber}")
+        raw = self._get(f"/contas/receber/{id_conta_receber}")
+        return self._validate_response(ContasReceberIdContaReceberGetResponse200, raw)
 
-    def get(self, receivable_id: int) -> JsonObject:
+    def get(self, receivable_id: int) -> ContasReceberIdContaReceberGetResponse200:
         """Compatibility alias for ``obter()``."""
         return self.obter(id_conta_receber=receivable_id)
 
-    def criar(self, dados: JsonObject) -> JsonObject:
+    def criar(self, dados: ContasReceberPostRequest) -> ContasReceberPostResponse201:
         """Cria uma conta a receber.
 
         Endpoint: POST /contas/receber
@@ -164,13 +176,16 @@ class ContasReceberResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
         """
-        return self._post("/contas/receber", json=to_json_object(dados))
+        raw = self._post("/contas/receber", json=to_json_object(dados))
+        return self._validate_response(ContasReceberPostResponse201, raw)
 
-    def create(self, data: JsonObject) -> JsonObject:
+    def create(self, data: ContasReceberPostRequest) -> ContasReceberPostResponse201:
         """Compatibility alias for ``criar()``."""
         return self.criar(dados=data)
 
-    def alterar(self, id_conta_receber: int, dados: JsonObject) -> JsonObject:
+    def alterar(
+        self, id_conta_receber: int, dados: ContasReceberIdContaReceberPutRequest
+    ) -> JsonObject:
         """Altera uma conta a receber.
 
         Endpoint: PUT /contas/receber/{idContaReceber}
@@ -184,7 +199,7 @@ class ContasReceberResource(BaseResource):
         """
         return self._put(f"/contas/receber/{id_conta_receber}", json=to_json_object(dados))
 
-    def update(self, receivable_id: int, data: JsonObject) -> JsonObject:
+    def update(self, receivable_id: int, data: ContasReceberIdContaReceberPutRequest) -> JsonObject:
         """Compatibility alias for ``alterar()``."""
         return self.alterar(id_conta_receber=receivable_id, dados=data)
 
@@ -209,7 +224,7 @@ class ContasReceberResource(BaseResource):
         self,
         id_conta_receber: int,
         dados: ContasBaixarContaDTO,
-    ) -> JsonObject:
+    ) -> ContasReceberIdContaReceberBaixarPostResponse200:
         """Baixa uma conta a receber (registra o recebimento).
 
         Endpoint: POST /contas/receber/{idContaReceber}/baixar
@@ -221,17 +236,20 @@ class ContasReceberResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: bordero; 400: ErrorResponse
         """
-        return self._post(f"/contas/receber/{id_conta_receber}/baixar", json=to_json_object(dados))
+        raw = self._post(f"/contas/receber/{id_conta_receber}/baixar", json=to_json_object(dados))
+        return self._validate_response(ContasReceberIdContaReceberBaixarPostResponse200, raw)
 
     def settle(
         self,
         receivable_id: int,
         data: ContasBaixarContaDTO,
-    ) -> JsonObject:
+    ) -> ContasReceberIdContaReceberBaixarPostResponse200:
         """Compatibility alias for ``baixar()``."""
         return self.baixar(id_conta_receber=receivable_id, dados=data)
 
-    def obter_boletos(self, *, id_origem: int, situacoes: list[int] | None = None) -> JsonObject:
+    def obter_boletos(
+        self, *, id_origem: int, situacoes: list[int] | None = None
+    ) -> ContasReceberBoletosDadosBaseDTO:
         """Obtém boletos vinculados a uma venda ou NF.
 
         Endpoint: GET /contas/receber/boletos
@@ -246,13 +264,16 @@ class ContasReceberResource(BaseResource):
             Bling API response. Response schemas: 200: ContasReceberBoletosDadosBaseDTO; 400: ErrorResponse; 404: ErrorResponse
         """
         params = compact_params({"situacoes[]": situacoes})
-        return self._get(f"/contas/receber/boletos?idOrigem={id_origem}", params=params)
+        raw = self._get(f"/contas/receber/boletos?idOrigem={id_origem}", params=params)
+        return self._validate_response(ContasReceberBoletosDadosBaseDTO, raw)
 
-    def get_boletos(self, *, source_id: int, statuses: list[int] | None = None) -> JsonObject:
+    def get_boletos(
+        self, *, source_id: int, statuses: list[int] | None = None
+    ) -> ContasReceberBoletosDadosBaseDTO:
         """Compatibility alias for ``obter_boletos()``."""
         return self.obter_boletos(id_origem=source_id, situacoes=statuses)
 
-    def cancelar_boletos(self, dados: JsonObject) -> JsonObject:
+    def cancelar_boletos(self, dados: ContasReceberBoletosCancelarDTO) -> JsonObject:
         """Cancela boletos em aberto.
 
         Endpoint: POST /contas/receber/boletos/cancelar
@@ -267,6 +288,6 @@ class ContasReceberResource(BaseResource):
         """
         return self._post("/contas/receber/boletos/cancelar", json=to_json_object(dados))
 
-    def cancel_boletos(self, data: JsonObject) -> JsonObject:
+    def cancel_boletos(self, data: ContasReceberBoletosCancelarDTO) -> JsonObject:
         """Compatibility alias for ``cancelar_boletos()``."""
         return self.cancelar_boletos(dados=data)

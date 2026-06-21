@@ -1,16 +1,38 @@
-"""Exemplo que remove vários contatos de uma vez."""
+"""Example: Remove multiple contacts.
+
+Demonstrates bulk deletion of contacts through the Bling contacts API.
+
+Endpoint:
+    - DELETE /contatos
+
+Docs:
+    - https://developer.bling.com.br/referencia#/Contatos/delete_contatos
+
+"""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from bling_erp_api import BlingClient
-from bling_erp_api.models.generated.contacts import ContatosDeleteResponse200
+
+if TYPE_CHECKING:
+    from bling_erp_api.models.generated.contacts import (
+        ContatosDeleteResponse200,
+    )
+
+
+def remover_varios_contatos(ids_contatos: list[int]) -> ContatosDeleteResponse200:
+    """Remove múltiplos contatos pelos IDs."""
+    with BlingClient.from_env() as client:
+        return client.contatos.remover_varios(ids_contatos=ids_contatos)
 
 
 def main() -> None:
-    """Remove múltiplos contatos informando os IDs."""
-    ids_contatos = [11111111, 22222222]
-    with BlingClient.from_env() as client:
-        response = client.contatos.remover_varios(ids_contatos)
-        parsed = ContatosDeleteResponse200(**response)  # type: ignore[reportArgumentType]
-        print(parsed.model_dump_json(indent=2, by_alias=True))
+    """Demonstrate bulk contact deletion."""
+    # Write operations (commented out)
+    # ids_contatos = [11111111, 22222222]
+    # print(remover_varios_contatos(ids_contatos).model_dump_json(indent=2, by_alias=True))
 
 
 if __name__ == "__main__":

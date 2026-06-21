@@ -1,31 +1,52 @@
-"""Exemplo que atualiza um contato existente."""
+"""Example: Update Contact.
+
+Demonstrates how to fully update an existing contact via PUT.
+
+Endpoint:
+    - PUT /contatos/{idContato}
+
+Docs:
+    - https://developer.bling.com.br/referencia#/Contatos/put_contatos__idContato_
+
+Note:
+    The Bling API returns 204 No Content on success — no response body.
+
+"""
+
+from __future__ import annotations
+
+import time
+from typing import TYPE_CHECKING
 
 from bling_erp_api import BlingClient
-from bling_erp_api.models.generated.contacts import ContatosIdContatoPutRequest
+
+if TYPE_CHECKING:
+    from bling_erp_api.models.generated.contacts import (
+        ContatosIdContatoPutRequest,
+    )
+    from bling_erp_api.types import JsonObject
 
 CONTATO_ID = 12345678
 
 
-def main() -> None:
-    """Altera dados de um contato por ``PUT``."""
-    # Model: ContatosIdContatoPutRequest (same fields as ContatosPostRequest)
-    #   Required: id (int), nome (str), situacao (str), tipo (str)
-    #   Optional: codigo (str|None), numero_documento (str|None), telefone (str|None),
-    #             celular (str|None), fantasia (str|None), indicador_ie (int|None),
-    #             ie (str|None), rg (str|None), inscricao_municipal (str|None),
-    #             orgao_emissor (str|None), email (str|None), email_nota_fiscal (str|None),
-    #             orgao_publico (str|None), endereco (ContatosEnderecoDTO|None),
-    #             vendedor (ContatosVendedorDTO|None), dados_adicionais (ContatosDadoAdicionalDTO|None),
-    #             financeiro (ContatosFinanceiroDTO|None), pais (ContatosPaisDTO|None),
-    #             tipos_contato (list[ContatosTipoContatoDTO]|None),
-    #             pessoas_contato (list[ContatosPessoaContatoDTO]|None)
-    payload = ContatosIdContatoPutRequest.model_construct(
-        id=0, nome="Nova Empresa LTDA - Matriz", situacao="A", tipo="J"
-    )
+def alterar_contato(id_contato: int, dados: ContatosIdContatoPutRequest) -> JsonObject:
+    """Altera um contato pelo ID (PUT)."""
     with BlingClient.from_env() as client:
-        response = client.contatos.alterar(CONTATO_ID, payload)
-        # NOTE: No success response model for PUT /contatos/{idContato} (only error responses in OpenAPI spec).
-        print(response)
+        return client.contatos.alterar(id_contato=id_contato, dados=dados)
+
+
+def main() -> None:
+    """Demonstrate updating a contact."""
+    # payload = ContatosIdContatoPutRequest(
+    #     id=0,
+    #     nome="Nova Empresa LTDA - Matriz",
+    #     situacao="A",
+    #     tipo="J",
+    # )
+    # result = alterar_contato(CONTATO_ID, payload)
+    # print(result)
+    print("Update example — uncomment the lines above and run with real credentials.")
+    time.sleep(1)
 
 
 if __name__ == "__main__":

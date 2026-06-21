@@ -5,6 +5,18 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import TYPE_CHECKING, Literal
 
+from bling_erp_api.models.generated.contacts import (
+    ContatosConsumidorFinalGetResponse200,
+    ContatosDeleteResponse200,
+    ContatosGetResponse200,
+    ContatosIdContatoGetResponse200,
+    ContatosIdContatoPutRequest,
+    ContatosIdContatoTiposGetResponse200,
+    ContatosPostRequest,
+    ContatosPostResponse201,
+    ContatosSituacoesPostResponse200,
+    ContatosTiposGetResponse200,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
@@ -12,10 +24,6 @@ from bling_erp_api.utils.serialization import to_json_object
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
 
-    from bling_erp_api.models.generated.contacts import (
-        ContatosIdContatoPutRequest,
-        ContatosPostRequest,
-    )
     from bling_erp_api.types import JsonObject, QueryParams
 
 
@@ -51,7 +59,7 @@ class ContactsResource(BaseResource):
         ids_contatos: Sequence[int] | None = None,
         numero_documento: str | None = None,
         tipo_pessoa: ContactPersonKind | None = None,
-    ) -> JsonObject:
+    ) -> ContatosGetResponse200:
         """Lista contatos.
 
         Endpoint: GET /contatos
@@ -78,7 +86,7 @@ class ContactsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ContatosDadosBaseDTO; 404: ErrorResponse
         """
-        return self._get(
+        raw = self._get(
             "/contatos",
             params=_contact_list_params(
                 pagina=pagina,
@@ -98,6 +106,7 @@ class ContactsResource(BaseResource):
                 tipo_pessoa=tipo_pessoa,
             ),
         )
+        return self._validate_response(ContatosGetResponse200, raw)
 
     def iterar(  # noqa: PLR0913
         self,
@@ -164,7 +173,7 @@ class ContactsResource(BaseResource):
         )
         return self._iterate("/contatos", page=pagina, limit=limite, params=params)
 
-    def obter(self, id_contato: int) -> JsonObject:
+    def obter(self, id_contato: int) -> ContatosIdContatoGetResponse200:
         """Obtém um contato.
 
         Endpoint: GET /contatos/{idContato}
@@ -177,9 +186,10 @@ class ContactsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ContatosDadosBaseDTO; 404: ErrorResponse
         """
-        return self._get(f"/contatos/{id_contato}")
+        raw = self._get(f"/contatos/{id_contato}")
+        return self._validate_response(ContatosIdContatoGetResponse200, raw)
 
-    def obter_consumidor_final(self) -> JsonObject:
+    def obter_consumidor_final(self) -> ContatosConsumidorFinalGetResponse200:
         """Obtém o contato Consumidor Final.
 
         Endpoint: GET /contatos/consumidor-final
@@ -189,9 +199,10 @@ class ContactsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ContatosDadosBaseDTO
         """
-        return self._get("/contatos/consumidor-final")
+        raw = self._get("/contatos/consumidor-final")
+        return self._validate_response(ContatosConsumidorFinalGetResponse200, raw)
 
-    def criar(self, dados: ContatosPostRequest) -> JsonObject:
+    def criar(self, dados: ContatosPostRequest) -> ContatosPostResponse201:
         """Cria um contato.
 
         Endpoint: POST /contatos
@@ -204,7 +215,8 @@ class ContactsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
         """
-        return self._post("/contatos", json=to_json_object(dados))
+        raw = self._post("/contatos", json=to_json_object(dados))
+        return self._validate_response(ContatosPostResponse201, raw)
 
     def alterar(self, id_contato: int, dados: ContatosIdContatoPutRequest) -> JsonObject:
         """Altera um contato.
@@ -237,7 +249,7 @@ class ContactsResource(BaseResource):
         """
         return self._delete(f"/contatos/{id_contato}")
 
-    def remover_varios(self, ids_contatos: Sequence[int]) -> JsonObject:
+    def remover_varios(self, ids_contatos: Sequence[int]) -> ContatosDeleteResponse200:
         """Remove múltiplos contatos.
 
         Endpoint: DELETE /contatos
@@ -250,9 +262,10 @@ class ContactsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ContatosAlertasResponse; 204: NoContent; 400: ErrorResponse
         """
-        return self._delete("/contatos", params={"idsContatos[]": list(ids_contatos)})
+        raw = self._delete("/contatos", params={"idsContatos[]": list(ids_contatos)})
+        return self._validate_response(ContatosDeleteResponse200, raw)
 
-    def obter_tipo_contato(self, id_contato: int) -> JsonObject:
+    def obter_tipo_contato(self, id_contato: int) -> ContatosIdContatoTiposGetResponse200:
         """Obtém os tipos de contato de um contato.
 
         Endpoint: GET /contatos/{idContato}/tipos
@@ -265,9 +278,10 @@ class ContactsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ContatosTipoContatoDTO; 404: ErrorResponse
         """
-        return self._get(f"/contatos/{id_contato}/tipos")
+        raw = self._get(f"/contatos/{id_contato}/tipos")
+        return self._validate_response(ContatosIdContatoTiposGetResponse200, raw)
 
-    def listar_tipos(self) -> JsonObject:
+    def listar_tipos(self) -> ContatosTiposGetResponse200:
         """Lista tipos de contato.
 
         Endpoint: GET /contatos/tipos
@@ -277,7 +291,8 @@ class ContactsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ContatosTipoContatoDTO
         """
-        return self._get("/contatos/tipos")
+        raw = self._get("/contatos/tipos")
+        return self._validate_response(ContatosTiposGetResponse200, raw)
 
     def alterar_situacao(self, id_contato: int, situacao: ContactStatus) -> JsonObject:
         """Altera a situação de um contato.
@@ -297,7 +312,7 @@ class ContactsResource(BaseResource):
 
     def alterar_situacao_varios(
         self, ids_contatos: Sequence[int], situacao: ContactStatus
-    ) -> JsonObject:
+    ) -> ContatosSituacoesPostResponse200:
         """Altera a situação de múltiplos contatos.
 
         Endpoint: POST /contatos/situacoes
@@ -311,10 +326,11 @@ class ContactsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ContatosAlertasResponse; 204: NoContent; 400: ErrorResponse
         """
-        return self._post(
+        raw = self._post(
             "/contatos/situacoes",
             json={"idsContatos": list(ids_contatos), "situacao": situacao},
         )
+        return self._validate_response(ContatosSituacoesPostResponse200, raw)
 
     # -- Aliases em inglês (compatibilidade) --
 
@@ -336,7 +352,7 @@ class ContactsResource(BaseResource):
         contact_ids: Sequence[int] | None = None,
         tax_id: str | None = None,
         person_kind: ContactPersonKind | None = None,
-    ) -> JsonObject:
+    ) -> ContatosGetResponse200:
         """Compatibility alias for ``listar()``.
 
         Lista contatos.
@@ -449,7 +465,7 @@ class ContactsResource(BaseResource):
             tipo_pessoa=person_kind,
         )
 
-    def get(self, contact_id: int) -> JsonObject:
+    def get(self, contact_id: int) -> ContatosIdContatoGetResponse200:
         """Compatibility alias for ``obter()``.
 
         Obtém um contato.
@@ -466,7 +482,7 @@ class ContactsResource(BaseResource):
         """
         return self.obter(contact_id)
 
-    def get_consumer(self) -> JsonObject:
+    def get_consumer(self) -> ContatosConsumidorFinalGetResponse200:
         """Compatibility alias for ``obter_consumidor_final()``.
 
         Obtém o contato Consumidor Final.
@@ -480,7 +496,7 @@ class ContactsResource(BaseResource):
         """
         return self.obter_consumidor_final()
 
-    def create(self, data: ContatosPostRequest) -> JsonObject:
+    def create(self, data: ContatosPostRequest) -> ContatosPostResponse201:
         """Compatibility alias for ``criar()``.
 
         Cria um contato.
@@ -532,7 +548,7 @@ class ContactsResource(BaseResource):
         """
         return self.remover(contact_id)
 
-    def delete_many(self, contact_ids: Sequence[int]) -> JsonObject:
+    def delete_many(self, contact_ids: Sequence[int]) -> ContatosDeleteResponse200:
         """Compatibility alias for ``remover_varios()``.
 
         Remove múltiplos contatos.
@@ -549,7 +565,7 @@ class ContactsResource(BaseResource):
         """
         return self.remover_varios(contact_ids)
 
-    def get_contact_types(self, contact_id: int) -> JsonObject:
+    def get_contact_types(self, contact_id: int) -> ContatosIdContatoTiposGetResponse200:
         """Compatibility alias for ``obter_tipo_contato()``.
 
         Obtém os tipos de contato de um contato.
@@ -566,7 +582,7 @@ class ContactsResource(BaseResource):
         """
         return self.obter_tipo_contato(contact_id)
 
-    def list_types(self) -> JsonObject:
+    def list_types(self) -> ContatosTiposGetResponse200:
         """Compatibility alias for ``listar_tipos()``.
 
         Lista tipos de contato.
@@ -598,7 +614,9 @@ class ContactsResource(BaseResource):
         """
         return self.alterar_situacao(contact_id, status)
 
-    def update_many_status(self, contact_ids: Sequence[int], status: ContactStatus) -> JsonObject:
+    def update_many_status(
+        self, contact_ids: Sequence[int], status: ContactStatus
+    ) -> ContatosSituacoesPostResponse200:
         """Compatibility alias for ``alterar_situacao_varios()``.
 
         Altera a situação de múltiplos contatos.

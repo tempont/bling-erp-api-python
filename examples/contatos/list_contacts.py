@@ -1,15 +1,39 @@
-"""Exemplo que lista contatos usando o SDK."""
+"""Example: List Contacts.
+
+Demonstrates how to list paginated contacts with optional search filter.
+
+Endpoint:
+    - GET /contatos
+
+Docs:
+    - https://developer.bling.com.br/referencia#/Contatos/get_contatos
+
+"""
+
+from __future__ import annotations
+
+import time
+from typing import TYPE_CHECKING
 
 from bling_erp_api import BlingClient
-from bling_erp_api.models.generated.contacts import ContatosGetResponse200
+
+if TYPE_CHECKING:
+    from bling_erp_api.models.generated.contacts import ContatosGetResponse200
+
+
+def listar_contatos(
+    *, pagina: int = 1, limite: int = 100, pesquisa: str | None = None
+) -> ContatosGetResponse200:
+    """Lista contatos com paginação e filtro opcional."""
+    with BlingClient.from_env() as client:
+        return client.contatos.listar(pagina=pagina, limite=limite, pesquisa=pesquisa)
 
 
 def main() -> None:
-    """Lista a primeira página de contatos."""
-    with BlingClient.from_env() as client:
-        response = client.contatos.listar(pesquisa="Ana", limite=10)
-        parsed = ContatosGetResponse200(**response)  # type: ignore[reportArgumentType]
-        print(parsed.model_dump_json(indent=2, by_alias=True))
+    """Demonstrate listing contacts."""
+    result = listar_contatos(pesquisa="Ana", limite=10)
+    print(result.model_dump_json(indent=2, by_alias=True))
+    time.sleep(1)
 
 
 if __name__ == "__main__":

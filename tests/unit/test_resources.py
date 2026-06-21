@@ -5,7 +5,6 @@ from __future__ import annotations
 from datetime import UTC, date, datetime
 from typing import cast
 
-from bling_erp_api.models.generated.contacts import ContatosGetResponse200
 from bling_erp_api.models.generated.depositos import DepositosDadosDTO
 from bling_erp_api.models.generated.invoices import (
     NfeIdNotaFiscalPutRequest,
@@ -35,7 +34,11 @@ from bling_erp_api.models.generated.sales_orders import (
     PedidosVendasGetResponse200,
     PedidosVendasPostRequest,
 )
-from bling_erp_api.models.generated.schemas import ContasBaixarContaDTO
+from bling_erp_api.models.generated.schemas import (
+    ContasBaixarContaDTO,
+    ContasReceberBoletosCancelarDTO,
+    ContasReceberPostRequest,
+)
 from bling_erp_api.models.generated.situacoes_modulos import (
     SituacoesModulosGetResponse200,
 )
@@ -136,7 +139,7 @@ def test_contacts_list_maps_to_bling_endpoint() -> None:
 
     response = resource.listar(pagina=2, limite=50, pesquisa="Ana")
 
-    assert cast("ContatosGetResponse200", response).data == []
+    assert response.data == []
     assert transport.calls == [
         ("GET", "/contatos", {"pagina": 2, "limite": 50, "pesquisa": "Ana"}, None),
     ]
@@ -1910,7 +1913,7 @@ class TestContasReceberResourceMapping:
         """Contas receber criar posts JSON body to POST /contas/receber."""
         transport = RecordingTransport()
         resource = ContasReceberResource(transport)
-        dados: JsonObject = {"vencimento": "2025-04-10", "valor": 2500.00}
+        dados = cast("ContasReceberPostRequest", {"vencimento": "2025-04-10", "valor": 2500.00})
         resource.criar(dados)
         assert transport.calls[0][:2] == ("POST", "/contas/receber")
         body = transport.calls[0][3]
@@ -1951,7 +1954,7 @@ class TestContasReceberResourceMapping:
         """Contas receber cancelar_boletos posts to POST /contas/receber/boletos/cancelar."""
         transport = RecordingTransport()
         resource = ContasReceberResource(transport)
-        dados: JsonObject = {"motivo": "Cancelamento por atraso"}
+        dados = cast("ContasReceberBoletosCancelarDTO", {"motivo": "Cancelamento por atraso"})
         resource.cancelar_boletos(dados)
         assert transport.calls[0][:2] == ("POST", "/contas/receber/boletos/cancelar")
         body = transport.calls[0][3]
