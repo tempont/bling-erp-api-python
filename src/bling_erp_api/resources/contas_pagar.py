@@ -4,6 +4,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.contas_pagar import (
+    BasePostResponse,
+    ContasPagarGetResponse200,
+    ContasPagarIdContaPagarBaixarPostResponse200,
+    ContasPagarIdContaPagarGetResponse200,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
@@ -60,7 +66,7 @@ class ContasPagarResource(BaseResource):
         data_pagamento_final: str | None = None,
         situacao: int | None = None,
         id_contato: int | None = None,
-    ) -> JsonObject:
+    ) -> ContasPagarGetResponse200:
         """Lista contas a pagar.
 
         Endpoint: GET /contas/pagar
@@ -92,7 +98,8 @@ class ContasPagarResource(BaseResource):
             situacao=situacao,
             id_contato=id_contato,
         )
-        return self._get(f"/contas/pagar?pagina={pagina}&limite={limite}", params=params)
+        raw = self._get(f"/contas/pagar?pagina={pagina}&limite={limite}", params=params)
+        return self._validate_response(ContasPagarGetResponse200, raw)
 
     def list(  # noqa: PLR0913
         self,
@@ -107,7 +114,7 @@ class ContasPagarResource(BaseResource):
         payment_date_end: str | None = None,
         status: int | None = None,
         contact_id: int | None = None,
-    ) -> JsonObject:
+    ) -> ContasPagarGetResponse200:
         """Compatibility alias for ``listar()``.
 
         Lista contas a pagar.
@@ -130,7 +137,7 @@ class ContasPagarResource(BaseResource):
             id_contato=contact_id,
         )
 
-    def obter(self, id_conta_pagar: int) -> JsonObject:
+    def obter(self, id_conta_pagar: int) -> ContasPagarIdContaPagarGetResponse200:
         """Obtém uma conta a pagar.
 
         Endpoint: GET /contas/pagar/{idContaPagar}
@@ -143,13 +150,14 @@ class ContasPagarResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ContasPagarDadosDTO; 404: ErrorResponse
         """
-        return self._get(f"/contas/pagar/{id_conta_pagar}")
+        raw = self._get(f"/contas/pagar/{id_conta_pagar}")
+        return self._validate_response(ContasPagarIdContaPagarGetResponse200, raw)
 
-    def get(self, payable_id: int) -> JsonObject:
+    def get(self, payable_id: int) -> ContasPagarIdContaPagarGetResponse200:
         """Compatibility alias for ``obter()``."""
         return self.obter(id_conta_pagar=payable_id)
 
-    def criar(self, dados: JsonObject) -> JsonObject:
+    def criar(self, dados: JsonObject) -> BasePostResponse:
         """Cria uma conta a pagar.
 
         Endpoint: POST /contas/pagar
@@ -162,13 +170,14 @@ class ContasPagarResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
         """
-        return self._post("/contas/pagar", json=to_json_object(dados))
+        raw = self._post("/contas/pagar", json=to_json_object(dados))
+        return self._validate_response(BasePostResponse, raw)
 
-    def create(self, data: JsonObject) -> JsonObject:
+    def create(self, data: JsonObject) -> BasePostResponse:
         """Compatibility alias for ``criar()``."""
         return self.criar(dados=data)
 
-    def alterar(self, id_conta_pagar: int, dados: JsonObject) -> JsonObject:
+    def alterar(self, id_conta_pagar: int, dados: JsonObject) -> BasePostResponse:
         """Altera uma conta a pagar.
 
         Endpoint: PUT /contas/pagar/{idContaPagar}
@@ -180,9 +189,10 @@ class ContasPagarResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: BasePostResponse; 400: ErrorResponse; 404: ErrorResponse
         """
-        return self._put(f"/contas/pagar/{id_conta_pagar}", json=to_json_object(dados))
+        raw = self._put(f"/contas/pagar/{id_conta_pagar}", json=to_json_object(dados))
+        return self._validate_response(BasePostResponse, raw)
 
-    def update(self, payable_id: int, data: JsonObject) -> JsonObject:
+    def update(self, payable_id: int, data: JsonObject) -> BasePostResponse:
         """Compatibility alias for ``alterar()``."""
         return self.alterar(id_conta_pagar=payable_id, dados=data)
 
@@ -207,7 +217,7 @@ class ContasPagarResource(BaseResource):
         self,
         id_conta_pagar: int,
         dados: ContasBaixarContaDTO,
-    ) -> JsonObject:
+    ) -> ContasPagarIdContaPagarBaixarPostResponse200:
         """Baixa uma conta a pagar (registra o pagamento).
 
         Endpoint: POST /contas/pagar/{idContaPagar}/baixar
@@ -221,12 +231,13 @@ class ContasPagarResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: bordero; 400: ErrorResponse
         """
-        return self._post(f"/contas/pagar/{id_conta_pagar}/baixar", json=to_json_object(dados))
+        raw = self._post(f"/contas/pagar/{id_conta_pagar}/baixar", json=to_json_object(dados))
+        return self._validate_response(ContasPagarIdContaPagarBaixarPostResponse200, raw)
 
     def settle(
         self,
         payable_id: int,
         data: ContasBaixarContaDTO,
-    ) -> JsonObject:
+    ) -> ContasPagarIdContaPagarBaixarPostResponse200:
         """Compatibility alias for ``baixar()``."""
         return self.baixar(id_conta_pagar=payable_id, dados=data)
