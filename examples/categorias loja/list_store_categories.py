@@ -1,15 +1,36 @@
 """Example: List store categories."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from bling_erp_api import BlingClient
-from bling_erp_api.models.generated.store_categories import CategoriasLojasGetResponse200
+
+if TYPE_CHECKING:
+    from bling_erp_api.models.generated.store_categories import (
+        CategoriasLojasGetResponse200,
+    )
+
+
+def listar_categorias_loja(
+    *,
+    pagina: int = 1,
+    limite: int = 10,
+    id_loja: int | None = None,
+) -> CategoriasLojasGetResponse200:
+    """Lista categorias de lojas."""
+    with BlingClient.from_env() as client:
+        return client.categorias_lojas.listar(
+            pagina=pagina,
+            limite=limite,
+            id_loja=id_loja,
+        )
 
 
 def main() -> None:
     """List store categories with store filter."""
-    with BlingClient.from_env() as client:
-        response = client.store_categories.listar(id_loja=1)
-        parsed = CategoriasLojasGetResponse200(**response)  # type: ignore[reportArgumentType]
-        print(parsed.model_dump_json(indent=2, by_alias=True))
+    result = listar_categorias_loja(id_loja=1)
+    print(result.model_dump_json(indent=2, by_alias=True))
 
 
 if __name__ == "__main__":

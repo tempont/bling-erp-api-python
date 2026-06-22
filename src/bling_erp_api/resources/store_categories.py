@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.store_categories import (
+    CategoriasLojasGetResponse200,
+    CategoriasLojasIdCategoriaLojaGetResponse200,
+    CategoriasLojasPostResponse201,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
@@ -45,7 +50,7 @@ class StoreCategoriesResource(BaseResource):
         id_loja: int | None = None,
         id_categoria_produto: int | None = None,
         id_categoria_produto_pai: int | None = None,
-    ) -> JsonObject:
+    ) -> CategoriasLojasGetResponse200:
         """Lista categorias de lojas.
 
         Endpoint: GET /categorias/lojas
@@ -67,7 +72,8 @@ class StoreCategoriesResource(BaseResource):
             id_categoria_produto=id_categoria_produto,
             id_categoria_produto_pai=id_categoria_produto_pai,
         )
-        return self._get(f"/categorias/lojas?pagina={pagina}&limite={limite}", params=params)
+        raw = self._get(f"/categorias/lojas?pagina={pagina}&limite={limite}", params=params)
+        return self._validate_response(CategoriasLojasGetResponse200, raw)
 
     def list(
         self,
@@ -77,7 +83,7 @@ class StoreCategoriesResource(BaseResource):
         store_id: int | None = None,
         product_category_id: int | None = None,
         parent_product_category_id: int | None = None,
-    ) -> JsonObject:
+    ) -> CategoriasLojasGetResponse200:
         """Compatibility alias for ``listar()``.
 
         Lista categorias de lojas.
@@ -104,7 +110,7 @@ class StoreCategoriesResource(BaseResource):
             id_categoria_produto_pai=parent_product_category_id,
         )
 
-    def obter(self, id_categoria_loja: int) -> JsonObject:
+    def obter(self, id_categoria_loja: int) -> CategoriasLojasIdCategoriaLojaGetResponse200:
         """Obtém uma categoria de loja.
 
         Endpoint: GET /categorias/lojas/{idCategoriaLoja}
@@ -117,9 +123,10 @@ class StoreCategoriesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: CategoriasLojasDadosDTO; 404: ErrorResponse
         """
-        return self._get(f"/categorias/lojas/{id_categoria_loja}")
+        raw = self._get(f"/categorias/lojas/{id_categoria_loja}")
+        return self._validate_response(CategoriasLojasIdCategoriaLojaGetResponse200, raw)
 
-    def get(self, store_category_id: int) -> JsonObject:
+    def get(self, store_category_id: int) -> CategoriasLojasIdCategoriaLojaGetResponse200:
         """Compatibility alias for ``obter()``.
 
         Obtém uma categoria de loja.
@@ -137,7 +144,7 @@ class StoreCategoriesResource(BaseResource):
     def criar(
         self,
         dados: CategoriasLojasDadosDTO,
-    ) -> JsonObject:
+    ) -> CategoriasLojasPostResponse201:
         """Cria um vínculo de categoria da loja com a de produto.
 
         Endpoint: POST /categorias/lojas
@@ -150,12 +157,13 @@ class StoreCategoriesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
         """
-        return self._post("/categorias/lojas", json=to_json_object(dados))
+        raw = self._post("/categorias/lojas", json=to_json_object(dados))
+        return self._validate_response(CategoriasLojasPostResponse201, raw)
 
     def create(
         self,
         data: CategoriasLojasDadosDTO,
-    ) -> JsonObject:
+    ) -> CategoriasLojasPostResponse201:
         """Compatibility alias for ``criar()``.
 
         Cria um vínculo de categoria da loja com a de produto.
