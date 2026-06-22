@@ -4,11 +4,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.contas_contabeis import (
+    ContasContabeisGetResponse200,
+    ContasContabeisIdContaContabilGetResponse200,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 
 if TYPE_CHECKING:
-    from bling_erp_api.types import JsonObject, QueryParams
+    from bling_erp_api.types import QueryParams
 
 
 def _contas_contabeis_list_params(
@@ -49,7 +53,7 @@ class ContasContabeisResource(BaseResource):
         situacoes: list[int] | None = None,
         alias_integracao: str | None = None,
         ordenacao: str | None = None,
-    ) -> JsonObject:
+    ) -> ContasContabeisGetResponse200:
         """Lista contas financeiras.
 
         Endpoint: GET /contas-contabeis
@@ -75,7 +79,8 @@ class ContasContabeisResource(BaseResource):
             alias_integracao=alias_integracao,
             ordenacao=ordenacao,
         )
-        return self._get(f"/contas-contabeis?pagina={pagina}&limite={limite}", params=params)
+        raw = self._get(f"/contas-contabeis?pagina={pagina}&limite={limite}", params=params)
+        return self._validate_response(ContasContabeisGetResponse200, raw)
 
     def list(  # noqa: PLR0913
         self,
@@ -87,7 +92,7 @@ class ContasContabeisResource(BaseResource):
         statuses: list[int] | None = None,
         integration_alias: str | None = None,
         ordering: str | None = None,
-    ) -> JsonObject:
+    ) -> ContasContabeisGetResponse200:
         """Compatibility alias for ``listar()``."""
         return self.listar(
             pagina=page,
@@ -99,7 +104,7 @@ class ContasContabeisResource(BaseResource):
             ordenacao=ordering,
         )
 
-    def obter(self, id_conta_contabil: int) -> JsonObject:
+    def obter(self, id_conta_contabil: int) -> ContasContabeisIdContaContabilGetResponse200:
         """Obtém uma conta financeira.
 
         Endpoint: GET /contas-contabeis/{idContaContabil}
@@ -112,8 +117,9 @@ class ContasContabeisResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ContasContabeisDadosDTO; 404: ErrorResponse
         """
-        return self._get(f"/contas-contabeis/{id_conta_contabil}")
+        raw = self._get(f"/contas-contabeis/{id_conta_contabil}")
+        return self._validate_response(ContasContabeisIdContaContabilGetResponse200, raw)
 
-    def get(self, financial_account_id: int) -> JsonObject:
+    def get(self, financial_account_id: int) -> ContasContabeisIdContaContabilGetResponse200:
         """Compatibility alias for ``obter()``."""
         return self.obter(id_conta_contabil=financial_account_id)
