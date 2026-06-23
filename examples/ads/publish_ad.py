@@ -1,15 +1,56 @@
-"""Example: Publish an ad."""
+"""Example: Publish an Ad.
+
+Demonstrates publishing an ad through the Bling Anúncios API.
+
+Endpoint:
+    - POST /anuncios/{idAnuncio}/publicar
+
+Docs:
+    - https://developer.bling.com.br/referencia#/Anúncios/post_anuncios__idAnuncio__publicar
+
+"""
+
+from __future__ import annotations
+
+import time  # noqa: F401  # pyright: ignore[reportUnusedImport]
 
 from bling_erp_api import BlingClient
-from bling_erp_api.models.generated.ads import AnunciosIdAnuncioGetResponse200
+
+# Replace with a real ad ID from your Bling account.
+AD_ID: int | None = 123456
+
+
+def publicar_anuncio(
+    ad_id: int, *, tipo_integracao: str = "MercadoLivre", id_loja: int = 1
+) -> None:
+    """Publica um anúncio.
+
+    Endpoint: POST /anuncios/{idAnuncio}/publicar
+
+    Publica um anúncio pausado.
+
+    Args:
+        ad_id: ID do anúncio (Bling: ``idAnuncio``, integer, obrigatório)
+        tipo_integracao: Tipo da integração (Bling: ``tipoIntegracao``, string, obrigatório)
+        id_loja: ID da loja (Bling: ``idLoja``, integer, obrigatório)
+
+    Returns:
+        None (204 NoContent). Response schemas: 400: ErrorResponse; 404: ErrorResponse
+    """
+    with BlingClient.from_env() as client:
+        client.anuncios.publicar(id_anuncio=ad_id, tipo_integracao=tipo_integracao, id_loja=id_loja)
 
 
 def main() -> None:
-    """Publish an existing ad by ID."""
-    with BlingClient.from_env() as client:
-        response = client.anuncios.publicar(123456, tipo_integracao="MercadoLivre", id_loja=1)
-        ad = AnunciosIdAnuncioGetResponse200(**response)  # type: ignore[reportArgumentType]
-        print(ad.model_dump_json(indent=2, by_alias=True))
+    """Demonstrate publishing an ad."""
+    if AD_ID is None:
+        print("Configure AD_ID before running this example.")
+        return
+
+    # publicar_anuncio(AD_ID)
+    # print("Ad published successfully.")
+    # time.sleep(1)
+    print("Ad publish example ready (write operations commented out).")
 
 
 if __name__ == "__main__":

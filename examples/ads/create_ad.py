@@ -1,34 +1,62 @@
-"""Example: Create a new ad."""
+"""Example: Create an Ad.
+
+Demonstrates ad creation through the Bling Anúncios API.
+
+Endpoint:
+    - POST /anuncios
+
+Docs:
+    - https://developer.bling.com.br/referencia#/Anúncios/post_anuncios
+
+"""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from bling_erp_api import BlingClient
-from bling_erp_api.models.generated.ads import AnunciosPostResponse201, AnunciosSaveRequest
 
+if TYPE_CHECKING:
+    from bling_erp_api.models.generated.ads import (
+        AnunciosPostResponse201,
+        AnunciosSaveRequest,
+    )
+
+# Use a real product ID from your Bling account.
 PRODUCT_ID: int | None = None
 
 
-def main() -> None:
-    """Create a new ad with product and integration info."""
-    if PRODUCT_ID is None:
-        msg = "PRODUCT_ID is required"
-        raise ValueError(msg)
+def criar_anuncio(dados: AnunciosSaveRequest) -> AnunciosPostResponse201:
+    """Cria um novo anúncio.
 
-    # Model: AnunciosSaveRequest
-    #   Required: produto (Produto1), integracao (Integracao), loja (Loja)
-    #   Optional: nome (str|None), descricao (str|None), preco (Preco|None),
-    #             anuncio_loja (AnuncioLoja|None), estoques (Estoques|None),
-    #             categoria (Categoria|None), atributos (list[Atributo]|None),
-    #             imagens (list[Imagen]|None), mercado_livre (MercadoLivre|None),
-    #             variacoes (list[AnunciosSaveRequestBase]|None)
-    payload = AnunciosSaveRequest.model_construct(
-        produto={"id": PRODUCT_ID},
-        integracao={"tipo": "MercadoLivre"},
-        loja={"id": 1},
-        nome="Meu Anúncio de Teste",
-    )
+    Endpoint: POST /anuncios
+
+    Cria um anúncio para um produto em uma loja de integração.
+
+    Args:
+        dados: Dados do anúncio (Bling: ``AnunciosSaveRequest``, obrigatório)
+
+    Returns:
+        Bling API response. Response schemas: 201: AnunciosSaveResponseDTO; 400: ErrorResponse
+    """
     with BlingClient.from_env() as client:
-        response = client.anuncios.criar(payload)
-        parsed = AnunciosPostResponse201(**response)  # type: ignore[reportArgumentType]
-        print(parsed.model_dump_json(indent=2, by_alias=True))
+        return client.anuncios.criar(dados=dados)
+
+
+def main() -> None:
+    """Demonstrate ad creation."""
+    if PRODUCT_ID is None:
+        print("Configure PRODUCT_ID before running this example.")
+        return
+
+    # payload = AnunciosSaveRequest(
+    #     produto={"id": PRODUCT_ID},
+    #     integracao={"id": 123456},
+    #     loja={"id": 1},
+    # )
+    # result = criar_anuncio(payload)
+    # print(result.model_dump_json(indent=2, by_alias=True))
+    print("Ad creation example ready (write operations commented out).")
 
 
 if __name__ == "__main__":

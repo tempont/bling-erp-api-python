@@ -4,6 +4,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.ads import (
+    AnunciosGetResponse200,
+    AnunciosIdAnuncioGetResponse200,
+    AnunciosPostResponse201,
+    AnunciosSaveRequest,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
@@ -11,9 +17,6 @@ from bling_erp_api.utils.serialization import to_json_object
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from bling_erp_api.models.generated.ads import (
-        AnunciosSaveRequest,
-    )
     from bling_erp_api.types import JsonObject, QueryParams
 
 
@@ -52,7 +55,7 @@ class AdsResource(BaseResource):
         id_produto: int | None = None,
         tipo_integracao: str,
         id_loja: int,
-    ) -> JsonObject:
+    ) -> AnunciosGetResponse200:
         """Lista anúncios.
 
         Endpoint: GET /anuncios
@@ -76,7 +79,8 @@ class AdsResource(BaseResource):
             tipo_integracao=tipo_integracao,
             id_loja=id_loja,
         )
-        return self._get(f"/anuncios?pagina={pagina}&limite={limite}", params=params)
+        raw = self._get(f"/anuncios?pagina={pagina}&limite={limite}", params=params)
+        return self._validate_response(AnunciosGetResponse200, raw)
 
     def list(  # noqa: PLR0913
         self,
@@ -87,7 +91,7 @@ class AdsResource(BaseResource):
         product_id: int | None = None,
         integration_type: str,
         store_id: int,
-    ) -> JsonObject:
+    ) -> AnunciosGetResponse200:
         """Compatibility alias for ``listar()``.
 
         Lista anúncios.
@@ -191,7 +195,9 @@ class AdsResource(BaseResource):
             id_loja=store_id,
         )
 
-    def obter(self, id_anuncio: int, *, tipo_integracao: str, id_loja: int) -> JsonObject:
+    def obter(
+        self, id_anuncio: int, *, tipo_integracao: str, id_loja: int
+    ) -> AnunciosIdAnuncioGetResponse200:
         """Obtém um anúncio.
 
         Endpoint: GET /anuncios/{idAnuncio}
@@ -212,9 +218,12 @@ class AdsResource(BaseResource):
                 "idLoja": id_loja,
             }
         )
-        return self._get(f"/anuncios/{id_anuncio}", params=params)
+        raw = self._get(f"/anuncios/{id_anuncio}", params=params)
+        return self._validate_response(AnunciosIdAnuncioGetResponse200, raw)
 
-    def get(self, ad_id: int, *, integration_type: str, store_id: int) -> JsonObject:
+    def get(
+        self, ad_id: int, *, integration_type: str, store_id: int
+    ) -> AnunciosIdAnuncioGetResponse200:
         """Compatibility alias for ``obter()``.
 
         Obtém um anúncio.
@@ -236,7 +245,7 @@ class AdsResource(BaseResource):
     def criar(
         self,
         dados: AnunciosSaveRequest,
-    ) -> JsonObject:
+    ) -> AnunciosPostResponse201:
         """Cria um anúncio.
 
         Endpoint: POST /anuncios
@@ -249,9 +258,10 @@ class AdsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: AnunciosSaveResponseDTO; 400: ErrorResponse
         """
-        return self._post("/anuncios", json=to_json_object(dados))
+        raw = self._post("/anuncios", json=to_json_object(dados))
+        return self._validate_response(AnunciosPostResponse201, raw)
 
-    def create(self, data: AnunciosSaveRequest) -> JsonObject:
+    def create(self, data: AnunciosSaveRequest) -> AnunciosPostResponse201:
         """Compatibility alias for ``criar()``.
 
         Cria um anúncio.
