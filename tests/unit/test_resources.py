@@ -15,6 +15,7 @@ from bling_erp_api.models.generated.logisticas import (
     LogisticasServicosDadosCreateRequestDTO,
     LogisticasServicosDadosSaveRequestDTO,
 )
+from bling_erp_api.models.generated.nfse import NfsePostRequest
 from bling_erp_api.models.generated.payment_methods import (
     FormasPagamentosIdFormaPagamentoPutRequest,
     FormasPagamentosPostRequest,
@@ -97,6 +98,7 @@ class RecordingTransport:
     def __init__(self) -> None:
         """Create an empty recorder."""
         self.calls: list[tuple[str, str, QueryParams | None, JsonPayload | None]] = []
+        self.header_calls: list[dict[str, str] | None] = []
 
     def request(
         self,
@@ -105,9 +107,11 @@ class RecordingTransport:
         *,
         params: QueryParams | None = None,
         json: JsonPayload | None = None,
+        headers: dict[str, str] | None = None,
     ) -> JsonObject:
         """Record a request and return a simple response."""
         self.calls.append((method, path, params, json))
+        self.header_calls.append(headers)
 
         return {"data": []}
 
@@ -127,9 +131,11 @@ class StaticPayloadTransport(RecordingTransport):
         *,
         params: QueryParams | None = None,
         json: JsonPayload | None = None,
+        headers: dict[str, str] | None = None,
     ) -> JsonObject:
         """Record a request and return the fixed response."""
         self.calls.append((method, path, params, json))
+        self.header_calls.append(headers)
         return self.payload
 
 
@@ -1028,7 +1034,7 @@ class TestNfseResourceMapping:
         """NFS-e criar posts JSON body to /nfse."""
         transport = RecordingTransport()
         resource = NfseResource(transport)
-        dados: JsonObject = {"numero": "111"}
+        dados = cast("NfsePostRequest", {"numero": "111"})
         resource.criar(dados)
         assert transport.calls[0][:2] == ("POST", "/nfse")
         assert transport.calls[0][3] is not None

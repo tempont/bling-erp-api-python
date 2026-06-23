@@ -137,24 +137,43 @@ class BaseResource:
         *,
         params: QueryParams | None = None,
         json: JsonPayload | None = None,
+        headers: dict[str, str] | None = None,
     ) -> JsonObject:
         """Send a POST request."""
-        payload = self._transport.request("POST", path, params=params, json=json)
+        payload = self._transport.request("POST", path, params=params, json=json, headers=headers)
         return cast("JsonObject", _parse_response("POST", path, payload))
 
-    def _put(self, path: str, *, json: JsonPayload | None = None) -> JsonObject:
+    def _put(
+        self,
+        path: str,
+        *,
+        json: JsonPayload | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> JsonObject:
         """Send a PUT request."""
-        payload = self._transport.request("PUT", path, json=json)
+        payload = self._transport.request("PUT", path, json=json, headers=headers)
         return cast("JsonObject", _parse_response("PUT", path, payload))
 
-    def _patch(self, path: str, *, json: JsonPayload | None = None) -> JsonObject:
+    def _patch(
+        self,
+        path: str,
+        *,
+        json: JsonPayload | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> JsonObject:
         """Send a PATCH request."""
-        payload = self._transport.request("PATCH", path, json=json)
+        payload = self._transport.request("PATCH", path, json=json, headers=headers)
         return cast("JsonObject", _parse_response("PATCH", path, payload))
 
-    def _delete(self, path: str, *, params: QueryParams | None = None) -> JsonObject:
+    def _delete(
+        self,
+        path: str,
+        *,
+        params: QueryParams | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> JsonObject:
         """Send a DELETE request."""
-        payload = self._transport.request("DELETE", path, params=params)
+        payload = self._transport.request("DELETE", path, params=params, headers=headers)
         return cast("JsonObject", _parse_response("DELETE", path, payload))
 
     def _validate_response[TResponse: BaseModel](

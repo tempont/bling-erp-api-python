@@ -14,7 +14,7 @@ from bling_erp_api.models.base import BlingModel
 from .contas import ContasDadosBaseDTO
 
 if TYPE_CHECKING:
-    from .common import Bordero, Data39
+    from .common import BasePostResponse, Bordero, Data39
     from .contas import ContasCategoriaDTO, ContasDadosBaseDTO, ContasPortadorDTO
     from .contas_receber import (
         ContasReceberOcorrenciaDTO,
@@ -196,6 +196,30 @@ class ContasPagarIdContaPagarPutRequest(ContasDadosBaseDTO, ContasPagarDadosDTO)
     pass
 
 
+class ContasPagarPostResponse201(BlingModel):
+    """OpenAPI schema ``ContasPagarPostResponse201``.
+
+    Modelo Pydantic gerado a partir do contrato OpenAPI do Bling. Use este schema
+    quando ele aparecer como request body ou response schema nos métodos do SDK.
+
+    Fields:
+        data: Bling ``data``; type ``BasePostResponse | None``; opcional."""
+
+    data: BasePostResponse | None = None
+
+
+class ContasPagarIdContaPagarPutResponse200(BlingModel):
+    """OpenAPI schema ``ContasPagarIdContaPagarPutResponse200``.
+
+    Modelo Pydantic gerado a partir do contrato OpenAPI do Bling. Use este schema
+    quando ele aparecer como request body ou response schema nos métodos do SDK.
+
+    Fields:
+        data: Bling ``data``; type ``BasePostResponse | None``; opcional."""
+
+    data: BasePostResponse | None = None
+
+
 __all__ = [
     "ContasPagarDadosDTO",
     "ContasPagarDadosPostDTO",
@@ -203,5 +227,7 @@ __all__ = [
     "ContasPagarIdContaPagarBaixarPostResponse200",
     "ContasPagarIdContaPagarGetResponse200",
     "ContasPagarIdContaPagarPutRequest",
+    "ContasPagarIdContaPagarPutResponse200",
     "ContasPagarPostRequest",
+    "ContasPagarPostResponse201",
 ]

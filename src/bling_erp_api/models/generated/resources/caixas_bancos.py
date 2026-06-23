@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from bling_erp_api.models.generated.schemas.caixas_bancos import (
+    CaixasBancosIdCaixaGetResponse200,
     CaixasBancosItemLancamentoDTO,
     CaixasBancosLancamentoDTO,
     CaixasBancosSalvarLancamentoDTO,
@@ -12,6 +13,7 @@ from bling_erp_api.models.generated.schemas.caixas_bancos import (
 from bling_erp_api.models.generated.schemas.common import ErrorResponse
 
 __all__ = [
+    "CaixasBancosIdCaixaGetResponse200",
     "CaixasBancosItemLancamentoDTO",
     "CaixasBancosLancamentoDTO",
     "CaixasBancosSalvarLancamentoDTO",

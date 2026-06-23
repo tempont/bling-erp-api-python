@@ -69,3 +69,4 @@ examples/dev/
 .opencode
 site
 typings/
+test-results/

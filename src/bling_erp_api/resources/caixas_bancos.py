@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from bling_erp_api.models.generated.caixas_bancos import (
-    CaixasBancosLancamentoDTO,
+    CaixasBancosIdCaixaGetResponse200,
     CaixasBancosSalvarLancamentoDTO,
     CaixasBancosSalvarLancamentoResponseDTO,
     CaixasGetResponse200,
@@ -184,7 +184,7 @@ class CaixasBancosResource(BaseResource):
         """
         return self.criar(lancamento=entry)
 
-    def obter(self, id_caixa: int) -> CaixasBancosLancamentoDTO:
+    def obter(self, id_caixa: int) -> CaixasBancosIdCaixaGetResponse200:
         """Obtém um lançamento de caixa e banco.
 
         Endpoint: GET /caixas/{idCaixa}
@@ -195,12 +195,12 @@ class CaixasBancosResource(BaseResource):
             id_caixa: ID do lançamento (Bling: ``idCaixa``, integer, obrigatório)
 
         Returns:
-            Bling API response. Response schemas: 200: CaixasBancosLancamentoDTO; 404: ErrorResponse
+            Bling API response. Response schemas: 200: CaixasBancosIdCaixaGetResponse200; 404: ErrorResponse
         """
         raw = self._get(f"/caixas/{id_caixa}")
-        return self._validate_response(CaixasBancosLancamentoDTO, raw)
+        return self._validate_response(CaixasBancosIdCaixaGetResponse200, raw)
 
-    def get(self, entry_id: int) -> CaixasBancosLancamentoDTO:
+    def get(self, entry_id: int) -> CaixasBancosIdCaixaGetResponse200:
         """Compatibility alias for ``obter()``.
 
         Obtém um lançamento de caixa e banco.
@@ -213,7 +213,7 @@ class CaixasBancosResource(BaseResource):
             entry_id: ID do lançamento (Bling: ``idCaixa``, integer, obrigatório)
 
         Returns:
-            Bling API response. Response schemas: 200: CaixasBancosLancamentoDTO; 404: ErrorResponse
+            Bling API response. Response schemas: 200: CaixasBancosIdCaixaGetResponse200; 404: ErrorResponse
         """
         return self.obter(id_caixa=entry_id)
 

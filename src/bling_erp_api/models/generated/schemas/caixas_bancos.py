@@ -12,6 +12,7 @@ from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 from bling_erp_api.models.base import BlingModel
 
 if TYPE_CHECKING:
+    from .common import BasePostResponse
     from .contas_financeiras import ContasFinanceirasDadosBasicosDTO
 
 
@@ -90,9 +91,9 @@ class CaixasBancosSalvarLancamentoResponseDTO(BlingModel):
     quando ele aparecer como request body ou response schema nos métodos do SDK.
 
     Fields:
-        id: Bling ``id``; type ``int | None``; opcional. ID do lançamento criado"""
+        data: Bling ``data``; type ``BasePostResponse | None``; opcional."""
 
-    id: int | None = Field(default=None, examples=[12345678])
+    data: BasePostResponse | None = None
 
 
 class CaixasBancosItemLancamentoDTO(BlingModel):
@@ -247,10 +248,23 @@ class CaixasGetResponse200(BlingModel):
     data: list[CaixasBancosItemLancamentoDTO] | None = None
 
 
+class CaixasBancosIdCaixaGetResponse200(BlingModel):
+    """OpenAPI schema ``CaixasBancosIdCaixaGetResponse200``.
+
+    Modelo Pydantic gerado a partir do contrato OpenAPI do Bling. Use este schema
+    quando ele aparecer como request body ou response schema nos métodos do SDK.
+
+    Fields:
+        data: Bling ``data``; type ``CaixasBancosLancamentoDTO | None``; opcional."""
+
+    data: CaixasBancosLancamentoDTO | None = None
+
+
 __all__ = [
     "CaixasBancosDadosBasicoContatoDTO",
     "CaixasBancosDadosBasicosCategoriaDTO",
     "CaixasBancosDadosBasicosOrigemDTO",
+    "CaixasBancosIdCaixaGetResponse200",
     "CaixasBancosItemLancamentoDTO",
     "CaixasBancosLancamentoConciliacaoMovimentacaoDTO",
     "CaixasBancosLancamentoDTO",

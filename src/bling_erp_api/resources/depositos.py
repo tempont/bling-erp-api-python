@@ -164,7 +164,7 @@ class DepositosResource(BaseResource):
             dados: Dados do depósito para atualização (Bling: request body, ``DepositosDadosDTO``)
 
         Returns:
-            Bling API response. Response schemas: 200: BasePostResponse; 400: ErrorResponse; 404: ErrorResponse
+            Bling API response. Response schemas: 200: DepositosIdDepositoPutResponse200; 400: ErrorResponse; 404: ErrorResponse
         """
         raw = self._put(f"/depositos/{id_deposito}", json=to_json_object(dados))
         return self._validate_response(DepositosIdDepositoPutResponse200, raw)
@@ -181,6 +181,6 @@ class DepositosResource(BaseResource):
             data: Deposit update data (Bling: request body, ``DepositosDadosDTO``)
 
         Returns:
-            Bling API response. Response schemas: 200: BasePostResponse; 400: ErrorResponse; 404: ErrorResponse
+            Bling API response. Response schemas: 200: DepositosIdDepositoPutResponse200; 400: ErrorResponse; 404: ErrorResponse
         """
         return self.alterar(id_deposito=deposit_id, dados=data)

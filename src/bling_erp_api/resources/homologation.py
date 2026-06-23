@@ -11,6 +11,8 @@ from bling_erp_api.models.generated.homologation import (
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.serialization import to_json_object
 
+_HOMOLOGACAO_HEADER: dict[str, str] = {"x-bling-homologacao": "true"}
+
 if TYPE_CHECKING:
     from bling_erp_api.types import JsonObject
 
@@ -65,7 +67,11 @@ class HomologationResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: HomologacaoDadosBaseDTO, HomologacaoDadosDTO; 400: ErrorResponse
         """
-        raw = self._post("/homologacao/produtos", json=to_json_object(dados))
+        raw = self._post(
+            "/homologacao/produtos",
+            json=to_json_object(dados),
+            headers=_HOMOLOGACAO_HEADER,
+        )
         return self._validate_response(HomologacaoProdutosPostResponse201, raw)
 
     def create(self, data: JsonObject) -> HomologacaoProdutosPostResponse201:
@@ -102,6 +108,7 @@ class HomologationResource(BaseResource):
         return self._put(
             f"/homologacao/produtos/{id_produto_homologacao}",
             json=to_json_object(dados),
+            headers=_HOMOLOGACAO_HEADER,
         )
 
     def update(self, homologation_product_id: int, data: JsonObject) -> JsonObject:
@@ -135,7 +142,10 @@ class HomologationResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 400: ErrorResponse
         """
-        return self._delete(f"/homologacao/produtos/{id_produto_homologacao}")
+        return self._delete(
+            f"/homologacao/produtos/{id_produto_homologacao}",
+            headers=_HOMOLOGACAO_HEADER,
+        )
 
     def delete(self, homologation_product_id: int) -> JsonObject:
         """Compatibility alias for ``remover()``.
@@ -171,6 +181,7 @@ class HomologationResource(BaseResource):
         return self._patch(
             f"/homologacao/produtos/{id_produto_homologacao}/situacoes",
             json=to_json_object({"situacao": situacao}),
+            headers=_HOMOLOGACAO_HEADER,
         )
 
     def set_status(self, homologation_product_id: int, status: str) -> JsonObject:

@@ -18,6 +18,7 @@ class Transport(Protocol):
         *,
         params: QueryParams | None = None,
         json: JsonPayload | None = None,
+        headers: dict[str, str] | None = None,
     ) -> JsonObject:
         """Send an HTTP request and return the decoded JSON object."""
         ...

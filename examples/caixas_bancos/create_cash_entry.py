@@ -2,16 +2,14 @@
 
 from __future__ import annotations
 
+import json
 from datetime import date
-from typing import TYPE_CHECKING
 
 from bling_erp_api import BlingClient
-from bling_erp_api.models.generated.caixas_bancos import CaixasBancosSalvarLancamentoDTO
-
-if TYPE_CHECKING:
-    from bling_erp_api.models.generated.caixas_bancos import (
-        CaixasBancosSalvarLancamentoResponseDTO,
-    )
+from bling_erp_api.models.generated.caixas_bancos import (
+    CaixasBancosSalvarLancamentoDTO,
+    CaixasBancosSalvarLancamentoResponseDTO,
+)
 
 
 def criar_lancamento(
@@ -43,7 +41,7 @@ def main() -> None:
         observacoes="Venda balcão",
     )
     resultado = criar_lancamento(dados=payload)
-    print(resultado.model_dump_json(indent=2, by_alias=True))
+    print(json.dumps(resultado.model_dump(by_alias=True), indent=2, ensure_ascii=False))
 
 
 if __name__ == "__main__":

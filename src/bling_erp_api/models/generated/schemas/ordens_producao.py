@@ -268,7 +268,7 @@ class OrdensProducaoPostRequest(OrdensProducaoDadosBaseDTO, OrdensProducaoDadosP
     Herda campos de: OrdensProducaoDadosBaseDTO, OrdensProducaoDadosPostDTO.
 
     Fields:
-        id: Bling ``id``; type ``int``; obrigatório.
+        id: Bling ``id``; type ``int | None``; opcional.
         data_previsao_inicio: Bling ``dataPrevisaoInicio``; type ``date | None``; opcional.
         data_previsao_final: Bling ``dataPrevisaoFinal``; type ``date | None``; opcional.
         data_inicio: Bling ``dataInicio``; type ``date | None``; opcional.
@@ -276,11 +276,12 @@ class OrdensProducaoPostRequest(OrdensProducaoDadosBaseDTO, OrdensProducaoDadosP
         numero: Bling ``numero``; type ``int``; obrigatório.
         responsavel: Bling ``responsavel``; type ``str | None``; opcional.
         deposito: Bling ``deposito``; type ``OrdensProducaoDepositoDTO``; obrigatório.
-        situacao: Bling ``situacao``; type ``OrdensProducaoSituacaoDTO``; obrigatório.
+        situacao: Bling ``situacao``; type ``OrdensProducaoSituacaoDTO | None``; opcional.
         itens: Bling ``itens``; type ``list[OrdensProducaoItemDTO] | None``; opcional.
         observacoes: Bling ``observacoes``; type ``str | None``; opcional."""
 
-    pass
+    id: int | None = None
+    situacao: OrdensProducaoSituacaoDTO | None = None
 
 
 class OrdensProducaoIdOrdemProducaoGetResponse200(

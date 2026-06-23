@@ -278,7 +278,7 @@ class ContatosPostRequest(BlingModel):
     quando ele aparecer como request body ou response schema nos métodos do SDK.
 
     Fields:
-        id: Bling ``id``; type ``int``; obrigatório.
+        id: Bling ``id``; type ``int | None``; opcional.
         nome: Bling ``nome``; type ``str``; obrigatório.
         codigo: Bling ``codigo``; type ``str | None``; opcional.
         situacao: Bling ``situacao``; type ``str``; obrigatório. Situação do contato <br> `A` Ativo <br> `E` Excluído <br> `I` Inativo <br> `S` Sem movimentação
@@ -303,7 +303,7 @@ class ContatosPostRequest(BlingModel):
         tipos_contato: Bling ``tiposContato``; type ``list[ContatosTipoContatoDTO] | None``; opcional.
         pessoas_contato: Bling ``pessoasContato``; type ``list[ContatosPessoaContatoDTO] | None``; opcional."""
 
-    id: int = Field(..., examples=[12345678])
+    id: int | None = Field(default=None, examples=[12345678])
     nome: str = Field(..., examples=["Contato"])
     codigo: str | None = Field(default=None, examples=["ASD001"])
     situacao: str = Field(..., examples=["A"])

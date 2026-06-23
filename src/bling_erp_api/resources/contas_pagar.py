@@ -5,10 +5,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from bling_erp_api.models.generated.contas_pagar import (
-    BasePostResponse,
     ContasPagarGetResponse200,
     ContasPagarIdContaPagarBaixarPostResponse200,
     ContasPagarIdContaPagarGetResponse200,
+    ContasPagarIdContaPagarPutResponse200,
+    ContasPagarPostResponse201,
 )
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
@@ -157,7 +158,7 @@ class ContasPagarResource(BaseResource):
         """Compatibility alias for ``obter()``."""
         return self.obter(id_conta_pagar=payable_id)
 
-    def criar(self, dados: JsonObject) -> BasePostResponse:
+    def criar(self, dados: JsonObject) -> ContasPagarPostResponse201:
         """Cria uma conta a pagar.
 
         Endpoint: POST /contas/pagar
@@ -168,16 +169,18 @@ class ContasPagarResource(BaseResource):
             dados: Dados da conta. Request body: ContasPagarSalvarDTO
 
         Returns:
-            Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
+            Bling API response. Response schemas: 201: ContasPagarPostResponse201; 400: ErrorResponse
         """
         raw = self._post("/contas/pagar", json=to_json_object(dados))
-        return self._validate_response(BasePostResponse, raw)
+        return self._validate_response(ContasPagarPostResponse201, raw)
 
-    def create(self, data: JsonObject) -> BasePostResponse:
+    def create(self, data: JsonObject) -> ContasPagarPostResponse201:
         """Compatibility alias for ``criar()``."""
         return self.criar(dados=data)
 
-    def alterar(self, id_conta_pagar: int, dados: JsonObject) -> BasePostResponse:
+    def alterar(
+        self, id_conta_pagar: int, dados: JsonObject
+    ) -> ContasPagarIdContaPagarPutResponse200:
         """Altera uma conta a pagar.
 
         Endpoint: PUT /contas/pagar/{idContaPagar}
@@ -187,12 +190,12 @@ class ContasPagarResource(BaseResource):
             dados: Dados da conta para atualização
 
         Returns:
-            Bling API response. Response schemas: 200: BasePostResponse; 400: ErrorResponse; 404: ErrorResponse
+            Bling API response. Response schemas: 200: ContasPagarIdContaPagarPutResponse200; 400: ErrorResponse; 404: ErrorResponse
         """
         raw = self._put(f"/contas/pagar/{id_conta_pagar}", json=to_json_object(dados))
-        return self._validate_response(BasePostResponse, raw)
+        return self._validate_response(ContasPagarIdContaPagarPutResponse200, raw)
 
-    def update(self, payable_id: int, data: JsonObject) -> BasePostResponse:
+    def update(self, payable_id: int, data: JsonObject) -> ContasPagarIdContaPagarPutResponse200:
         """Compatibility alias for ``alterar()``."""
         return self.alterar(id_conta_pagar=payable_id, dados=data)
 

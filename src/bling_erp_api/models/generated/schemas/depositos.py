@@ -11,11 +11,10 @@ from pydantic import AliasChoices, AwareDatetime, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
-from .common import BasePostResponse
 from .estoques import EstoquesDepositoBaseDTO, EstoquesDepositoDTO
 
 if TYPE_CHECKING:
-    from .common import BasePostResponse, ErrorField
+    from .common import BasePostResponse
 
 
 class DepositosDadosDTO(BlingModel):
@@ -95,19 +94,16 @@ class DepositosIdDepositoGetResponse200(BlingModel):
     data: DepositosDadosDTO | None = None
 
 
-class DepositosIdDepositoPutResponse200(BasePostResponse):
+class DepositosIdDepositoPutResponse200(BlingModel):
     """OpenAPI schema ``DepositosIdDepositoPutResponse200``.
 
     Modelo Pydantic gerado a partir do contrato OpenAPI do Bling. Use este schema
     quando ele aparecer como request body ou response schema nos métodos do SDK.
 
-    Herda campos de: BasePostResponse.
-
     Fields:
-        id: Bling ``id``; type ``int``; obrigatório.
-        alertas: Bling ``alertas``; type ``list[ErrorField] | None``; opcional."""
+        data: Bling ``data``; type ``BasePostResponse | None``; opcional."""
 
-    alertas: list[ErrorField] | None = None
+    data: BasePostResponse | None = None
 
 
 __all__ = [

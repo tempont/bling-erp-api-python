@@ -7,10 +7,10 @@ from typing import TYPE_CHECKING
 from bling_erp_api import BlingClient
 
 if TYPE_CHECKING:
-    from bling_erp_api.models.generated.caixas_bancos import CaixasBancosLancamentoDTO
+    from bling_erp_api.models.generated.caixas_bancos import CaixasBancosIdCaixaGetResponse200
 
 
-def obter_lancamento(id_caixa: int) -> CaixasBancosLancamentoDTO:
+def obter_lancamento(id_caixa: int) -> CaixasBancosIdCaixaGetResponse200:
     """Obtém um lançamento de caixa e banco pelo ID.
 
     Endpoint: GET /caixas/{idCaixa}
@@ -21,7 +21,7 @@ def obter_lancamento(id_caixa: int) -> CaixasBancosLancamentoDTO:
         id_caixa: ID do lançamento (Bling: ``idCaixa``, integer, obrigatório)
 
     Returns:
-        Bling API response. Response schemas: 200: CaixasBancosLancamentoDTO; 404: ErrorResponse
+        Bling API response. Response schemas: 200: CaixasBancosIdCaixaGetResponse200; 404: ErrorResponse
     """
     with BlingClient.from_env() as client:
         return client.caixas_bancos.obter(id_caixa=id_caixa)

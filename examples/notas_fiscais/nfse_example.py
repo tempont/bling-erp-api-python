@@ -23,6 +23,7 @@ from typing import TYPE_CHECKING
 from bling_erp_api import BlingClient
 
 if TYPE_CHECKING:
+    from bling_erp_api.models.generated.nfse import NfsePostRequest, NfsePostResponse201
     from bling_erp_api.types import JsonObject
 
 ## ---------------------------------------------------------------------------
@@ -76,7 +77,7 @@ def obter_configuracoes() -> JsonObject:
 ## ---------------------------------------------------------------------------
 
 
-def criar_nfse(dados: JsonObject) -> JsonObject:
+def criar_nfse(dados: NfsePostRequest) -> NfsePostResponse201:
     """Cria uma nova NFS-e."""
     with BlingClient.from_env() as client:
         return client.notas_servicos.criar(dados=dados)

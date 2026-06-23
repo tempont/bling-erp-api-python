@@ -279,7 +279,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "POST",
         "path": "/contas/pagar",
         "pattern": r"^/contas/pagar/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.common.BasePostResponse",
+        "response_model": "bling_erp_api.models.generated.schemas.contas_pagar.ContasPagarPostResponse201",
         "response_item_model": None,
     },
     {
@@ -306,7 +306,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "method": "PUT",
         "path": "/contas/pagar/{idContaPagar}",
         "pattern": r"^/contas/pagar/[^/]+/?$",
-        "response_model": "bling_erp_api.models.generated.schemas.common.BasePostResponse",
+        "response_model": "bling_erp_api.models.generated.schemas.contas_pagar.ContasPagarIdContaPagarPutResponse200",
         "response_item_model": None,
     },
     {

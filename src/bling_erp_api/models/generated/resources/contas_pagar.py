@@ -11,7 +11,9 @@ from bling_erp_api.models.generated.schemas.contas_pagar import (
     ContasPagarIdContaPagarBaixarPostResponse200,
     ContasPagarIdContaPagarGetResponse200,
     ContasPagarIdContaPagarPutRequest,
+    ContasPagarIdContaPagarPutResponse200,
     ContasPagarPostRequest,
+    ContasPagarPostResponse201,
 )
 
 __all__ = [
@@ -24,6 +26,8 @@ __all__ = [
     "ContasPagarIdContaPagarBaixarPostResponse200",
     "ContasPagarIdContaPagarGetResponse200",
     "ContasPagarIdContaPagarPutRequest",
+    "ContasPagarIdContaPagarPutResponse200",
     "ContasPagarPostRequest",
+    "ContasPagarPostResponse201",
     "ErrorResponse",
 ]

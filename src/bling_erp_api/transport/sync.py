@@ -59,6 +59,7 @@ class SyncTransport:
         *,
         params: QueryParams | None = None,
         json: JsonPayload | None = None,
+        headers: dict[str, str] | None = None,
     ) -> JsonObject:
         """Send a request and return a decoded JSON object."""
         attempts = 0
@@ -66,7 +67,7 @@ class SyncTransport:
             if self._rate_limiter is not None:
                 self._rate_limiter.wait()
 
-            response = self._send_request(method, path, params=params, json=json)
+            response = self._send_request(method, path, params=params, json=json, headers=headers)
             try:
                 raise_for_error_response(response)
             except BlingRateLimitError:
@@ -85,6 +86,7 @@ class SyncTransport:
         *,
         params: QueryParams | None = None,
         json: JsonPayload | None = None,
+        headers: dict[str, str] | None = None,
     ) -> httpx.Response:
         """Send one HTTP request."""
         try:
@@ -93,6 +95,7 @@ class SyncTransport:
                 path,
                 params=params,
                 json=json,
+                headers=headers,
             )
         except httpx.HTTPError as exc:
             msg = f"Unable to complete Bling API request: {exc}"

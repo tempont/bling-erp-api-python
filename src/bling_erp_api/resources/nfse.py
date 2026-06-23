@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.nfse import NfsePostRequest, NfsePostResponse201
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
@@ -196,7 +197,7 @@ class NfseResource(BaseResource):
         """
         return self.obter(service_invoice_id)
 
-    def criar(self, dados: JsonObject) -> JsonObject:
+    def criar(self, dados: NfsePostRequest) -> NfsePostResponse201:
         """Cria uma NFS-e.
 
         Endpoint: POST /nfse
@@ -204,14 +205,15 @@ class NfseResource(BaseResource):
         Cria uma nova nota fiscal de serviço.
 
         Args:
-            dados: Dados da NFS-e. Request body schema: NotasServicosDadosBaseDTO_POST
+            dados: Dados da NFS-e. Request body schema: NfsePostRequest
 
         Returns:
-            Bling API response. Response schemas: 201: NotasServicosResponse_POST_PUT; 400: ErrorResponse
+            Bling API response. Response schemas: 201: NfsePostResponse201; 400: ErrorResponse
         """
-        return self._post("/nfse", json=to_json_object(dados))
+        raw = self._post("/nfse", json=to_json_object(dados))
+        return self._validate_response(NfsePostResponse201, raw)
 
-    def create(self, data: JsonObject) -> JsonObject:
+    def create(self, data: NfsePostRequest) -> NfsePostResponse201:
         """Compatibility alias for ``criar()``.
 
         Cria uma NFS-e.
@@ -221,10 +223,10 @@ class NfseResource(BaseResource):
         Cria uma nova nota fiscal de serviço.
 
         Args:
-            data: Dados da NFS-e. Request body schema: NotasServicosDadosBaseDTO_POST
+            data: Dados da NFS-e. Request body schema: NfsePostRequest
 
         Returns:
-            Bling API response. Response schemas: 201: NotasServicosResponse_POST_PUT; 400: ErrorResponse
+            Bling API response. Response schemas: 201: NfsePostResponse201; 400: ErrorResponse
         """
         return self.criar(data)
 

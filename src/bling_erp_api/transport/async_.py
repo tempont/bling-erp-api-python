@@ -37,6 +37,7 @@ class AsyncTransport:
         *,
         params: QueryParams | None = None,
         json: JsonPayload | None = None,
+        headers: dict[str, str] | None = None,
     ) -> JsonObject:
         """Send an async request and return a decoded JSON object."""
         try:
@@ -45,6 +46,7 @@ class AsyncTransport:
                 path,
                 params=params,
                 json=json,
+                headers=headers,
             )
         except httpx.HTTPError as exc:
             msg = f"Unable to complete Bling API request: {exc}"

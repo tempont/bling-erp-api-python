@@ -134,15 +134,36 @@ FIELD_ANNOTATION_OVERRIDES = {
     ("SituacoesAcaoDTO", "descricao"): "str | None",
     ("SituacoesModuloDTO", "descricao"): "str | None",
     ("VendedoresGetResponse200", "data"): "list[VendedoresDadosBaseDTO] | None",
+    # Bug 4: OrdensProducaoPostRequest.id should be optional on POST
+    ("OrdensProducaoPostRequest", "id"): "int | None",
+    # Bug 5: ContatosPostRequest.id should be optional on POST
+    ("ContatosPostRequest", "id"): "int | None",
 }
 FIELD_NONE_DEFAULT_OVERRIDES = {
     ("SituacoesAcaoDTO", "descricao"),
     ("SituacoesModuloDTO", "descricao"),
+    # Bug 4: OrdensProducaoPostRequest.situacao should be optional on POST
+    ("OrdensProducaoPostRequest", "situacao"),
+    # Bug 5: ContatosPostRequest.id should be optional on POST
+    ("ContatosPostRequest", "id"),
 }
 
 # Type that replaces bare ``date`` in all generated annotations.
 DATE_TYPE_REWRITE = "BlingDate"
 DATE_IMPORT = "from bling_erp_api.models.fields import BlingDate"
+
+# Map of model name → inner data type for wrapper generation.
+# Models listed here will have their body replaced with:
+#   data: <InnerType> | None = None
+# If the model name does not exist in the generated schemas, a new class is
+# injected (so the wrappers survive regeneration).
+RESPONSE_MODEL_DATA_WRAPPERS: dict[str, str] = {
+    "ContasPagarPostResponse201": "BasePostResponse",
+    "ContasPagarIdContaPagarPutResponse200": "BasePostResponse",
+    "DepositosIdDepositoPutResponse200": "BasePostResponse",
+    "CaixasBancosSalvarLancamentoResponseDTO": "BasePostResponse",
+    "CaixasBancosIdCaixaGetResponse200": "CaixasBancosLancamentoDTO",
+}
 
 
 @dataclass(frozen=True)
@@ -163,6 +184,11 @@ def main() -> None:
 
     _run_datamodel_codegen()
     class_order, class_nodes = _schema_class_nodes()
+
+    # Inject response data wrapper models (new classes or body overwrites).
+    # Must happen BEFORE _schema_class_modules so module assignment is correct.
+    _inject_response_model_data_wrappers(class_order, class_nodes)
+
     class_names = set(class_order)
     all_contracts = _contracts_by_module(payload)
     class_modules = _schema_class_modules(class_order, all_contracts)
@@ -453,9 +479,17 @@ def _class_with_docstring(
     node = cast(
         "ast.ClassDef", ast.fix_missing_locations(ast.parse(ast.unparse(class_nodes[name])).body[0])
     )
-    _rewrite_field_aliases(node)
-    _apply_field_overrides(name, node)
-    _rewrite_date_types(node)
+
+    wrapper_info = RESPONSE_MODEL_DATA_WRAPPERS.get(name)
+    if wrapper_info is not None:
+        # Data wrapper models replace the entire body with a single ``data``
+        # field. No field alias / date / override transforms are needed.
+        _rewrite_as_data_wrapper(node, wrapper_info)
+    else:
+        _rewrite_field_aliases(node)
+        _apply_field_overrides(name, node, class_nodes=class_nodes)
+        _rewrite_date_types(node)
+
     docstring_nodes = dict(class_nodes)
     docstring_nodes[name] = node
     docstring = _model_docstring(name, docstring_nodes)
@@ -473,8 +507,16 @@ def _class_with_docstring(
     return ast.fix_missing_locations(node)
 
 
-def _apply_field_overrides(name: str, node: ast.ClassDef) -> None:
+def _apply_field_overrides(
+    name: str,
+    node: ast.ClassDef,
+    class_nodes: Mapping[str, ast.ClassDef] | None = None,
+) -> None:
     """Apply known runtime-contract fixes for inaccurate OpenAPI schemas."""
+    # Track which overrides were actually applied (field existed in class body).
+    applied_annotation_fields: set[str] = set()
+    applied_default_fields: set[str] = set()
+
     for stmt in node.body:
         if not isinstance(stmt, ast.AnnAssign) or not isinstance(stmt.target, ast.Name):
             continue
@@ -482,9 +524,114 @@ def _apply_field_overrides(name: str, node: ast.ClassDef) -> None:
         annotation = FIELD_ANNOTATION_OVERRIDES.get((name, stmt.target.id))
         if annotation is not None:
             stmt.annotation = ast.parse(annotation, mode="eval").body
+            applied_annotation_fields.add(stmt.target.id)
 
         if (name, stmt.target.id) in FIELD_NONE_DEFAULT_OVERRIDES:
             _set_field_default_none(stmt)
+            applied_default_fields.add(stmt.target.id)
+
+    # Handle overrides for fields inherited from parent classes — the field
+    # does not exist in this class's body, so we must insert a new declaration.
+    for (override_name, field_name), annotation in FIELD_ANNOTATION_OVERRIDES.items():
+        if override_name == name and field_name not in applied_annotation_fields:
+            _insert_field_override_with_annotation(node, field_name, annotation)
+
+    for override_name, field_name in FIELD_NONE_DEFAULT_OVERRIDES:
+        if override_name == name and field_name not in applied_default_fields:
+            _insert_field_none_default(node, field_name, class_nodes)
+
+
+def _insert_field_override_with_annotation(
+    node: ast.ClassDef,
+    field_name: str,
+    annotation: str,
+) -> None:
+    """Insert a new field declaration into the class body.
+
+    Used when the override targets a field inherited from a parent class
+    that is not declared in this class's body.
+    """
+    _remove_pass_if_empty(node)
+
+    new_field = ast.AnnAssign(
+        target=ast.Name(id=field_name, ctx=ast.Store()),
+        annotation=ast.parse(annotation, mode="eval").body,
+        value=ast.Constant(value=None),
+        simple=1,
+    )
+    node.body.append(new_field)
+
+
+def _insert_field_none_default(
+    node: ast.ClassDef,
+    field_name: str,
+    class_nodes: Mapping[str, ast.ClassDef] | None = None,
+) -> None:
+    """Insert a field with ``= None`` default for a parent-inherited field.
+
+    Looks up the original type from the parent class hierarchy so the
+    generated type is correct (e.g. ``OrdensProducaoSituacaoDTO | None``).
+    Falls back to ``Any`` if the type cannot be resolved.
+    """
+    _remove_pass_if_empty(node)
+
+    # Try to find the original annotation from parent classes
+    orig_annotation: ast.expr | None = None
+    if class_nodes is not None:
+        for base in node.bases:
+            base_name = _name_from_expr(base)
+            if base_name and base_name in class_nodes:
+                orig_annotation = _find_field_annotation(field_name, base_name, class_nodes)
+                if orig_annotation is not None:
+                    break
+
+    if orig_annotation is not None:
+        # Build ``OriginalType | None``
+        annotation = ast.BinOp(
+            left=orig_annotation,
+            op=ast.BitOr(),
+            right=ast.Constant(value=None),
+        )
+    else:
+        annotation = ast.Name(id="Any", ctx=ast.Load())
+
+    new_field = ast.AnnAssign(
+        target=ast.Name(id=field_name, ctx=ast.Store()),
+        annotation=annotation,
+        value=ast.Constant(value=None),
+        simple=1,
+    )
+    node.body.append(new_field)
+
+
+def _find_field_annotation(
+    field_name: str,
+    class_name: str,
+    class_nodes: Mapping[str, ast.ClassDef],
+) -> ast.expr | None:
+    """Walk the class hierarchy to find the annotation expression for a field."""
+    node = class_nodes.get(class_name)
+    if node is None:
+        return None
+    for stmt in node.body:
+        if (
+            isinstance(stmt, ast.AnnAssign)
+            and isinstance(stmt.target, ast.Name)
+            and stmt.target.id == field_name
+        ):
+            return stmt.annotation
+    for base in node.bases:
+        base_name = _name_from_expr(base)
+        if base_name:
+            result = _find_field_annotation(field_name, base_name, class_nodes)
+            if result is not None:
+                return result
+    return None
+
+
+def _remove_pass_if_empty(node: ast.ClassDef) -> None:
+    """Remove the ``pass`` statement if it's the only (non-docstring) body element."""
+    node.body = [stmt for stmt in node.body if not (isinstance(stmt, ast.Pass))]
 
 
 def _rewrite_date_types(node: ast.ClassDef) -> None:
@@ -705,6 +852,12 @@ def _write_resource_reexports(
 
     for module, contracts in sorted(all_contracts.items()):
         names = sorted(_resource_model_names(module, contracts, class_names))
+        # Include response data wrapper models that belong to this module
+        # but are not automatically picked up by _resource_model_names.
+        for model_name in RESPONSE_MODEL_DATA_WRAPPERS:
+            if class_modules.get(model_name) == module and model_name not in names:
+                names.append(model_name)
+        names.sort()
         content = _reexport_module_content(module, names, class_modules)
         (GENERATED_DIR / f"{module}.py").write_text(content, encoding="utf-8")
         (RESOURCE_REEXPORT_DIR / f"{module}.py").write_text(content, encoding="utf-8")
@@ -926,6 +1079,57 @@ def _camel_to_snake(value: str) -> str:
     value = re.sub(r"(.)([A-Z][a-z]+)", r"\1_\2", value)
     value = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", value)
     return value.strip("_").lower() or COMMON_SCHEMA_MODULE
+
+
+def _rewrite_as_data_wrapper(node: ast.ClassDef, inner_type: str) -> None:
+    """Replace class body with ``data: <inner_type> | None = None``.
+
+    Clears all existing fields, sets the base to ``BlingModel``, and
+    creates a single annotation: ``data: <inner_type> | None = None``.
+    """
+    node.body.clear()
+
+    # Build: data: <inner_type> | None
+    annotation: ast.expr = ast.BinOp(
+        left=ast.Name(id=inner_type, ctx=ast.Load()),
+        op=ast.BitOr(),
+        right=ast.Constant(value=None),
+    )
+
+    node.body.append(
+        ast.AnnAssign(
+            target=ast.Name(id="data", ctx=ast.Store()),
+            annotation=annotation,
+            value=ast.Constant(value=None),
+            simple=1,
+        )
+    )
+
+    node.bases = [ast.Name(id="BlingModel", ctx=ast.Load())]
+
+
+def _inject_response_model_data_wrappers(
+    class_order: list[str],
+    class_nodes: dict[str, ast.ClassDef],
+) -> None:
+    """Inject ``ast.ClassDef`` stubs for wrapper models not yet in ``class_nodes``.
+
+    Existing models (already generated by datamodel-codegen) are left as-is;
+    their body will be replaced later in ``_class_with_docstring`` via
+    ``_rewrite_as_data_wrapper``.
+    """
+    for model_name in RESPONSE_MODEL_DATA_WRAPPERS:
+        if model_name not in class_nodes:
+            # Needs a body statement so ast.unparse → ast.parse round-trip works.
+            node = ast.ClassDef(
+                name=model_name,
+                bases=[ast.Name(id="BlingModel", ctx=ast.Load())],
+                keywords=[],
+                body=[ast.Pass()],
+                decorator_list=[],
+            )
+            class_order.append(model_name)
+            class_nodes[model_name] = node
 
 
 if __name__ == "__main__":
