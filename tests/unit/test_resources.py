@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import UTC, date, datetime
 from typing import cast
 
+from bling_erp_api.models.generated.caixas_bancos import CaixasBancosSalvarLancamentoDTO
 from bling_erp_api.models.generated.depositos import DepositosDadosDTO
 from bling_erp_api.models.generated.invoices import (
     NfeIdNotaFiscalPutRequest,
@@ -1413,14 +1414,14 @@ class TestCaixasBancosResourceMapping:
         """Caixas criar posts JSON body to POST /caixas."""
         transport = RecordingTransport()
         resource = CaixasBancosResource(transport)
-        dados: JsonObject = {
-            "data": "2025-02-01",
-            "valor": 350.00,
-            "debCred": "C",
-            "competencia": "2025-02-01",
-            "observacoes": "Teste",
-        }
-        resource.criar(dados)  # type: ignore[reportArgumentType]
+        dados = CaixasBancosSalvarLancamentoDTO.model_construct(
+            data="2025-02-01",
+            valor=350.00,
+            deb_cred="C",
+            competencia="2025-02-01",
+            observacoes="Teste",
+        )
+        resource.criar(dados)
         assert len(transport.calls) == 1
         assert transport.calls[0][0] == "POST"
         assert transport.calls[0][1] == "/caixas"
@@ -1430,14 +1431,14 @@ class TestCaixasBancosResourceMapping:
         """Caixas alterar puts JSON body to PUT /caixas/{idCaixa}."""
         transport = RecordingTransport()
         resource = CaixasBancosResource(transport)
-        dados: JsonObject = {
-            "data": "2025-02-01",
-            "valor": 500.00,
-            "debCred": "D",
-            "competencia": "2025-02-01",
-            "observacoes": "Atualizado",
-        }
-        resource.alterar(123456, dados)  # type: ignore[reportArgumentType]
+        dados = CaixasBancosSalvarLancamentoDTO.model_construct(
+            data="2025-02-01",
+            valor=500.00,
+            deb_cred="D",
+            competencia="2025-02-01",
+            observacoes="Atualizado",
+        )
+        resource.alterar(123456, dados)
         assert transport.calls[0][0] == "PUT"
         assert transport.calls[0][1] == "/caixas/123456"
         assert transport.calls[0][3] is not None
@@ -1467,13 +1468,13 @@ class TestCaixasBancosResourceMapping:
         transport = RecordingTransport()
         resource = CaixasBancosResource(transport)
         resource.create(
-            {
-                "data": "2025-02-01",
-                "valor": 100.00,
-                "debCred": "C",
-                "competencia": "2025-02-01",
-                "observacoes": "Test",
-            }  # type: ignore[reportArgumentType]
+            CaixasBancosSalvarLancamentoDTO.model_construct(
+                data="2025-02-01",
+                valor=100.00,
+                deb_cred="C",
+                competencia="2025-02-01",
+                observacoes="Test",
+            )
         )
         assert transport.calls[0][0] == "POST"
         assert transport.calls[0][1] == "/caixas"
@@ -1492,13 +1493,13 @@ class TestCaixasBancosResourceMapping:
         resource = CaixasBancosResource(transport)
         resource.update(
             123456,
-            {
-                "data": "2025-02-01",
-                "valor": 500.00,
-                "debCred": "D",
-                "competencia": "2025-02-01",
-                "observacoes": "Upd",
-            },  # type: ignore[reportArgumentType]
+            CaixasBancosSalvarLancamentoDTO.model_construct(
+                data="2025-02-01",
+                valor=500.00,
+                deb_cred="D",
+                competencia="2025-02-01",
+                observacoes="Upd",
+            ),
         )
         assert transport.calls[0][0] == "PUT"
         assert transport.calls[0][1] == "/caixas/123456"

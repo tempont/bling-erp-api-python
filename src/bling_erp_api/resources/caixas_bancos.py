@@ -4,14 +4,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.caixas_bancos import (
+    CaixasBancosLancamentoDTO,
+    CaixasBancosSalvarLancamentoDTO,
+    CaixasBancosSalvarLancamentoResponseDTO,
+    CaixasGetResponse200,
+)
 from bling_erp_api.resources.base import BaseResource
 from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
 
 if TYPE_CHECKING:
-    from bling_erp_api.models.generated.caixas_bancos import (
-        CaixasBancosSalvarLancamentoDTO,
-    )
     from bling_erp_api.types import JsonObject, QueryParams
 
 
@@ -61,7 +64,7 @@ class CaixasBancosResource(BaseResource):
         valor: float | None = None,
         situacao_conciliacao: int | None = None,
         situacao: str | None = None,
-    ) -> JsonObject:
+    ) -> CaixasGetResponse200:
         """Lista lançamentos de caixas e bancos.
 
         Endpoint: GET /caixas
@@ -92,7 +95,8 @@ class CaixasBancosResource(BaseResource):
             situacao_conciliacao=situacao_conciliacao,
             situacao=situacao,
         )
-        return self._get(f"/caixas?pagina={pagina}", params=params)
+        raw = self._get(f"/caixas?pagina={pagina}", params=params)
+        return self._validate_response(CaixasGetResponse200, raw)
 
     def list(  # noqa: PLR0913
         self,
@@ -106,7 +110,7 @@ class CaixasBancosResource(BaseResource):
         amount: float | None = None,
         reconciliation_status: int | None = None,
         status: str | None = None,
-    ) -> JsonObject:
+    ) -> CaixasGetResponse200:
         """Compatibility alias for ``listar()``.
 
         Lista lançamentos de caixas e bancos.
@@ -144,7 +148,7 @@ class CaixasBancosResource(BaseResource):
     def criar(
         self,
         lancamento: CaixasBancosSalvarLancamentoDTO,
-    ) -> JsonObject:
+    ) -> CaixasBancosSalvarLancamentoResponseDTO:
         """Cria um lançamento de caixa e banco.
 
         Endpoint: POST /caixas
@@ -157,12 +161,13 @@ class CaixasBancosResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 201: CaixasBancosSalvarLancamentoResponseDTO; 400: ErrorResponse
         """
-        return self._post("/caixas", json=to_json_object(lancamento))
+        raw = self._post("/caixas", json=to_json_object(lancamento))
+        return self._validate_response(CaixasBancosSalvarLancamentoResponseDTO, raw)
 
     def create(
         self,
         entry: CaixasBancosSalvarLancamentoDTO,
-    ) -> JsonObject:
+    ) -> CaixasBancosSalvarLancamentoResponseDTO:
         """Compatibility alias for ``criar()``.
 
         Cria um lançamento de caixa e banco.
@@ -179,7 +184,7 @@ class CaixasBancosResource(BaseResource):
         """
         return self.criar(lancamento=entry)
 
-    def obter(self, id_caixa: int) -> JsonObject:
+    def obter(self, id_caixa: int) -> CaixasBancosLancamentoDTO:
         """Obtém um lançamento de caixa e banco.
 
         Endpoint: GET /caixas/{idCaixa}
@@ -192,9 +197,10 @@ class CaixasBancosResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: CaixasBancosLancamentoDTO; 404: ErrorResponse
         """
-        return self._get(f"/caixas/{id_caixa}")
+        raw = self._get(f"/caixas/{id_caixa}")
+        return self._validate_response(CaixasBancosLancamentoDTO, raw)
 
-    def get(self, entry_id: int) -> JsonObject:
+    def get(self, entry_id: int) -> CaixasBancosLancamentoDTO:
         """Compatibility alias for ``obter()``.
 
         Obtém um lançamento de caixa e banco.
@@ -215,7 +221,7 @@ class CaixasBancosResource(BaseResource):
         self,
         id_caixa: int,
         lancamento: CaixasBancosSalvarLancamentoDTO,
-    ) -> JsonObject:
+    ) -> CaixasBancosSalvarLancamentoResponseDTO:
         """Altera um lançamento de caixa e banco.
 
         Endpoint: PUT /caixas/{idCaixa}
@@ -229,13 +235,14 @@ class CaixasBancosResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: CaixasBancosSalvarLancamentoResponseDTO; 400: ErrorResponse; 404: ErrorResponse
         """
-        return self._put(f"/caixas/{id_caixa}", json=to_json_object(lancamento))
+        raw = self._put(f"/caixas/{id_caixa}", json=to_json_object(lancamento))
+        return self._validate_response(CaixasBancosSalvarLancamentoResponseDTO, raw)
 
     def update(
         self,
         entry_id: int,
         entry: CaixasBancosSalvarLancamentoDTO,
-    ) -> JsonObject:
+    ) -> CaixasBancosSalvarLancamentoResponseDTO:
         """Compatibility alias for ``alterar()``.
 
         Altera um lançamento de caixa e banco.
