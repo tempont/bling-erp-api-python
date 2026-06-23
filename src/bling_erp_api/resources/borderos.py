@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from bling_erp_api.models.generated.borderos import BorderosIdBorderoGetResponse200
 from bling_erp_api.resources.base import BaseResource
 
 if TYPE_CHECKING:
@@ -17,7 +18,7 @@ class BorderosResource(BaseResource):
     português para acompanhar a documentação oficial.
     """
 
-    def obter(self, id_bordero: int) -> JsonObject:
+    def obter(self, id_bordero: int) -> BorderosIdBorderoGetResponse200:
         """Obtém um borderô.
 
         Endpoint: GET /borderos/{idBordero}
@@ -30,9 +31,10 @@ class BorderosResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: BorderosDadosDTO; 404: ErrorResponse
         """
-        return self._get(f"/borderos/{id_bordero}")
+        raw = self._get(f"/borderos/{id_bordero}")
+        return self._validate_response(BorderosIdBorderoGetResponse200, raw)
 
-    def get(self, bordero_id: int) -> JsonObject:
+    def get(self, bordero_id: int) -> BorderosIdBorderoGetResponse200:
         """Compatibility alias for ``obter()``.
 
         Obtém um borderô.
