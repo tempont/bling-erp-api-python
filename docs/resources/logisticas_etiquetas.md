@@ -6,7 +6,7 @@ A documentação oficial é usada como contrato para paths, métodos e parâmetr
 ## Exemplo
 
 ```python
-etiquetas = client.logisticas_etiquetas.obter(formato="PDF", ids_vendas=[1])
+etiquetas = client.logisticas_etiquetas.obter(formato='PDF', ids_vendas=[1])
 ```
 
 ## Operações

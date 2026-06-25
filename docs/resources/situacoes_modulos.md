@@ -1,4 +1,4 @@
-# Situation Modules
+# Módulos de Situações
 
 Esta página é gerada a partir de `specs/bling-openapi-reference.json`.
 A documentação oficial é usada como contrato para paths, métodos e parâmetros.

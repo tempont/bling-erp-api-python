@@ -24,6 +24,11 @@ class ResourceConfig(TypedDict):
     title: str
     example: list[str]
     extra_openapi_resources: NotRequired[list[str]]
+    path_prefix: NotRequired[str]
+    exclude_path_prefixes: NotRequired[list[str]]
+    include_actions: NotRequired[list[str]]
+    exclude_actions: NotRequired[list[str]]
+    method_overrides: NotRequired[dict[str, str]]
 
 
 ACTION_TO_SDK_METHOD = {
@@ -252,6 +257,12 @@ _CLASS_NAME_MAP: dict[str, str] = {
     "situacoes_modulos": "SituacoesModulosResource",
     "situacoes_transicoes": "SituacoesTransicoesResource",
     "vendedores": "VendedoresResource",
+    "nfce": "NfceResource",
+    "usuarios": "UsuariosResource",
+    "logisticas_servicos": "LogisticasServicosResource",
+    "logisticas_objetos": "LogisticasObjetosResource",
+    "logisticas_etiquetas": "LogisticasEtiquetasResource",
+    "logisticas_remessas": "LogisticasRemessasResource",
 }
 
 RESOURCES: list[ResourceConfig] = [
@@ -272,7 +283,7 @@ RESOURCES: list[ResourceConfig] = [
         "openapi_resource": "PedidosCompra",
         "module": "purchase_orders",
         "constant": "PURCHASE_ORDER_OPERATIONS",
-        "title": "Purchase Orders",
+        "title": "Pedidos de Compra",
         "example": [
             "Lista os pedidos de compra.",
         ],
@@ -391,8 +402,20 @@ RESOURCES: list[ResourceConfig] = [
         "module": "invoices",
         "constant": "INVOICE_OPERATIONS",
         "title": "Notas Fiscais",
+        "path_prefix": "/nfe",
         "example": [
             "notas = client.invoices.listar(pagina=1, limite=10)",
+        ],
+    },
+    {
+        "openapi_resource": "NotasFiscais",
+        "module": "nfce",
+        "constant": "NFCE_OPERATIONS",
+        "title": "Notas Fiscais do Consumidor (NFC-e)",
+        "path_prefix": "/nfce",
+        "example": [
+            "notas = client.notas_fiscais_consumidor.listar(pagina=1, limite=10)",
+            "nota = client.notas_fiscais_consumidor.obter(123456)",
         ],
     },
     {
@@ -557,9 +580,67 @@ RESOURCES: list[ResourceConfig] = [
         "module": "logisticas",
         "constant": "LOGISTICAS_OPERATIONS",
         "title": "Logísticas",
+        "path_prefix": "/logisticas",
+        "exclude_path_prefixes": [
+            "/logisticas/servicos",
+            "/logisticas/objetos",
+            "/logisticas/etiquetas",
+            "/logisticas/remessas",
+        ],
+        "exclude_actions": [
+            "AlterarSituacaoLogisticaServico",
+            "ObterLogisticaRemessaMultiplos",
+        ],
         "example": [
             "logisticas = client.logisticas.listar()",
+            "logistica = client.logisticas.obter(123456)",
+        ],
+    },
+    {
+        "openapi_resource": "Logisticas",
+        "module": "logisticas_servicos",
+        "constant": "LOGISTICAS_SERVICOS_OPERATIONS",
+        "title": "Logísticas - Serviços",
+        "path_prefix": "/logisticas/servicos",
+        "include_actions": [
+            "AlterarSituacaoLogisticaServico",
+        ],
+        "example": [
             "servicos = client.logisticas_servicos.listar()",
+            "servico = client.logisticas_servicos.obter(123456)",
+        ],
+    },
+    {
+        "openapi_resource": "Logisticas",
+        "module": "logisticas_objetos",
+        "constant": "LOGISTICAS_OBJETOS_OPERATIONS",
+        "title": "Logísticas - Objetos",
+        "path_prefix": "/logisticas/objetos",
+        "example": [
+            "objeto = client.logisticas_objetos.obter(1)",
+        ],
+    },
+    {
+        "openapi_resource": "Logisticas",
+        "module": "logisticas_etiquetas",
+        "constant": "LOGISTICAS_ETIQUETAS_OPERATIONS",
+        "title": "Logísticas - Etiquetas",
+        "path_prefix": "/logisticas/etiquetas",
+        "example": [
+            "etiquetas = client.logisticas_etiquetas.obter(formato='PDF', ids_vendas=[1])",
+        ],
+    },
+    {
+        "openapi_resource": "Logisticas",
+        "module": "logisticas_remessas",
+        "constant": "LOGISTICAS_REMESSAS_OPERATIONS",
+        "title": "Logísticas - Remessas",
+        "path_prefix": "/logisticas/remessas",
+        "include_actions": [
+            "ObterLogisticaRemessaMultiplos",
+        ],
+        "example": [
+            "remessas = client.logisticas_remessas.listar_por_logistica(101)",
         ],
     },
     {
@@ -603,7 +684,7 @@ RESOURCES: list[ResourceConfig] = [
         "openapi_resource": "PropostasComerciais",
         "module": "propostas_comerciais",
         "constant": "COMMERCIAL_PROPOSAL_OPERATIONS",
-        "title": "Commercial Proposals",
+        "title": "Propostas Comerciais",
         "example": [
             "Lista as propostas comerciais.",
         ],
@@ -612,7 +693,7 @@ RESOURCES: list[ResourceConfig] = [
         "openapi_resource": "Situacoes",
         "module": "situacoes",
         "constant": "SITUATION_OPERATIONS",
-        "title": "Situations",
+        "title": "Situações",
         "example": [
             "Lista as situacoes.",
         ],
@@ -621,7 +702,7 @@ RESOURCES: list[ResourceConfig] = [
         "openapi_resource": "SituacoesModulos",
         "module": "situacoes_modulos",
         "constant": "SITUATION_MODULE_OPERATIONS",
-        "title": "Situation Modules",
+        "title": "Módulos de Situações",
         "example": [
             "Lista os modulos de situacoes.",
         ],
@@ -630,7 +711,7 @@ RESOURCES: list[ResourceConfig] = [
         "openapi_resource": "SituacoesTransicoes",
         "module": "situacoes_transicoes",
         "constant": "SITUATION_TRANSITION_OPERATIONS",
-        "title": "Situation Transitions",
+        "title": "Transições de Situações",
         "example": [
             "Lista as transicoes de situacoes.",
         ],
@@ -644,6 +725,21 @@ RESOURCES: list[ResourceConfig] = [
             "Lista os vendedores.",
         ],
     },
+    {
+        "openapi_resource": "Usuarios",
+        "module": "usuarios",
+        "constant": "USUARIO_OPERATIONS",
+        "title": "Usuários",
+        "path_prefix": "/usuarios",
+        "method_overrides": {
+            "get": "verificar_hash",
+            "patch": "redefinir_senha",
+            "post": "recuperar_senha",
+        },
+        "example": [
+            "client.usuarios.recuperar_senha('user@example.com')",
+        ],
+    },
 ]
 
 
@@ -654,13 +750,46 @@ def main() -> None:
 
     # Existing resources: generate contracts + docs + collect for docstrings
     for resource in RESOURCES:
+        path_prefix = resource.get("path_prefix")
+        include_actions_set = set(resource.get("include_actions", []))
+        method_overrides = resource.get("method_overrides")
+        exclude_path_prefixes = resource.get("exclude_path_prefixes", [])
+        exclude_actions = set(resource.get("exclude_actions", []))
+
         resource_names = [
             resource["openapi_resource"],
             *resource.get("extra_openapi_resources", []),
         ]
         contracts: list[dict[str, object]] = []
         for name in resource_names:
-            contracts.extend(_resource_contracts(payload, resource=name))
+            contracts.extend(
+                _resource_contracts(
+                    payload,
+                    resource=name,
+                    path_prefix=path_prefix,
+                    include_actions=include_actions_set or None,
+                    method_overrides=method_overrides,
+                )
+            )
+
+        # Apply exclusion filters in the main loop
+        if exclude_path_prefixes or exclude_actions:
+            filtered: list[dict[str, object]] = []
+            for c in contracts:
+                path = str(c["path"])
+                action = str(c["action"])
+                if action in exclude_actions:
+                    continue
+                excluded = False
+                for ep in exclude_path_prefixes:
+                    if path.startswith(ep):
+                        excluded = True
+                        break
+                if excluded:
+                    continue
+                filtered.append(c)
+            contracts = filtered
+
         contracts.sort(key=lambda item: (str(item["path"]), str(item["method"])))
         _write_contract_module(
             resource["module"],
@@ -686,7 +815,14 @@ def main() -> None:
     _write_docstring_module(all_contracts)
 
 
-def _resource_contracts(payload: Mapping[str, object], *, resource: str) -> list[dict[str, object]]:
+def _resource_contracts(
+    payload: Mapping[str, object],
+    *,
+    resource: str,
+    path_prefix: str | None = None,
+    include_actions: set[str] | None = None,
+    method_overrides: dict[str, str] | None = None,
+) -> list[dict[str, object]]:
     paths = _mapping(payload.get("paths"))
     components = _mapping(payload.get("components"))
     parameters = _mapping(components.get("parameters"))
@@ -696,15 +832,31 @@ def _resource_contracts(payload: Mapping[str, object], *, resource: str) -> list
         path = str(raw_path)
         for raw_method, raw_operation in _mapping(methods).items():
             operation = _mapping(raw_operation)
-            if operation.get("x-api-resource") != resource:
+            api_resource: object | None = operation.get("x-api-resource")
+
+            # Determine if operation should be included
+            action = str(operation.get("x-api-action") or raw_method)
+
+            # If include_actions specified, match by action name
+            if include_actions and action in include_actions:
+                pass  # include
+            elif path_prefix:
+                # When path_prefix is set, also check api_resource if present
+                if api_resource is not None and str(api_resource) != resource:
+                    continue
+                if not path.startswith(path_prefix):
+                    continue
+            elif api_resource != resource:
                 continue
 
-            action = str(operation.get("x-api-action") or raw_method)
-            sdk_method = _sdk_method_for_operation(
-                action=action,
-                method=str(raw_method).upper(),
-                path=path,
-            )
+            if method_overrides and action in method_overrides:
+                sdk_method = method_overrides[action]
+            else:
+                sdk_method = _sdk_method_for_operation(
+                    action=action,
+                    method=str(raw_method).upper(),
+                    path=path,
+                )
             contracts.append(
                 {
                     "sdk_method": sdk_method,

@@ -7,6 +7,7 @@ A documentação oficial é usada como contrato para paths, métodos e parâmetr
 
 ```python
 servicos = client.logisticas_servicos.listar()
+servico = client.logisticas_servicos.obter(123456)
 ```
 
 ## Operações
