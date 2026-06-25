@@ -63,6 +63,10 @@ class ProductsResource(BaseResource):
     ) -> ProdutosGetResponse200:
         """Lista produtos.
 
+        Endpoint: GET /produtos
+
+        Obtém produtos paginados.
+
         Args:
             pagina: Parâmetro ``pagina`` do Bling.
             limite: Parâmetro ``limite`` do Bling.
@@ -81,6 +85,9 @@ class ProductsResource(BaseResource):
             gtins: GTINs/EANs, enviados como ``gtins[]``.
             filtro_saldo_estoque: Filtro de saldo, enviado como ``filtroSaldoEstoque``.
             filtro_saldo_estoque_deposito: Depósito para filtro de saldo.
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutosDadosBaseDTO
         """
         raw = self._get(
             "/produtos",
@@ -178,12 +185,38 @@ class ProductsResource(BaseResource):
         )
 
     def iterar(self, *, pagina: int = 1, limite: int = 100) -> Iterator[ProdutosDadosBaseDTO]:
-        """Itera pelos produtos página a página."""
+        """Itera pelos produtos página a página.
+
+        Endpoint: GET /produtos
+
+        Itera pelos produtos, página a página, retornando um iterador de itens.
+
+        Args:
+            pagina: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limite: Quantidade de registros por página (Bling: ``limite``, integer, opcional)
+
+        Returns:
+            Iterator sobre os itens da resposta. Cada item é um ``ProdutosDadosBaseDTO``.
+        """
         for item in self._iterate("/produtos", page=pagina, limit=limite):
             yield ProdutosDadosBaseDTO.model_validate(item)
 
     def iterate(self, *, page: int = 1, limit: int = 100) -> Iterator[ProdutosDadosBaseDTO]:
-        """Compatibility alias for ``iterar()``."""
+        """Compatibility alias for ``iterar()``.
+
+        Itera pelos produtos página a página.
+
+        Endpoint: GET /produtos
+
+        Itera pelos produtos, página a página, retornando um iterador de itens.
+
+        Args:
+            page: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limit: Quantidade de registros por página (Bling: ``limite``, integer, opcional)
+
+        Returns:
+            Iterator sobre os itens da resposta. Cada item é um ``ProdutosDadosBaseDTO``.
+        """
         return self.iterar(pagina=page, limite=limit)
 
     def obter(self, id_produto: int) -> ProdutosIdProdutoGetResponse200:
@@ -226,6 +259,9 @@ class ProductsResource(BaseResource):
 
         Cria um produto.
 
+        Args:
+            dados: Dados do produto (Bling: request body, ``ProdutosDadosDTO``, obrigatório)
+
         Request body schema: ProdutosDadosDTO
 
         Returns:
@@ -243,234 +279,10 @@ class ProductsResource(BaseResource):
 
         Cria um produto.
 
+        Args:
+            data: Dados do produto (Bling: request body, ``ProdutosDadosDTO``, obrigatório)
+
         Request body schema: ProdutosDadosDTO
-        {
-            "id": 123456789,
-            "nome": "Produto 1",
-            "codigo": "CODE_123",
-            "preco": 1,
-            "tipo": "P",
-            "situacao": "A",
-            "formato": "S",
-            "descricaoCurta": "Descrição curta",
-            "dataValidade": "2020-01-01",
-            "unidade": "UN",
-            "pesoLiquido": 1,
-            "pesoBruto": 1,
-            "volumes": 1,
-            "itensPorCaixa": 1,
-            "gtin": "1234567890123",
-            "gtinEmbalagem": "1234567890123",
-            "tipoProducao": "P",
-            "condicao": 0,
-            "freteGratis": false,
-            "marca": "Marca",
-            "descricaoComplementar": "Descrição complementar",
-            "linkExterno": "https://www.google.com",
-            "observacoes": "Observações",
-            "descricaoEmbalagemDiscreta": "Produto teste",
-            "categoria": {
-                "id": 123456789
-            },
-            "estoque": {
-                "minimo": 1,
-                "maximo": 100,
-                "crossdocking": 1,
-                "localizacao": "14A"
-            },
-            "actionEstoque": "",
-            "dimensoes": {
-                "largura": 1,
-                "altura": 1,
-                "profundidade": 1,
-                "unidadeMedida": 1
-            },
-            "tributacao": {
-                "origem": 0,
-                "nFCI": "",
-                "ncm": "",
-                "cest": "",
-                "codigoListaServicos": "",
-                "spedTipoItem": "",
-                "codigoItem": "",
-                "percentualTributos": 0,
-                "valorBaseStRetencao": 0,
-                "valorStRetencao": 0,
-                "valorICMSSubstituto": 0,
-                "codigoExcecaoTipi": "",
-                "classeEnquadramentoIpi": "",
-                "valorIpiFixo": 0,
-                "codigoSeloIpi": "",
-                "valorPisFixo": 0,
-                "valorCofinsFixo": 0,
-                "codigoANP": "",
-                "descricaoANP": "",
-                "percentualGLP": 0,
-                "percentualGasNacional": 0,
-                "percentualGasImportado": 0,
-                "valorPartida": 0,
-                "tipoArmamento": 0,
-                "descricaoCompletaArmamento": "",
-                "dadosAdicionais": "",
-                "grupoProduto": {
-                "id": 123456789
-                }
-            },
-            "midia": {
-                "video": {
-                "url": "https://www.youtube.com/watch?v=1"
-                },
-                "imagens": {
-                "imagensURL": [
-                    {
-                    "link": "https://shutterstock.com/lalala123"
-                    }
-                ]
-                }
-            },
-            "linhaProduto": {
-                "id": 1
-            },
-            "estrutura": {
-                "tipoEstoque": "F",
-                "lancamentoEstoque": "A",
-                "componentes": [
-                {
-                    "produto": {
-                    "id": 1
-                    },
-                    "quantidade": 2.1
-                }
-                ]
-            },
-            "camposCustomizados": [
-                {
-                "idCampoCustomizado": 123456789,
-                "idVinculo": "Utilize para atualizar o valor existente. Ex: 123456789",
-                "valor": "256GB",
-                "item": "Opção A"
-                }
-            ],
-            "artigoPerigoso": false,
-            "variacoes": [
-                {
-                "id": 123456789,
-                "nome": "Produto 1",
-                "codigo": "CODE_123",
-                "preco": 1,
-                "tipo": "P",
-                "situacao": "A",
-                "formato": "S",
-                "descricaoCurta": "Descrição curta",
-                "dataValidade": "2020-01-01",
-                "unidade": "UN",
-                "pesoLiquido": 1,
-                "pesoBruto": 1,
-                "volumes": 1,
-                "itensPorCaixa": 1,
-                "gtin": "1234567890123",
-                "gtinEmbalagem": "1234567890123",
-                "tipoProducao": "P",
-                "condicao": 0,
-                "freteGratis": false,
-                "marca": "Marca",
-                "descricaoComplementar": "Descrição complementar",
-                "linkExterno": "https://www.google.com",
-                "observacoes": "Observações",
-                "descricaoEmbalagemDiscreta": "Produto teste",
-                "categoria": {
-                    "id": 123456789
-                },
-                "estoque": {
-                    "minimo": 1,
-                    "maximo": 100,
-                    "crossdocking": 1,
-                    "localizacao": "14A"
-                },
-                "actionEstoque": "",
-                "dimensoes": {
-                    "largura": 1,
-                    "altura": 1,
-                    "profundidade": 1,
-                    "unidadeMedida": 1
-                },
-                "tributacao": {
-                    "origem": 0,
-                    "nFCI": "",
-                    "ncm": "",
-                    "cest": "",
-                    "codigoListaServicos": "",
-                    "spedTipoItem": "",
-                    "codigoItem": "",
-                    "percentualTributos": 0,
-                    "valorBaseStRetencao": 0,
-                    "valorStRetencao": 0,
-                    "valorICMSSubstituto": 0,
-                    "codigoExcecaoTipi": "",
-                    "classeEnquadramentoIpi": "",
-                    "valorIpiFixo": 0,
-                    "codigoSeloIpi": "",
-                    "valorPisFixo": 0,
-                    "valorCofinsFixo": 0,
-                    "codigoANP": "",
-                    "descricaoANP": "",
-                    "percentualGLP": 0,
-                    "percentualGasNacional": 0,
-                    "percentualGasImportado": 0,
-                    "valorPartida": 0,
-                    "tipoArmamento": 0,
-                    "descricaoCompletaArmamento": "",
-                    "dadosAdicionais": "",
-                    "grupoProduto": {
-                    "id": 123456789
-                    }
-                },
-                "midia": {
-                    "video": {
-                    "url": "https://www.youtube.com/watch?v=1"
-                    },
-                    "imagens": {
-                    "imagensURL": [
-                        {
-                        "link": "https://shutterstock.com/lalala123"
-                        }
-                    ]
-                    }
-                },
-                "linhaProduto": {
-                    "id": 1
-                },
-                "estrutura": {
-                    "tipoEstoque": "F",
-                    "lancamentoEstoque": "A",
-                    "componentes": [
-                    {
-                        "produto": {
-                        "id": 1
-                        },
-                        "quantidade": 2.1
-                    }
-                    ]
-                },
-                "camposCustomizados": [
-                    {
-                    "idCampoCustomizado": 123456789,
-                    "idVinculo": "Utilize para atualizar o valor existente. Ex: 123456789",
-                    "valor": "256GB",
-                    "item": "Opção A"
-                    }
-                ],
-                "artigoPerigoso": false,
-                "variacao": {
-                    "nome": "Tamanho:G;Cor:Verde",
-                    "ordem": 1,
-                    "produtoPai": {
-                    "cloneInfo": true
-                    }
-                }
-                }
-            ]
-            }
 
         Returns:
             Bling API response. Response schemas: 201: ProdutosResponse_POST_PUT; 400: ErrorResponse; 403: ErrorResponse
@@ -665,6 +477,10 @@ class ProductsResource(BaseResource):
 
         Altera a situação de múltiplos produtos pelos IDs.
 
+        Args:
+            ids_produtos: IDs dos produtos (Bling: ``idsProdutos``, array, obrigatório)
+            situacao: Situação do produto (Bling: ``situacao``, string, obrigatório)
+
         Returns:
             Bling API response. Response schemas: 200: ProdutosAlertasResponse; 400: ErrorResponse
         """
@@ -684,6 +500,10 @@ class ProductsResource(BaseResource):
         Endpoint: POST /produtos/situacoes
 
         Altera a situação de múltiplos produtos pelos IDs.
+
+        Args:
+            product_ids: IDs dos produtos (Bling: ``idsProdutos``, array, obrigatório)
+            status: Situação do produto (Bling: ``situacao``, string, obrigatório)
 
         Returns:
             Bling API response. Response schemas: 200: ProdutosAlertasResponse; 400: ErrorResponse
