@@ -4,6 +4,7 @@
 [![Python versions](https://img.shields.io/pypi/pyversions/bling-erp-api.svg)](https://pypi.org/project/bling-erp-api/)
 [![License: MIT](https://img.shields.io/pypi/l/bling-erp-api.svg)](https://github.com/tempont/bling-erp-api-python/blob/main/LICENSE)
 [![CI](https://github.com/tempont/bling-erp-api-python/actions/workflows/ci.yml/badge.svg)](https://github.com/tempont/bling-erp-api-python/actions/workflows/ci.yml)
+[![Docs](https://github.com/tempont/bling-erp-api-python/actions/workflows/docs.yml/badge.svg)](https://tempont.github.io/bling-erp-api-python/)
 [![Downloads](https://img.shields.io/pypi/dm/bling-erp-api.svg)](https://pypi.org/project/bling-erp-api/)
 [![Code style: Ruff](https://img.shields.io/badge/code%20style-Ruff-261230.svg)](https://github.com/astral-sh/ruff)
 [![Type checker: basedpyright](https://img.shields.io/badge/type%20checker-basedpyright-blue.svg)](https://github.com/detachhead/basedpyright)
