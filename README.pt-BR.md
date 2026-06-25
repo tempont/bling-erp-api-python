@@ -11,7 +11,7 @@
 
 **Português (BR)** | [English](README.md)
 
-SDK Python não oficial para a [API v3 do Bling ERP](https://lerosa.atlassian.net/wiki/spaces/JSON/pages/25362471/API+v3).
+SDK Python não oficial para a [API v3 do Bling ERP](https://developer.bling.com.br/referencia).
 
 Acesso tipado e idiomático a mais de 40 recursos do Bling ERP, com transporte síncrono e assíncrono,
 autenticação OAuth2, limite de taxa, retry automático e modelos Pydantic.
@@ -116,51 +116,51 @@ para mais detalhes.
 
 ## Recursos Disponíveis
 
-| Namespace pt-BR | Alias EN | Descrição |
-|---|---|---|
-| `client.contatos` | `client.contacts` | CRUD de contatos e gerenciamento de situação |
-| `client.produtos` | `client.products` | CRUD de produtos e gerenciamento de situação |
-| `client.produtos_estruturas` | `client.product_structures` | Estruturas de produtos (BOM) |
-| `client.produtos_fornecedores` | `client.product_suppliers` | Fornecedores de produtos |
-| `client.produtos_lojas` | `client.product_stores` | Mapeamento de produtos por loja |
-| `client.lotes` | `client.product_batches` | Lotes de produtos |
-| `client.lotes_lancamentos` | `client.product_batch_entries` | Lançamentos de lotes |
-| `client.produtos_variacoes` | `client.product_variations` | Variações de produtos |
-| `client.pedidos_vendas` | `client.sales_orders` | Pedidos de venda |
-| `client.pedidos_compras` | `client.purchase_orders` | Pedidos de compra |
-| `client.notas_fiscais` | `client.invoices` | NF-e (notas fiscais eletrônicas) |
-| `client.notas_fiscais_consumidor` | `client.consumer_invoices` | NFC-e (notas fiscais ao consumidor) |
-| `client.notas_servicos` | `client.service_invoices` | NFS-e (notas fiscais de serviços) |
-| `client.anuncios` | `client.ads` | Anúncios em marketplaces |
-| `client.anuncios_categorias` | `client.ad_categories` | Categorias de anúncios |
-| `client.caixas_bancos` | `client.cash_entries` | Movimentações de caixa e bancos |
-| `client.borderos` | `client.payment_bundles` | Gerenciamento de borderôs |
-| `client.categorias_lojas` | `client.store_categories` | Categorias de lojas |
-| `client.categorias_produtos` | `client.product_categories` | Categorias de produtos |
-| `client.categorias_receitas_despesas` | `client.income_expense_categories` | Categorias de receitas e despesas |
-| `client.contas_pagar` | `client.accounts_payable` | Contas a pagar |
-| `client.contas_receber` | `client.accounts_receivable` | Contas a receber |
-| `client.contas_contabeis` | `client.financial_accounts` | Contas contábeis / plano de contas |
-| `client.depositos` | `client.warehouses` | Depósitos |
-| `client.empresas` | `client.companies` | Dados da empresa |
-| `client.estoques` | `client.stock` | Saldos de estoque |
-| `client.formas_pagamentos` | `client.payment_methods` | Formas de pagamento |
-| `client.grupos_produtos` | `client.product_groups` | Grupos de produtos |
-| `client.homologacao` | `client.homologation` | Testes / homologação |
-| `client.logisticas` | `client.logistics` | Transportadoras / logísticas |
-| `client.logisticas_servicos` | `client.logistics_services` | Serviços logísticos |
-| `client.logisticas_objetos` | `client.logistics_objects` | Objetos logísticos |
-| `client.logisticas_etiquetas` | `client.logistics_labels` | Etiquetas de envio |
-| `client.logisticas_remessas` | `client.logistics_shipments` | Remessas logísticas |
-| `client.naturezas_operacoes` | `client.natures_of_operations` | Naturezas de operações fiscais |
-| `client.notificacoes` | `client.notifications` | Notificações |
-| `client.ordens_producao` | `client.production_orders` | Ordens de produção |
-| `client.propostas_comerciais` | `client.commercial_proposals` | Propostas comerciais |
-| `client.situacoes` | `client.situations` | Situações / status |
-| `client.situacoes_modulos` | `client.situation_modules` | Módulos de situações |
-| `client.situacoes_transicoes` | `client.situation_transitions` | Transições de situações |
-| `client.vendedores` | `client.sellers` | Vendedores |
-| `client.usuarios` | `client.users` | Gerenciamento de usuários |
+| Namespace pt-BR                       | Alias EN                           | Descrição                                    |
+|---------------------------------------|------------------------------------|----------------------------------------------|
+| `client.contatos`                     | `client.contacts`                  | CRUD de contatos e gerenciamento de situação |
+| `client.produtos`                     | `client.products`                  | CRUD de produtos e gerenciamento de situação |
+| `client.produtos_estruturas`          | `client.product_structures`        | Estruturas de produtos (BOM)                 |
+| `client.produtos_fornecedores`        | `client.product_suppliers`         | Fornecedores de produtos                     |
+| `client.produtos_lojas`               | `client.product_stores`            | Mapeamento de produtos por loja              |
+| `client.lotes`                        | `client.product_batches`           | Lotes de produtos                            |
+| `client.lotes_lancamentos`            | `client.product_batch_entries`     | Lançamentos de lotes                         |
+| `client.produtos_variacoes`           | `client.product_variations`        | Variações de produtos                        |
+| `client.pedidos_vendas`               | `client.sales_orders`              | Pedidos de venda                             |
+| `client.pedidos_compras`              | `client.purchase_orders`           | Pedidos de compra                            |
+| `client.notas_fiscais`                | `client.invoices`                  | NF-e (notas fiscais eletrônicas)             |
+| `client.notas_fiscais_consumidor`     | `client.consumer_invoices`         | NFC-e (notas fiscais ao consumidor)          |
+| `client.notas_servicos`               | `client.service_invoices`          | NFS-e (notas fiscais de serviços)            |
+| `client.anuncios`                     | `client.ads`                       | Anúncios em marketplaces                     |
+| `client.anuncios_categorias`          | `client.ad_categories`             | Categorias de anúncios                       |
+| `client.caixas_bancos`                | `client.cash_entries`              | Movimentações de caixa e bancos              |
+| `client.borderos`                     | `client.payment_bundles`           | Gerenciamento de borderôs                    |
+| `client.categorias_lojas`             | `client.store_categories`          | Categorias de lojas                          |
+| `client.categorias_produtos`          | `client.product_categories`        | Categorias de produtos                       |
+| `client.categorias_receitas_despesas` | `client.income_expense_categories` | Categorias de receitas e despesas            |
+| `client.contas_pagar`                 | `client.accounts_payable`          | Contas a pagar                               |
+| `client.contas_receber`               | `client.accounts_receivable`       | Contas a receber                             |
+| `client.contas_contabeis`             | `client.financial_accounts`        | Contas contábeis / plano de contas           |
+| `client.depositos`                    | `client.warehouses`                | Depósitos                                    |
+| `client.empresas`                     | `client.companies`                 | Dados da empresa                             |
+| `client.estoques`                     | `client.stock`                     | Saldos de estoque                            |
+| `client.formas_pagamentos`            | `client.payment_methods`           | Formas de pagamento                          |
+| `client.grupos_produtos`              | `client.product_groups`            | Grupos de produtos                           |
+| `client.homologacao`                  | `client.homologation`              | Testes / homologação                         |
+| `client.logisticas`                   | `client.logistics`                 | Transportadoras / logísticas                 |
+| `client.logisticas_servicos`          | `client.logistics_services`        | Serviços logísticos                          |
+| `client.logisticas_objetos`           | `client.logistics_objects`         | Objetos logísticos                           |
+| `client.logisticas_etiquetas`         | `client.logistics_labels`          | Etiquetas de envio                           |
+| `client.logisticas_remessas`          | `client.logistics_shipments`       | Remessas logísticas                          |
+| `client.naturezas_operacoes`          | `client.natures_of_operations`     | Naturezas de operações fiscais               |
+| `client.notificacoes`                 | `client.notifications`             | Notificações                                 |
+| `client.ordens_producao`              | `client.production_orders`         | Ordens de produção                           |
+| `client.propostas_comerciais`         | `client.commercial_proposals`      | Propostas comerciais                         |
+| `client.situacoes`                    | `client.situations`                | Situações / status                           |
+| `client.situacoes_modulos`            | `client.situation_modules`         | Módulos de situações                         |
+| `client.situacoes_transicoes`         | `client.situation_transitions`     | Transições de situações                      |
+| `client.vendedores`                   | `client.sellers`                   | Vendedores                                   |
+| `client.usuarios`                     | `client.users`                     | Gerenciamento de usuários                    |
 
 ## Documentação
 

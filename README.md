@@ -11,7 +11,7 @@
 
 [Português (BR)](README.pt-BR.md) | **English**
 
-Unofficial Python SDK for the [Bling ERP API v3](https://lerosa.atlassian.net/wiki/spaces/JSON/pages/25362471/API+v3).
+Unofficial Python SDK for the [Bling ERP API v3](https://developer.bling.com.br/referencia).
 
 Provides typed, idiomatic access to 40+ Bling ERP resources with sync/async
 transports, OAuth2 authentication, rate limiting, and automatic retry.
@@ -69,51 +69,51 @@ with BlingClient.from_env() as client:
 
 ## Resources
 
-| pt-BR Namespace | EN Alias | Description |
-|---|---|---|
-| `client.contatos` | `client.contacts` | Contacts CRUD and status management |
-| `client.produtos` | `client.products` | Products CRUD and status |
-| `client.produtos_estruturas` | `client.product_structures` | Product structures (BOM) |
-| `client.produtos_fornecedores` | `client.product_suppliers` | Product suppliers |
-| `client.produtos_lojas` | `client.product_stores` | Product store mappings |
-| `client.lotes` | `client.product_batches` | Product batches |
-| `client.lotes_lancamentos` | `client.product_batch_entries` | Batch entries |
-| `client.produtos_variacoes` | `client.product_variations` | Product variations |
-| `client.pedidos_vendas` | `client.sales_orders` | Sales orders |
-| `client.pedidos_compras` | `client.purchase_orders` | Purchase orders |
-| `client.notas_fiscais` | `client.invoices` | NF-e (electronic invoices) |
-| `client.notas_fiscais_consumidor` | `client.consumer_invoices` | NFC-e (consumer invoices) |
-| `client.notas_servicos` | `client.service_invoices` | NFS-e (service invoices) |
-| `client.anuncios` | `client.ads` | Marketplace ads |
-| `client.anuncios_categorias` | `client.ad_categories` | Ad categories |
-| `client.caixas_bancos` | `client.cash_entries` | Cash and bank entries |
-| `client.borderos` | `client.payment_bundles` | Bordero management |
-| `client.categorias_lojas` | `client.store_categories` | Store categories |
-| `client.categorias_produtos` | `client.product_categories` | Product categories |
-| `client.categorias_receitas_despesas` | `client.income_expense_categories` | Income/expense categories |
-| `client.contas_pagar` | `client.accounts_payable` | Accounts payable |
-| `client.contas_receber` | `client.accounts_receivable` | Accounts receivable |
-| `client.contas_contabeis` | `client.financial_accounts` | Financial/chart of accounts |
-| `client.depositos` | `client.warehouses` | Warehouses |
-| `client.empresas` | `client.companies` | Company data |
-| `client.estoques` | `client.stock` | Stock balances |
-| `client.formas_pagamentos` | `client.payment_methods` | Payment methods |
-| `client.grupos_produtos` | `client.product_groups` | Product groups |
-| `client.homologacao` | `client.homologation` | Test/homologation |
-| `client.logisticas` | `client.logistics` | Logistics providers |
-| `client.logisticas_servicos` | `client.logistics_services` | Logistics services |
-| `client.logisticas_objetos` | `client.logistics_objects` | Logistics objects |
-| `client.logisticas_etiquetas` | `client.logistics_labels` | Shipping labels |
-| `client.logisticas_remessas` | `client.logistics_shipments` | Logistics shipments |
-| `client.naturezas_operacoes` | `client.natures_of_operations` | Tax natures |
-| `client.notificacoes` | `client.notifications` | Notifications |
-| `client.ordens_producao` | `client.production_orders` | Production orders |
-| `client.propostas_comerciais` | `client.commercial_proposals` | Commercial proposals |
-| `client.situacoes` | `client.situations` | Status/situations |
-| `client.situacoes_modulos` | `client.situation_modules` | Situation modules |
-| `client.situacoes_transicoes` | `client.situation_transitions` | Situation transitions |
-| `client.vendedores` | `client.sellers` | Sellers |
-| `client.usuarios` | `client.users` | User management |
+| pt-BR Namespace                       | EN Alias                           | Description                         |
+|---------------------------------------|------------------------------------|-------------------------------------|
+| `client.contatos`                     | `client.contacts`                  | Contacts CRUD and status management |
+| `client.produtos`                     | `client.products`                  | Products CRUD and status            |
+| `client.produtos_estruturas`          | `client.product_structures`        | Product structures (BOM)            |
+| `client.produtos_fornecedores`        | `client.product_suppliers`         | Product suppliers                   |
+| `client.produtos_lojas`               | `client.product_stores`            | Product store mappings              |
+| `client.lotes`                        | `client.product_batches`           | Product batches                     |
+| `client.lotes_lancamentos`            | `client.product_batch_entries`     | Batch entries                       |
+| `client.produtos_variacoes`           | `client.product_variations`        | Product variations                  |
+| `client.pedidos_vendas`               | `client.sales_orders`              | Sales orders                        |
+| `client.pedidos_compras`              | `client.purchase_orders`           | Purchase orders                     |
+| `client.notas_fiscais`                | `client.invoices`                  | NF-e (electronic invoices)          |
+| `client.notas_fiscais_consumidor`     | `client.consumer_invoices`         | NFC-e (consumer invoices)           |
+| `client.notas_servicos`               | `client.service_invoices`          | NFS-e (service invoices)            |
+| `client.anuncios`                     | `client.ads`                       | Marketplace ads                     |
+| `client.anuncios_categorias`          | `client.ad_categories`             | Ad categories                       |
+| `client.caixas_bancos`                | `client.cash_entries`              | Cash and bank entries               |
+| `client.borderos`                     | `client.payment_bundles`           | Bordero management                  |
+| `client.categorias_lojas`             | `client.store_categories`          | Store categories                    |
+| `client.categorias_produtos`          | `client.product_categories`        | Product categories                  |
+| `client.categorias_receitas_despesas` | `client.income_expense_categories` | Income/expense categories           |
+| `client.contas_pagar`                 | `client.accounts_payable`          | Accounts payable                    |
+| `client.contas_receber`               | `client.accounts_receivable`       | Accounts receivable                 |
+| `client.contas_contabeis`             | `client.financial_accounts`        | Financial/chart of accounts         |
+| `client.depositos`                    | `client.warehouses`                | Warehouses                          |
+| `client.empresas`                     | `client.companies`                 | Company data                        |
+| `client.estoques`                     | `client.stock`                     | Stock balances                      |
+| `client.formas_pagamentos`            | `client.payment_methods`           | Payment methods                     |
+| `client.grupos_produtos`              | `client.product_groups`            | Product groups                      |
+| `client.homologacao`                  | `client.homologation`              | Test/homologation                   |
+| `client.logisticas`                   | `client.logistics`                 | Logistics providers                 |
+| `client.logisticas_servicos`          | `client.logistics_services`        | Logistics services                  |
+| `client.logisticas_objetos`           | `client.logistics_objects`         | Logistics objects                   |
+| `client.logisticas_etiquetas`         | `client.logistics_labels`          | Shipping labels                     |
+| `client.logisticas_remessas`          | `client.logistics_shipments`       | Logistics shipments                 |
+| `client.naturezas_operacoes`          | `client.natures_of_operations`     | Tax natures                         |
+| `client.notificacoes`                 | `client.notifications`             | Notifications                       |
+| `client.ordens_producao`              | `client.production_orders`         | Production orders                   |
+| `client.propostas_comerciais`         | `client.commercial_proposals`      | Commercial proposals                |
+| `client.situacoes`                    | `client.situations`                | Status/situations                   |
+| `client.situacoes_modulos`            | `client.situation_modules`         | Situation modules                   |
+| `client.situacoes_transicoes`         | `client.situation_transitions`     | Situation transitions               |
+| `client.vendedores`                   | `client.sellers`                   | Sellers                             |
+| `client.usuarios`                     | `client.users`                     | User management                     |
 
 ## Authentication
 
