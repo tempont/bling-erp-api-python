@@ -1,9 +1,14 @@
 # Bling ERP API SDK
 
-[![PyPI](https://img.shields.io/pypi/v/bling-erp-api)](https://pypi.org/project/bling-erp-api/)
-[![Python Versions](https://img.shields.io/pypi/pyversions/bling-erp-api)](https://pypi.org/project/bling-erp-api/)
-[![License](https://img.shields.io/pypi/l/bling-erp-api)](LICENSE)
-[![CI](https://github.com/tempont/bling-erp-api-python/actions/workflows/ci.yml/badge.svg)](https://github.com/tempont/bling-erp-api-python/actions)
+[![PyPI version](https://img.shields.io/pypi/v/bling-erp-api.svg)](https://pypi.org/project/bling-erp-api/)
+[![Python versions](https://img.shields.io/pypi/pyversions/bling-erp-api.svg)](https://pypi.org/project/bling-erp-api/)
+[![License: MIT](https://img.shields.io/pypi/l/bling-erp-api.svg)](https://github.com/tempont/bling-erp-api-python/blob/main/LICENSE)
+[![CI](https://github.com/tempont/bling-erp-api-python/actions/workflows/ci.yml/badge.svg)](https://github.com/tempont/bling-erp-api-python/actions/workflows/ci.yml)
+[![Downloads](https://img.shields.io/pypi/dm/bling-erp-api.svg)](https://pypi.org/project/bling-erp-api/)
+[![Code style: Ruff](https://img.shields.io/badge/code%20style-Ruff-261230.svg)](https://github.com/astral-sh/ruff)
+[![Type checker: basedpyright](https://img.shields.io/badge/type%20checker-basedpyright-blue.svg)](https://github.com/detachhead/basedpyright)
+
+[Português (BR)](README.pt-BR.md) | **English**
 
 Unofficial Python SDK for the [Bling ERP API v3](https://lerosa.atlassian.net/wiki/spaces/JSON/pages/25362471/API+v3).
 
@@ -143,7 +148,11 @@ Full documentation is available at:
 - [Error Handling](https://tempont.github.io/bling-erp-api-python/errors/)
 - [API Reference](https://tempont.github.io/bling-erp-api-python/api-reference/)
 
-## Development
+## Contributing
+
+Contributions are welcome! See the full guide in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+### Quick start
 
 ```bash
 git clone https://github.com/tempont/bling-erp-api-python.git
@@ -152,7 +161,29 @@ uv sync --all-groups
 make check
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+### Workflow
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feat/my-feature`)
+3. Make your changes
+4. Verify with `make check` (runs ruff, basedpyright, and pytest)
+5. Commit with a clear message, push, and open a Pull Request
+
+For detailed conventions on naming, docstrings, models, and resource implementation,
+see the [`AGENTS.md`](AGENTS.md) file in the repository root.
+
+## Reporting Issues
+
+Found a bug? Use the [GitHub issue tracker](https://github.com/tempont/bling-erp-api-python/issues).
+
+When reporting, please include:
+
+- Python version (`python --version`)
+- SDK version (`bling-erp-api --version`)
+- Minimal reproduction code
+- Expected vs. actual behavior
+
+For security issues, please report privately through GitHub's security channels.
 
 ## License
 
