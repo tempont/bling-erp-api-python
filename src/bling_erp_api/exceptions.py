@@ -16,6 +16,10 @@ HTTP_UNAUTHORIZED = 401
 HTTP_FORBIDDEN = 403
 HTTP_NOT_FOUND = 404
 HTTP_TOO_MANY_REQUESTS = 429
+HTTP_METHOD_NOT_ALLOWED = 405
+HTTP_REQUEST_TIMEOUT = 408
+HTTP_CONFLICT = 409
+HTTP_UNSUPPORTED_MEDIA_TYPE = 415
 HTTP_INTERNAL_SERVER_ERROR = 500
 
 
@@ -55,6 +59,18 @@ class BlingNotFoundError(BlingAPIError):
 
 class BlingRateLimitError(BlingAPIError):
     """Raised when the API rate limit is reached."""
+
+
+class BlingMethodNotAllowedError(BlingAPIError):
+    """Raised when the API returns 405 Method Not Allowed."""
+
+
+class BlingConflictError(BlingAPIError):
+    """Raised when the API returns 409 Conflict."""
+
+
+class BlingUnsupportedMediaTypeError(BlingAPIError):
+    """Raised when the API returns 415 Unsupported Media Type."""
 
 
 class BlingServerError(BlingAPIError):
@@ -205,15 +221,25 @@ def _request_target(response: httpx.Response) -> str | None:
     return f"{request.method} {path}"
 
 
+_STATUS_CODE_MAP: dict[int, type[BlingAPIError]] = {
+    HTTP_BAD_REQUEST: BlingValidationError,
+    HTTP_UNAUTHORIZED: BlingAuthenticationError,
+    HTTP_FORBIDDEN: BlingAuthenticationError,
+    HTTP_NOT_FOUND: BlingNotFoundError,
+    HTTP_METHOD_NOT_ALLOWED: BlingMethodNotAllowedError,
+    HTTP_REQUEST_TIMEOUT: BlingTransportError,
+    HTTP_CONFLICT: BlingConflictError,
+    HTTP_UNSUPPORTED_MEDIA_TYPE: BlingUnsupportedMediaTypeError,
+    HTTP_TOO_MANY_REQUESTS: BlingRateLimitError,
+}
+
+
 def _error_type_for_status(status_code: int) -> type[BlingAPIError]:
-    if status_code in {HTTP_UNAUTHORIZED, HTTP_FORBIDDEN}:
-        return BlingAuthenticationError
-    if status_code == HTTP_NOT_FOUND:
-        return BlingNotFoundError
-    if status_code == HTTP_TOO_MANY_REQUESTS:
-        return BlingRateLimitError
+    error_type = _STATUS_CODE_MAP.get(status_code)
+    if error_type is not None:
+        return error_type
     if HTTP_BAD_REQUEST <= status_code < HTTP_INTERNAL_SERVER_ERROR:
-        return BlingValidationError
+        return BlingAPIError
     if status_code >= HTTP_INTERNAL_SERVER_ERROR:
         return BlingServerError
     return BlingAPIError

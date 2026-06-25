@@ -68,12 +68,16 @@ class PaymentMethodsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: FormasPagamentosDadosBaseDTO
         """
-        params = _payment_methods_list_params(
-            descricao=descricao,
-            tipos_pagamentos=tipos_pagamentos,
-            situacao=situacao,
-        )
-        raw = self._get(f"/formas-pagamentos?pagina={pagina}&limite={limite}", params=params)
+        params: QueryParams = {
+            "pagina": pagina,
+            "limite": limite,
+            **_payment_methods_list_params(
+                descricao=descricao,
+                tipos_pagamentos=tipos_pagamentos,
+                situacao=situacao,
+            ),
+        }
+        raw = self._get("/formas-pagamentos", params=params)
         return self._validate_response(FormasPagamentosGetResponse200, raw)
 
     def list(

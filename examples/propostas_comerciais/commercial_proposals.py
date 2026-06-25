@@ -15,7 +15,7 @@ Docs:
 from __future__ import annotations
 
 from datetime import date
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from bling_erp_api import BlingClient
 from bling_erp_api.models.generated.propostas_comerciais import PropostasComerciaisPostRequest
@@ -77,7 +77,9 @@ def create_proposal_dict() -> PropostasComerciaisIdPropostaComercialGetResponse2
     }
 
     with BlingClient.from_env() as client:
-        response = client.propostas_comerciais.criar(dados=data)
+        response = client.propostas_comerciais.criar(
+            dados=cast("PropostasComerciaisPostRequest", data)
+        )
         print("Proposta criada (dict):", response.model_dump_json(indent=2, by_alias=True))
         if response.data is None:
             msg = "Failed to create proposal: no data in response"

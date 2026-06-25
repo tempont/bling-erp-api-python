@@ -20,7 +20,7 @@ from __future__ import annotations
 
 import json
 from datetime import date
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from pydantic import BaseModel
 
@@ -88,7 +88,7 @@ def update_proposal_dict(proposal_id: int) -> JsonObject | None:
     with BlingClient.from_env() as client:
         return client.propostas_comerciais.alterar(
             id_proposta_comercial=proposal_id,
-            dados=data,
+            dados=cast("PropostasComerciaisIdPropostaComercialPutRequest", data),
         )
 
 

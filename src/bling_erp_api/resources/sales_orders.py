@@ -51,6 +51,10 @@ class SalesOrdersResource(BaseResource):
     ) -> JsonObject:
         """Lista pedidos de venda.
 
+        Endpoint: GET /pedidos/vendas
+
+        Lista pedidos de venda paginados.
+
         Args:
             pagina: Parâmetro ``pagina`` do Bling.
             limite: Parâmetro ``limite`` do Bling.
@@ -77,6 +81,9 @@ class SalesOrdersResource(BaseResource):
 
         Datas aceitam ``str``, ``datetime.date`` ou ``datetime.datetime``.
         Filtros de data/hora são formatados como ``YYYY-MM-DD HH:MM:SS``.
+
+        Returns:
+            Bling API response. Response schemas: 200: VendasDadosBaseDTO
         """
         return self._get(
             "/pedidos/vendas",
@@ -120,7 +127,35 @@ class SalesOrdersResource(BaseResource):
         store_numbers: Sequence[str] | None = None,
         business_unit_id: int | None = None,
     ) -> JsonObject:
-        """Compatibility alias for ``listar()``."""
+        """Compatibility alias for ``listar()``.
+
+        Lista pedidos de venda.
+
+        Endpoint: GET /pedidos/vendas
+
+        Lista pedidos de venda paginados.
+
+        Args:
+            page: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limit: Quantidade de registros que devem ser exibidos por página (Bling: ``limite``, integer, opcional)
+            contact_id: ID do contato (Bling: ``idContato``, integer, opcional)
+            status_ids: IDs das situações (Bling: ``idsSituacoes[]``, array, opcional)
+            start_date: Data inicial (Bling: ``dataInicial``, string, opcional)
+            end_date: Data final (Bling: ``dataFinal``, string, opcional)
+            updated_start: Data inicial da alteração (Bling: ``dataAlteracaoInicial``, string, opcional)
+            updated_end: Data final da alteração (Bling: ``dataAlteracaoFinal``, string, opcional)
+            expected_start_date: Data prevista inicial (Bling: ``dataPrevistaInicial``, string, opcional)
+            expected_end_date: Data prevista final (Bling: ``dataPrevistaFinal``, string, opcional)
+            number: Número do pedido de venda (Bling: ``numero``, integer, opcional)
+            store_id: ID da loja (Bling: ``idLoja``, integer, opcional)
+            seller_id: ID do vendedor (Bling: ``idVendedor``, integer, opcional)
+            cash_register_id: ID do controle de caixa (Bling: ``idControleCaixa``, integer, opcional)
+            store_numbers: Números dos pedidos nas lojas (Bling: ``numerosLojas[]``, array, opcional)
+            business_unit_id: ID da unidade de negócio (Bling: ``idUnidadeNegocio``, integer, opcional)
+
+        Returns:
+            Bling API response. Response schemas: 200: VendasDadosBaseDTO
+        """
         return self.listar(
             pagina=page,
             limite=limit,
@@ -162,8 +197,13 @@ class SalesOrdersResource(BaseResource):
     ) -> Iterator[JsonObject]:
         """Itera pelos pedidos de venda página a página.
 
+        Endpoint: GET /pedidos/vendas
+
         Aceita os mesmos filtros de ``listar()`` e busca novas páginas enquanto
         o Bling retornar registros no envelope ``data``.
+
+        Returns:
+            Bling API response. Response schemas: 200: VendasDadosBaseDTO
         """
         params = _sales_order_list_params(
             pagina=pagina,
@@ -205,7 +245,36 @@ class SalesOrdersResource(BaseResource):
         store_numbers: Sequence[str] | None = None,
         business_unit_id: int | None = None,
     ) -> Iterator[JsonObject]:
-        """Compatibility alias for ``iterar()``."""
+        """Compatibility alias for ``iterar()``.
+
+        Itera pelos pedidos de venda página a página.
+
+        Endpoint: GET /pedidos/vendas
+
+        Aceita os mesmos filtros de ``listar()`` e busca novas páginas enquanto
+        o Bling retornar registros no envelope ``data``.
+
+        Args:
+            page: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limit: Quantidade de registros que devem ser exibidos por página (Bling: ``limite``, integer, opcional)
+            contact_id: ID do contato (Bling: ``idContato``, integer, opcional)
+            status_ids: IDs das situações (Bling: ``idsSituacoes[]``, array, opcional)
+            start_date: Data inicial (Bling: ``dataInicial``, string, opcional)
+            end_date: Data final (Bling: ``dataFinal``, string, opcional)
+            updated_start: Data inicial da alteração (Bling: ``dataAlteracaoInicial``, string, opcional)
+            updated_end: Data final da alteração (Bling: ``dataAlteracaoFinal``, string, opcional)
+            expected_start_date: Data prevista inicial (Bling: ``dataPrevistaInicial``, string, opcional)
+            expected_end_date: Data prevista final (Bling: ``dataPrevistaFinal``, string, opcional)
+            number: Número do pedido de venda (Bling: ``numero``, integer, opcional)
+            store_id: ID da loja (Bling: ``idLoja``, integer, opcional)
+            seller_id: ID do vendedor (Bling: ``idVendedor``, integer, opcional)
+            cash_register_id: ID do controle de caixa (Bling: ``idControleCaixa``, integer, opcional)
+            store_numbers: Números dos pedidos nas lojas (Bling: ``numerosLojas[]``, array, opcional)
+            business_unit_id: ID da unidade de negócio (Bling: ``idUnidadeNegocio``, integer, opcional)
+
+        Returns:
+            Bling API response. Response schemas: 200: VendasDadosBaseDTO
+        """
         return self.iterar(
             pagina=page,
             limite=limit,
@@ -226,32 +295,69 @@ class SalesOrdersResource(BaseResource):
         )
 
     def obter(self, id_pedido_venda: int) -> JsonObject:
-        """Obtém um pedido de venda pelo ID.
+        """Obtém um pedido de venda.
 
-        Mapeia ``GET /pedidos/vendas/{idPedidoVenda}``.
+        Endpoint: GET /pedidos/vendas/{idPedidoVenda}
+
+        Obtém um pedido de venda pelo ID.
 
         Args:
-            id_pedido_venda: ID do pedido, enviado como ``idPedidoVenda``.
+            id_pedido_venda: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: VendasDadosBaseDTO, VendasDadosDTO; 404: ErrorResponse
         """
         return self._get(f"/pedidos/vendas/{id_pedido_venda}")
 
     def get(self, order_id: int) -> JsonObject:
-        """Compatibility alias for ``obter()``."""
+        """Compatibility alias for ``obter()``.
+
+        Obtém um pedido de venda.
+
+        Endpoint: GET /pedidos/vendas/{idPedidoVenda}
+
+        Obtém um pedido de venda pelo ID.
+
+        Args:
+            order_id: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: VendasDadosBaseDTO, VendasDadosDTO; 404: ErrorResponse
+        """
         return self.obter(order_id)
 
     def criar(self, dados: PedidosVendasPostRequest) -> JsonObject:
         """Cria um pedido de venda.
 
-        Mapeia ``POST /pedidos/vendas``.
+        Endpoint: POST /pedidos/vendas
+
+        Cria um pedido de venda.
 
         Args:
             dados: Payload do pedido. Use ``PedidosVendasPostRequest`` para uso
                 tipado ou um objeto JSON com os nomes de campos do Bling.
+
+        Returns:
+            Bling API response. Response schemas: 201: BasePostResponse, VendasResponse_POST_PUT; 400: ErrorResponse
         """
         return self._post("/pedidos/vendas", json=to_json_object(dados))
 
     def create(self, data: PedidosVendasPostRequest) -> JsonObject:
-        """Compatibility alias for ``criar()``."""
+        """Compatibility alias for ``criar()``.
+
+        Cria um pedido de venda.
+
+        Endpoint: POST /pedidos/vendas
+
+        Cria um pedido de venda.
+
+        Args:
+            data: Payload do pedido. Use ``PedidosVendasPostRequest`` para uso
+                tipado ou um objeto JSON com os nomes de campos do Bling.
+
+        Returns:
+            Bling API response. Response schemas: 201: BasePostResponse, VendasResponse_POST_PUT; 400: ErrorResponse
+        """
         return self.criar(data)
 
     def alterar(
@@ -259,150 +365,335 @@ class SalesOrdersResource(BaseResource):
     ) -> JsonObject:
         """Altera um pedido de venda.
 
-        Mapeia ``PUT /pedidos/vendas/{idPedidoVenda}``.
+        Endpoint: PUT /pedidos/vendas/{idPedidoVenda}
+
+        Altera um pedido de venda pelo ID.
 
         Args:
-            id_pedido_venda: ID do pedido, enviado como ``idPedidoVenda``.
+            id_pedido_venda: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
             dados: Payload do pedido. Use ``PedidosVendasIdPedidoVendaPutRequest`` para uso
                 tipado ou um objeto JSON com os nomes de campos do Bling.
+
+        Returns:
+            Bling API response. Response schemas: 200: BasePostResponse, VendasResponse_POST_PUT; 400: ErrorResponse; 404: ErrorResponse
         """
         return self._put(f"/pedidos/vendas/{id_pedido_venda}", json=to_json_object(dados))
 
     def update(self, order_id: int, data: PedidosVendasIdPedidoVendaPutRequest) -> JsonObject:
-        """Compatibility alias for ``alterar()``."""
+        """Compatibility alias for ``alterar()``.
+
+        Altera um pedido de venda.
+
+        Endpoint: PUT /pedidos/vendas/{idPedidoVenda}
+
+        Altera um pedido de venda pelo ID.
+
+        Args:
+            order_id: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+            data: Payload do pedido. Use ``PedidosVendasIdPedidoVendaPutRequest`` para uso
+                tipado ou um objeto JSON com os nomes de campos do Bling.
+
+        Returns:
+            Bling API response. Response schemas: 200: BasePostResponse, VendasResponse_POST_PUT; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.alterar(order_id, data)
 
     def remover(self, id_pedido_venda: int) -> JsonObject:
         """Remove um pedido de venda.
 
-        Mapeia ``DELETE /pedidos/vendas/{idPedidoVenda}``.
+        Endpoint: DELETE /pedidos/vendas/{idPedidoVenda}
+
+        Remove um pedido de venda pelo ID.
 
         Args:
-            id_pedido_venda: ID do pedido, enviado como ``idPedidoVenda``.
+            id_pedido_venda: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
         """
         return self._delete(f"/pedidos/vendas/{id_pedido_venda}")
 
     def delete(self, order_id: int) -> JsonObject:
-        """Compatibility alias for ``remover()``."""
+        """Compatibility alias for ``remover()``.
+
+        Remove um pedido de venda.
+
+        Endpoint: DELETE /pedidos/vendas/{idPedidoVenda}
+
+        Remove um pedido de venda pelo ID.
+
+        Args:
+            order_id: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.remover(order_id)
 
     def remover_varios(self, ids_pedidos_vendas: Sequence[int]) -> JsonObject:
         """Remove vários pedidos de venda.
 
-        Mapeia ``DELETE /pedidos/vendas``.
+        Endpoint: DELETE /pedidos/vendas
+
+        Remove vários pedidos de venda pelos IDs.
 
         Args:
-            ids_pedidos_vendas: IDs dos pedidos, enviados como ``idsPedidosVendas[]``.
+            ids_pedidos_vendas: IDs dos pedidos de venda (Bling: ``idsPedidosVendas[]``, array, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
         """
         return self._delete(
             "/pedidos/vendas", params={"idsPedidosVendas[]": list(ids_pedidos_vendas)}
         )
 
     def delete_many(self, order_ids: Sequence[int]) -> JsonObject:
-        """Compatibility alias for ``remover_varios()``."""
+        """Compatibility alias for ``remover_varios()``.
+
+        Remove vários pedidos de venda.
+
+        Endpoint: DELETE /pedidos/vendas
+
+        Remove vários pedidos de venda pelos IDs.
+
+        Args:
+            order_ids: IDs dos pedidos de venda (Bling: ``idsPedidosVendas[]``, array, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.remover_varios(order_ids)
 
     def alterar_situacao(self, id_pedido_venda: int, id_situacao: int) -> JsonObject:
         """Altera a situação de um pedido de venda.
 
-        Mapeia ``PATCH /pedidos/vendas/{idPedidoVenda}/situacoes/{idSituacao}``.
+        Endpoint: PATCH /pedidos/vendas/{idPedidoVenda}/situacoes/{idSituacao}
+
+        Altera a situação de um pedido de venda pelo ID.
 
         Args:
-            id_pedido_venda: ID do pedido, enviado como ``idPedidoVenda``.
-            id_situacao: ID da situação, enviado como ``idSituacao``.
+            id_pedido_venda: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+            id_situacao: ID da situação do pedido de venda (Bling: ``idSituacao``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
         """
         return self._patch(f"/pedidos/vendas/{id_pedido_venda}/situacoes/{id_situacao}")
 
     def update_status(self, order_id: int, status_id: int) -> JsonObject:
-        """Compatibility alias for ``alterar_situacao()``."""
+        """Compatibility alias for ``alterar_situacao()``.
+
+        Altera a situação de um pedido de venda.
+
+        Endpoint: PATCH /pedidos/vendas/{idPedidoVenda}/situacoes/{idSituacao}
+
+        Altera a situação de um pedido de venda pelo ID.
+
+        Args:
+            order_id: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+            status_id: ID da situação do pedido de venda (Bling: ``idSituacao``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.alterar_situacao(order_id, status_id)
 
     def lancar_estoque(self, id_pedido_venda: int, *, id_deposito: int | None = None) -> JsonObject:
         """Lança estoque de um pedido de venda.
 
-        Mapeia ``POST /pedidos/vendas/{idPedidoVenda}/lancar-estoque`` ou
-        ``POST /pedidos/vendas/{idPedidoVenda}/lancar-estoque/{idDeposito}``.
+        Endpoint: POST /pedidos/vendas/{idPedidoVenda}/lancar-estoque
+
+        Lança o estoque de um pedido de venda pelo ID, no depósito padrão ou
+        em um depósito específico se ``idDeposito`` for informado.
 
         Args:
-            id_pedido_venda: ID do pedido, enviado como ``idPedidoVenda``.
-            id_deposito: Depósito opcional, enviado como ``idDeposito``.
+            id_pedido_venda: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+            id_deposito: ID do depósito de estoque (Bling: ``idDeposito``, integer, opcional)
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
         """
         if id_deposito is None:
             return self._post(f"/pedidos/vendas/{id_pedido_venda}/lancar-estoque")
         return self._post(f"/pedidos/vendas/{id_pedido_venda}/lancar-estoque/{id_deposito}")
 
     def post_stock(self, order_id: int, *, deposit_id: int | None = None) -> JsonObject:
-        """Compatibility alias for ``lancar_estoque()``."""
+        """Compatibility alias for ``lancar_estoque()``.
+
+        Lança estoque de um pedido de venda.
+
+        Endpoint: POST /pedidos/vendas/{idPedidoVenda}/lancar-estoque
+
+        Lança o estoque de um pedido de venda pelo ID, no depósito padrão ou
+        em um depósito específico se ``deposit_id`` for informado.
+
+        Args:
+            order_id: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+            deposit_id: ID do depósito de estoque (Bling: ``idDeposito``, integer, opcional)
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.lancar_estoque(order_id, id_deposito=deposit_id)
 
     def estornar_estoque(self, id_pedido_venda: int) -> JsonObject:
         """Estorna o estoque de um pedido de venda.
 
-        Mapeia ``POST /pedidos/vendas/{idPedidoVenda}/estornar-estoque``.
+        Endpoint: POST /pedidos/vendas/{idPedidoVenda}/estornar-estoque
+
+        Estorna o estoque de um pedido de venda pelo ID.
 
         Args:
-            id_pedido_venda: ID do pedido, enviado como ``idPedidoVenda``.
+            id_pedido_venda: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 404: ErrorResponse
         """
         return self._post(f"/pedidos/vendas/{id_pedido_venda}/estornar-estoque")
 
     def reverse_stock(self, order_id: int) -> JsonObject:
-        """Compatibility alias for ``estornar_estoque()``."""
+        """Compatibility alias for ``estornar_estoque()``.
+
+        Estorna o estoque de um pedido de venda.
+
+        Endpoint: POST /pedidos/vendas/{idPedidoVenda}/estornar-estoque
+
+        Estorna o estoque de um pedido de venda pelo ID.
+
+        Args:
+            order_id: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 404: ErrorResponse
+        """
         return self.estornar_estoque(order_id)
 
     def lancar_contas(self, id_pedido_venda: int) -> JsonObject:
-        """Lança contas de um pedido de venda.
+        """Lança as contas de um pedido de venda.
 
-        Mapeia ``POST /pedidos/vendas/{idPedidoVenda}/lancar-contas``.
+        Endpoint: POST /pedidos/vendas/{idPedidoVenda}/lancar-contas
+
+        Lança as contas de um pedido de venda pelo ID.
 
         Args:
-            id_pedido_venda: ID do pedido, enviado como ``idPedidoVenda``.
+            id_pedido_venda: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
         """
         return self._post(f"/pedidos/vendas/{id_pedido_venda}/lancar-contas")
 
     def post_accounts(self, order_id: int) -> JsonObject:
-        """Compatibility alias for ``lancar_contas()``."""
+        """Compatibility alias for ``lancar_contas()``.
+
+        Lança as contas de um pedido de venda.
+
+        Endpoint: POST /pedidos/vendas/{idPedidoVenda}/lancar-contas
+
+        Lança as contas de um pedido de venda pelo ID.
+
+        Args:
+            order_id: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.lancar_contas(order_id)
 
     def estornar_contas(self, id_pedido_venda: int) -> JsonObject:
-        """Estorna contas de um pedido de venda.
+        """Estorna as contas de um pedido de venda.
 
-        Mapeia ``POST /pedidos/vendas/{idPedidoVenda}/estornar-contas``.
+        Endpoint: POST /pedidos/vendas/{idPedidoVenda}/estornar-contas
+
+        Estorna as contas de um pedido de venda pelo ID.
 
         Args:
-            id_pedido_venda: ID do pedido, enviado como ``idPedidoVenda``.
+            id_pedido_venda: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
         """
         return self._post(f"/pedidos/vendas/{id_pedido_venda}/estornar-contas")
 
     def reverse_accounts(self, order_id: int) -> JsonObject:
-        """Compatibility alias for ``estornar_contas()``."""
+        """Compatibility alias for ``estornar_contas()``.
+
+        Estorna as contas de um pedido de venda.
+
+        Endpoint: POST /pedidos/vendas/{idPedidoVenda}/estornar-contas
+
+        Estorna as contas de um pedido de venda pelo ID.
+
+        Args:
+            order_id: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.estornar_contas(order_id)
 
     def gerar_nota_fiscal(self, id_pedido_venda: int) -> JsonObject:
-        """Gera nota fiscal eletrônica a partir do pedido.
+        """Gera nota fiscal eletrônica a partir do pedido de venda.
 
-        Mapeia ``POST /pedidos/vendas/{idPedidoVenda}/gerar-nfe``.
+        Endpoint: POST /pedidos/vendas/{idPedidoVenda}/gerar-nfe
+
+        Gera nota fiscal eletrônica a partir do pedido de venda pelo ID.
 
         Args:
-            id_pedido_venda: ID do pedido, enviado como ``idPedidoVenda``.
+            id_pedido_venda: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 201: VendasCreateInvoiceResponseDTO; 400: ErrorResponse; 404: ErrorResponse
         """
         return self._post(f"/pedidos/vendas/{id_pedido_venda}/gerar-nfe")
 
     def generate_invoice(self, order_id: int) -> JsonObject:
-        """Compatibility alias for ``gerar_nota_fiscal()``."""
+        """Compatibility alias for ``gerar_nota_fiscal()``.
+
+        Gera nota fiscal eletrônica a partir do pedido de venda.
+
+        Endpoint: POST /pedidos/vendas/{idPedidoVenda}/gerar-nfe
+
+        Gera nota fiscal eletrônica a partir do pedido de venda pelo ID.
+
+        Args:
+            order_id: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 201: VendasCreateInvoiceResponseDTO; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.gerar_nota_fiscal(order_id)
 
     def gerar_nota_fiscal_consumidor(self, id_pedido_venda: int) -> JsonObject:
-        """Gera nota fiscal de consumidor eletrônica a partir do pedido.
+        """Gera nota fiscal de consumidor eletrônica a partir do pedido de venda.
 
-        Mapeia ``POST /pedidos/vendas/{idPedidoVenda}/gerar-nfce``.
+        Endpoint: POST /pedidos/vendas/{idPedidoVenda}/gerar-nfce
+
+        Gera nota fiscal de consumidor eletrônica a partir do pedido de venda pelo ID.
 
         Args:
-            id_pedido_venda: ID do pedido, enviado como ``idPedidoVenda``.
+            id_pedido_venda: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 201: VendasCreateInvoiceResponseDTO; 400: ErrorResponse; 404: ErrorResponse
         """
         return self._post(f"/pedidos/vendas/{id_pedido_venda}/gerar-nfce")
 
     def generate_consumer_invoice(self, order_id: int) -> JsonObject:
-        """Compatibility alias for ``gerar_nota_fiscal_consumidor()``."""
+        """Compatibility alias for ``gerar_nota_fiscal_consumidor()``.
+
+        Gera nota fiscal de consumidor eletrônica a partir do pedido de venda.
+
+        Endpoint: POST /pedidos/vendas/{idPedidoVenda}/gerar-nfce
+
+        Gera nota fiscal de consumidor eletrônica a partir do pedido de venda pelo ID.
+
+        Args:
+            order_id: ID do pedido de venda (Bling: ``idPedidoVenda``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 201: VendasCreateInvoiceResponseDTO; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.gerar_nota_fiscal_consumidor(order_id)
 
 

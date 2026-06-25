@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from contextlib import suppress
 from typing import TYPE_CHECKING, Self
 
 from bling_erp_api.auth import BlingAuthAdapter
@@ -11,6 +12,7 @@ from bling_erp_api.config import (
     DEFAULT_RATE_LIMIT_MAX_RETRIES,
     DEFAULT_RATE_LIMIT_PERIOD_SECONDS,
     DEFAULT_TIMEOUT_SECONDS,
+    load_env,
 )
 from bling_erp_api.resources import (
     AdCategoriesResource,
@@ -83,6 +85,7 @@ class BlingClient:
         rate_limit_max_retries: int = DEFAULT_RATE_LIMIT_MAX_RETRIES,
     ) -> None:
         """Create a client and attach resource namespaces."""
+        load_env()
         resolved_auth = auth or _auth_from_token_provider(token_provider)
         self._transport = SyncTransport(
             auth=resolved_auth,
@@ -149,24 +152,24 @@ class BlingClient:
     # -- Resource namespace properties (with IDE-visible docstrings) --
 
     @property
-    def contacts(self) -> ContactsResource:
+    def contatos(self) -> ContactsResource:
         """Operações de contatos (/contatos)."""
         return self._contacts
 
     @property
-    def contatos(self) -> ContactsResource:
-        """Alias pt-BR para ``contacts``. Operações em ``/contatos``."""
-        return self._contacts
+    def contacts(self) -> ContactsResource:
+        """Alias em inglês para ``contatos``. Contact operations on ``/contatos``."""
+        return self.contatos
 
     @property
-    def products(self) -> ProductsResource:
+    def produtos(self) -> ProductsResource:
         """Operações de produtos (/produtos). Bling API v3."""
         return self._products
 
     @property
-    def produtos(self) -> ProductsResource:
-        """Alias pt-BR para ``products``. Operações de produtos (/produtos)."""
-        return self._products
+    def products(self) -> ProductsResource:
+        """Alias em inglês para ``produtos``. Product operations on ``/produtos``."""
+        return self.produtos
 
     @property
     def produtos_estruturas(self) -> ProductStructuresResource:
@@ -176,7 +179,7 @@ class BlingClient:
     @property
     def product_structures(self) -> ProductStructuresResource:
         """Alias em inglês para ``produtos_estruturas``. Product structures (/produtos/estruturas)."""
-        return self._produtos_estruturas
+        return self.produtos_estruturas
 
     @property
     def produtos_fornecedores(self) -> ProductSuppliersResource:
@@ -186,7 +189,7 @@ class BlingClient:
     @property
     def product_suppliers(self) -> ProductSuppliersResource:
         """Alias em inglês para ``produtos_fornecedores``. Product suppliers (/produtos/fornecedores)."""
-        return self._produtos_fornecedores
+        return self.produtos_fornecedores
 
     @property
     def produtos_lojas(self) -> ProductStoresResource:
@@ -196,7 +199,7 @@ class BlingClient:
     @property
     def product_stores(self) -> ProductStoresResource:
         """Alias em inglês para ``produtos_lojas``. Product stores (/produtos/lojas)."""
-        return self._produtos_lojas
+        return self.produtos_lojas
 
     @property
     def lotes(self) -> ProductBatchesResource:
@@ -206,7 +209,7 @@ class BlingClient:
     @property
     def product_batches(self) -> ProductBatchesResource:
         """Alias em inglês para ``lotes``. Product batches (/produtos/lotes)."""
-        return self._lotes
+        return self.lotes
 
     @property
     def lotes_lancamentos(self) -> ProductBatchEntriesResource:
@@ -216,7 +219,7 @@ class BlingClient:
     @property
     def product_batch_entries(self) -> ProductBatchEntriesResource:
         """Alias em inglês para ``lotes_lancamentos``. Product batch entries (/produtos/lotes/lancamentos)."""
-        return self._lotes_lancamentos
+        return self.lotes_lancamentos
 
     @property
     def produtos_variacoes(self) -> ProductVariationsResource:
@@ -226,17 +229,17 @@ class BlingClient:
     @property
     def product_variations(self) -> ProductVariationsResource:
         """Alias em inglês para ``produtos_variacoes``. Product variations (/produtos/variacoes)."""
-        return self._produtos_variacoes
+        return self.produtos_variacoes
 
     @property
-    def sales_orders(self) -> SalesOrdersResource:
+    def pedidos_vendas(self) -> SalesOrdersResource:
         """Operações de pedidos de venda (/pedidos/vendas). Bling API v3."""
         return self._sales_orders
 
     @property
-    def pedidos_vendas(self) -> SalesOrdersResource:
-        """Alias pt-BR para ``sales_orders``. Operações de pedidos de venda (/pedidos/vendas)."""
-        return self._sales_orders
+    def sales_orders(self) -> SalesOrdersResource:
+        """Alias em inglês para ``pedidos_vendas``. Sales order operations on ``/pedidos/vendas``."""
+        return self.pedidos_vendas
 
     @property
     def pedidos_compras(self) -> PurchaseOrdersResource:
@@ -246,7 +249,7 @@ class BlingClient:
     @property
     def purchase_orders(self) -> PurchaseOrdersResource:
         """Alias for ``pedidos_compras``. Purchase order operations on ``/pedidos/compras``."""
-        return self._purchase_orders
+        return self.pedidos_compras
 
     @property
     def notas_fiscais(self) -> NfeResource:
@@ -256,7 +259,7 @@ class BlingClient:
     @property
     def invoices(self) -> NfeResource:
         """Alias em inglês para ``notas_fiscais``. NF-e (/nfe)."""
-        return self._nfe
+        return self.notas_fiscais
 
     @property
     def notas_fiscais_consumidor(self) -> NfceResource:
@@ -266,7 +269,7 @@ class BlingClient:
     @property
     def consumer_invoices(self) -> NfceResource:
         """Alias em inglês para ``notas_fiscais_consumidor``. NFC-e (/nfce)."""
-        return self._nfce
+        return self.notas_fiscais_consumidor
 
     @property
     def notas_servicos(self) -> NfseResource:
@@ -276,7 +279,7 @@ class BlingClient:
     @property
     def service_invoices(self) -> NfseResource:
         """Alias em inglês para ``notas_servicos``. NFS-e (/nfse)."""
-        return self._nfse
+        return self.notas_servicos
 
     @property
     def anuncios(self) -> AdsResource:
@@ -312,6 +315,11 @@ class BlingClient:
     def borderos(self) -> BorderosResource:
         """Borderôs — operações em ``/borderos``."""
         return self._borderos
+
+    @property
+    def payment_bundles(self) -> BorderosResource:
+        """Alias for ``borderos``. Payment bundle operations on ``/borderos``."""
+        return self.borderos
 
     @property
     def categorias_lojas(self) -> StoreCategoriesResource:
@@ -485,33 +493,33 @@ class BlingClient:
 
     @property
     def notificacoes(self) -> NotificacoesResource:
-        """Notificações (pt-BR)."""
+        """Notificações — operações em ``/notificacoes``."""
         return self._notificacoes
 
     @property
     def notifications(self) -> NotificacoesResource:
-        """Notificações (EN alias)."""
-        return self._notificacoes
+        """Alias for ``notificacoes``. Notification operations on ``/notificacoes``."""
+        return self.notificacoes
 
     @property
     def ordens_producao(self) -> OrdensProducaoResource:
-        """Ordens de Produção (pt-BR)."""
+        """Ordens de Produção — operações em ``/ordens-producao``."""
         return self._ordens_producao
 
     @property
     def production_orders(self) -> OrdensProducaoResource:
-        """Ordens de Produção (EN alias)."""
-        return self._ordens_producao
+        """Alias for ``ordens_producao``. Production order operations on ``/ordens-producao``."""
+        return self.ordens_producao
 
     @property
     def naturezas_operacoes(self) -> NaturezasOperacoesResource:
-        """Naturezas de Operações (pt-BR)."""
+        """Naturezas de Operações — operações em ``/naturezas-operacoes``."""
         return self._naturezas_operacoes
 
     @property
     def natures_of_operations(self) -> NaturezasOperacoesResource:
-        """Naturezas de Operações (EN alias)."""
-        return self._naturezas_operacoes
+        """Alias for ``naturezas_operacoes``. Tax nature operations on ``/naturezas-operacoes``."""
+        return self.naturezas_operacoes
 
     @property
     def propostas_comerciais(self) -> CommercialProposalsResource:
@@ -521,7 +529,7 @@ class BlingClient:
     @property
     def commercial_proposals(self) -> CommercialProposalsResource:
         """Alias for ``propostas_comerciais``. Commercial proposals on ``/propostas-comerciais``."""
-        return self._commercial_proposals
+        return self.propostas_comerciais
 
     @property
     def situacoes(self) -> SituacoesResource:
@@ -531,7 +539,7 @@ class BlingClient:
     @property
     def situations(self) -> SituacoesResource:
         """Alias for ``situacoes``. Situation operations on ``/situacoes``."""
-        return self._situacoes
+        return self.situacoes
 
     @property
     def situacoes_modulos(self) -> SituacoesModulosResource:
@@ -541,7 +549,7 @@ class BlingClient:
     @property
     def situation_modules(self) -> SituacoesModulosResource:
         """Alias for ``situacoes_modulos``. Situation module operations on ``/situacoes/modulos``."""
-        return self._situacoes_modulos
+        return self.situacoes_modulos
 
     @property
     def situacoes_transicoes(self) -> SituacoesTransicoesResource:
@@ -551,7 +559,7 @@ class BlingClient:
     @property
     def situation_transitions(self) -> SituacoesTransicoesResource:
         """Alias for ``situacoes_transicoes``. Situation transition operations on ``/situacoes/transicoes``."""
-        return self._situacoes_transicoes
+        return self.situacoes_transicoes
 
     @property
     def vendedores(self) -> VendedoresResource:
@@ -561,7 +569,7 @@ class BlingClient:
     @property
     def sellers(self) -> VendedoresResource:
         """Alias for ``vendedores``. Seller operations on ``/vendedores``."""
-        return self._vendedores
+        return self.vendedores
 
     @property
     def usuarios(self) -> UsuariosResource:
@@ -571,7 +579,7 @@ class BlingClient:
     @property
     def users(self) -> UsuariosResource:
         """Alias for ``usuarios``. User operations on ``/usuarios``."""
-        return self._usuarios
+        return self.usuarios
 
     @classmethod
     def from_env(  # noqa: PLR0913
@@ -584,7 +592,12 @@ class BlingClient:
         rate_limit_period_seconds: float = DEFAULT_RATE_LIMIT_PERIOD_SECONDS,
         rate_limit_max_retries: int = DEFAULT_RATE_LIMIT_MAX_RETRIES,
     ) -> Self:
-        """Create a client using ``BLING_*`` settings from ``bling-jwt-auth``."""
+        """Create a client using ``BLING_*`` settings from ``bling-jwt-auth``.
+
+        Sets ``rate_limit_max_requests`` to ``None`` to disable client-side
+        rate limiting (not recommended for production use).
+        """
+        load_env()
         return cls(
             auth=BlingAuthAdapter.from_env(),
             base_url=base_url,
@@ -598,6 +611,11 @@ class BlingClient:
     def close(self) -> None:
         """Close owned resources."""
         self._transport.close()
+
+    def __del__(self) -> None:
+        """Close resources during garbage collection."""
+        with suppress(Exception):
+            self.close()
 
     def __enter__(self) -> Self:
         """Return this client for context manager usage."""

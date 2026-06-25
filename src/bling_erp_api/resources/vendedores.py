@@ -104,14 +104,14 @@ class VendedoresResource(BaseResource):
     def list(  # noqa: PLR0913
         self,
         *,
-        pagina: int | None = None,
-        limite: int | None = None,
-        nome_contato: str | None = None,
-        situacao_contato: str | None = None,
-        id_contato: int | None = None,
-        id_loja: int | None = None,
-        data_alteracao_inicial: str | None = None,
-        data_alteracao_final: str | None = None,
+        page: int | None = None,
+        limit: int | None = None,
+        contact_name: str | None = None,
+        contact_status: str | None = None,
+        contact_id: int | None = None,
+        store_id: int | None = None,
+        updated_start: str | None = None,
+        updated_end: str | None = None,
     ) -> VendedoresGetResponse200:
         """Compatibility alias for ``listar()``.
 
@@ -123,27 +123,27 @@ class VendedoresResource(BaseResource):
         opcionais para refinar a consulta.
 
         Args:
-            pagina: N° da página da listagem (Bling: ``pagina``, integer, opcional)
-            limite: Quantidade de registros por página (Bling: ``limite``, integer, opcional)
-            nome_contato: Nome do contato para filtro (Bling: ``nomeContato``, string, opcional)
-            situacao_contato: Situação do contato para filtro (Bling: ``situacaoContato``, string, opcional)
-            id_contato: ID do contato para filtro (Bling: ``idContato``, integer, opcional)
-            id_loja: ID da loja para filtro (Bling: ``idLoja``, integer, opcional)
-            data_alteracao_inicial: Data de alteração inicial (Bling: ``dataAlteracaoInicial``, string, opcional)
-            data_alteracao_final: Data de alteração final (Bling: ``dataAlteracaoFinal``, string, opcional)
+            page: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limit: Quantidade de registros por página (Bling: ``limite``, integer, opcional)
+            contact_name: Nome do contato para filtro (Bling: ``nomeContato``, string, opcional)
+            contact_status: Situação do contato para filtro (Bling: ``situacaoContato``, string, opcional)
+            contact_id: ID do contato para filtro (Bling: ``idContato``, integer, opcional)
+            store_id: ID da loja para filtro (Bling: ``idLoja``, integer, opcional)
+            updated_start: Data de alteração inicial (Bling: ``dataAlteracaoInicial``, string, opcional)
+            updated_end: Data de alteração final (Bling: ``dataAlteracaoFinal``, string, opcional)
 
         Returns:
             Bling API response. Response schemas: 200: VendedoresGetResponse200; 404: ErrorResponse
         """
         return self.listar(
-            pagina=pagina,
-            limite=limite,
-            nome_contato=nome_contato,
-            situacao_contato=situacao_contato,
-            id_contato=id_contato,
-            id_loja=id_loja,
-            data_alteracao_inicial=data_alteracao_inicial,
-            data_alteracao_final=data_alteracao_final,
+            pagina=page,
+            limite=limit,
+            nome_contato=contact_name,
+            situacao_contato=contact_status,
+            id_contato=contact_id,
+            id_loja=store_id,
+            data_alteracao_inicial=updated_start,
+            data_alteracao_final=updated_end,
         )
 
     # ------------------------------------------------------------------

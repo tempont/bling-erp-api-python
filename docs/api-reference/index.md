@@ -12,6 +12,7 @@ tipos e valores de retorno com formatação colorida.
 |---|---|
 | [Cliente](client.md) | `BlingClient` — ponto de entrada do SDK |
 | [Pedidos de Venda](sales_orders.md) | `SalesOrdersResource` — `/pedidos/vendas` |
+| [Pedidos de Compra](purchase_orders.md) | `PurchaseOrdersResource` — `/pedidos/compras` |
 | [Produtos](products.md) | `ProductsResource` — `/produtos` |
 | [Estruturas de Produtos](product_structures.md) | `ProductStructuresResource` — `/produtos/estruturas` |
 | [Fornecedores de Produtos](product_suppliers.md) | `ProductSuppliersResource` — `/produtos/fornecedores` |
@@ -22,28 +23,34 @@ tipos e valores de retorno com formatação colorida.
 | [Anúncios](ads.md) | `AdsResource` — `/anuncios` |
 | [Categorias de Anúncios](ad_categories.md) | `AdCategoriesResource` — `/anuncios/categorias` |
 | [Borderôs](borderos.md) | `BorderosResource` — `/borderos` |
+| [Caixas e Bancos](caixas_bancos.md) | `CaixasBancosResource` — `/caixas` |
 | [Categorias - Lojas](store_categories.md) | `StoreCategoriesResource` — `/categorias/lojas` |
 | [Categorias - Produtos](product_categories.md) | `ProductCategoriesResource` — `/categorias/produtos` |
 | [Categorias - Receitas e Despesas](income_expense_categories.md) | `IncomeExpenseCategoriesResource` — `/categorias/receitas-despesas` |
 | [Contas a Pagar](contas_pagar.md) | `ContasPagarResource` — `/contas/pagar` |
 | [Contas a Receber](contas_receber.md) | `ContasReceberResource` — `/contas/receber` |
 | [Contas Financeiras](contas_contabeis.md) | `ContasContabeisResource` — `/contas-contabeis` |
+| [Contatos](contacts.md) | `ContactsResource` — `/contatos` |
 | [Depósitos](depositos.md) | `DepositosResource` — `/depositos` |
 | [Empresas](empresas.md) | `EmpresasResource` — `/empresas` |
 | [Estoques](estoques.md) | `EstoquesResource` — `/estoques` |
 | [Formas de Pagamento](payment_methods.md) | `PaymentMethodsResource` — `/formas-pagamentos` |
 | [Grupos de Produtos](product_groups.md) | `ProductGroupsResource` — `/grupos-produtos` |
 | [Homologação](homologation.md) | `HomologationResource` — `/homologacao/produtos` |
-| [Caixas e Bancos](caixas_bancos.md) | `CaixasBancosResource` — `/caixas` |
-| [Contatos](contacts.md) | `ContactsResource` — `/contatos` |
-| [NF-e](nfe.md) | `NfeResource` — `/nfe` |
-| [NFC-e](nfce.md) | `NfceResource` — `/nfce` |
-| [NFS-e](nfse.md) | `NfseResource` — `/nfse` |
 | [Logísticas](logisticas.md) | `LogisticasResource` — `/logisticas` |
 | [Logísticas - Serviços](logisticas_servicos.md) | `LogisticasServicosResource` — `/logisticas/servicos` |
 | [Logísticas - Objetos](logisticas_objetos.md) | `LogisticasObjetosResource` — `/logisticas/objetos` |
 | [Logísticas - Etiquetas](logisticas_etiquetas.md) | `LogisticasEtiquetasResource` — `/logisticas/etiquetas` |
 | [Logísticas - Remessas](logisticas_remessas.md) | `LogisticasRemessasResource` — `/logisticas/remessas` |
-| [Naturezas de Operações](naturezas_operacoes.md) | Listagem e cálculo de tributação |
-| [Notificações](notificacoes.md) | Listagem, contagem e leitura de notificações |
-| [Ordens de Produção](ordens_producao.md) | CRUD, situações e geração sob demanda |
+| [Naturezas de Operações](naturezas_operacoes.md) | `NaturezasOperacoesResource` — `/naturezas-operacoes` |
+| [Notificações](notificacoes.md) | `NotificacoesResource` — `/notificacoes` |
+| [NF-e](nfe.md) | `NfeResource` — `/nfe` |
+| [NFC-e](nfce.md) | `NfceResource` — `/nfce` |
+| [NFS-e](nfse.md) | `NfseResource` — `/nfse` |
+| [Ordens de Produção](ordens_producao.md) | `OrdensProducaoResource` — `/ordens-producao` |
+| [Propostas Comerciais](propostas_comerciais.md) | `CommercialProposalsResource` — `/propostas-comerciais` |
+| [Situações](situacoes.md) | `SituacoesResource` — `/situacoes` |
+| [Módulos de Situações](situacoes_modulos.md) | `SituacoesModulosResource` — `/situacoes/modulos` |
+| [Transições de Situações](situacoes_transicoes.md) | `SituacoesTransicoesResource` — `/situacoes/transicoes` |
+| [Vendedores](vendedores.md) | `VendedoresResource` — `/vendedores` |
+| [Usuários](usuarios.md) | `UsuariosResource` — `/usuarios` |

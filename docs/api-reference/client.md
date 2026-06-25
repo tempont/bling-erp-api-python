@@ -4,21 +4,92 @@
     options:
       members:
         - __init__
-        - pedidos_vendas
+        - from_env
+        - close
+        - __enter__
+        - __exit__
+        - contacts
+        - contatos
+        - products
         - produtos
         - produtos_estruturas
-        - produtos_fornecedores
-        - produtos_lojas
-        - lotes
-        - lotes_lancamentos
-        - produtos_variacoes
-        - contatos
-        - sales_orders
-        - products
         - product_structures
+        - produtos_fornecedores
         - product_suppliers
+        - produtos_lojas
         - product_stores
+        - lotes
         - product_batches
+        - lotes_lancamentos
         - product_batch_entries
+        - produtos_variacoes
         - product_variations
-        - contacts
+        - sales_orders
+        - pedidos_vendas
+        - pedidos_compras
+        - purchase_orders
+        - notas_fiscais
+        - invoices
+        - notas_fiscais_consumidor
+        - consumer_invoices
+        - notas_servicos
+        - service_invoices
+        - anuncios
+        - ads
+        - anuncios_categorias
+        - ad_categories
+        - caixas_bancos
+        - cash_entries
+        - borderos
+        - categorias_lojas
+        - store_categories
+        - categorias_produtos
+        - product_categories
+        - categorias_receitas_despesas
+        - income_expense_categories
+        - contas_pagar
+        - accounts_payable
+        - contas_receber
+        - accounts_receivable
+        - contas_contabeis
+        - financial_accounts
+        - depositos
+        - warehouses
+        - empresas
+        - companies
+        - estoques
+        - stock
+        - formas_pagamentos
+        - payment_methods
+        - grupos_produtos
+        - product_groups
+        - homologacao
+        - homologation
+        - logisticas
+        - logistics
+        - logisticas_servicos
+        - logistics_services
+        - logisticas_objetos
+        - logistics_objects
+        - logisticas_etiquetas
+        - logistics_labels
+        - logisticas_remessas
+        - logistics_shipments
+        - naturezas_operacoes
+        - natures_of_operations
+        - notificacoes
+        - notifications
+        - ordens_producao
+        - production_orders
+        - propostas_comerciais
+        - commercial_proposals
+        - situacoes
+        - situations
+        - situacoes_modulos
+        - situation_modules
+        - situacoes_transicoes
+        - situation_transitions
+        - vendedores
+        - sellers
+        - usuarios
+        - users

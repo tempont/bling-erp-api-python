@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import threading
 import time
 from collections import deque
@@ -23,6 +24,7 @@ class RateLimiter:
         self._period_seconds = period_seconds
         self._timestamps: deque[float] = deque()
         self._lock = threading.Lock()
+        self._async_lock = asyncio.Lock()
 
     def wait(self) -> None:
         """Block until the next request can be sent."""
@@ -38,6 +40,25 @@ class RateLimiter:
 
             if wait_seconds > 0:
                 time.sleep(wait_seconds)
+
+    async def wait_async(self) -> None:
+        """Coroutine: block until the next request can be sent.
+
+        Async counterpart of :meth:`wait`. Uses ``asyncio.Lock`` and
+        ``asyncio.sleep`` so it cooperates with the event loop.
+        """
+        while True:
+            async with self._async_lock:
+                now = time.monotonic()
+                self._drop_expired(now)
+                if len(self._timestamps) < self._max_requests:
+                    self._timestamps.append(now)
+                    return
+
+                wait_seconds = self._period_seconds - (now - self._timestamps[0])
+
+            if wait_seconds > 0:
+                await asyncio.sleep(wait_seconds)
 
     def _drop_expired(self, now: float) -> None:
         while self._timestamps and now - self._timestamps[0] >= self._period_seconds:

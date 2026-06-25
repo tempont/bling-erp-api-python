@@ -5,6 +5,10 @@ from __future__ import annotations
 from datetime import UTC, date, datetime
 from typing import cast
 
+import pytest
+
+from bling_erp_api import BlingClient
+from bling_erp_api.exceptions import BlingValidationError
 from bling_erp_api.models.generated.caixas_bancos import CaixasBancosSalvarLancamentoDTO
 from bling_erp_api.models.generated.depositos import DepositosDadosDTO
 from bling_erp_api.models.generated.invoices import (
@@ -32,6 +36,10 @@ from bling_erp_api.models.generated.products import (
     ProdutosDadosDTO,
     ProdutosDadosPatchDTO,
 )
+from bling_erp_api.models.generated.propostas_comerciais import (
+    PropostasComerciaisIdPropostaComercialPutRequest,
+    PropostasComerciaisPostRequest,
+)
 from bling_erp_api.models.generated.sales_orders import (
     PedidosVendasGetResponse200,
     PedidosVendasPostRequest,
@@ -41,11 +49,20 @@ from bling_erp_api.models.generated.schemas import (
     ContasReceberBoletosCancelarDTO,
     ContasReceberPostRequest,
 )
+from bling_erp_api.models.generated.schemas.notas_fiscais_consumidor import (
+    NfceIdNotaFiscalConsumidorPutRequest,
+    NfcePostRequest,
+)
+from bling_erp_api.models.generated.situacoes import (
+    SituacoesIdSituacaoPutRequest,
+    SituacoesPostRequest,
+)
 from bling_erp_api.models.generated.situacoes_modulos import (
     SituacoesModulosGetResponse200,
 )
 from bling_erp_api.resources.ad_categories import AdCategoriesResource
 from bling_erp_api.resources.ads import AdsResource
+from bling_erp_api.resources.base import _validate_path  # pyright: ignore[reportPrivateUsage]
 from bling_erp_api.resources.borderos import BorderosResource
 from bling_erp_api.resources.caixas_bancos import CaixasBancosResource
 from bling_erp_api.resources.contacts import ContactsResource
@@ -137,6 +154,40 @@ class StaticPayloadTransport(RecordingTransport):
         self.calls.append((method, path, params, json))
         self.header_calls.append(headers)
         return self.payload
+
+
+class TestPathValidation:
+    """Tests for URL path traversal validation in BaseResource."""
+
+    def test_validate_path_rejects_traversal_dotdot(self) -> None:
+        """_validate_path rejects paths containing ../."""
+        with pytest.raises(BlingValidationError, match="path traversal"):
+            _validate_path("/contatos/../../admin")
+
+    def test_validate_path_rejects_url_encoded_traversal(self) -> None:
+        """_validate_path rejects paths containing ..%2f."""
+        with pytest.raises(BlingValidationError, match="path traversal"):
+            _validate_path("/contatos/..%2fadmin")
+
+    def test_validate_path_rejects_backslash_url_encoded_traversal(self) -> None:
+        """_validate_path rejects paths containing ..%5c."""
+        with pytest.raises(BlingValidationError, match="path traversal"):
+            _validate_path("/contatos/..%5cadmin")
+
+    def test_validate_path_accepts_normal_path(self) -> None:
+        """_validate_path accepts normal paths like /produtos/123."""
+        _validate_path("/produtos/123")  # Should not raise
+
+    def test_validate_path_accepts_normal_path_with_hyphens(self) -> None:
+        """_validate_path accepts paths with hyphens like /formas-pagamentos."""
+        _validate_path("/formas-pagamentos/10")  # Should not raise
+
+    def test_resource_method_rejects_traversal_id(self) -> None:
+        """Resource method with traversal-style ID raises BlingValidationError."""
+        transport = RecordingTransport()
+        resource = ProductsResource(transport)
+        with pytest.raises(BlingValidationError, match="path traversal"):
+            resource.obter(id_produto="../../admin")  # type: ignore[arg-type]
 
 
 def test_contacts_list_maps_to_bling_endpoint() -> None:
@@ -243,6 +294,11 @@ def test_products_create_and_patch_serialize_model_with_api_aliases() -> None:
             "/produtos",
             None,
             {
+                "gtin": "",
+                "gtinEmbalagem": "",
+                "tipoProducao": "P",
+                "condicao": 0,
+                "artigoPerigoso": False,
                 "nome": "Produto Teste",
                 "codigo": "SKU-1",
                 "preco": 19.9,
@@ -251,7 +307,20 @@ def test_products_create_and_patch_serialize_model_with_api_aliases() -> None:
                 "formato": "S",
             },
         ),
-        ("PATCH", "/produtos/123", None, {"preco": 21.9}),
+        (
+            "PATCH",
+            "/produtos/123",
+            None,
+            {
+                "gtin": "",
+                "gtinEmbalagem": "",
+                "tipoProducao": "P",
+                "condicao": 0,
+                "artigoPerigoso": False,
+                "preco": 21.9,
+                "situacao": "A",
+            },
+        ),
     ]
 
 
@@ -628,6 +697,51 @@ def test_product_batches_map_requests_to_bling() -> None:
     ]
 
 
+def test_product_batches_english_aliases() -> None:
+    """ProductBatchesResource EN aliases should map to pt-BR methods."""
+    transport = RecordingTransport()
+    resource = ProductBatchesResource(transport)
+
+    resource.delete_many([1, 9])
+    resource.create_many(
+        [
+            {
+                "idLote": 1,
+                "produto": {"id": 11},
+                "deposito": {"id": 22},
+                "dataFabricacao": "2024-01-01",
+                "dataValidade": "2024-06-01",
+            }
+        ]  # type: ignore[reportArgumentType]
+    )
+    resource.list_products_control_lot([111])
+    resource.update(999, {"codigoLote": "L"})  # type: ignore[reportArgumentType]
+    resource.update_status(999, {"status": 2})  # type: ignore[reportArgumentType]
+    resource.deactivate_lot_control(4321)
+
+    assert transport.calls == [
+        ("DELETE", "/produtos/lotes", {"idsLotes[]": [1, 9]}, None),
+        (
+            "PUT",
+            "/produtos/lotes",
+            None,
+            [
+                {
+                    "idLote": 1,
+                    "produto": {"id": 11},
+                    "deposito": {"id": 22},
+                    "dataFabricacao": "2024-01-01",
+                    "dataValidade": "2024-06-01",
+                }
+            ],
+        ),
+        ("GET", "/produtos/lotes/controla-lote", {"idsProdutos[]": [111]}, None),
+        ("PUT", "/produtos/lotes/999", None, {"codigoLote": "L"}),
+        ("PATCH", "/produtos/lotes/999/status", None, {"status": 2}),
+        ("POST", "/produtos/4321/lotes/controla-lote/desativar", None, None),
+    ]
+
+
 def test_product_batch_entries_map_requests_to_bling() -> None:
     """Lancamentos usam paths aninhados e query idsLotes[]."""
     transport = RecordingTransport()
@@ -939,7 +1053,7 @@ class TestNfceResourceMapping:
         """NFC-e criar posts JSON body to /nfce."""
         transport = RecordingTransport()
         resource = NfceResource(transport)
-        dados: JsonObject = {"tipo": 1}
+        dados = cast("NfcePostRequest", {"tipo": 1})
         resource.criar(dados)
         assert transport.calls[0][:2] == ("POST", "/nfce")
         assert transport.calls[0][3] is not None
@@ -948,7 +1062,7 @@ class TestNfceResourceMapping:
         """NFC-e alterar puts to /nfce/{id}."""
         transport = RecordingTransport()
         resource = NfceResource(transport)
-        resource.alterar(54321, {"tipo": 1})
+        resource.alterar(54321, cast("NfceIdNotaFiscalConsumidorPutRequest", {"tipo": 1}))
         assert transport.calls[0][:2] == ("PUT", "/nfce/54321")
 
     def test_nfce_autorizar_maps_to_bling_endpoint(self) -> None:
@@ -1125,8 +1239,13 @@ class TestAdsResourceMapping:
         resource.listar(tipo_integracao="MercadoLivre", id_loja=1)
         assert len(transport.calls) == 1
         assert transport.calls[0][0] == "GET"
-        assert transport.calls[0][1] == "/anuncios?pagina=1&limite=100"
-        assert transport.calls[0][2] == {"tipoIntegracao": "MercadoLivre", "idLoja": 1}
+        assert transport.calls[0][1] == "/anuncios"
+        assert transport.calls[0][2] == {
+            "pagina": 1,
+            "limite": 100,
+            "tipoIntegracao": "MercadoLivre",
+            "idLoja": 1,
+        }
 
     def test_ads_listar_with_filters(self) -> None:
         """Ads listar maps optional filters to Bling camelCase."""
@@ -1139,6 +1258,8 @@ class TestAdsResourceMapping:
             id_produto=99,
         )
         assert transport.calls[0][2] == {
+            "pagina": 1,
+            "limite": 100,
             "tipoIntegracao": "MercadoLivre",
             "idLoja": 1,
             "situacao": 1,
@@ -1371,6 +1492,12 @@ class TestBorderosResourceMapping:
         assert transport.calls[0][0] == "DELETE"
         assert transport.calls[0][1] == "/borderos/123456"
 
+    def test_client_payment_bundles_alias(self) -> None:
+        """Client.payment_bundles should be a property."""
+        # This test can't instantiate a full client without auth,
+        # but we can verify the property exists on the class
+        assert isinstance(BlingClient.__dict__["payment_bundles"], property)
+
 
 # --- Caixas e Bancos mapping tests ---
 
@@ -1383,7 +1510,7 @@ class TestCaixasBancosResourceMapping:
         transport = RecordingTransport()
         resource = CaixasBancosResource(transport)
         resource.listar()
-        assert transport.calls == [("GET", "/caixas?pagina=1", {}, None)]
+        assert transport.calls == [("GET", "/caixas", {"pagina": 1}, None)]
 
     def test_caixas_bancos_listar_with_filters(self) -> None:
         """Caixas listar maps optional filters to Bling camelCase."""
@@ -1398,8 +1525,9 @@ class TestCaixasBancosResourceMapping:
             situacao="R",
         )
         assert transport.calls[0][0] == "GET"
-        assert transport.calls[0][1] == "/caixas?pagina=1"
+        assert transport.calls[0][1] == "/caixas"
         assert transport.calls[0][2] == {
+            "pagina": 1,
             "dataInicial": "2025-01-01",
             "dataFinal": "2025-01-31",
             "idsCategorias": [10, 20],
@@ -1462,10 +1590,10 @@ class TestCaixasBancosResourceMapping:
         resource = CaixasBancosResource(transport)
         resource.list(page=2, start_date="2025-01-01", reconciliation_status=1)
         assert transport.calls[0][0] == "GET"
-        assert "caixas" in transport.calls[0][1]
-        assert "pagina=2" in transport.calls[0][1]
+        assert transport.calls[0][1] == "/caixas"
         params = transport.calls[0][2]
         assert params is not None
+        assert params["pagina"] == 2
         assert params["dataInicial"] == "2025-01-01"
         assert params["situacaoConciliacao"] == 1
 
@@ -1530,7 +1658,7 @@ class TestStoreCategoriesResourceMapping:
         transport = RecordingTransport()
         resource = StoreCategoriesResource(transport)
         resource.listar()
-        assert transport.calls == [("GET", "/categorias/lojas?pagina=1&limite=100", {}, None)]
+        assert transport.calls == [("GET", "/categorias/lojas", {"pagina": 1, "limite": 100}, None)]
 
     def test_store_categories_listar_with_filters(self) -> None:
         """Store categories listar maps optional filters."""
@@ -1538,7 +1666,12 @@ class TestStoreCategoriesResourceMapping:
         resource = StoreCategoriesResource(transport)
         resource.listar(id_loja=1, id_categoria_produto=50)
         assert transport.calls[0][0] == "GET"
-        assert transport.calls[0][2] == {"idLoja": 1, "idCategoriaProduto": 50}
+        assert transport.calls[0][2] == {
+            "pagina": 1,
+            "limite": 100,
+            "idLoja": 1,
+            "idCategoriaProduto": 50,
+        }
 
     def test_store_categories_obter_maps_to_bling_endpoint(self) -> None:
         """Store categories obter maps ID to GET /categorias/lojas/{id}."""
@@ -1614,7 +1747,9 @@ class TestProductCategoriesResourceMapping:
         transport = RecordingTransport()
         resource = ProductCategoriesResource(transport)
         resource.listar()
-        assert transport.calls == [("GET", "/categorias/produtos?pagina=1&limite=100", None, None)]
+        assert transport.calls == [
+            ("GET", "/categorias/produtos", {"pagina": 1, "limite": 100}, None)
+        ]
 
     def test_product_categories_obter_maps_to_bling_endpoint(self) -> None:
         """Product categories obter maps ID to GET .../{id}."""
@@ -1651,8 +1786,8 @@ class TestProductCategoriesResourceMapping:
         transport = RecordingTransport()
         resource = ProductCategoriesResource(transport)
         resource.list(page=3, limit=50)
-        assert "pagina=3" in transport.calls[0][1]
-        assert "limite=50" in transport.calls[0][1]
+        assert transport.calls[0][1] == "/categorias/produtos"
+        assert transport.calls[0][2] == {"pagina": 3, "limite": 50}
 
     def test_product_categories_english_alias_get(self) -> None:
         """EN alias 'get' maps to obter."""
@@ -1695,7 +1830,7 @@ class TestIncomeExpenseCategoriesResourceMapping:
         resource = IncomeExpenseCategoriesResource(transport)
         resource.listar()
         assert transport.calls == [
-            ("GET", "/categorias/receitas-despesas?pagina=1&limite=100", {}, None)
+            ("GET", "/categorias/receitas-despesas", {"pagina": 1, "limite": 100}, None)
         ]
 
     def test_income_expense_listar_with_filters(self) -> None:
@@ -1703,7 +1838,7 @@ class TestIncomeExpenseCategoriesResourceMapping:
         transport = RecordingTransport()
         resource = IncomeExpenseCategoriesResource(transport)
         resource.listar(tipo=2, situacao=1)
-        assert transport.calls[0][2] == {"tipo": 2, "situacao": 1}
+        assert transport.calls[0][2] == {"pagina": 1, "limite": 100, "tipo": 2, "situacao": 1}
 
     def test_income_expense_obter_maps_to_bling_endpoint(self) -> None:
         """Income/expense obter maps ID."""
@@ -1749,7 +1884,7 @@ class TestIncomeExpenseCategoriesResourceMapping:
         transport = RecordingTransport()
         resource = IncomeExpenseCategoriesResource(transport)
         resource.list(type_=2, status=1)
-        assert transport.calls[0][2] == {"tipo": 2, "situacao": 1}
+        assert transport.calls[0][2] == {"pagina": 1, "limite": 100, "tipo": 2, "situacao": 1}
 
     def test_income_expense_english_alias_get(self) -> None:
         """EN alias 'get' maps to obter."""
@@ -1800,7 +1935,7 @@ class TestContasPagarResourceMapping:
         resource = ContasPagarResource(transport)
         resource.listar(pagina=1, limite=100)
         assert transport.calls == [
-            ("GET", "/contas/pagar?pagina=1&limite=100", {}, None),
+            ("GET", "/contas/pagar", {"pagina": 1, "limite": 100}, None),
         ]
 
     def test_contas_pagar_listar_with_filters(self) -> None:
@@ -1810,8 +1945,8 @@ class TestContasPagarResourceMapping:
         resource.listar(pagina=1, limite=100, situacao=1)
         assert transport.calls[0] == (
             "GET",
-            "/contas/pagar?pagina=1&limite=100",
-            {"situacao": 1},
+            "/contas/pagar",
+            {"pagina": 1, "limite": 100, "situacao": 1},
             None,
         )
 
@@ -1858,7 +1993,7 @@ class TestContasPagarResourceMapping:
         transport = RecordingTransport()
         resource = ContasPagarResource(transport)
         resource.list(page=1, limit=100)
-        assert transport.calls[0][:2] == ("GET", "/contas/pagar?pagina=1&limite=100")
+        assert transport.calls[0][:2] == ("GET", "/contas/pagar")
 
     def test_contas_pagar_english_alias_get(self) -> None:
         """English alias 'get' should map to 'obter'."""
@@ -1892,7 +2027,7 @@ class TestContasReceberResourceMapping:
         resource = ContasReceberResource(transport)
         resource.listar(pagina=1, limite=100)
         assert transport.calls == [
-            ("GET", "/contas/receber?pagina=1&limite=100", {}, None),
+            ("GET", "/contas/receber", {"pagina": 1, "limite": 100}, None),
         ]
 
     def test_contas_receber_listar_with_filters(self) -> None:
@@ -1902,8 +2037,8 @@ class TestContasReceberResourceMapping:
         resource.listar(pagina=1, limite=100, situacoes=[1, 2])
         assert transport.calls[0] == (
             "GET",
-            "/contas/receber?pagina=1&limite=100",
-            {"situacoes[]": [1, 2]},
+            "/contas/receber",
+            {"pagina": 1, "limite": 100, "situacoes[]": [1, 2]},
             None,
         )
 
@@ -1952,8 +2087,8 @@ class TestContasReceberResourceMapping:
         resource.obter_boletos(id_origem=500)
         assert transport.calls[0] == (
             "GET",
-            "/contas/receber/boletos?idOrigem=500",
-            {},
+            "/contas/receber/boletos",
+            {"idOrigem": 500},
             None,
         )
 
@@ -1974,7 +2109,7 @@ class TestContasReceberResourceMapping:
         resource.list(page=1, limit=100)
         assert transport.calls[0][:2] == (
             "GET",
-            "/contas/receber?pagina=1&limite=100",
+            "/contas/receber",
         )
 
     def test_contas_receber_english_alias_get_boletos(self) -> None:
@@ -1984,8 +2119,8 @@ class TestContasReceberResourceMapping:
         resource.get_boletos(source_id=500)
         assert transport.calls[0] == (
             "GET",
-            "/contas/receber/boletos?idOrigem=500",
-            {},
+            "/contas/receber/boletos",
+            {"idOrigem": 500},
             None,
         )
 
@@ -2002,7 +2137,7 @@ class TestContasContabeisResourceMapping:
         resource = ContasContabeisResource(transport)
         resource.listar(pagina=1, limite=100)
         assert transport.calls == [
-            ("GET", "/contas-contabeis?pagina=1&limite=100", {}, None),
+            ("GET", "/contas-contabeis", {"pagina": 1, "limite": 100}, None),
         ]
 
     def test_contas_contabeis_listar_with_filters(self) -> None:
@@ -2012,8 +2147,8 @@ class TestContasContabeisResourceMapping:
         resource.listar(pagina=1, limite=100, situacoes=[1, 2])
         assert transport.calls[0] == (
             "GET",
-            "/contas-contabeis?pagina=1&limite=100",
-            {"situacoes": [1, 2]},
+            "/contas-contabeis",
+            {"pagina": 1, "limite": 100, "situacoes": [1, 2]},
             None,
         )
 
@@ -2033,7 +2168,7 @@ class TestContasContabeisResourceMapping:
         resource.list(page=1, limit=100)
         assert transport.calls[0][:2] == (
             "GET",
-            "/contas-contabeis?pagina=1&limite=100",
+            "/contas-contabeis",
         )
 
     def test_contas_contabeis_english_alias_get(self) -> None:
@@ -2058,7 +2193,7 @@ class TestDepositosResourceMapping:
         resource = DepositosResource(transport)
         resource.listar(pagina=1, limite=100)
         assert transport.calls == [
-            ("GET", "/depositos?pagina=1&limite=100", {}, None),
+            ("GET", "/depositos", {"pagina": 1, "limite": 100}, None),
         ]
 
     def test_depositos_listar_with_filters(self) -> None:
@@ -2068,8 +2203,8 @@ class TestDepositosResourceMapping:
         resource.listar(pagina=1, limite=100, situacao=1)
         assert transport.calls[0] == (
             "GET",
-            "/depositos?pagina=1&limite=100",
-            {"situacao": 1},
+            "/depositos",
+            {"pagina": 1, "limite": 100, "situacao": 1},
             None,
         )
 
@@ -2110,7 +2245,7 @@ class TestDepositosResourceMapping:
         resource.list(page=1, limit=100)
         assert transport.calls[0][:2] == (
             "GET",
-            "/depositos?pagina=1&limite=100",
+            "/depositos",
         )
 
     def test_depositos_english_alias_get(self) -> None:
@@ -2222,7 +2357,7 @@ class TestPaymentMethodsResourceMapping:
         resource = PaymentMethodsResource(transport)
         resource.listar(pagina=1, limite=100)
         assert transport.calls == [
-            ("GET", "/formas-pagamentos?pagina=1&limite=100", {}, None),
+            ("GET", "/formas-pagamentos", {"pagina": 1, "limite": 100}, None),
         ]
 
     def test_payment_methods_listar_with_filters(self) -> None:
@@ -2232,8 +2367,8 @@ class TestPaymentMethodsResourceMapping:
         resource.listar(pagina=1, limite=100, tipos_pagamentos=[2])
         assert transport.calls[0] == (
             "GET",
-            "/formas-pagamentos?pagina=1&limite=100",
-            {"tiposPagamentos[]": [2]},
+            "/formas-pagamentos",
+            {"pagina": 1, "limite": 100, "tiposPagamentos[]": [2]},
             None,
         )
 
@@ -2296,7 +2431,7 @@ class TestPaymentMethodsResourceMapping:
         resource.list(page=1, limit=100)
         assert transport.calls[0][:2] == (
             "GET",
-            "/formas-pagamentos?pagina=1&limite=100",
+            "/formas-pagamentos",
         )
 
     def test_payment_methods_english_alias_set_default(self) -> None:
@@ -2320,7 +2455,7 @@ class TestProductGroupsResourceMapping:
         resource = ProductGroupsResource(transport)
         resource.listar(pagina=1, limite=100)
         assert transport.calls == [
-            ("GET", "/grupos-produtos?pagina=1&limite=100", {}, None),
+            ("GET", "/grupos-produtos", {"pagina": 1, "limite": 100}, None),
         ]
 
     def test_product_groups_listar_with_filters(self) -> None:
@@ -2330,8 +2465,8 @@ class TestProductGroupsResourceMapping:
         resource.listar(pagina=1, limite=100, nome="Eletrônicos")
         assert transport.calls[0] == (
             "GET",
-            "/grupos-produtos?pagina=1&limite=100",
-            {"nome": "Eletrônicos"},
+            "/grupos-produtos",
+            {"pagina": 1, "limite": 100, "nome": "Eletrônicos"},
             None,
         )
 
@@ -2369,7 +2504,7 @@ class TestProductGroupsResourceMapping:
         resource.list(page=1, limit=100)
         assert transport.calls[0][:2] == (
             "GET",
-            "/grupos-produtos?pagina=1&limite=100",
+            "/grupos-produtos",
         )
 
     def test_product_groups_english_alias_get(self) -> None:
@@ -2469,7 +2604,7 @@ class TestLogisticasResourceMapping:
         resource = LogisticasResource(transport)
         resource.listar(pagina=1, limite=100)
         assert transport.calls == [
-            ("GET", "/logisticas?pagina=1&limite=100", {}, None),
+            ("GET", "/logisticas", {"pagina": 1, "limite": 100}, None),
         ]
 
     def test_obter_maps_to_bling_endpoint(self) -> None:
@@ -2551,7 +2686,7 @@ class TestLogisticasServicosResourceMapping:
         resource = LogisticasServicosResource(transport)
         resource.listar(pagina=1, limite=100)
         assert transport.calls == [
-            ("GET", "/logisticas/servicos?pagina=1&limite=100", {}, None),
+            ("GET", "/logisticas/servicos", {"pagina": 1, "limite": 100}, None),
         ]
 
     def test_obter_maps_to_bling_endpoint(self) -> None:
@@ -2964,8 +3099,18 @@ class TestNotificacoesResourceMapping:
         assert path == "/notificacoes/quantidade"
         assert params == {"periodo": "2025-01"}
 
-    def test_alterar_maps_to_post(self) -> None:
-        """alterar() → POST /notificacoes/{id}/confirmar-leitura."""
+    def test_confirmar_leitura_maps_to_post(self) -> None:
+        """confirmar_leitura() → POST /notificacoes/{id}/confirmar-leitura."""
+        transport = RecordingTransport()
+        resource = NotificacoesResource(transport)
+        resource.confirmar_leitura("01ARZ3NDEKTSV4RRFFQ69G5FAV")
+        assert len(transport.calls) == 1
+        method, path, _params, _body = transport.calls[0]
+        assert method == "POST"
+        assert path == "/notificacoes/01ARZ3NDEKTSV4RRFFQ69G5FAV/confirmar-leitura"
+
+    def test_alterar_compat_alias(self) -> None:
+        """alterar() compat alias → POST /notificacoes/{id}/confirmar-leitura."""
         transport = RecordingTransport()
         resource = NotificacoesResource(transport)
         resource.alterar("01ARZ3NDEKTSV4RRFFQ69G5FAV")
@@ -2994,7 +3139,7 @@ class TestNotificacoesResourceMapping:
         assert path == "/notificacoes/quantidade"
 
     def test_mark_as_read_alias(self) -> None:
-        """EN alias mark_as_read() delega para alterar()."""
+        """EN alias mark_as_read() delega para confirmar_leitura()."""
         transport = RecordingTransport()
         resource = NotificacoesResource(transport)
         resource.mark_as_read("ULID123")
@@ -3363,7 +3508,7 @@ class TestCommercialProposalsResourceMapping:
         """criar() should POST JSON body to /propostas-comerciais."""
         transport = RecordingTransport()
         resource = CommercialProposalsResource(transport)
-        dados: JsonObject = {"contato": {"id": 800}}
+        dados = cast("PropostasComerciaisPostRequest", {"contato": {"id": 800}})
         resource.criar(dados)
         assert transport.calls[0][:2] == ("POST", "/propostas-comerciais")
         assert transport.calls[0][3] is not None  # body was serialized
@@ -3372,7 +3517,7 @@ class TestCommercialProposalsResourceMapping:
         """alterar() should PUT JSON body to /propostas-comerciais/{id}."""
         transport = RecordingTransport()
         resource = CommercialProposalsResource(transport)
-        dados: JsonObject = {"contato": {"id": 800}}
+        dados = cast("PropostasComerciaisIdPropostaComercialPutRequest", {"contato": {"id": 800}})
         resource.alterar(5001, dados)
         assert transport.calls[0][:2] == ("PUT", "/propostas-comerciais/5001")
         assert transport.calls[0][3] is not None
@@ -3449,7 +3594,7 @@ class TestSituacoesResourceMapping:
         """Situacoes criar should POST /situacoes with JSON body."""
         t = StaticPayloadTransport({"data": {"id": 10}})
         r = SituacoesResource(t)
-        dados: JsonObject = {"nome": "Teste", "idModuloSistema": 1}
+        dados = cast("SituacoesPostRequest", {"nome": "Teste", "idModuloSistema": 1})
         r.criar(dados)
         assert t.calls[0][:2] == ("POST", "/situacoes")
         assert t.calls[0][3] is not None
@@ -3465,7 +3610,7 @@ class TestSituacoesResourceMapping:
         """Situacoes alterar should PUT /situacoes/{id} with JSON body."""
         t = StaticPayloadTransport({"data": {"id": 10}})
         r = SituacoesResource(t)
-        r.alterar(10, {"nome": "Novo"})
+        r.alterar(10, cast("SituacoesIdSituacaoPutRequest", {"nome": "Novo"}))
         assert t.calls[0][:2] == ("PUT", "/situacoes/10")
         assert t.calls[0][3] is not None
 
@@ -3666,6 +3811,38 @@ class TestVendedoresResourceMapping:
         r = VendedoresResource(t)
         r.get(12345678)
         assert t.calls == [("GET", "/vendedores/12345678", None, None)]
+
+    def test_english_list_uses_english_params(self) -> None:
+        """English alias 'list()' should use English parameter names."""
+        t = RecordingTransport()
+        r = VendedoresResource(t)
+        r.list(
+            page=2,
+            limit=10,
+            contact_name="Maria",
+            contact_status="A",
+            contact_id=100,
+            store_id=1,
+            updated_start="2024-01-01",
+            updated_end="2024-01-31",
+        )
+        assert t.calls == [
+            (
+                "GET",
+                "/vendedores",
+                {
+                    "pagina": 2,
+                    "limite": 10,
+                    "nomeContato": "Maria",
+                    "situacaoContato": "A",
+                    "idContato": 100,
+                    "idLoja": 1,
+                    "dataAlteracaoInicial": "2024-01-01",
+                    "dataAlteracaoFinal": "2024-01-31",
+                },
+                None,
+            )
+        ]
 
 
 class TestUsuariosResourceMapping:

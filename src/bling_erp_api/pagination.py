@@ -35,5 +35,11 @@ def iter_pages(
 
 
 def next_page_payload(payload: JsonObject, *, next_page: int) -> JsonObject:
-    """Create normalized pagination metadata for future response wrappers."""
+    """Create normalized pagination metadata for future response wrappers.
+
+    Note:
+        The full response is retained in memory under the ``"raw"`` key.
+        For large paginated datasets this could lead to significant memory
+        growth — use with care.
+    """
     return {"page": next_page, "raw": payload}

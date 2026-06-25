@@ -72,7 +72,7 @@ class NotificacoesResource(BaseResource):
         raw = self._get("/notificacoes/quantidade", params=params)
         return self._validate_response(NotificacoesQuantidadeGetResponse200, raw)
 
-    def alterar(
+    def confirmar_leitura(
         self,
         id_notificacao: str,
     ) -> NotificacoesIdNotificacaoConfirmarLeituraPostResponse200:
@@ -92,6 +92,24 @@ class NotificacoesResource(BaseResource):
         return self._validate_response(
             NotificacoesIdNotificacaoConfirmarLeituraPostResponse200, raw
         )
+
+    def alterar(
+        self,
+        id_notificacao: str,
+    ) -> NotificacoesIdNotificacaoConfirmarLeituraPostResponse200:
+        """Deprecated compatibility alias for ``confirmar_leitura()``.
+
+        Marca notificação como lida.
+
+        Endpoint: POST /notificacoes/{idNotificacao}/confirmar-leitura
+
+        Args:
+            id_notificacao: ULID da notificação (Bling: ``idNotificacao``, string, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: NotificacoesDadosDTO[]; 400: ErrorResponse
+        """
+        return self.confirmar_leitura(id_notificacao=id_notificacao)
 
     # --- English aliases ---
 
@@ -137,7 +155,7 @@ class NotificacoesResource(BaseResource):
         self,
         notification_id: str,
     ) -> NotificacoesIdNotificacaoConfirmarLeituraPostResponse200:
-        """Compatibility alias for ``alterar()``.
+        """Compatibility alias for ``confirmar_leitura()``.
 
         Marca notificação como lida.
 
@@ -149,4 +167,4 @@ class NotificacoesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: NotificacoesDadosDTO[]; 400: ErrorResponse
         """
-        return self.alterar(id_notificacao=notification_id)
+        return self.confirmar_leitura(id_notificacao=notification_id)

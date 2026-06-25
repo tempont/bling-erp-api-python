@@ -274,6 +274,109 @@ class ProductBatchesResource(BaseResource):
         """
         return self._post(f"/produtos/{id_produto}/lotes/controla-lote/desativar")
 
+    # --- English aliases ---
+
+    def delete_many(self, lot_ids: Sequence[int]) -> JsonObject:
+        """Compatibility alias for ``remover_varios()``.
+
+        Remove lotes de produtos.
+
+        Endpoint: DELETE /produtos/lotes
+
+        Remove lotes de produtos pelos IDs.
+
+        Args:
+            lot_ids: IDs dos lotes (Bling: ``idsLotes[]``, array, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
+        """
+        return self.remover_varios(ids_lotes=lot_ids)
+
+    def create_many(self, batches: Sequence[LotesDTO]) -> ProdutosLotesPutResponse200:
+        """Compatibility alias for ``criar_varios()``.
+
+        Salva lotes de produtos.
+
+        Endpoint: PUT /produtos/lotes
+
+        Cria/altera lotes de produtos.
+
+        Request body schema: LotesDTO
+
+        Returns:
+            Bling API response. Response schemas: 200: SaveResponseLotsDTO; 400: ErrorResponse
+        """
+        return self.criar_varios(lotes=batches)
+
+    def list_products_control_lot(
+        self, product_ids: Sequence[int]
+    ) -> ProdutosLotesControlaLoteGetResponse200:
+        """Compatibility alias for ``listar_produtos_controlam_lote()``.
+
+        Obtém a informação se determinados produtos possuem controle de lote.
+
+        Endpoint: GET /produtos/lotes/controla-lote
+
+        Args:
+            product_ids: IDs dos produtos (Bling: ``idsProdutos[]``, array, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: ProdutoControlaLotesDTO; 400: ErrorResponse
+        """
+        return self.listar_produtos_controlam_lote(ids_produtos=product_ids)
+
+    def update(self, lot_id: int, data: LotePutRequestDTO) -> JsonObject:
+        """Compatibility alias for ``alterar()``.
+
+        Altera um lote de um produto.
+
+        Endpoint: PUT /produtos/lotes/{idLote}
+
+        Args:
+            lot_id: ID do lote (Bling: ``idLote``, integer, obrigatório)
+            data: Dados do lote para atualização.
+
+        Request body schema: LotePutRequestDTO
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
+        """
+        return self.alterar(id_lote=lot_id, dados=data)
+
+    def update_status(self, lot_id: int, data: LoteStatusDTO) -> JsonObject:
+        """Compatibility alias for ``alterar_situacao()``.
+
+        Altera o status de um lote do produto.
+
+        Endpoint: PATCH /produtos/lotes/{idLote}/status
+
+        Args:
+            lot_id: ID do lote (Bling: ``idLote``, integer, obrigatório)
+            data: Dados de status do lote.
+
+        Request body schema: LoteStatusDTO
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
+        """
+        return self.alterar_situacao(id_lote=lot_id, dados=data)
+
+    def deactivate_lot_control(self, product_id: int) -> JsonObject:
+        """Compatibility alias for ``alterar_situacao_desativar()``.
+
+        Desativa controle de lotes para o produto.
+
+        Endpoint: POST /produtos/{idProduto}/lotes/controla-lote/desativar
+
+        Args:
+            product_id: ID do produto (Bling: ``idProduto``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
+        """
+        return self.alterar_situacao_desativar(id_produto=product_id)
+
 
 def _batch_list_params(  # noqa: PLR0913
     *,

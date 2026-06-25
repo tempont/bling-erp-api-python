@@ -18,7 +18,10 @@ Docs:
 from __future__ import annotations
 
 from bling_erp_api import BlingClient
-from bling_erp_api.models.generated.situacoes import SituacoesPostRequest
+from bling_erp_api.models.generated.situacoes import (
+    SituacoesIdSituacaoPutRequest,
+    SituacoesPostRequest,
+)
 
 
 def get(situation_id: int):
@@ -43,7 +46,7 @@ def put(situation_id: int, name: str, color: str):
     """Update a status by ID."""
     client = BlingClient.from_env()
 
-    data = SituacoesPostRequest(
+    data = SituacoesIdSituacaoPutRequest(
         id_modulo_sistema=situation_id,
         nome=name,
         cor=color,

@@ -73,13 +73,17 @@ class AdsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: AnunciosGetAllResponseDTO; 400: ErrorResponse
         """
-        params = _ads_list_params(
-            situacao=situacao,
-            id_produto=id_produto,
-            tipo_integracao=tipo_integracao,
-            id_loja=id_loja,
-        )
-        raw = self._get(f"/anuncios?pagina={pagina}&limite={limite}", params=params)
+        params: QueryParams = {
+            "pagina": pagina,
+            "limite": limite,
+            **_ads_list_params(
+                situacao=situacao,
+                id_produto=id_produto,
+                tipo_integracao=tipo_integracao,
+                id_loja=id_loja,
+            ),
+        }
+        raw = self._get("/anuncios", params=params)
         return self._validate_response(AnunciosGetResponse200, raw)
 
     def list(  # noqa: PLR0913

@@ -5,10 +5,11 @@ from __future__ import annotations
 import contextlib
 import importlib
 import re
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from pydantic import BaseModel, ValidationError
 
+from bling_erp_api.exceptions import BlingAPIError, BlingValidationError
 from bling_erp_api.pagination import iter_pages
 
 if TYPE_CHECKING:
@@ -17,19 +18,21 @@ if TYPE_CHECKING:
     from bling_erp_api.transport.base import Transport
     from bling_erp_api.types import JsonObject, JsonPayload, QueryParams
 
+_operation_docstrings: dict[str, str] | None
 try:
-    from bling_erp_api.contracts.generated._docstrings import (  # type: ignore[attr-defined]
-        OPERATION_DOCSTRINGS,
-    )
-except ImportError:
-    OPERATION_DOCSTRINGS = None  # type: ignore[assignment]
+    import bling_erp_api.contracts.generated._docstrings as _docstrings_mod  # type: ignore[attr-defined]
 
+    _operation_docstrings = _docstrings_mod.OPERATION_DOCSTRINGS
+except (ImportError, AttributeError):
+    _operation_docstrings = None
+
+_operation_models: list[dict[str, object]]
 try:
-    from bling_erp_api.contracts.generated._operation_models import (  # type: ignore[attr-defined]
-        OPERATION_MODELS,
-    )
-except ImportError:
-    OPERATION_MODELS = []  # type: ignore[var-annotated]
+    import bling_erp_api.contracts.generated._operation_models as _op_models_mod  # type: ignore[attr-defined]
+
+    _operation_models = list(_op_models_mod.OPERATION_MODELS)
+except (ImportError, AttributeError):
+    _operation_models = []
 
 # Map English method names to pt-BR equivalents for resources still using English
 _ENGLISH_TO_PTBR: dict[str, str] = {
@@ -43,6 +46,19 @@ _ENGLISH_TO_PTBR: dict[str, str] = {
 }
 
 
+_PATH_TRAVERSAL_PATTERN = re.compile(
+    r"(?:^|/)(?:\.\.(?:/|$)|\.\.%2f|\.\.%5c)",
+    re.IGNORECASE,
+)
+
+
+def _validate_path(path: str) -> None:
+    """Validate that a URL path does not contain traversal sequences."""
+    if _PATH_TRAVERSAL_PATTERN.search(path):
+        msg = f"Invalid URL path: path traversal sequences are not allowed in '{path}'"
+        raise BlingValidationError(msg)
+
+
 class BaseResource:
     """Common request helpers for resource namespaces."""
 
@@ -54,7 +70,7 @@ class BaseResource:
     @classmethod
     def _autopopulate_docstrings(cls) -> None:  # noqa: PLR0912
         """Populate __doc__ on methods that lack substantive docstrings."""
-        operation_docstrings = OPERATION_DOCSTRINGS
+        operation_docstrings = _operation_docstrings
         if operation_docstrings is None:
             return  # Generated file doesn't exist yet during development
 
@@ -128,6 +144,7 @@ class BaseResource:
 
     def _get(self, path: str, *, params: QueryParams | None = None) -> JsonObject:
         """Send a GET request."""
+        _validate_path(path)
         payload = self._transport.request("GET", path, params=params)
         return cast("JsonObject", _parse_response("GET", path, payload))
 
@@ -140,6 +157,7 @@ class BaseResource:
         headers: dict[str, str] | None = None,
     ) -> JsonObject:
         """Send a POST request."""
+        _validate_path(path)
         payload = self._transport.request("POST", path, params=params, json=json, headers=headers)
         return cast("JsonObject", _parse_response("POST", path, payload))
 
@@ -151,6 +169,7 @@ class BaseResource:
         headers: dict[str, str] | None = None,
     ) -> JsonObject:
         """Send a PUT request."""
+        _validate_path(path)
         payload = self._transport.request("PUT", path, json=json, headers=headers)
         return cast("JsonObject", _parse_response("PUT", path, payload))
 
@@ -162,6 +181,7 @@ class BaseResource:
         headers: dict[str, str] | None = None,
     ) -> JsonObject:
         """Send a PATCH request."""
+        _validate_path(path)
         payload = self._transport.request("PATCH", path, json=json, headers=headers)
         return cast("JsonObject", _parse_response("PATCH", path, payload))
 
@@ -173,6 +193,7 @@ class BaseResource:
         headers: dict[str, str] | None = None,
     ) -> JsonObject:
         """Send a DELETE request."""
+        _validate_path(path)
         payload = self._transport.request("DELETE", path, params=params, headers=headers)
         return cast("JsonObject", _parse_response("DELETE", path, payload))
 
@@ -182,15 +203,18 @@ class BaseResource:
         payload: object,
     ) -> TResponse:
         """Validate a parsed response against a concrete response model."""
+        if payload is None:
+            return cast("TResponse", cast("Any", {}))
         try:
             return model.model_validate(payload)
-        except ValidationError:
+        except ValidationError as exc:
             if payload == {"data": []}:
                 try:
                     return model.model_validate({"data": None})
                 except ValidationError:
                     return cast("TResponse", payload)
-            raise
+            msg = f"Failed to validate response: {exc}"
+            raise BlingAPIError(msg) from exc
 
     def _iterate(
         self,
@@ -201,6 +225,7 @@ class BaseResource:
         params: QueryParams | None = None,
     ) -> Iterator[JsonObject]:
         """Iterate through paginated records for an endpoint."""
+        _validate_path(path)
         item_model = _response_item_model("GET", path)
 
         def fetch_page(next_page: int) -> JsonObject:
@@ -214,7 +239,7 @@ class BaseResource:
             if item_model is None:
                 yield record
             else:
-                yield cast("JsonObject", item_model.model_validate(record))
+                yield cast("JsonObject", item_model.model_validate(record).model_dump(mode="json"))
 
 
 _MIN_SUBSTANTIVE_LINES = 3
@@ -233,10 +258,10 @@ def is_substantive_docstring(doc: str) -> bool:
     return len(doc) > _MIN_SUBSTANTIVE_LENGTH
 
 
-def _parse_response(method: str, path: str, payload: JsonObject) -> BaseModel | JsonObject | None:
+def _parse_response(method: str, path: str, payload: JsonObject) -> BaseModel | JsonObject:
     model = _response_model(method, path)
     if model is None:
-        return None if payload == {} and _operation_entry(method, path) is not None else payload
+        return payload
     try:
         return model.model_validate(payload)
     except ValidationError:
@@ -268,7 +293,7 @@ def _response_item_model(method: str, path: str) -> type[BaseModel] | None:
 def _operation_entry(method: str, path: str) -> dict[str, object] | None:
     normalized = path.split("?", maxsplit=1)[0].rstrip("/") or "/"
     matches: list[dict[str, object]] = []
-    for entry in OPERATION_MODELS:
+    for entry in _operation_models:
         if entry.get("method") != method:
             continue
         pattern = entry.get("pattern")

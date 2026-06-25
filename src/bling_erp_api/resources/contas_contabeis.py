@@ -72,14 +72,18 @@ class ContasContabeisResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ContasContabeisDadosDTO
         """
-        params = _contas_contabeis_list_params(
-            ocultar_invisiveis=ocultar_invisiveis,
-            ocultar_tipo_conta_bancaria=ocultar_tipo_conta_bancaria,
-            situacoes=situacoes,
-            alias_integracao=alias_integracao,
-            ordenacao=ordenacao,
-        )
-        raw = self._get(f"/contas-contabeis?pagina={pagina}&limite={limite}", params=params)
+        params: QueryParams = {
+            "pagina": pagina,
+            "limite": limite,
+            **_contas_contabeis_list_params(
+                ocultar_invisiveis=ocultar_invisiveis,
+                ocultar_tipo_conta_bancaria=ocultar_tipo_conta_bancaria,
+                situacoes=situacoes,
+                alias_integracao=alias_integracao,
+                ordenacao=ordenacao,
+            ),
+        }
+        raw = self._get("/contas-contabeis", params=params)
         return self._validate_response(ContasContabeisGetResponse200, raw)
 
     def list(  # noqa: PLR0913

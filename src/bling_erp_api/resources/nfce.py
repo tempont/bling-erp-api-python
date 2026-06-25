@@ -11,6 +11,10 @@ from bling_erp_api.utils.serialization import to_json_object
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
+    from bling_erp_api.models.generated.schemas.notas_fiscais_consumidor import (
+        NfceIdNotaFiscalConsumidorPutRequest,
+        NfcePostRequest,
+    )
     from bling_erp_api.types import JsonObject, QueryParams
 
 
@@ -244,7 +248,7 @@ class NfceResource(BaseResource):
         """
         return self.obter(consumer_invoice_id)
 
-    def criar(self, dados: JsonObject) -> JsonObject:
+    def criar(self, dados: NfcePostRequest) -> JsonObject:
         """Cria uma NFC-e.
 
         Endpoint: POST /nfce
@@ -252,14 +256,15 @@ class NfceResource(BaseResource):
         Cria uma nova nota fiscal do consumidor eletrônica.
 
         Args:
-            dados: Dados da NFC-e. Request body schema: NotasFiscaisDadosPostDTO
+            dados: Dados da NFC-e. Use ``NfcePostRequest`` para uso tipado
+                ou um objeto JSON com os nomes de campos do Bling.
 
         Returns:
             Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
         """
         return self._post("/nfce", json=to_json_object(dados))
 
-    def create(self, data: JsonObject) -> JsonObject:
+    def create(self, data: NfcePostRequest) -> JsonObject:
         """Compatibility alias for ``criar()``.
 
         Cria uma NFC-e.
@@ -269,14 +274,17 @@ class NfceResource(BaseResource):
         Cria uma nova nota fiscal do consumidor eletrônica.
 
         Args:
-            data: Dados da NFC-e. Request body schema: NotasFiscaisDadosPostDTO
+            data: Dados da NFC-e. Use ``NfcePostRequest`` para uso tipado
+                ou um objeto JSON com os nomes de campos do Bling.
 
         Returns:
             Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
         """
         return self.criar(data)
 
-    def alterar(self, id_nota_fiscal_consumidor: int, dados: JsonObject) -> JsonObject:
+    def alterar(
+        self, id_nota_fiscal_consumidor: int, dados: NfceIdNotaFiscalConsumidorPutRequest
+    ) -> JsonObject:
         """Altera uma NFC-e.
 
         Endpoint: PUT /nfce/{idNotaFiscalConsumidor}
@@ -285,14 +293,17 @@ class NfceResource(BaseResource):
 
         Args:
             id_nota_fiscal_consumidor: ID da NFC-e (Bling: ``idNotaFiscalConsumidor``, integer, obrigatório)
-            dados: Dados da NFC-e para atualização. Request body schema: NotasFiscaisDadosPostDTO
+            dados: Dados da NFC-e para atualização. Use ``NfceIdNotaFiscalConsumidorPutRequest``
+                para uso tipado ou um objeto JSON com os nomes de campos do Bling.
 
         Returns:
             Bling API response. Response schemas: 200: NotasFiscaisDadosGetDTO; 400: ErrorResponse; 404: ErrorResponse
         """
         return self._put(f"/nfce/{id_nota_fiscal_consumidor}", json=to_json_object(dados))
 
-    def update(self, consumer_invoice_id: int, data: JsonObject) -> JsonObject:
+    def update(
+        self, consumer_invoice_id: int, data: NfceIdNotaFiscalConsumidorPutRequest
+    ) -> JsonObject:
         """Compatibility alias for ``alterar()``.
 
         Altera uma NFC-e.
@@ -303,7 +314,8 @@ class NfceResource(BaseResource):
 
         Args:
             consumer_invoice_id: ID da NFC-e (Bling: ``idNotaFiscalConsumidor``, integer, obrigatório)
-            data: Dados da NFC-e para atualização. Request body schema: NotasFiscaisDadosPostDTO
+            data: Dados da NFC-e para atualização. Use ``NfceIdNotaFiscalConsumidorPutRequest``
+                para uso tipado ou um objeto JSON com os nomes de campos do Bling.
 
         Returns:
             Bling API response. Response schemas: 200: NotasFiscaisDadosGetDTO; 400: ErrorResponse; 404: ErrorResponse

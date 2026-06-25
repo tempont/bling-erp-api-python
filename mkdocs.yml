@@ -1,9 +1,10 @@
+strict: true
 site_name: Bling ERP API SDK
 site_description: Python SDK para a API do Bling ERP v3
 repo_url: https://github.com/tempont/bling-erp-api-python
 site_url: https://tempont.github.io/bling-erp-api-python/
 edit_uri: edit/main/docs/
-copyright: Copyright &copy; 2025 tempont
+copyright: Copyright &copy; 2026 tempont
 
 theme:
   name: material
@@ -99,6 +100,12 @@ nav:
       - Naturezas de Operações: resources/naturezas_operacoes.md
       - Notificações: resources/notificacoes.md
       - Ordens de Produção: resources/ordens_producao.md
+      - Pedidos de Compra: resources/purchase_orders.md
+      - Propostas Comerciais: resources/propostas_comerciais.md
+      - Situações: resources/situacoes.md
+      - Situações - Módulos: resources/situacoes_modulos.md
+      - Situações - Transições: resources/situacoes_transicoes.md
+      - Vendedores: resources/vendedores.md
   - Referência da API:
       - api-reference/index.md
       - Cliente: api-reference/client.md
@@ -138,3 +145,10 @@ nav:
       - Naturezas de Operações: api-reference/naturezas_operacoes.md
       - Notificações: api-reference/notificacoes.md
       - Ordens de Produção: api-reference/ordens_producao.md
+      - Pedidos de Compra: api-reference/purchase_orders.md
+      - Propostas Comerciais: api-reference/propostas_comerciais.md
+      - Situações: api-reference/situacoes.md
+      - Módulos de Situações: api-reference/situacoes_modulos.md
+      - Transições de Situações: api-reference/situacoes_transicoes.md
+      - Vendedores: api-reference/vendedores.md
+      - Usuários: api-reference/usuarios.md

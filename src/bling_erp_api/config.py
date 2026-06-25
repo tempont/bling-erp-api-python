@@ -3,11 +3,20 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv as _load_dotenv
 
-load_dotenv()
+_loaded = False
+
+
+def load_env() -> None:
+    """Lazy-load ``.env`` file variables. Idempotent — safe to call multiple times."""
+    global _loaded  # noqa: PLW0603
+    if _loaded:
+        return
+    _load_dotenv(override=False)
+    _loaded = True
+
 
 is_dev: str | None = os.environ.get("BLING_ENV")
 
@@ -22,14 +31,3 @@ DEFAULT_RATE_LIMIT_MAX_REQUESTS = 3
 DEFAULT_RATE_LIMIT_PERIOD_SECONDS = 1.0
 DEFAULT_RETRY_AFTER_RATE_LIMIT_SECONDS = 1.0
 DEFAULT_RATE_LIMIT_MAX_RETRIES = 3
-
-
-@dataclass(frozen=True, slots=True)
-class BlingClientConfig:
-    """Runtime configuration used to create SDK transports."""
-
-    base_url: str = DEFAULT_API_BASE_URL
-    timeout: float = DEFAULT_TIMEOUT_SECONDS
-    rate_limit_max_requests: int = DEFAULT_RATE_LIMIT_MAX_REQUESTS
-    rate_limit_period_seconds: float = DEFAULT_RATE_LIMIT_PERIOD_SECONDS
-    rate_limit_max_retries: int = DEFAULT_RATE_LIMIT_MAX_RETRIES

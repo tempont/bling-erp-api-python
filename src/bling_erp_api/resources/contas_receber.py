@@ -100,19 +100,23 @@ class ContasReceberResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ContasReceberDadosListDTO
         """
-        params = _contas_receber_list_params(
-            situacoes=situacoes,
-            tipo_filtro_data=tipo_filtro_data,
-            data_inicial=data_inicial,
-            data_final=data_final,
-            ids_categorias=ids_categorias,
-            id_portador=id_portador,
-            id_contato=id_contato,
-            id_vendedor=id_vendedor,
-            id_forma_pagamento=id_forma_pagamento,
-            boleto_gerado=boleto_gerado,
-        )
-        raw = self._get(f"/contas/receber?pagina={pagina}&limite={limite}", params=params)
+        params: QueryParams = {
+            "pagina": pagina,
+            "limite": limite,
+            **_contas_receber_list_params(
+                situacoes=situacoes,
+                tipo_filtro_data=tipo_filtro_data,
+                data_inicial=data_inicial,
+                data_final=data_final,
+                ids_categorias=ids_categorias,
+                id_portador=id_portador,
+                id_contato=id_contato,
+                id_vendedor=id_vendedor,
+                id_forma_pagamento=id_forma_pagamento,
+                boleto_gerado=boleto_gerado,
+            ),
+        }
+        raw = self._get("/contas/receber", params=params)
         return self._validate_response(ContasReceberGetResponse200, raw)
 
     def list(  # noqa: PLR0913
@@ -263,8 +267,8 @@ class ContasReceberResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ContasReceberBoletosDadosBaseDTO; 400: ErrorResponse; 404: ErrorResponse
         """
-        params = compact_params({"situacoes[]": situacoes})
-        raw = self._get(f"/contas/receber/boletos?idOrigem={id_origem}", params=params)
+        params = compact_params({"idOrigem": id_origem, "situacoes[]": situacoes})
+        raw = self._get("/contas/receber/boletos", params=params)
         return self._validate_response(ContasReceberBoletosDadosBaseDTO, raw)
 
     def get_boletos(

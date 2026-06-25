@@ -47,8 +47,10 @@ class LogisticasServicosResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: LogisticasServicosDadosDTO; 400: ErrorResponse
         """
-        params = compact_params({"tipoIntegracao": tipo_integracao})
-        raw = self._get(f"/logisticas/servicos?pagina={pagina}&limite={limite}", params=params)
+        params = compact_params(
+            {"pagina": pagina, "limite": limite, "tipoIntegracao": tipo_integracao}
+        )
+        raw = self._get("/logisticas/servicos", params=params)
         return self._validate_response(LogisticasServicosGetResponse200, raw)
 
     def list(

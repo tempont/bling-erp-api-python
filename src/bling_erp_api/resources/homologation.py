@@ -184,7 +184,7 @@ class HomologationResource(BaseResource):
             headers=_HOMOLOGACAO_HEADER,
         )
 
-    def set_status(self, homologation_product_id: int, status: str) -> JsonObject:
+    def update_status(self, homologation_product_id: int, status: str) -> JsonObject:
         """Compatibility alias for ``alterar_situacao()``.
 
         Altera a situação do produto da homologação.
@@ -203,4 +203,15 @@ class HomologationResource(BaseResource):
         return self.alterar_situacao(
             id_produto_homologacao=homologation_product_id,
             situacao=status,
+        )
+
+    def set_status(self, homologation_product_id: int, status: str) -> JsonObject:
+        """Backward-compatibility alias for ``update_status()``.
+
+        Use ``update_status()`` instead; this method will be removed in a future
+        version.
+        """
+        return self.update_status(
+            homologation_product_id=homologation_product_id,
+            status=status,
         )

@@ -22,3 +22,23 @@ class Transport(Protocol):
     ) -> JsonObject:
         """Send an HTTP request and return the decoded JSON object."""
         ...
+
+
+class AsyncTransportProtocol(Protocol):
+    """Minimal async transport contract consumed by async resources."""
+
+    async def request(
+        self,
+        method: str,
+        path: str,
+        *,
+        params: QueryParams | None = None,
+        json: JsonPayload | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> JsonObject:
+        """Send an async HTTP request and return the decoded JSON object."""
+        ...
+
+    async def close(self) -> None:
+        """Close owned resources."""
+        ...

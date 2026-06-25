@@ -67,13 +67,17 @@ class LogisticasResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: LogisticasDadosBaseDTO; 404: ErrorResponse
         """
-        params = _logisticas_list_params(
-            tipo_integracao=tipo_integracao,
-            tipos_integracoes=tipos_integracoes,
-            situacao=situacao,
-            logisticas_reversas=logisticas_reversas,
-        )
-        raw = self._get(f"/logisticas?pagina={pagina}&limite={limite}", params=params)
+        params: QueryParams = {
+            "pagina": pagina,
+            "limite": limite,
+            **_logisticas_list_params(
+                tipo_integracao=tipo_integracao,
+                tipos_integracoes=tipos_integracoes,
+                situacao=situacao,
+                logisticas_reversas=logisticas_reversas,
+            ),
+        }
+        raw = self._get("/logisticas", params=params)
         return self._validate_response(LogisticasGetResponse200, raw)
 
     def list(  # noqa: PLR0913

@@ -34,4 +34,4 @@ with OAuthClient(settings) as oauth:
 
     # 6. Now ready — every subsequent call auto-refreshes
     token = manager.get_access_token()
-    print(f"Access token acquired: {token[:24]}...")
+    print("Access token acquired successfully.")

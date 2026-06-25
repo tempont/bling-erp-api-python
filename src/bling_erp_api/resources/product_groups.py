@@ -59,8 +59,12 @@ class ProductGroupsResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: GruposProdutosDadosDTO
         """
-        params = _product_groups_list_params(nome=nome, nome_pai=nome_pai)
-        raw = self._get(f"/grupos-produtos?pagina={pagina}&limite={limite}", params=params)
+        params: QueryParams = {
+            "pagina": pagina,
+            "limite": limite,
+            **_product_groups_list_params(nome=nome, nome_pai=nome_pai),
+        }
+        raw = self._get("/grupos-produtos", params=params)
         return self._validate_response(GruposProdutosGetResponse200, raw)
 
     def list(

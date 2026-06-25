@@ -61,10 +61,12 @@ class IncomeExpenseCategoriesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: CategoriasReceitasDespesasDadosBaseDTO
         """
-        params = _income_expense_list_params(tipo=tipo, situacao=situacao)
-        return self._get(
-            f"/categorias/receitas-despesas?pagina={pagina}&limite={limite}", params=params
-        )
+        params: QueryParams = {
+            "pagina": pagina,
+            "limite": limite,
+            **_income_expense_list_params(tipo=tipo, situacao=situacao),
+        }
+        return self._get("/categorias/receitas-despesas", params=params)
 
     def list(
         self,

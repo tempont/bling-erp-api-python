@@ -5,34 +5,31 @@ on:
     branches: [main]
   pull_request:
 
-concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+permissions:
+  contents: read
 
 jobs:
-  check:
+  quality:
+    name: Quality Checks
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v3
         with:
-          python-version: "3.14"
           enable-cache: true
-
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
       - name: Install dependencies
-        run: uv sync --all-groups
-
-      - name: Ruff lint
+        run: uv sync --all-groups --python ${{ matrix.python-version }}
+      - name: Ruff check
         run: uv run ruff check .
-
-      - name: Ruff format
+      - name: Ruff format check
         run: uv run ruff format --check .
-
-      - name: Type check
+      - name: Basedpyright
         run: uv run basedpyright
-
-      - name: Tests
-        run: uv run pytest
+      - name: Pytest
+        run: uv run python -m pytest

@@ -89,17 +89,21 @@ class ContasPagarResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: ContasDadosBaseDTO
         """
-        params = _contas_pagar_list_params(
-            data_emissao_inicial=data_emissao_inicial,
-            data_emissao_final=data_emissao_final,
-            data_vencimento_inicial=data_vencimento_inicial,
-            data_vencimento_final=data_vencimento_final,
-            data_pagamento_inicial=data_pagamento_inicial,
-            data_pagamento_final=data_pagamento_final,
-            situacao=situacao,
-            id_contato=id_contato,
-        )
-        raw = self._get(f"/contas/pagar?pagina={pagina}&limite={limite}", params=params)
+        params: QueryParams = {
+            "pagina": pagina,
+            "limite": limite,
+            **_contas_pagar_list_params(
+                data_emissao_inicial=data_emissao_inicial,
+                data_emissao_final=data_emissao_final,
+                data_vencimento_inicial=data_vencimento_inicial,
+                data_vencimento_final=data_vencimento_final,
+                data_pagamento_inicial=data_pagamento_inicial,
+                data_pagamento_final=data_pagamento_final,
+                situacao=situacao,
+                id_contato=id_contato,
+            ),
+        }
+        raw = self._get("/contas/pagar", params=params)
         return self._validate_response(ContasPagarGetResponse200, raw)
 
     def list(  # noqa: PLR0913

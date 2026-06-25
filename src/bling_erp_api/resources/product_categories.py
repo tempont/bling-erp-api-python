@@ -10,6 +10,7 @@ from bling_erp_api.models.generated.product_categories import (
     CategoriasProdutosPostResponse201,
 )
 from bling_erp_api.resources.base import BaseResource
+from bling_erp_api.utils.query import compact_params
 from bling_erp_api.utils.serialization import to_json_object
 
 if TYPE_CHECKING:
@@ -46,7 +47,9 @@ class ProductCategoriesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: CategoriasProdutosDadosDTO
         """
-        raw = self._get(f"/categorias/produtos?pagina={pagina}&limite={limite}")
+        raw = self._get(
+            "/categorias/produtos", params=compact_params({"pagina": pagina, "limite": limite})
+        )
         return self._validate_response(CategoriasProdutosGetResponse200, raw)
 
     def list(

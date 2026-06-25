@@ -85,17 +85,20 @@ class CaixasBancosResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: CaixasBancosItemLancamentoDTO; 400: ErrorResponse
         """
-        params = _caixas_list_params(
-            data_inicial=data_inicial,
-            data_final=data_final,
-            ids_categorias=ids_categorias,
-            id_conta_financeira=id_conta_financeira,
-            pesquisa=pesquisa,
-            valor=valor,
-            situacao_conciliacao=situacao_conciliacao,
-            situacao=situacao,
-        )
-        raw = self._get(f"/caixas?pagina={pagina}", params=params)
+        params: QueryParams = {
+            "pagina": pagina,
+            **_caixas_list_params(
+                data_inicial=data_inicial,
+                data_final=data_final,
+                ids_categorias=ids_categorias,
+                id_conta_financeira=id_conta_financeira,
+                pesquisa=pesquisa,
+                valor=valor,
+                situacao_conciliacao=situacao_conciliacao,
+                situacao=situacao,
+            ),
+        }
+        raw = self._get("/caixas", params=params)
         return self._validate_response(CaixasGetResponse200, raw)
 
     def list(  # noqa: PLR0913

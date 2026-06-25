@@ -67,12 +67,16 @@ class StoreCategoriesResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: CategoriasLojasDadosDTO
         """
-        params = _store_categories_list_params(
-            id_loja=id_loja,
-            id_categoria_produto=id_categoria_produto,
-            id_categoria_produto_pai=id_categoria_produto_pai,
-        )
-        raw = self._get(f"/categorias/lojas?pagina={pagina}&limite={limite}", params=params)
+        params: QueryParams = {
+            "pagina": pagina,
+            "limite": limite,
+            **_store_categories_list_params(
+                id_loja=id_loja,
+                id_categoria_produto=id_categoria_produto,
+                id_categoria_produto_pai=id_categoria_produto_pai,
+            ),
+        }
+        raw = self._get("/categorias/lojas", params=params)
         return self._validate_response(CategoriasLojasGetResponse200, raw)
 
     def list(

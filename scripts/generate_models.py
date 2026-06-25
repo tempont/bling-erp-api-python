@@ -1127,6 +1127,7 @@ def _inject_response_model_data_wrappers(
                 keywords=[],
                 body=[ast.Pass()],
                 decorator_list=[],
+                type_params=[],
             )
             class_order.append(model_name)
             class_nodes[model_name] = node

@@ -6,10 +6,12 @@ from typing import TYPE_CHECKING, Any
 
 from pydantic import ValidationError
 
-from bling_erp_api.models.aliases import (
+from bling_erp_api.models.generated.propostas_comerciais import (
     PropostasComerciaisDeleteResponse200,
     PropostasComerciaisGetResponse200,
     PropostasComerciaisIdPropostaComercialGetResponse200,
+    PropostasComerciaisIdPropostaComercialPutRequest,
+    PropostasComerciaisPostRequest,
     PropostasComerciaisPostResponse201,
 )
 from bling_erp_api.resources.base import BaseResource
@@ -225,7 +227,7 @@ class CommercialProposalsResource(BaseResource):
             Bling API response. Response schemas:
             200: PropostasComerciaisIdPropostaComercialGetResponse200; 404: ErrorResponse
         """
-        payload = self._transport.request("GET", f"{self.BASE_PATH}/{id_proposta_comercial}")
+        payload = self._get(f"{self.BASE_PATH}/{id_proposta_comercial}")
         inner = payload.get("data", {})
         if isinstance(inner, dict):
             return PropostasComerciaisIdPropostaComercialGetResponse200.model_validate(inner)
@@ -253,7 +255,7 @@ class CommercialProposalsResource(BaseResource):
     # criar / create
     # ------------------------------------------------------------------
 
-    def criar(self, dados: Any) -> PropostasComerciaisPostResponse201:
+    def criar(self, dados: PropostasComerciaisPostRequest) -> PropostasComerciaisPostResponse201:
         """Cria uma proposta comercial.
 
         Endpoint: POST /propostas-comerciais
@@ -276,7 +278,7 @@ class CommercialProposalsResource(BaseResource):
                 return PropostasComerciaisPostResponse201(data=None)
             raise
 
-    def create(self, data: Any) -> PropostasComerciaisPostResponse201:
+    def create(self, data: PropostasComerciaisPostRequest) -> PropostasComerciaisPostResponse201:
         """Compatibility alias for ``criar()``.
 
         Cria uma proposta comercial.
@@ -297,7 +299,9 @@ class CommercialProposalsResource(BaseResource):
     # alterar / update
     # ------------------------------------------------------------------
 
-    def alterar(self, id_proposta_comercial: int, dados: Any) -> JsonObject:
+    def alterar(
+        self, id_proposta_comercial: int, dados: PropostasComerciaisIdPropostaComercialPutRequest
+    ) -> JsonObject:
         """Altera uma proposta comercial.
 
         Endpoint: PUT /propostas-comerciais/{idPropostaComercial}
@@ -318,7 +322,9 @@ class CommercialProposalsResource(BaseResource):
             json=to_json_object(dados),
         )
 
-    def update(self, proposal_id: int, data: Any) -> JsonObject:
+    def update(
+        self, proposal_id: int, data: PropostasComerciaisIdPropostaComercialPutRequest
+    ) -> JsonObject:
         """Compatibility alias for ``alterar()``.
 
         Altera uma proposta comercial.

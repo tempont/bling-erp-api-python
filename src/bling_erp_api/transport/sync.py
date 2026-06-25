@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+import email.utils
+import math
 import time
+from contextlib import suppress
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Self
 
 import httpx
@@ -51,6 +55,7 @@ class SyncTransport:
             period_seconds=rate_limit_period_seconds,
         )
         self._rate_limit_max_retries = rate_limit_max_retries
+        self._closed = False
 
     def request(
         self,
@@ -62,6 +67,9 @@ class SyncTransport:
         headers: dict[str, str] | None = None,
     ) -> JsonObject:
         """Send a request and return a decoded JSON object."""
+        if self._closed:
+            msg = "Transport is closed"
+            raise BlingTransportError(msg)
         attempts = 0
         while True:
             if self._rate_limiter is not None:
@@ -103,8 +111,11 @@ class SyncTransport:
 
     def close(self) -> None:
         """Close owned HTTP and auth resources."""
+        if self._closed:
+            return
         if self._owns_client:
             self._client.close()
+        self._closed = True
 
         close = getattr(self._auth, "close", None)
         if callable(close):
@@ -113,6 +124,11 @@ class SyncTransport:
     def __enter__(self) -> Self:
         """Return this transport for context manager usage."""
         return self
+
+    def __del__(self) -> None:
+        """Close resources during garbage collection."""
+        with suppress(Exception):
+            self.close()
 
     def __exit__(self, *_exc: object) -> None:
         """Close resources when leaving a context manager."""
@@ -125,15 +141,24 @@ def _build_rate_limiter(*, max_requests: int | None, period_seconds: float) -> R
     return RateLimiter(max_requests=max_requests, period_seconds=period_seconds)
 
 
+_MAX_RETRY_AFTER_SECONDS = 300.0
+
+
 def _sleep_retry_after(response: httpx.Response) -> None:
     retry_after = response.headers.get("Retry-After")
-    try:
-        delay = (
-            float(retry_after)
-            if retry_after is not None
-            else DEFAULT_RETRY_AFTER_RATE_LIMIT_SECONDS
-        )
-    except ValueError:
+    if retry_after is None:
         delay = DEFAULT_RETRY_AFTER_RATE_LIMIT_SECONDS
+    else:
+        try:
+            delay = float(retry_after)
+            if not math.isfinite(delay):
+                delay = DEFAULT_RETRY_AFTER_RATE_LIMIT_SECONDS
+        except ValueError:
+            try:
+                parsed = email.utils.parsedate_to_datetime(retry_after)
+                delay = (parsed - datetime.now(UTC)).total_seconds()
+            except (TypeError, ValueError, AttributeError):
+                delay = DEFAULT_RETRY_AFTER_RATE_LIMIT_SECONDS
+    delay = max(0.0, min(delay, _MAX_RETRY_AFTER_SECONDS))
     if delay > 0:
         time.sleep(delay)

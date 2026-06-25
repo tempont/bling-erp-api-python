@@ -19,7 +19,6 @@ def to_json_object(value: BaseModel | JsonObject) -> JsonObject:
                 mode="json",
                 by_alias=True,
                 exclude_none=True,
-                exclude_defaults=True,
             ),
         )
     return value

@@ -24,6 +24,7 @@ from bling_erp_api import BlingClient
 if TYPE_CHECKING:
     from bling_erp_api.models.generated.situacoes import (
         SituacoesIdSituacaoGetResponse200,
+        SituacoesIdSituacaoPutRequest,
         SituacoesPostRequest,
     )
 
@@ -46,7 +47,7 @@ def delete_status(situation_id: int):
     return client.situacoes.remover(id_situacao=situation_id)
 
 
-def put_status(status_id: int, payload: SituacoesPostRequest):
+def put_status(status_id: int, payload: SituacoesIdSituacaoPutRequest):
     """Update a status by ID."""
     client = BlingClient.from_env()
     return client.situacoes.alterar(id_situacao=status_id, dados=payload)

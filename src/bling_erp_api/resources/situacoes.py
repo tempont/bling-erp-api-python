@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from pydantic import ValidationError
 
 from bling_erp_api.models.generated.situacoes import (
     SituacoesIdSituacaoGetResponse200,
+    SituacoesIdSituacaoPutRequest,
     SituacoesIdSituacaoPutResponse200,
+    SituacoesPostRequest,
     SituacoesPostResponse201,
 )
 from bling_erp_api.resources.base import BaseResource
@@ -32,7 +34,7 @@ class SituacoesResource(BaseResource):
     # criar / create
     # ------------------------------------------------------------------
 
-    def criar(self, dados: Any) -> SituacoesPostResponse201:
+    def criar(self, dados: SituacoesPostRequest) -> SituacoesPostResponse201:
         """Cria uma nova situação.
 
         Endpoint: POST /situacoes
@@ -50,7 +52,7 @@ class SituacoesResource(BaseResource):
         raw = self._post(self.BASE_PATH, json=to_json_object(dados))
         return SituacoesPostResponse201.model_validate(raw)
 
-    def create(self, data: Any) -> SituacoesPostResponse201:
+    def create(self, data: SituacoesPostRequest) -> SituacoesPostResponse201:
         """Compatibility alias for ``criar()``.
 
         Cria uma nova situação.
@@ -113,7 +115,9 @@ class SituacoesResource(BaseResource):
     # alterar / update
     # ------------------------------------------------------------------
 
-    def alterar(self, id_situacao: int, dados: Any) -> SituacoesIdSituacaoPutResponse200:
+    def alterar(
+        self, id_situacao: int, dados: SituacoesIdSituacaoPutRequest
+    ) -> SituacoesIdSituacaoPutResponse200:
         """Altera uma situação.
 
         Endpoint: PUT /situacoes/{idSituacao}
@@ -132,7 +136,9 @@ class SituacoesResource(BaseResource):
         raw = self._put(f"{self.BASE_PATH}/{id_situacao}", json=to_json_object(dados))
         return SituacoesIdSituacaoPutResponse200.model_validate(raw)
 
-    def update(self, situation_id: int, data: Any) -> SituacoesIdSituacaoPutResponse200:
+    def update(
+        self, situation_id: int, data: SituacoesIdSituacaoPutRequest
+    ) -> SituacoesIdSituacaoPutResponse200:
         """Compatibility alias for ``alterar()``.
 
         Altera uma situação.

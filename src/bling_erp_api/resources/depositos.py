@@ -59,8 +59,12 @@ class DepositosResource(BaseResource):
         Returns:
             Bling API response. Response schemas: 200: DepositosDadosDTO
         """
-        params = _depositos_list_params(descricao=descricao, situacao=situacao)
-        raw = self._get(f"/depositos?pagina={pagina}&limite={limite}", params=params)
+        params: QueryParams = {
+            "pagina": pagina,
+            "limite": limite,
+            **_depositos_list_params(descricao=descricao, situacao=situacao),
+        }
+        raw = self._get("/depositos", params=params)
         return self._validate_response(DepositosGetResponse200, raw)
 
     def list(

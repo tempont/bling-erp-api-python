@@ -38,11 +38,11 @@ class PurchaseOrdersResource(BaseResource):
         data_final: str | None = None,
         ids_notas_fiscais: Sequence[int] | None = None,
     ) -> JsonObject:
-        """Obtém pedidos de compras.
+        """Lista pedidos de compra.
 
         Endpoint: GET /pedidos/compras
 
-        Obtém pedidos de compras paginados.
+        Lista pedidos de compra paginados.
 
         Args:
             pagina: N° da página da listagem (Bling: ``pagina``, integer, opcional)
@@ -83,7 +83,27 @@ class PurchaseOrdersResource(BaseResource):
         end_date: str | None = None,
         invoice_ids: Sequence[int] | None = None,
     ) -> JsonObject:
-        """Compatibility alias for ``listar()``."""
+        """Compatibility alias for ``listar()``.
+
+        Lista pedidos de compra.
+
+        Endpoint: GET /pedidos/compras
+
+        Lista pedidos de compra paginados.
+
+        Args:
+            page: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limit: Quantidade de registros que devem ser exibidos por página (Bling: ``limite``, integer, opcional)
+            supplier_id: ID do contato do tipo fornecedor (Bling: ``idFornecedor``, integer, opcional)
+            status_value: Valor da situação (Bling: ``valorSituacao``, integer, opcional)
+            status_id: ID da situação (Bling: ``idSituacao``, integer, opcional)
+            start_date: Data inicial do período da compra (Bling: ``dataInicial``, string, opcional)
+            end_date: Data final do período da compra (Bling: ``dataFinal``, string, opcional)
+            invoice_ids: IDs das notas fiscais de entrada (Bling: ``idsNotasFiscais[]``, array, opcional)
+
+        Returns:
+            Bling API response. Response schemas: 200: PedidosComprasDadosBaseDTO
+        """
         return self.listar(
             pagina=page,
             limite=limit,
@@ -109,8 +129,13 @@ class PurchaseOrdersResource(BaseResource):
     ) -> Iterator[JsonObject]:
         """Itera pelos pedidos de compra página a página.
 
+        Endpoint: GET /pedidos/compras
+
         Aceita os mesmos filtros de ``listar()`` e busca novas páginas enquanto
         o Bling retornar registros no envelope ``data``.
+
+        Returns:
+            Bling API response. Response schemas: 200: PedidosComprasDadosBaseDTO
         """
         params = _purchase_order_list_params(
             pagina=pagina,
@@ -136,7 +161,28 @@ class PurchaseOrdersResource(BaseResource):
         end_date: str | None = None,
         invoice_ids: Sequence[int] | None = None,
     ) -> Iterator[JsonObject]:
-        """Compatibility alias for ``iterar()``."""
+        """Compatibility alias for ``iterar()``.
+
+        Itera pelos pedidos de compra página a página.
+
+        Endpoint: GET /pedidos/compras
+
+        Aceita os mesmos filtros de ``listar()`` e busca novas páginas enquanto
+        o Bling retornar registros no envelope ``data``.
+
+        Args:
+            page: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limit: Quantidade de registros que devem ser exibidos por página (Bling: ``limite``, integer, opcional)
+            supplier_id: ID do contato do tipo fornecedor (Bling: ``idFornecedor``, integer, opcional)
+            status_value: Valor da situação (Bling: ``valorSituacao``, integer, opcional)
+            status_id: ID da situação (Bling: ``idSituacao``, integer, opcional)
+            start_date: Data inicial do período da compra (Bling: ``dataInicial``, string, opcional)
+            end_date: Data final do período da compra (Bling: ``dataFinal``, string, opcional)
+            invoice_ids: IDs das notas fiscais de entrada (Bling: ``idsNotasFiscais[]``, array, opcional)
+
+        Returns:
+            Bling API response. Response schemas: 200: PedidosComprasDadosBaseDTO
+        """
         return self.iterar(
             pagina=page,
             limite=limit,
@@ -164,7 +210,20 @@ class PurchaseOrdersResource(BaseResource):
         return self._get(f"/pedidos/compras/{id_pedido_compra}")
 
     def get(self, purchase_order_id: int) -> JsonObject:
-        """Compatibility alias for ``obter()``."""
+        """Compatibility alias for ``obter()``.
+
+        Obtém um pedido de compra.
+
+        Endpoint: GET /pedidos/compras/{idPedidoCompra}
+
+        Obtém um pedido de compra pelo ID.
+
+        Args:
+            purchase_order_id: ID do pedido de compra (Bling: ``idPedidoCompra``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: PedidosComprasDadosBaseDTO, PedidosComprasDadosDTO; 404: ErrorResponse
+        """
         return self.obter(purchase_order_id)
 
     def criar(self, dados: PedidosComprasPostRequest) -> JsonObject:
@@ -184,7 +243,21 @@ class PurchaseOrdersResource(BaseResource):
         return self._post("/pedidos/compras", json=to_json_object(dados))
 
     def create(self, data: PedidosComprasPostRequest) -> JsonObject:
-        """Compatibility alias for ``criar()``."""
+        """Compatibility alias for ``criar()``.
+
+        Cria um pedido de compra.
+
+        Endpoint: POST /pedidos/compras
+
+        Cria um pedido de compra.
+
+        Args:
+            data: Payload do pedido. Use ``PedidosComprasPostRequest`` para uso
+                tipado ou um objeto JSON com os nomes de campos do Bling.
+
+        Returns:
+            Bling API response. Response schemas: 201: BasePostResponse, PedidosCompraResponsePOSTPUT; 400: ErrorResponse
+        """
         return self.criar(data)
 
     def alterar(
@@ -213,7 +286,22 @@ class PurchaseOrdersResource(BaseResource):
         purchase_order_id: int,
         data: PedidosComprasIdPedidoCompraPutRequest,
     ) -> JsonObject:
-        """Compatibility alias for ``alterar()``."""
+        """Compatibility alias for ``alterar()``.
+
+        Altera um pedido de compra.
+
+        Endpoint: PUT /pedidos/compras/{idPedidoCompra}
+
+        Altera um pedido de compra pelo ID.
+
+        Args:
+            purchase_order_id: ID do pedido de compra (Bling: ``idPedidoCompra``, integer, obrigatório)
+            data: Payload do pedido. Use ``PedidosComprasIdPedidoCompraPutRequest`` para uso
+                tipado ou um objeto JSON com os nomes de campos do Bling.
+
+        Returns:
+            Bling API response. Response schemas: 200: BasePostResponse, PedidosCompraResponsePOSTPUT; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.alterar(purchase_order_id, data)
 
     def remover(self, id_pedido_compra: int) -> JsonObject:
@@ -232,7 +320,20 @@ class PurchaseOrdersResource(BaseResource):
         return self._delete(f"/pedidos/compras/{id_pedido_compra}")
 
     def delete(self, purchase_order_id: int) -> JsonObject:
-        """Compatibility alias for ``remover()``."""
+        """Compatibility alias for ``remover()``.
+
+        Remove um pedido de compra.
+
+        Endpoint: DELETE /pedidos/compras/{idPedidoCompra}
+
+        Remove um pedido de compra pelo ID.
+
+        Args:
+            purchase_order_id: ID do pedido de compra (Bling: ``idPedidoCompra``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 204: NoContent; 404: ErrorResponse
+        """
         return self.remover(purchase_order_id)
 
     def alterar_situacao(self, id_pedido_compra: int, id_situacao: int) -> JsonObject:
@@ -252,7 +353,21 @@ class PurchaseOrdersResource(BaseResource):
         return self._patch(f"/pedidos/compras/{id_pedido_compra}/situacoes/{id_situacao}")
 
     def update_status(self, purchase_order_id: int, status_id: int) -> JsonObject:
-        """Compatibility alias for ``alterar_situacao()``."""
+        """Compatibility alias for ``alterar_situacao()``.
+
+        Altera a situação de um pedido de compra.
+
+        Endpoint: PATCH /pedidos/compras/{idPedidoCompra}/situacoes/{idSituacao}
+
+        Altera a situação de um pedido de compra pelo ID.
+
+        Args:
+            purchase_order_id: ID do pedido de compra (Bling: ``idPedidoCompra``, integer, obrigatório)
+            status_id: ID da situação do pedido de compra (Bling: ``idSituacao``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 204: NoContent; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.alterar_situacao(purchase_order_id, status_id)
 
     def lancar_contas(self, id_pedido_compra: int) -> JsonObject:
@@ -271,7 +386,20 @@ class PurchaseOrdersResource(BaseResource):
         return self._post(f"/pedidos/compras/{id_pedido_compra}/lancar-contas")
 
     def post_accounts(self, purchase_order_id: int) -> JsonObject:
-        """Compatibility alias for ``lancar_contas()``."""
+        """Compatibility alias for ``lancar_contas()``.
+
+        Lança as contas de um pedido de compra.
+
+        Endpoint: POST /pedidos/compras/{idPedidoCompra}/lancar-contas
+
+        Lança as contas de um pedido de compra pelo ID.
+
+        Args:
+            purchase_order_id: ID do pedido de compra (Bling: ``idPedidoCompra``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 204: NoContent; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.lancar_contas(purchase_order_id)
 
     def estornar_contas(self, id_pedido_compra: int) -> JsonObject:
@@ -290,7 +418,20 @@ class PurchaseOrdersResource(BaseResource):
         return self._post(f"/pedidos/compras/{id_pedido_compra}/estornar-contas")
 
     def reverse_accounts(self, purchase_order_id: int) -> JsonObject:
-        """Compatibility alias for ``estornar_contas()``."""
+        """Compatibility alias for ``estornar_contas()``.
+
+        Estorna as contas de um pedido de compra.
+
+        Endpoint: POST /pedidos/compras/{idPedidoCompra}/estornar-contas
+
+        Estorna as contas de um pedido de compra pelo ID.
+
+        Args:
+            purchase_order_id: ID do pedido de compra (Bling: ``idPedidoCompra``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 204: NoContent; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.estornar_contas(purchase_order_id)
 
     def lancar_estoque(self, id_pedido_compra: int) -> JsonObject:
@@ -309,7 +450,20 @@ class PurchaseOrdersResource(BaseResource):
         return self._post(f"/pedidos/compras/{id_pedido_compra}/lancar-estoque")
 
     def post_stock(self, purchase_order_id: int) -> JsonObject:
-        """Compatibility alias for ``lancar_estoque()``."""
+        """Compatibility alias for ``lancar_estoque()``.
+
+        Lança o estoque de um pedido de compra.
+
+        Endpoint: POST /pedidos/compras/{idPedidoCompra}/lancar-estoque
+
+        Lança o estoque de um pedido de compra pelo ID.
+
+        Args:
+            purchase_order_id: ID do pedido de compra (Bling: ``idPedidoCompra``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 204: NoContent; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.lancar_estoque(purchase_order_id)
 
     def estornar_estoque(self, id_pedido_compra: int) -> JsonObject:
@@ -328,7 +482,20 @@ class PurchaseOrdersResource(BaseResource):
         return self._post(f"/pedidos/compras/{id_pedido_compra}/estornar-estoque")
 
     def reverse_stock(self, purchase_order_id: int) -> JsonObject:
-        """Compatibility alias for ``estornar_estoque()``."""
+        """Compatibility alias for ``estornar_estoque()``.
+
+        Estorna o estoque de um pedido de compra.
+
+        Endpoint: POST /pedidos/compras/{idPedidoCompra}/estornar-estoque
+
+        Estorna o estoque de um pedido de compra pelo ID.
+
+        Args:
+            purchase_order_id: ID do pedido de compra (Bling: ``idPedidoCompra``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 204: NoContent; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.estornar_estoque(purchase_order_id)
 
 
