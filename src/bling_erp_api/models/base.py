@@ -12,7 +12,19 @@ if TYPE_CHECKING:
 
 
 class BlingModel(BaseModel):
-    """Base class for hand-written and generated models."""
+    """Base Pydantic model for Bling API data transfer objects.
+
+    Accepts both Python snake_case field names and Bling wire-format aliases
+    (camelCase) in constructors (``populate_by_name=True``). Unknown fields
+    from API responses are preserved (``extra="allow"``).
+
+    A ``model_validator`` (``_normalize_known_aliases``) resolves known field
+    aliases before extras are stored. Conflicting snake_case and alias keys
+    with different values raise ``ValueError`` during validation.
+
+    Use the standalone :func:`bling_erp_api.utils.serialization.to_json_object`
+    helper to serialize models back to Bling wire format.
+    """
 
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 

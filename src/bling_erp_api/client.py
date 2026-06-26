@@ -1,4 +1,8 @@
-"""Main SDK client."""
+"""Synchronous clients for the Bling ERP API.
+
+This module defines :class:`BlingClient`, the primary entry point for the SDK.
+Use :meth:`BlingClient.from_env` to create a client from environment variables.
+"""
 
 from __future__ import annotations
 
@@ -70,7 +74,41 @@ if TYPE_CHECKING:
 
 
 class BlingClient:
-    """Synchronous client for the Bling API."""
+    """Synchronous client for the Bling ERP REST API.
+
+    The client exposes resource namespaces that map to Bling API endpoints.
+    Canonical method names are in Portuguese (pt-BR); English compatibility
+    aliases are available for backwards compatibility.
+
+    Usage:
+        Create a client from environment variables with ``from_env()``,
+        or instantiate directly with a token provider or auth adapter::
+
+            with BlingClient.from_env() as client:
+                produtos = client.produtos.listar()
+
+    Namespaces:
+        - ``client.produtos`` / ``client.products`` — produtos
+        - ``client.contatos`` / ``client.contacts`` — contatos
+        - ``client.pedidos_vendas`` / ``client.sales_orders`` — pedidos de venda
+        - ``client.pedidos_compras`` / ``client.purchase_orders`` — pedidos de compra
+        - ``client.notas_fiscais`` / ``client.invoices`` — NF-e
+        - ``client.notas_fiscais_consumidor`` / ``client.consumer_invoices`` — NFC-e
+        - ``client.notas_servicos`` / ``client.service_invoices`` — NFS-e
+        - ``client.anuncios`` / ``client.ads`` — anúncios
+        - ``client.contas_pagar`` / ``client.accounts_payable`` — contas a pagar
+        - ``client.contas_receber`` / ``client.accounts_receivable`` — contas a receber
+        - ``client.estoques`` / ``client.stock`` — estoques
+        - ``client.ordens_producao`` / ``client.production_orders`` — ordens de produção
+        - ``client.logisticas`` / ``client.logistics`` — logísticas
+        - ``client.situacoes`` / ``client.situations`` — situações
+        - ``client.usuarios`` / ``client.users`` — usuários
+
+    Rate limiting:
+        A local rate limiter (3 requests/second by default) is enabled
+        automatically. HTTP 429 responses are retried with ``Retry-After``
+        support.
+    """
 
     def __init__(  # noqa: PLR0913
         self,
@@ -594,8 +632,9 @@ class BlingClient:
     ) -> Self:
         """Create a client using ``BLING_*`` settings from ``bling-jwt-auth``.
 
-        Sets ``rate_limit_max_requests`` to ``None`` to disable client-side
-        rate limiting (not recommended for production use).
+        Rate limiting is enabled by default (3 requests/second).
+        Pass ``rate_limit_max_requests=None`` to disable it
+        (not recommended for production use).
         """
         load_env()
         return cls(
