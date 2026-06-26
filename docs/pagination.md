@@ -48,6 +48,12 @@ A autopaginação é implementada nos seguintes recursos:
 | Contatos | `contatos.iterar()` | `contacts.iterate()` |
 | Anúncios | `anuncios.iterar()` | `ads.iterate()` |
 | Propostas Comerciais | `propostas_comerciais.iterar()` | `commercial_proposals.iterate()` |
+| NF-e | `notas_fiscais.iterar()` | `invoices.iterate()` |
+| NFC-e | `notas_fiscais_consumidor.iterar()` | `consumer_invoices.iterate()` |
+| NFS-e | `notas_servicos.iterar()` | `service_invoices.iterate()` |
+| Lotes | `lotes.iterar()` | `product_batches.iterate()` |
+| Fornecedores de Produtos | `produtos_fornecedores.iterar()` | `product_suppliers.iterate()` |
+| Lojas de Produtos | `produtos_lojas.iterar()` | `product_stores.iterate()` |
 
 ## next_page_payload Helper
 

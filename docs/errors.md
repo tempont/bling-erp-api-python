@@ -28,6 +28,7 @@ Classe base para todos os erros. Expõe os seguintes atributos:
 
 Erro de transporte — quando a requisição HTTP não pode ser completada
 por problemas de conexão, timeout, DNS, etc.
+Também é disparado para código HTTP 408 (Request Timeout).
 
 ```python
 from bling_erp_api import BlingTransportError
@@ -45,7 +46,7 @@ from bling_erp_api import BlingAuthenticationError
 ### BlingValidationError
 
 Erro de validação da requisição. Disparado para códigos de 400 a 499
-(exceto 401, 403, 404 e 429).
+(exceto 401, 403, 404, 408 e 429).
 
 ```python
 from bling_erp_api import BlingValidationError

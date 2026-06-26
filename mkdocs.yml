@@ -75,10 +75,11 @@ nav:
       - resources/product_variations.md
       - resources/contacts.md
       - resources/invoices.md
+      - resources/nfce.md
       - resources/nfse.md
       - resources/ad_categories.md
       - resources/ads.md
-      - Borderos: resources/borderos.md
+      - Borderôs: resources/borderos.md
       - Caixas e Bancos: resources/caixas_bancos.md
       - Categorias Lojas: resources/store_categories.md
       - Categorias Produtos: resources/product_categories.md
@@ -106,6 +107,7 @@ nav:
       - Situações - Módulos: resources/situacoes_modulos.md
       - Situações - Transições: resources/situacoes_transicoes.md
       - Vendedores: resources/vendedores.md
+      - Usuários: resources/usuarios.md
   - Referência da API:
       - api-reference/index.md
       - Cliente: api-reference/client.md
