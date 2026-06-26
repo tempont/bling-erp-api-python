@@ -28,10 +28,11 @@ if TYPE_CHECKING:
 
 
 class ProductBatchEntriesResource(BaseResource):
-    """Resource for Bling product batch entry and balance endpoints.
+    """Resource para lançamentos e saldos de lotes de produtos do Bling.
 
-    Maps lot entry endpoints under ``/produtos/lotes/lancamentos`` and stock
-    balance endpoints under product lot paths.
+    Mapeia os endpoints de lançamentos sob ``/produtos/lotes/lancamentos``
+    e de saldos sob caminhos de lotes de produtos. Métodos canônicos em pt-BR;
+    aliases em inglês disponíveis para compatibilidade.
     """
 
     def obter(self, id_lancamento: int) -> ProdutosLotesLancamentosIdLancamentoGetResponse200:
@@ -60,6 +61,10 @@ class ProductBatchEntriesResource(BaseResource):
         Endpoint: PATCH /produtos/lotes/lancamentos/{idLancamento}
 
         Altera a observação de um lançamento de um lote de um produto pelo ID do lançamento.
+
+        Args:
+            id_lancamento: ID do lançamento (Bling: ``idLancamento``, integer, obrigatório)
+            dados: Dados da observação do lançamento (Bling: ``LoteLancamentoObservacaoDTO``, obrigatório)
 
         Request body schema: LoteLancamentoObservacaoDTO
 
@@ -98,7 +103,7 @@ class ProductBatchEntriesResource(BaseResource):
 
         Args:
             id_lote: ID do lote (Bling: ``idLote``, integer, obrigatório)
-            dados: Dados do lançamento do lote.
+            dados: Dados do lançamento do lote (Bling: ``LoteLancamentoDTO``, object, obrigatório)
 
         Request body schema: LoteLancamentoDTO
 

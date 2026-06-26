@@ -27,10 +27,11 @@ type DateFilter = date | datetime | str
 
 
 class ProductStoresResource(BaseResource):
-    """Resource for Bling product-store link endpoints.
+    """Resource para vínculos de produtos com lojas do Bling.
 
-    Maps ``/produtos/lojas`` operations for listing, retrieving, creating,
-    updating, and removing product links to stores.
+    Mapeia os endpoints ``/produtos/lojas`` para listagem, consulta, criação,
+    alteração e remoção de vínculos de produtos com lojas. Métodos canônicos
+    em pt-BR; aliases em inglês disponíveis para compatibilidade.
     """
 
     def listar(  # noqa: PLR0913
@@ -107,6 +108,9 @@ class ProductStoresResource(BaseResource):
 
         Cria o vínculo de um produto com uma loja.
 
+        Args:
+            dados: Dados do vínculo do produto com a loja (Bling: ``ProdutosLojasDadosBaseDTO, ProdutosLojasDadosDTO``, obrigatório)
+
         Request body schema: ProdutosLojasDadosBaseDTO, ProdutosLojasDadosDTO
 
         Returns:
@@ -142,7 +146,7 @@ class ProductStoresResource(BaseResource):
 
         Args:
             id_produto_loja: ID do vínculo do produto com a loja (Bling: ``idProdutoLoja``, integer, obrigatório)
-            dados: Dados do vínculo do produto com a loja.
+            dados: Dados do vínculo do produto com a loja (Bling: ``ProdutosLojasDadosBaseDTO, ProdutosLojasDadosDTO``, obrigatório)
 
         Request body schema: ProdutosLojasDadosBaseDTO, ProdutosLojasDadosDTO
 

@@ -24,10 +24,12 @@ if TYPE_CHECKING:
 
 
 class ProductSuppliersResource(BaseResource):
-    """Resource for Bling product-supplier endpoints.
+    """Resource para fornecedores de produtos do Bling.
 
-    Maps ``/produtos/fornecedores`` operations for listing, retrieving,
-    creating, updating, and removing product supplier links.
+    Mapeia os endpoints ``/produtos/fornecedores`` para listagem, consulta,
+    criação, alteração e remoção de vínculos de produtos com fornecedores.
+    Métodos canônicos em pt-BR; aliases em inglês disponíveis para
+    compatibilidade.
     """
 
     def listar(
@@ -94,6 +96,9 @@ class ProductSuppliersResource(BaseResource):
 
         Cria um produto fornecedor.
 
+        Args:
+            dados: Dados do produto fornecedor (Bling: ``ProdutosFornecedoresDadosBaseDTO, ProdutosFornecedoresDadosDTO``, obrigatório)
+
         Request body schema: ProdutosFornecedoresDadosBaseDTO, ProdutosFornecedoresDadosDTO
 
         Returns:
@@ -133,7 +138,7 @@ class ProductSuppliersResource(BaseResource):
 
         Args:
             id_produto_fornecedor: ID do produto fornecedor (Bling: ``idProdutoFornecedor``, integer, obrigatório)
-            dados: Dados do produto fornecedor.
+            dados: Dados do produto fornecedor (Bling: ``ProdutosFornecedoresIdProdutoFornecedorPutRequest``, object, obrigatório)
 
         Request body schema: ProdutosFornecedoresDadosBaseUpdateDTO, ProdutosFornecedoresDadosUpdateDTO
 

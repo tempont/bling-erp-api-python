@@ -14,10 +14,11 @@ from bling_erp_api.utils.serialization import to_json_object
 
 
 class ProductVariationsResource(BaseResource):
-    """Resource for Bling product variation endpoints.
+    """Resource para variações de produtos do Bling.
 
-    Maps ``/produtos/variacoes`` operations for listing variations, generating
-    combinations, and updating variation attributes.
+    Mapeia os endpoints ``/produtos/variacoes`` para listagem de variações,
+    geração de combinações e alteração de atributos. Métodos canônicos em
+    pt-BR; aliases em inglês disponíveis para compatibilidade.
     """
 
     def gerar_combinacoes(
@@ -28,6 +29,9 @@ class ProductVariationsResource(BaseResource):
         Endpoint: POST /produtos/variacoes/atributos/gerar-combinacoes
 
         Ação responsável por retornar o produto pai com combinação de novas variações a partir dos atributos. Esta ação não persistirá os dados.
+
+        Args:
+            dados: Dados da combinação de variações (Bling: ``ProdutosVariacoesCombinacaoDadosDTO``, obrigatório)
 
         Request body schema: ProdutosVariacoesCombinacaoDadosDTO
 
@@ -71,7 +75,7 @@ class ProductVariationsResource(BaseResource):
 
         Args:
             id_produto_pai: ID do produto pai (Bling: ``idProdutoPai``, integer, obrigatório)
-            dados: Dados do atributo a ser alterado.
+            dados: Dados do atributo a ser alterado (Bling: ``ProdutosVariacoesDadosAtributoDTO``, object, obrigatório)
 
         Request body schema: ProdutosVariacoesDadosAtributoDTO
 

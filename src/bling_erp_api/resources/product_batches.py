@@ -29,10 +29,12 @@ type DateFilter = date | datetime | str
 
 
 class ProductBatchesResource(BaseResource):
-    """Resource for Bling product batch endpoints.
+    """Resource para lotes de produtos do Bling.
 
-    Maps ``/produtos/lotes`` and related lot-control endpoints for listing,
-    retrieving, saving, and status operations for product batches.
+    Mapeia os endpoints ``/produtos/lotes`` e endpoints relacionados de
+    controle de lotes para listagem, consulta, salvamento e operações de
+    situação. Métodos canônicos em pt-BR; aliases em inglês disponíveis
+    para compatibilidade.
     """
 
     def remover_varios(self, ids_lotes: Sequence[int]) -> JsonObject:
@@ -185,6 +187,9 @@ class ProductBatchesResource(BaseResource):
 
         Cria/altera lotes de produtos.
 
+        Args:
+            lotes: Lista de lotes a serem salvos (Bling: ``LotesDTO[]``, array, obrigatório)
+
         Request body schema: LotesDTO
 
         Returns:
@@ -238,6 +243,10 @@ class ProductBatchesResource(BaseResource):
 
         Altera um lote de um produto pelo ID.
 
+        Args:
+            id_lote: ID do lote (Bling: ``idLote``, integer, obrigatório)
+            dados: Dados do lote para atualização (Bling: ``LotePutRequestDTO``, obrigatório)
+
         Request body schema: LotePutRequestDTO
 
         Returns:
@@ -251,6 +260,10 @@ class ProductBatchesResource(BaseResource):
         Endpoint: PATCH /produtos/lotes/{idLote}/status
 
         Altera o status de um lote do produto pelo ID.
+
+        Args:
+            id_lote: ID do lote (Bling: ``idLote``, integer, obrigatório)
+            dados: Dados do status do lote (Bling: ``LoteStatusDTO``, obrigatório)
 
         Request body schema: LoteStatusDTO
 

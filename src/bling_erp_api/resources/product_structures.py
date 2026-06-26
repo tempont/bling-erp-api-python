@@ -23,10 +23,11 @@ if TYPE_CHECKING:
 
 
 class ProductStructuresResource(BaseResource):
-    """Resource for Bling product structure endpoints.
+    """Resource para estruturas de produtos do Bling.
 
-    Maps ``/produtos/estruturas`` operations for product composition
-    structures and their components.
+    Mapeia os endpoints ``/produtos/estruturas`` para operações de composição
+    de produtos e seus componentes. Métodos canônicos em pt-BR; aliases em
+    inglês disponíveis para compatibilidade.
     """
 
     def remover_varios(self, ids_produtos: Sequence[int]) -> ProdutosEstruturasDeleteResponse200:
@@ -79,7 +80,7 @@ class ProductStructuresResource(BaseResource):
 
         Args:
             id_produto_estrutura: ID do produto com composição (Bling: ``idProdutoEstrutura``, integer, obrigatório)
-            dados: Dados da estrutura do produto.
+            dados: Dados da estrutura do produto (Bling: ``ProdutosEstruturaDTO``, object, obrigatório)
 
         Request body schema: ProdutosEstruturaDTO
 
@@ -128,7 +129,7 @@ class ProductStructuresResource(BaseResource):
 
         Args:
             id_produto_estrutura: ID do produto com composição (Bling: ``idProdutoEstrutura``, integer, obrigatório)
-            componentes: Dados dos componentes a serem vinculados.
+            componentes: Dados dos componentes a serem vinculados (Bling: ``ProdutosComponenteDTO``, object, obrigatório)
 
         Request body schema: ProdutosComponenteDTO
 
@@ -156,7 +157,7 @@ class ProductStructuresResource(BaseResource):
         Args:
             id_produto_estrutura: ID do produto com composição (Bling: ``idProdutoEstrutura``, integer, obrigatório)
             id_componente: ID do componente (Bling: ``idComponente``, integer, obrigatório)
-            dados: Dados do componente a serem alterados.
+            dados: Dados do componente a serem alterados (Bling: ``ProdutosComponenteDTO``, object, obrigatório)
 
         Request body schema: ProdutosComponenteDTO
 

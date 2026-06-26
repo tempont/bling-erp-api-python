@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 class BorderosResource(BaseResource):
     """Operações de borderôs do Bling.
 
-    Este recurso mapeia os endpoints ``/borderos``. Os métodos canônicos usam
-    português para acompanhar a documentação oficial.
+    Este recurso mapeia os endpoints ``/borderos``. Métodos canônicos em pt-BR;
+    aliases em inglês disponíveis para compatibilidade.
     """
 
     def obter(self, id_bordero: int) -> BorderosIdBorderoGetResponse200:

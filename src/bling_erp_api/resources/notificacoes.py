@@ -27,7 +27,7 @@ class NotificacoesResource(BaseResource):
     - GET /notificacoes/quantidade
     - POST /notificacoes/{idNotificacao}/confirmar-leitura
 
-    Métodos canônicos em pt-BR.
+    Métodos canônicos em pt-BR; aliases em inglês disponíveis para compatibilidade.
     """
 
     def listar(

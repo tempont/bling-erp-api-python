@@ -30,7 +30,7 @@ class NaturezasOperacoesResource(BaseResource):
     - GET /naturezas-operacoes
     - POST /naturezas-operacoes/{idNaturezaOperacao}/obter-tributacao
 
-    Métodos canônicos em pt-BR.
+    Métodos canônicos em pt-BR; aliases em inglês disponíveis para compatibilidade.
     """
 
     def listar(

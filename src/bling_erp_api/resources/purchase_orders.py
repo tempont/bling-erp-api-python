@@ -134,6 +134,16 @@ class PurchaseOrdersResource(BaseResource):
         Aceita os mesmos filtros de ``listar()`` e busca novas páginas enquanto
         o Bling retornar registros no envelope ``data``.
 
+        Args:
+            pagina: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limite: Quantidade de registros que devem ser exibidos por página (Bling: ``limite``, integer, opcional)
+            id_fornecedor: ID do contato do tipo fornecedor (Bling: ``idFornecedor``, integer, opcional)
+            valor_situacao: Valor da situação (Bling: ``valorSituacao``, integer, opcional)
+            id_situacao: ID da situação (Bling: ``idSituacao``, integer, opcional)
+            data_inicial: Data inicial do período da compra (Bling: ``dataInicial``, string, opcional)
+            data_final: Data final do período da compra (Bling: ``dataFinal``, string, opcional)
+            ids_notas_fiscais: IDs das notas fiscais de entrada (Bling: ``idsNotasFiscais[]``, array, opcional)
+
         Returns:
             Bling API response. Response schemas: 200: PedidosComprasDadosBaseDTO
         """

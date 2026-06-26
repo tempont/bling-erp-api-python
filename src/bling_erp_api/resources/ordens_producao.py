@@ -38,7 +38,7 @@ class OrdensProducaoResource(BaseResource):
     - PUT /ordens-producao/{idOrdemProducao}/situacoes
     - POST /ordens-producao/gerar-sob-demanda
 
-    Métodos canônicos em pt-BR.
+    Métodos canônicos em pt-BR; aliases em inglês disponíveis para compatibilidade.
     """
 
     def listar(
