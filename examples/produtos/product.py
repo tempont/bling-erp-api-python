@@ -52,7 +52,7 @@ def obter_produto(product_id: int) -> ProdutosIdProdutoGetResponse200:
 def criar_produto(dados: ProdutosDadosDTO) -> ProdutosResponsePOSTPUT:
     """Cria um novo produto."""
     client = BlingClient.from_env()
-    return client.products.create(data=dados)
+    return client.produtos.criar(dados=dados)
 
 
 ## ---------------------------------------------------------------------------

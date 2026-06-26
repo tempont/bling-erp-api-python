@@ -7,8 +7,8 @@ from bling_erp_api.models.generated.product_categories import CategoriasProdutos
 def main() -> None:
     """List product categories with pagination."""
     with BlingClient.from_env() as client:
-        response = client.product_categories.listar(limite=50)
-        parsed = CategoriasProdutosGetResponse200(**response)  # type: ignore[reportArgumentType]
+        response = client.categorias_produtos.listar(limite=50)
+        parsed = CategoriasProdutosGetResponse200.model_validate(response)
         print(parsed.model_dump_json(indent=2, by_alias=True))
 
 

@@ -59,7 +59,7 @@ def mark_notification_as_read(
 ) -> NotificacoesIdNotificacaoConfirmarLeituraPostResponse200:
     """Mark a notification as read by its ULID."""
     with BlingClient.from_env() as client:
-        response = client.notifications.mark_as_read(notification_id=notification_id)
+        response = client.notificacoes.confirmar_leitura(id_notificacao=notification_id)
     return NotificacoesIdNotificacaoConfirmarLeituraPostResponse200.model_validate(response)
 
 

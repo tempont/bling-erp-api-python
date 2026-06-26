@@ -93,7 +93,7 @@ def post_product() -> ProdutosResponsePOSTPUT:
         preco=10.0,
     )
 
-    return client.products.create(data=payload)
+    return client.produtos.criar(dados=payload)
 
 
 ## ---------------------------------------------------------------------------
@@ -104,7 +104,7 @@ def post_product() -> ProdutosResponsePOSTPUT:
 def delete_product(product_ids: list[int]) -> None:
     """Delete a product by ID."""
     client = BlingClient.from_env()
-    client.products.delete_many(product_ids=product_ids)
+    client.produtos.remover_varios(ids_produtos=product_ids)
 
 
 def main() -> None:

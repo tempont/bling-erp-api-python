@@ -46,7 +46,7 @@ def update_multiple_product_status(
 ) -> ProdutosSituacoesPostResponse200:
     """Update the status of multiple products at once."""
     with BlingClient.from_env() as client:
-        return client.products.update_many_status(product_ids=product_ids, status=status)
+        return client.produtos.alterar_situacao_varios(ids_produtos=product_ids, situacao=status)
 
 
 def main() -> None:

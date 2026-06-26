@@ -109,6 +109,8 @@ def main() -> None:
 
     # Get tax calculation for a specific nature of operations (read operation)
     tax_nature_id = 1001  # Exemplo — substitua pelo ID real.
+    # Raw dict with Bling wire-format keys (no Pydantic model for this payload yet).
+    # This is a deliberately flexible payload accepted by the endpoint.
     calculation: JsonObject = {
         "tipoNota": 1,
         "uf": "SP",

@@ -16,8 +16,8 @@ def main() -> None:
         descricao="Consultoria", tipo=2, id_categoria_pai=0
     )
     with BlingClient.from_env() as client:
-        response = client.income_expense_categories.criar(payload)
-        parsed = CategoriasReceitasDespesasPostResponse201(**response)  # type: ignore[reportArgumentType]
+        response = client.categorias_receitas_despesas.criar(dados=payload)
+        parsed = CategoriasReceitasDespesasPostResponse201.model_validate(response)
         print(parsed.model_dump_json(indent=2, by_alias=True))
 
 
