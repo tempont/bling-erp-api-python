@@ -9,183 +9,207 @@
 [![Code style: Ruff](https://img.shields.io/badge/code%20style-Ruff-261230.svg)](https://github.com/astral-sh/ruff)
 [![Type checker: basedpyright](https://img.shields.io/badge/type%20checker-basedpyright-blue.svg)](https://github.com/detachhead/basedpyright)
 
-[Português (BR)](README.pt-BR.md) | **English**
+**Português (BR)** | [English](README.en.md)
 
-Unofficial Python SDK for the [Bling ERP API v3](https://developer.bling.com.br/referencia).
+SDK Python não oficial para a [API v3 do Bling ERP](https://developer.bling.com.br/referencia).
 
-Provides typed, idiomatic access to 40+ Bling ERP resources with sync/async
-transports, OAuth2 authentication, rate limiting, and automatic retry.
+Acesso tipado e idiomático a mais de 40 recursos do Bling ERP, com transporte síncrono e assíncrono,
+autenticação OAuth2, limite de taxa, retry automático e modelos Pydantic.
 
-## Installation
+## Descrição
+
+O **Bling ERP API SDK** é uma biblioteca Python que simplifica a integração com a API v3 do Bling ERP.
+Ela oferece uma interface canônica em português (com aliases em inglês para compatibilidade),
+modelos tipados com Pydantic v2, validação de contratos OpenAPI, e tratamento robusto de erros
+e rate limiting — tudo para que você possa focar no que importa: sua aplicação.
+
+## Recursos
+
+- **40+ módulos de recursos** cobrindo toda a superfície da API do Bling ERP
+- **Autenticação OAuth2** via `bling-jwt-auth` — renovação automática de tokens
+- **Rate limiting** (3 req/s padrão) com retry em respostas 429 e suporte a `Retry-After`
+- **Modelos tipados** com Pydantic v2 — campos em snake_case e mapeamento automático para nomes Bling
+- **Transporte síncrono e assíncrono** baseado em HTTPX
+- **API canônica em pt-BR** com aliases em inglês para compatibilidade
+- **Contratos OpenAPI** — gerados e testados contra a especificação oficial
+- **500+ testes** com HTTP mockado
+- **Documentação completa** em mkdocs com suporte a busca
+
+## Instalação
 
 ```bash
 pip install bling-erp-api
 ```
 
-Or with `uv`:
+Ou com `uv`:
 
 ```bash
 uv add bling-erp-api
 ```
 
-Python 3.12+ required.
+Requer Python 3.12 ou superior.
 
-## Quick Start
+## Início Rápido
 
-Set the required environment variables (see [Authentication](#authentication)):
+Defina as variáveis de ambiente necessárias (veja [Autenticação](#autenticação)):
 
 ```bash
-export BLING_CLIENT_ID="your_client_id"
-export BLING_CLIENT_SECRET="your_client_secret"
-export BLING_REFRESH_TOKEN="your_refresh_token"
+export BLING_CLIENT_ID="seu_client_id"
+export BLING_CLIENT_SECRET="seu_client_secret"
+export BLING_REFRESH_TOKEN="seu_refresh_token"
 ```
 
-Then use the SDK:
+Depois use o SDK:
 
 ```python
 from bling_erp_api import BlingClient
 
 with BlingClient.from_env() as client:
-    # List products
-    products = client.produtos.listar(limit=10)
-    for product in products.get("data", []):
-        print(product.get("nome"))
+    # Listar produtos da primeira página
+    produtos = client.produtos.listar(limit=100)
+    for produto in produtos.get("data", []):
+        print(produto.get("nome"))
 
-    # Get a contact
-    contact = client.contatos.obter(1)
-    print(contact)
+    # Obter um contato
+    contato = client.contatos.obter(1)
+    print(contato)
+
+    # Criar um pedido de venda
+    from bling_erp_api.models.aliases import PedidoVenda
+
+    pedido = PedidoVenda(
+        cliente=PedidoVenda.Cliente(nome="Cliente Exemplo"),
+        itens=[
+            PedidoVenda.Item(
+                codigo="PROD-001",
+                descricao="Produto Exemplo",
+                quantidade=2,
+                valor_unitario=49.90,
+            )
+        ],
+    )
+    resposta = client.pedidos_vendas.criar(pedido)
+    print(resposta)
 ```
 
-## Features
+## Autenticação
 
-- **40+ resource modules** covering the full Bling ERP API surface
-- **OAuth2 authentication** via `bling-jwt-auth` — automatic token refresh
-- **Rate limiting** (3 req/s default) with 429 retry and `Retry-After` support
-- **Typed models** with Pydantic v2 — snake_case fields, automatic Bling name mapping
-- **Sync and async** transports
-- **pt-BR canonical API** with English compatibility aliases
-- **OpenAPI contract validation** — generated and tested against the spec
-- **500+ tests** with mocked HTTP
+O SDK utiliza OAuth2 (fluxo de autorização) delegado ao pacote
+[`bling-jwt-auth`](https://pypi.org/project/bling-jwt-auth/).
 
-## Resources
-
-| pt-BR Namespace                       | EN Alias                           | Description                         |
-|---------------------------------------|------------------------------------|-------------------------------------|
-| `client.contatos`                     | `client.contacts`                  | Contacts CRUD and status management |
-| `client.produtos`                     | `client.products`                  | Products CRUD and status            |
-| `client.produtos_estruturas`          | `client.product_structures`        | Product structures (BOM)            |
-| `client.produtos_fornecedores`        | `client.product_suppliers`         | Product suppliers                   |
-| `client.produtos_lojas`               | `client.product_stores`            | Product store mappings              |
-| `client.lotes`                        | `client.product_batches`           | Product batches                     |
-| `client.lotes_lancamentos`            | `client.product_batch_entries`     | Batch entries                       |
-| `client.produtos_variacoes`           | `client.product_variations`        | Product variations                  |
-| `client.pedidos_vendas`               | `client.sales_orders`              | Sales orders                        |
-| `client.pedidos_compras`              | `client.purchase_orders`           | Purchase orders                     |
-| `client.notas_fiscais`                | `client.invoices`                  | NF-e (electronic invoices)          |
-| `client.notas_fiscais_consumidor`     | `client.consumer_invoices`         | NFC-e (consumer invoices)           |
-| `client.notas_servicos`               | `client.service_invoices`          | NFS-e (service invoices)            |
-| `client.anuncios`                     | `client.ads`                       | Marketplace ads                     |
-| `client.anuncios_categorias`          | `client.ad_categories`             | Ad categories                       |
-| `client.caixas_bancos`                | `client.cash_entries`              | Cash and bank entries               |
-| `client.borderos`                     | `client.payment_bundles`           | Bordero management                  |
-| `client.categorias_lojas`             | `client.store_categories`          | Store categories                    |
-| `client.categorias_produtos`          | `client.product_categories`        | Product categories                  |
-| `client.categorias_receitas_despesas` | `client.income_expense_categories` | Income/expense categories           |
-| `client.contas_pagar`                 | `client.accounts_payable`          | Accounts payable                    |
-| `client.contas_receber`               | `client.accounts_receivable`       | Accounts receivable                 |
-| `client.contas_contabeis`             | `client.financial_accounts`        | Financial/chart of accounts         |
-| `client.depositos`                    | `client.warehouses`                | Warehouses                          |
-| `client.empresas`                     | `client.companies`                 | Company data                        |
-| `client.estoques`                     | `client.stock`                     | Stock balances                      |
-| `client.formas_pagamentos`            | `client.payment_methods`           | Payment methods                     |
-| `client.grupos_produtos`              | `client.product_groups`            | Product groups                      |
-| `client.homologacao`                  | `client.homologation`              | Test/homologation                   |
-| `client.logisticas`                   | `client.logistics`                 | Logistics providers                 |
-| `client.logisticas_servicos`          | `client.logistics_services`        | Logistics services                  |
-| `client.logisticas_objetos`           | `client.logistics_objects`         | Logistics objects                   |
-| `client.logisticas_etiquetas`         | `client.logistics_labels`          | Shipping labels                     |
-| `client.logisticas_remessas`          | `client.logistics_shipments`       | Logistics shipments                 |
-| `client.naturezas_operacoes`          | `client.natures_of_operations`     | Tax natures                         |
-| `client.notificacoes`                 | `client.notifications`             | Notifications                       |
-| `client.ordens_producao`              | `client.production_orders`         | Production orders                   |
-| `client.propostas_comerciais`         | `client.commercial_proposals`      | Commercial proposals                |
-| `client.situacoes`                    | `client.situations`                | Status/situations                   |
-| `client.situacoes_modulos`            | `client.situation_modules`         | Situation modules                   |
-| `client.situacoes_transicoes`         | `client.situation_transitions`     | Situation transitions               |
-| `client.vendedores`                   | `client.sellers`                   | Sellers                             |
-| `client.usuarios`                     | `client.users`                     | User management                     |
-
-## Authentication
-
-The SDK uses OAuth2 (authorization code flow) delegated to the
-[`bling-jwt-auth`](https://pypi.org/project/bling-jwt-auth/) package.
-
-The simplest way to get started is with environment variables:
+A forma mais simples de começar é com variáveis de ambiente:
 
 ```bash
-export BLING_CLIENT_ID="your_client_id"
-export BLING_CLIENT_SECRET="your_client_secret"
-export BLING_REFRESH_TOKEN="your_refresh_token"
-export BLING_REDIRECT_URI="your_redirect_uri"  # optional
+export BLING_CLIENT_ID="seu_client_id"
+export BLING_CLIENT_SECRET="seu_client_secret"
+export BLING_REFRESH_TOKEN="seu_refresh_token"
+export BLING_REDIRECT_URI="sua_redirect_uri"  # opcional
 ```
 
-Then create a client with `BlingClient.from_env()`.
+Em seguida, crie um cliente com `BlingClient.from_env()`.
 
-For custom authentication, pass a `token_provider` implementing
-`get_access_token() -> str` or an `httpx.Auth` instance.
+Para autenticação personalizada, passe um `token_provider` que implemente
+`get_access_token() -> str` ou uma instância de `httpx.Auth`.
 
-See the [Authentication documentation](https://tempont.github.io/bling-erp-api-python/authentication/)
-for details.
+Consulte a [documentação de autenticação](https://tempont.github.io/bling-erp-api-python/authentication/)
+para mais detalhes.
 
-## Documentation
+## Recursos Disponíveis
 
-Full documentation is available at:
+| Namespace pt-BR                       | Alias EN                           | Descrição                                    |
+|---------------------------------------|------------------------------------|----------------------------------------------|
+| `client.contatos`                     | `client.contacts`                  | CRUD de contatos e gerenciamento de situação |
+| `client.produtos`                     | `client.products`                  | CRUD de produtos e gerenciamento de situação |
+| `client.produtos_estruturas`          | `client.product_structures`        | Estruturas de produtos (BOM)                 |
+| `client.produtos_fornecedores`        | `client.product_suppliers`         | Fornecedores de produtos                     |
+| `client.produtos_lojas`               | `client.product_stores`            | Mapeamento de produtos por loja              |
+| `client.lotes`                        | `client.product_batches`           | Lotes de produtos                            |
+| `client.lotes_lancamentos`            | `client.product_batch_entries`     | Lançamentos de lotes                         |
+| `client.produtos_variacoes`           | `client.product_variations`        | Variações de produtos                        |
+| `client.pedidos_vendas`               | `client.sales_orders`              | Pedidos de venda                             |
+| `client.pedidos_compras`              | `client.purchase_orders`           | Pedidos de compra                            |
+| `client.notas_fiscais`                | `client.invoices`                  | NF-e (notas fiscais eletrônicas)             |
+| `client.notas_fiscais_consumidor`     | `client.consumer_invoices`         | NFC-e (notas fiscais ao consumidor)          |
+| `client.notas_servicos`               | `client.service_invoices`          | NFS-e (notas fiscais de serviços)            |
+| `client.anuncios`                     | `client.ads`                       | Anúncios em marketplaces                     |
+| `client.anuncios_categorias`          | `client.ad_categories`             | Categorias de anúncios                       |
+| `client.caixas_bancos`                | `client.cash_entries`              | Movimentações de caixa e bancos              |
+| `client.borderos`                     | `client.payment_bundles`           | Gerenciamento de borderôs                    |
+| `client.categorias_lojas`             | `client.store_categories`          | Categorias de lojas                          |
+| `client.categorias_produtos`          | `client.product_categories`        | Categorias de produtos                       |
+| `client.categorias_receitas_despesas` | `client.income_expense_categories` | Categorias de receitas e despesas            |
+| `client.contas_pagar`                 | `client.accounts_payable`          | Contas a pagar                               |
+| `client.contas_receber`               | `client.accounts_receivable`       | Contas a receber                             |
+| `client.contas_contabeis`             | `client.financial_accounts`        | Contas contábeis / plano de contas           |
+| `client.depositos`                    | `client.warehouses`                | Depósitos                                    |
+| `client.empresas`                     | `client.companies`                 | Dados da empresa                             |
+| `client.estoques`                     | `client.stock`                     | Saldos de estoque                            |
+| `client.formas_pagamentos`            | `client.payment_methods`           | Formas de pagamento                          |
+| `client.grupos_produtos`              | `client.product_groups`            | Grupos de produtos                           |
+| `client.homologacao`                  | `client.homologation`              | Testes / homologação                         |
+| `client.logisticas`                   | `client.logistics`                 | Transportadoras / logísticas                 |
+| `client.logisticas_servicos`          | `client.logistics_services`        | Serviços logísticos                          |
+| `client.logisticas_objetos`           | `client.logistics_objects`         | Objetos logísticos                           |
+| `client.logisticas_etiquetas`         | `client.logistics_labels`          | Etiquetas de envio                           |
+| `client.logisticas_remessas`          | `client.logistics_shipments`       | Remessas logísticas                          |
+| `client.naturezas_operacoes`          | `client.natures_of_operations`     | Naturezas de operações fiscais               |
+| `client.notificacoes`                 | `client.notifications`             | Notificações                                 |
+| `client.ordens_producao`              | `client.production_orders`         | Ordens de produção                           |
+| `client.propostas_comerciais`         | `client.commercial_proposals`      | Propostas comerciais                         |
+| `client.situacoes`                    | `client.situations`                | Situações / status                           |
+| `client.situacoes_modulos`            | `client.situation_modules`         | Módulos de situações                         |
+| `client.situacoes_transicoes`         | `client.situation_transitions`     | Transições de situações                      |
+| `client.vendedores`                   | `client.sellers`                   | Vendedores                                   |
+| `client.usuarios`                     | `client.users`                     | Gerenciamento de usuários                    |
+
+## Documentação
+
+A documentação completa está disponível em:
 
 **https://tempont.github.io/bling-erp-api-python/**
 
-- [Getting Started](https://tempont.github.io/bling-erp-api-python/getting-started/)
-- [Authentication](https://tempont.github.io/bling-erp-api-python/authentication/)
-- [Pagination](https://tempont.github.io/bling-erp-api-python/pagination/)
-- [Error Handling](https://tempont.github.io/bling-erp-api-python/errors/)
-- [API Reference](https://tempont.github.io/bling-erp-api-python/api-reference/)
+- [Comece por aqui](https://tempont.github.io/bling-erp-api-python/getting-started/) — instalação e primeiro uso
+- [Autenticação](https://tempont.github.io/bling-erp-api-python/authentication/) — configuração de credenciais OAuth2
+- [Paginação](https://tempont.github.io/bling-erp-api-python/pagination/) — navegação por resultados paginados
+- [Tratamento de erros](https://tempont.github.io/bling-erp-api-python/errors/) — exceções tipadas
+- [Referência da API](https://tempont.github.io/bling-erp-api-python/api-reference/) — documentação completa de classes e métodos
 
-## Contributing
+## Contribuindo
 
-Contributions are welcome! See the full guide in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+Contribuições são bem-vindas! Consulte o guia completo em [`CONTRIBUTING.md`](CONTRIBUTING.md) — em inglês.
 
-### Quick start
+### Resumo rápido
 
-```bash
-git clone https://github.com/tempont/bling-erp-api-python.git
-cd bling-erp-api-python
-uv sync --all-groups
-make check
-```
+1. Faça um fork do repositório
+2. Crie um branch para sua feature (`git checkout -b feat/minha-feature`)
+3. Instale as dependências: `uv sync --all-groups`
+4. Faça suas alterações
+5. Verifique com `make check` (executa ruff, basedpyright e pytest)
+6. Commit e push, depois abra um Pull Request
 
-### Workflow
+Para convenções detalhadas de nomenclatura, docstrings, modelos e implementação,
+veja o arquivo [`AGENTS.md`](AGENTS.md) na raiz do projeto.
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feat/my-feature`)
-3. Make your changes
-4. Verify with `make check` (runs ruff, basedpyright, and pytest)
-5. Commit with a clear message, push, and open a Pull Request
+## Reportando Problemas
 
-For detailed conventions on naming, docstrings, models, and resource implementation,
-see the [`AGENTS.md`](AGENTS.md) file in the repository root.
+Encontrou um bug? Use o [rastreador de issues do GitHub](https://github.com/tempont/bling-erp-api-python/issues).
 
-## Reporting Issues
+Ao reportar, inclua:
 
-Found a bug? Use the [GitHub issue tracker](https://github.com/tempont/bling-erp-api-python/issues).
+- Versão do Python (`python --version`)
+- Versão do SDK (`bling-erp-api --version`)
+- Código mínimo para reproduzir o problema
+- Comportamento esperado vs. observado
 
-When reporting, please include:
+Problemas de segurança devem ser reportados em privado — entre em contato pelos
+canais do GitHub.
 
-- Python version (`python --version`)
-- SDK version (`bling-erp-api --version`)
-- Minimal reproduction code
-- Expected vs. actual behavior
+## Licença
 
-For security issues, please report privately through GitHub's security channels.
+MIT — veja o arquivo [`LICENSE`](LICENSE).
 
-## License
+## Roadmap
 
-MIT — see [LICENSE](LICENSE).
+- Expansão da geração de modelos Pydantic a partir do OpenAPI spec
+- Continuação dos slices verticais para mais recursos (contas, estoques, categorias, logística, anúncios)
+- Mais exemplos e documentação interativa
