@@ -126,6 +126,18 @@ class ContasPagarResource(BaseResource):
 
         Endpoint: GET /contas/pagar
 
+        Args:
+            page: N° da página (Bling: ``pagina``, integer, opcional)
+            limit: Registros por página (Bling: ``limite``, integer, opcional)
+            issue_date_start: Data de emissão inicial (Bling: ``dataEmissaoInicial``, string, opcional)
+            issue_date_end: Data de emissão final (Bling: ``dataEmissaoFinal``, string, opcional)
+            due_date_start: Data de vencimento inicial (Bling: ``dataVencimentoInicial``, string, opcional)
+            due_date_end: Data de vencimento final (Bling: ``dataVencimentoFinal``, string, opcional)
+            payment_date_start: Data de pagamento inicial (Bling: ``dataPagamentoInicial``, string, opcional)
+            payment_date_end: Data de pagamento final (Bling: ``dataPagamentoFinal``, string, opcional)
+            status: 1=Em aberto, 2=Pago, 3=Parcial, 4=Devolvido, 5=Cancelado (Bling: ``situacao``, integer, opcional)
+            contact_id: ID do contato (Bling: ``idContato``, integer, opcional)
+
         Returns:
             Bling API response. Response schemas: 200: ContasDadosBaseDTO
         """
@@ -159,7 +171,20 @@ class ContasPagarResource(BaseResource):
         return self._validate_response(ContasPagarIdContaPagarGetResponse200, raw)
 
     def get(self, payable_id: int) -> ContasPagarIdContaPagarGetResponse200:
-        """Compatibility alias for ``obter()``."""
+        """Compatibility alias for ``obter()``.
+
+        Obtém uma conta a pagar.
+
+        Endpoint: GET /contas/pagar/{idContaPagar}
+
+        Obtém uma conta a pagar pelo ID.
+
+        Args:
+            payable_id: ID da conta a pagar (Bling: ``idContaPagar``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: ContasPagarDadosDTO; 404: ErrorResponse
+        """
         return self.obter(id_conta_pagar=payable_id)
 
     def criar(self, dados: JsonObject) -> ContasPagarPostResponse201:
@@ -179,7 +204,20 @@ class ContasPagarResource(BaseResource):
         return self._validate_response(ContasPagarPostResponse201, raw)
 
     def create(self, data: JsonObject) -> ContasPagarPostResponse201:
-        """Compatibility alias for ``criar()``."""
+        """Compatibility alias for ``criar()``.
+
+        Cria uma conta a pagar.
+
+        Endpoint: POST /contas/pagar
+
+        Cria uma nova conta a pagar.
+
+        Args:
+            data: Dados da conta. Request body: ContasPagarSalvarDTO
+
+        Returns:
+            Bling API response. Response schemas: 201: ContasPagarPostResponse201; 400: ErrorResponse
+        """
         return self.criar(dados=data)
 
     def alterar(
@@ -200,7 +238,19 @@ class ContasPagarResource(BaseResource):
         return self._validate_response(ContasPagarIdContaPagarPutResponse200, raw)
 
     def update(self, payable_id: int, data: JsonObject) -> ContasPagarIdContaPagarPutResponse200:
-        """Compatibility alias for ``alterar()``."""
+        """Compatibility alias for ``alterar()``.
+
+        Altera uma conta a pagar.
+
+        Endpoint: PUT /contas/pagar/{idContaPagar}
+
+        Args:
+            payable_id: ID da conta a pagar (Bling: ``idContaPagar``, integer, obrigatório)
+            data: Dados da conta para atualização
+
+        Returns:
+            Bling API response. Response schemas: 200: ContasPagarIdContaPagarPutResponse200; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.alterar(id_conta_pagar=payable_id, dados=data)
 
     def remover(self, id_conta_pagar: int) -> JsonObject:
@@ -217,7 +267,20 @@ class ContasPagarResource(BaseResource):
         return self._delete(f"/contas/pagar/{id_conta_pagar}")
 
     def delete(self, payable_id: int) -> JsonObject:
-        """Compatibility alias for ``remover()``."""
+        """Compatibility alias for ``remover()``.
+
+        Remove uma conta a pagar.
+
+        Endpoint: DELETE /contas/pagar/{idContaPagar}
+
+        Remove uma conta a pagar pelo ID.
+
+        Args:
+            payable_id: ID da conta a pagar (Bling: ``idContaPagar``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 204: NoContent; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.remover(id_conta_pagar=payable_id)
 
     def baixar(
@@ -246,5 +309,19 @@ class ContasPagarResource(BaseResource):
         payable_id: int,
         data: ContasBaixarContaDTO,
     ) -> ContasPagarIdContaPagarBaixarPostResponse200:
-        """Compatibility alias for ``baixar()``."""
+        """Compatibility alias for ``baixar()``.
+
+        Baixa uma conta a pagar (registra o pagamento).
+
+        Endpoint: POST /contas/pagar/{idContaPagar}/baixar
+
+        Cria o pagamento de uma conta a pagar.
+
+        Args:
+            payable_id: ID da conta a pagar (Bling: ``idContaPagar``, integer, obrigatório)
+            data: Dados da baixa. Request body: ContasBaixarContaDTO
+
+        Returns:
+            Bling API response. Response schemas: 200: bordero; 400: ErrorResponse
+        """
         return self.baixar(id_conta_pagar=payable_id, dados=data)

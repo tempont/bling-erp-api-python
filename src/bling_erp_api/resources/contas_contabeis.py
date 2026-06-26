@@ -97,7 +97,26 @@ class ContasContabeisResource(BaseResource):
         integration_alias: str | None = None,
         ordering: str | None = None,
     ) -> ContasContabeisGetResponse200:
-        """Compatibility alias for ``listar()``."""
+        """Compatibility alias for ``listar()``.
+
+        Lista contas financeiras.
+
+        Endpoint: GET /contas-contabeis
+
+        Obtém lista paginada de contas financeiras.
+
+        Args:
+            page: N° da página (Bling: ``pagina``, integer, opcional)
+            limit: Registros por página (Bling: ``limite``, integer, opcional)
+            hide_inactive: Oculta contas invisíveis (Bling: ``ocultarInvisiveis``, boolean, opcional)
+            hide_bank_accounts: Oculta contas bancárias (Bling: ``ocultarTipoContaBancaria``, boolean, opcional)
+            statuses: 1=Ativo, 2=Inativo, 3=Pendente, 4=Cancelada (Bling: ``situacoes``, array, opcional)
+            integration_alias: Alias da integração (Bling: ``aliasIntegracao``, string, opcional)
+            ordering: Ordenação: descricao ou -descricao (Bling: ``ordenacao``, string, opcional)
+
+        Returns:
+            Bling API response. Response schemas: 200: ContasContabeisDadosDTO
+        """
         return self.listar(
             pagina=page,
             limite=limit,
@@ -125,5 +144,18 @@ class ContasContabeisResource(BaseResource):
         return self._validate_response(ContasContabeisIdContaContabilGetResponse200, raw)
 
     def get(self, financial_account_id: int) -> ContasContabeisIdContaContabilGetResponse200:
-        """Compatibility alias for ``obter()``."""
+        """Compatibility alias for ``obter()``.
+
+        Obtém uma conta financeira.
+
+        Endpoint: GET /contas-contabeis/{idContaContabil}
+
+        Obtém uma conta financeira pelo ID.
+
+        Args:
+            financial_account_id: ID da conta financeira (Bling: ``idContaContabil``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: ContasContabeisDadosDTO; 404: ErrorResponse
+        """
         return self.obter(id_conta_contabil=financial_account_id)

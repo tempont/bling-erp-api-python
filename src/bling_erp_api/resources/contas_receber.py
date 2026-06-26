@@ -135,7 +135,31 @@ class ContasReceberResource(BaseResource):
         payment_method_id: int | None = None,
         boleto_generated: int | None = None,
     ) -> ContasReceberGetResponse200:
-        """Compatibility alias for ``listar()``."""
+        """Compatibility alias for ``listar()``.
+
+        Lista contas a receber.
+
+        Endpoint: GET /contas/receber
+
+        Obtém lista paginada de contas a receber.
+
+        Args:
+            page: N° da página (Bling: ``pagina``, integer, opcional)
+            limit: Registros por página (Bling: ``limite``, integer, opcional)
+            statuses: Situações: 1=Em aberto, 2=Recebido, 3=Parcial, 4=Devolvido, 5=Cancelado (Bling: ``situacoes[]``, array, opcional)
+            date_filter_type: E=Emissão, V=Vencimento, R=Recebimento (Bling: ``tipoFiltroData``, string, opcional)
+            start_date: Data inicial do filtro (Bling: ``dataInicial``, string, opcional)
+            end_date: Data final do filtro (Bling: ``dataFinal``, string, opcional)
+            category_ids: IDs das categorias (Bling: ``idsCategorias[]``, array, opcional)
+            financial_account_id: ID da conta financeira/portador (Bling: ``idPortador``, integer, opcional)
+            contact_id: ID do contato (Bling: ``idContato``, integer, opcional)
+            salesperson_id: ID do vendedor (Bling: ``idVendedor``, integer, opcional)
+            payment_method_id: ID da forma de pagamento (Bling: ``idFormaPagamento``, integer, opcional)
+            boleto_generated: 0=Não emitido, 1=Emitido (Bling: ``boletoGerado``, integer, opcional)
+
+        Returns:
+            Bling API response. Response schemas: 200: ContasReceberDadosListDTO
+        """
         return self.listar(
             pagina=page,
             limite=limit,
@@ -166,7 +190,20 @@ class ContasReceberResource(BaseResource):
         return self._validate_response(ContasReceberIdContaReceberGetResponse200, raw)
 
     def get(self, receivable_id: int) -> ContasReceberIdContaReceberGetResponse200:
-        """Compatibility alias for ``obter()``."""
+        """Compatibility alias for ``obter()``.
+
+        Obtém uma conta a receber.
+
+        Endpoint: GET /contas/receber/{idContaReceber}
+
+        Obtém uma conta a receber pelo ID.
+
+        Args:
+            receivable_id: ID da conta a receber (Bling: ``idContaReceber``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 200: ContasReceberDadosListDTO; 404: ErrorResponse
+        """
         return self.obter(id_conta_receber=receivable_id)
 
     def criar(self, dados: ContasReceberPostRequest) -> ContasReceberPostResponse201:
@@ -184,7 +221,18 @@ class ContasReceberResource(BaseResource):
         return self._validate_response(ContasReceberPostResponse201, raw)
 
     def create(self, data: ContasReceberPostRequest) -> ContasReceberPostResponse201:
-        """Compatibility alias for ``criar()``."""
+        """Compatibility alias for ``criar()``.
+
+        Cria uma conta a receber.
+
+        Endpoint: POST /contas/receber
+
+        Args:
+            data: Dados da conta. Request body: ContasReceberSalvarDTO
+
+        Returns:
+            Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
+        """
         return self.criar(dados=data)
 
     def alterar(
@@ -204,7 +252,19 @@ class ContasReceberResource(BaseResource):
         return self._put(f"/contas/receber/{id_conta_receber}", json=to_json_object(dados))
 
     def update(self, receivable_id: int, data: ContasReceberIdContaReceberPutRequest) -> JsonObject:
-        """Compatibility alias for ``alterar()``."""
+        """Compatibility alias for ``alterar()``.
+
+        Altera uma conta a receber.
+
+        Endpoint: PUT /contas/receber/{idContaReceber}
+
+        Args:
+            receivable_id: ID da conta a receber (Bling: ``idContaReceber``, integer, obrigatório)
+            data: Dados da conta para atualização
+
+        Returns:
+            Bling API response. Response schemas: 204: NoContent; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.alterar(id_conta_receber=receivable_id, dados=data)
 
     def remover(self, id_conta_receber: int) -> JsonObject:
@@ -221,7 +281,20 @@ class ContasReceberResource(BaseResource):
         return self._delete(f"/contas/receber/{id_conta_receber}")
 
     def delete(self, receivable_id: int) -> JsonObject:
-        """Compatibility alias for ``remover()``."""
+        """Compatibility alias for ``remover()``.
+
+        Remove uma conta a receber.
+
+        Endpoint: DELETE /contas/receber/{idContaReceber}
+
+        Remove uma conta a receber pelo ID.
+
+        Args:
+            receivable_id: ID da conta a receber (Bling: ``idContaReceber``, integer, obrigatório)
+
+        Returns:
+            Bling API response. Response schemas: 204: NoContent; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.remover(id_conta_receber=receivable_id)
 
     def baixar(
@@ -248,7 +321,21 @@ class ContasReceberResource(BaseResource):
         receivable_id: int,
         data: ContasBaixarContaDTO,
     ) -> ContasReceberIdContaReceberBaixarPostResponse200:
-        """Compatibility alias for ``baixar()``."""
+        """Compatibility alias for ``baixar()``.
+
+        Baixa uma conta a receber (registra o recebimento).
+
+        Endpoint: POST /contas/receber/{idContaReceber}/baixar
+
+        Cria o recebimento de uma conta a receber.
+
+        Args:
+            receivable_id: ID da conta a receber (Bling: ``idContaReceber``, integer, obrigatório)
+            data: Dados da baixa. Request body: ContasBaixarContaDTO
+
+        Returns:
+            Bling API response. Response schemas: 200: bordero; 400: ErrorResponse
+        """
         return self.baixar(id_conta_receber=receivable_id, dados=data)
 
     def obter_boletos(
@@ -274,7 +361,21 @@ class ContasReceberResource(BaseResource):
     def get_boletos(
         self, *, source_id: int, statuses: list[int] | None = None
     ) -> ContasReceberBoletosDadosBaseDTO:
-        """Compatibility alias for ``obter_boletos()``."""
+        """Compatibility alias for ``obter_boletos()``.
+
+        Obtém boletos vinculados a uma venda ou NF.
+
+        Endpoint: GET /contas/receber/boletos
+
+        Obtém os boletos vinculados a um idOrigem (venda ou nota fiscal).
+
+        Args:
+            source_id: ID da venda ou nota fiscal (Bling: ``idOrigem``, integer, obrigatório)
+            statuses: Situações: 1=Aberto, 2=Recebido, 3=Parcial, 4=Devolvido, 5=Parcial devolvido, 6=Cancelado (Bling: ``situacoes[]``, array, opcional)
+
+        Returns:
+            Bling API response. Response schemas: 200: ContasReceberBoletosDadosBaseDTO; 400: ErrorResponse; 404: ErrorResponse
+        """
         return self.obter_boletos(id_origem=source_id, situacoes=statuses)
 
     def cancelar_boletos(self, dados: ContasReceberBoletosCancelarDTO) -> JsonObject:
@@ -293,5 +394,18 @@ class ContasReceberResource(BaseResource):
         return self._post("/contas/receber/boletos/cancelar", json=to_json_object(dados))
 
     def cancel_boletos(self, data: ContasReceberBoletosCancelarDTO) -> JsonObject:
-        """Compatibility alias for ``cancelar_boletos()``."""
+        """Compatibility alias for ``cancelar_boletos()``.
+
+        Cancela boletos em aberto.
+
+        Endpoint: POST /contas/receber/boletos/cancelar
+
+        Cancela um ou todos os boletos em aberto vinculados a uma venda ou NF.
+
+        Args:
+            data: Dados de cancelamento. Request body: ContasReceberBoletosCancelarDTO
+
+        Returns:
+            Bling API response. Response schemas: 204: NoContent; 400: ErrorResponse
+        """
         return self.cancelar_boletos(dados=data)
