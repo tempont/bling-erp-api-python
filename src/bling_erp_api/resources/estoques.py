@@ -79,14 +79,14 @@ class EstoquesResource(BaseResource):
     ) -> EstoquesSaldosGetResponse200:
         """Compatibility alias for ``obter_saldos()``.
 
-        Gets stock balances for products.
+        Obtém saldo em estoque de produtos.
 
         Endpoint: GET /estoques/saldos
 
         Args:
-            product_ids: Product IDs (Bling: ``idsProdutos[]``, array, obrigatório)
-            codes: Product codes (Bling: ``codigos[]``, array, opcional)
-            stock_balance_filter: 0=Zero, 1=Positive, 2=Negative (Bling: ``filtroSaldoEstoque``, integer, opcional)
+            product_ids: IDs dos produtos (Bling: ``idsProdutos[]``, array, obrigatório)
+            codes: Códigos dos produtos (Bling: ``codigos[]``, array, opcional)
+            stock_balance_filter: 0=Zerado, 1=Positivo, 2=Negativo (Bling: ``filtroSaldoEstoque``, integer, opcional)
 
         Returns:
             Bling API response. Response schemas: 200: EstoquesSaldosBaseDTO; 400: ErrorResponse
@@ -138,15 +138,15 @@ class EstoquesResource(BaseResource):
     ) -> EstoquesSaldosIdDepositoGetResponse200:
         """Compatibility alias for ``obter_saldos_por_deposito()``.
 
-        Gets stock balances by deposit.
+        Obtém saldo em estoque por depósito.
 
         Endpoint: GET /estoques/saldos/{idDeposito}
 
         Args:
-            deposit_id: Deposit ID (Bling: ``idDeposito``, integer, obrigatório)
-            product_ids: Product IDs (Bling: ``idsProdutos[]``, array, obrigatório)
-            codes: Product codes (Bling: ``codigos[]``, array, opcional)
-            stock_balance_filter: 0=Zero, 1=Positive, 2=Negative (Bling: ``filtroSaldoEstoque``, integer, opcional)
+            deposit_id: ID do depósito (Bling: ``idDeposito``, integer, obrigatório)
+            product_ids: IDs dos produtos (Bling: ``idsProdutos[]``, array, obrigatório)
+            codes: Códigos dos produtos (Bling: ``codigos[]``, array, opcional)
+            stock_balance_filter: 0=Zerado, 1=Positivo, 2=Negativo (Bling: ``filtroSaldoEstoque``, integer, opcional)
 
         Returns:
             Bling API response. Response schemas: 200: EstoquesSaldosBaseDTO; 400: ErrorResponse; 404: ErrorResponse
@@ -177,12 +177,12 @@ class EstoquesResource(BaseResource):
     def create(self, data: JsonObject) -> EstoquesPostResponse201:
         """Compatibility alias for ``criar()``.
 
-        Creates a stock entry.
+        Cria um registro de estoque.
 
         Endpoint: POST /estoques
 
         Args:
-            data: Stock entry data (Bling: request body)
+            data: Dados do registro (Bling: request body)
 
         Returns:
             Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse

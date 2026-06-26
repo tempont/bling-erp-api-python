@@ -206,7 +206,7 @@ class HomologationResource(BaseResource):
         )
 
     def set_status(self, homologation_product_id: int, status: str) -> JsonObject:
-        """Backward-compatibility alias for ``update_status()``.
+        """Compatibility alias for ``update_status()``.
 
         Use ``update_status()`` instead; this method will be removed in a future
         version.

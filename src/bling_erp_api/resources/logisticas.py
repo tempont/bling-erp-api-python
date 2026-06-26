@@ -97,12 +97,12 @@ class LogisticasResource(BaseResource):
         Endpoint: GET /logisticas
 
         Args:
-            page: Page number (Bling: ``pagina``, integer, opcional)
-            limit: Items per page (Bling: ``limite``, integer, opcional)
-            integration_type: Integration type (Bling: ``tipoIntegracao``, string, opcional)
-            integration_types: List of integration types (Bling: ``tiposIntegracoes[]``, array, opcional)
-            status: Status (Bling: ``situacao``, string, opcional)
-            reverse_logistics: Only reverse logistics (Bling: ``logisticasReversas``, boolean, opcional)
+            page: N° da página (Bling: ``pagina``, integer, opcional)
+            limit: Itens por página (Bling: ``limite``, integer, opcional)
+            integration_type: Tipo de integração (Bling: ``tipoIntegracao``, string, opcional)
+            integration_types: Lista de tipos de integração (Bling: ``tiposIntegracoes[]``, array, opcional)
+            status: Situação (Bling: ``situacao``, string, opcional)
+            reverse_logistics: Apenas logísticas reversas (Bling: ``logisticasReversas``, boolean, opcional)
 
         Returns:
             Bling API response. Response schemas: 200: LogisticasDadosBaseDTO; 404: ErrorResponse

@@ -67,9 +67,9 @@ class LogisticasServicosResource(BaseResource):
         Endpoint: GET /logisticas/servicos
 
         Args:
-            page: Page number (Bling: ``pagina``, integer, opcional)
-            limit: Items per page (Bling: ``limite``, integer, opcional)
-            integration_type: Integration type (Bling: ``tipoIntegracao``, string, opcional)
+            page: N° da página (Bling: ``pagina``, integer, opcional)
+            limit: Itens por página (Bling: ``limite``, integer, opcional)
+            integration_type: Tipo de integração (Bling: ``tipoIntegracao``, string, opcional)
 
         Returns:
             Bling API response. Response schemas: 200: LogisticasServicosDadosDTO; 400: ErrorResponse

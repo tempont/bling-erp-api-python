@@ -77,15 +77,15 @@ class DepositosResource(BaseResource):
     ) -> DepositosGetResponse200:
         """Compatibility alias for ``listar()``.
 
-        Lists deposits.
+        Lista depósitos.
 
         Endpoint: GET /depositos
 
         Args:
-            page: Page number (Bling: ``pagina``, integer, opcional)
-            limit: Results per page (Bling: ``limite``, integer, opcional)
-            description: Deposit description (Bling: ``descricao``, string, opcional)
-            status: 0=Inactive, 1=Active (Bling: ``situacao``, integer, opcional)
+            page: N° da página (Bling: ``pagina``, integer, opcional)
+            limit: Registros por página (Bling: ``limite``, integer, opcional)
+            description: Descrição do depósito (Bling: ``descricao``, string, opcional)
+            status: 0=Inativo, 1=Ativo (Bling: ``situacao``, integer, opcional)
 
         Returns:
             Bling API response. Response schemas: 200: DepositosDadosDTO
@@ -111,12 +111,12 @@ class DepositosResource(BaseResource):
     def get(self, deposit_id: int) -> DepositosIdDepositoGetResponse200:
         """Compatibility alias for ``obter()``.
 
-        Gets a deposit.
+        Obtém um depósito.
 
         Endpoint: GET /depositos/{idDeposito}
 
         Args:
-            deposit_id: Deposit ID (Bling: ``idDeposito``, integer, obrigatório)
+            deposit_id: ID do depósito (Bling: ``idDeposito``, integer, obrigatório)
 
         Returns:
             Bling API response. Response schemas: 200: DepositosDadosDTO; 404: ErrorResponse
@@ -142,12 +142,12 @@ class DepositosResource(BaseResource):
     def create(self, data: DepositosDadosDTO) -> DepositosPostResponse201:
         """Compatibility alias for ``criar()``.
 
-        Creates a deposit.
+        Cria um depósito.
 
         Endpoint: POST /depositos
 
         Args:
-            data: Deposit data (Bling: request body, ``DepositosDadosDTO``)
+            data: Dados do depósito (Bling: request body, ``DepositosDadosDTO``)
 
         Returns:
             Bling API response. Response schemas: 201: BasePostResponse; 400: ErrorResponse
@@ -176,13 +176,13 @@ class DepositosResource(BaseResource):
     def update(self, deposit_id: int, data: DepositosDadosDTO) -> DepositosIdDepositoPutResponse200:
         """Compatibility alias for ``alterar()``.
 
-        Updates a deposit.
+        Altera um depósito.
 
         Endpoint: PUT /depositos/{idDeposito}
 
         Args:
-            deposit_id: Deposit ID (Bling: ``idDeposito``, integer, obrigatório)
-            data: Deposit update data (Bling: request body, ``DepositosDadosDTO``)
+            deposit_id: ID do depósito (Bling: ``idDeposito``, integer, obrigatório)
+            data: Dados do depósito para atualização (Bling: request body, ``DepositosDadosDTO``)
 
         Returns:
             Bling API response. Response schemas: 200: DepositosIdDepositoPutResponse200; 400: ErrorResponse; 404: ErrorResponse
