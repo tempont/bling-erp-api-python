@@ -142,15 +142,15 @@ class AdsResource(BaseResource):
         o Bling retornar registros no envelope ``data``.
 
         Args:
-            pagina: N° da página inicial
-            limite: Registros por página
-            situacao: Situação
-            id_produto: ID do produto
-            tipo_integracao: Tipo de integração
-            id_loja: ID da loja
+            pagina: N° da página (Bling: ``pagina``, integer, opcional)
+            limite: Registros por página (Bling: ``limite``, integer, opcional)
+            situacao: Situação do anúncio (Bling: ``situacao``, integer, opcional)
+            id_produto: ID do produto (Bling: ``idProduto``, integer, opcional)
+            tipo_integracao: Tipo de integração (Bling: ``tipoIntegracao``, string, obrigatório)
+            id_loja: ID da loja (Bling: ``idLoja``, integer, obrigatório)
 
-        Yields:
-            Iterator de JsonObject — cada iteração retorna a resposta de uma página
+        Returns:
+            Iterator sobre os itens da resposta.
         """
         params = _ads_list_params(
             situacao=situacao,
@@ -180,15 +180,15 @@ class AdsResource(BaseResource):
         o Bling retornar registros no envelope ``data``.
 
         Args:
-            page: N° da página inicial
-            limit: Registros por página
-            status: Situação
-            product_id: ID do produto
-            integration_type: Tipo de integração
-            store_id: ID da loja
+            page: N° da página (Bling: ``pagina``, integer, opcional)
+            limit: Registros por página (Bling: ``limite``, integer, opcional)
+            status: Situação do anúncio (Bling: ``situacao``, integer, opcional)
+            product_id: ID do produto (Bling: ``idProduto``, integer, opcional)
+            integration_type: Tipo de integração (Bling: ``tipoIntegracao``, string, obrigatório)
+            store_id: ID da loja (Bling: ``idLoja``, integer, obrigatório)
 
-        Yields:
-            Iterator de JsonObject — cada iteração retorna a resposta de uma página
+        Returns:
+            Iterator sobre os itens da resposta.
         """
         return self.iterar(
             pagina=page,

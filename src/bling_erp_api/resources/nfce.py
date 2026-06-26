@@ -142,18 +142,18 @@ class NfceResource(BaseResource):
         o Bling retornar registros no envelope ``data``.
 
         Args:
-            pagina: N° da página inicial
-            limite: Registros por página
-            id_transportador: ID do transportador
-            chave_acesso: Chave de acesso
-            numero: N° da nota
-            serie: Série
-            situacao: Situação
-            data_emissao_inicial: Data de emissão inicial
-            data_emissao_final: Data de emissão final
+            pagina: N° da página (Bling: ``pagina``, integer, opcional)
+            limite: Registros por página (Bling: ``limite``, integer, opcional)
+            id_transportador: ID do transportador (Bling: ``idTransportador``, integer, opcional)
+            chave_acesso: Chave de acesso (Bling: ``chaveAcesso``, string, opcional)
+            numero: N° da nota (Bling: ``numero``, string, opcional)
+            serie: Série (Bling: ``serie``, string, opcional)
+            situacao: Situação (Bling: ``situacao``, integer, opcional)
+            data_emissao_inicial: Data de emissão inicial (Bling: ``dataEmissaoInicial``, string, opcional)
+            data_emissao_final: Data de emissão final (Bling: ``dataEmissaoFinal``, string, opcional)
 
-        Yields:
-            Iterator de JsonObject — cada iteração retorna a resposta de uma página
+        Returns:
+            Iterator sobre os itens da resposta.
         """
         params = _nfce_list_params(
             pagina=pagina,
@@ -191,18 +191,18 @@ class NfceResource(BaseResource):
         o Bling retornar registros no envelope ``data``.
 
         Args:
-            page: N° da página inicial
-            limit: Registros por página
-            carrier_id: ID do transportador
-            access_key: Chave de acesso
-            number: N° da nota
-            series: Série
-            status: Situação
-            issued_start: Data de emissão inicial
-            issued_end: Data de emissão final
+            page: N° da página (Bling: ``pagina``, integer, opcional)
+            limit: Registros por página (Bling: ``limite``, integer, opcional)
+            carrier_id: ID do transportador (Bling: ``idTransportador``, integer, opcional)
+            access_key: Chave de acesso (Bling: ``chaveAcesso``, string, opcional)
+            number: N° da nota (Bling: ``numero``, string, opcional)
+            series: Série (Bling: ``serie``, string, opcional)
+            status: Situação (Bling: ``situacao``, integer, opcional)
+            issued_start: Data de emissão inicial (Bling: ``dataEmissaoInicial``, string, opcional)
+            issued_end: Data de emissão final (Bling: ``dataEmissaoFinal``, string, opcional)
 
-        Yields:
-            Iterator de JsonObject — cada iteração retorna a resposta de uma página
+        Returns:
+            Iterator sobre os itens da resposta.
         """
         return self.iterar(
             pagina=page,

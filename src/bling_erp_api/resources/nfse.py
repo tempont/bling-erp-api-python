@@ -111,14 +111,14 @@ class NfseResource(BaseResource):
         o Bling retornar registros no envelope ``data``.
 
         Args:
-            pagina: N° da página inicial
-            limite: Registros por página
-            situacao: Situação
-            data_emissao_inicial: Data de emissão inicial
-            data_emissao_final: Data de emissão final
+            pagina: N° da página (Bling: ``pagina``, integer, opcional)
+            limite: Registros por página (Bling: ``limite``, integer, opcional)
+            situacao: Situação (Bling: ``situacao``, integer, opcional)
+            data_emissao_inicial: Data de emissão inicial (Bling: ``dataEmissaoInicial``, string, opcional)
+            data_emissao_final: Data de emissão final (Bling: ``dataEmissaoFinal``, string, opcional)
 
-        Yields:
-            Iterator de JsonObject — cada iteração retorna a resposta de uma página
+        Returns:
+            Iterator sobre os itens da resposta.
         """
         params = _nfse_list_params(
             pagina=pagina,
@@ -148,14 +148,14 @@ class NfseResource(BaseResource):
         o Bling retornar registros no envelope ``data``.
 
         Args:
-            page: N° da página inicial
-            limit: Registros por página
-            status: Situação
-            issued_start: Data de emissão inicial
-            issued_end: Data de emissão final
+            page: N° da página (Bling: ``pagina``, integer, opcional)
+            limit: Registros por página (Bling: ``limite``, integer, opcional)
+            status: Situação (Bling: ``situacao``, integer, opcional)
+            issued_start: Data de emissão inicial (Bling: ``dataEmissaoInicial``, string, opcional)
+            issued_end: Data de emissão final (Bling: ``dataEmissaoFinal``, string, opcional)
 
-        Yields:
-            Iterator de JsonObject — cada iteração retorna a resposta de uma página
+        Returns:
+            Iterator sobre os itens da resposta.
         """
         return self.iterar(
             pagina=page,

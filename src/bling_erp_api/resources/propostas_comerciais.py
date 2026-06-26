@@ -162,6 +162,17 @@ class CommercialProposalsResource(BaseResource):
 
         Aceita os mesmos filtros de ``listar()`` e busca novas páginas enquanto
         o Bling retornar registros no envelope ``data``.
+
+        Args:
+            pagina: Número da página (Bling: ``pagina``, integer, opcional)
+            limite: Limite de registros por página (Bling: ``limite``, integer, opcional)
+            situacao: Situação da proposta (Bling: ``situacao``, string, opcional)
+            id_contato: ID do contato (Bling: ``idContato``, integer, opcional)
+            data_inicial: Data inicial do período (Bling: ``dataInicial``, date, opcional)
+            data_final: Data final do período (Bling: ``dataFinal``, date, opcional)
+
+        Returns:
+            Iterator sobre os itens da resposta.
         """
         pagina_atual = pagina or 1
         while True:
@@ -196,6 +207,20 @@ class CommercialProposalsResource(BaseResource):
         Itera sobre as propostas comerciais com paginação automática.
 
         Endpoint: GET /propostas-comerciais
+
+        Aceita os mesmos filtros de ``listar()`` e busca novas páginas enquanto
+        o Bling retornar registros no envelope ``data``.
+
+        Args:
+            page: Número da página (Bling: ``pagina``, integer, opcional)
+            limit: Limite de registros por página (Bling: ``limite``, integer, opcional)
+            status: Situação da proposta (Bling: ``situacao``, string, opcional)
+            contact_id: ID do contato (Bling: ``idContato``, integer, opcional)
+            start_date: Data inicial do período (Bling: ``dataInicial``, date, opcional)
+            end_date: Data final do período (Bling: ``dataFinal``, date, opcional)
+
+        Returns:
+            Iterator sobre os itens da resposta.
         """
         return self.iterar(
             pagina=page,

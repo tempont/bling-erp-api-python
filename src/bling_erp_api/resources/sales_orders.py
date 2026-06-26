@@ -202,6 +202,24 @@ class SalesOrdersResource(BaseResource):
         Aceita os mesmos filtros de ``listar()`` e busca novas páginas enquanto
         o Bling retornar registros no envelope ``data``.
 
+        Args:
+            pagina: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limite: Quantidade de registros que devem ser exibidos por página (Bling: ``limite``, integer, opcional)
+            id_contato: ID do contato (Bling: ``idContato``, integer, opcional)
+            ids_situacoes: IDs das situações (Bling: ``idsSituacoes[]``, array, opcional)
+            data_inicial: Data inicial (Bling: ``dataInicial``, string, opcional)
+            data_final: Data final (Bling: ``dataFinal``, string, opcional)
+            data_alteracao_inicial: Data inicial da alteração (Bling: ``dataAlteracaoInicial``, string, opcional)
+            data_alteracao_final: Data final da alteração (Bling: ``dataAlteracaoFinal``, string, opcional)
+            data_prevista_inicial: Data prevista inicial (Bling: ``dataPrevistaInicial``, string, opcional)
+            data_prevista_final: Data prevista final (Bling: ``dataPrevistaFinal``, string, opcional)
+            numero: Número do pedido de venda (Bling: ``numero``, integer, opcional)
+            id_loja: ID da loja (Bling: ``idLoja``, integer, opcional)
+            id_vendedor: ID do vendedor (Bling: ``idVendedor``, integer, opcional)
+            id_controle_caixa: ID do controle de caixa (Bling: ``idControleCaixa``, integer, opcional)
+            numeros_lojas: Números dos pedidos nas lojas (Bling: ``numerosLojas[]``, array, opcional)
+            id_unidade_negocio: ID da unidade de negócio (Bling: ``idUnidadeNegocio``, integer, opcional)
+
         Returns:
             Bling API response. Response schemas: 200: VendasDadosBaseDTO
         """

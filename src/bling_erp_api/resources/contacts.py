@@ -135,24 +135,24 @@ class ContactsResource(BaseResource):
         o Bling retornar registros no envelope ``data``.
 
         Args:
-            pagina: N° da página inicial
-            limite: Registros por página
-            pesquisa: Termo de pesquisa
-            criterio: Critério de listagem
-            data_inclusao_inicial: Data de inclusão inicial
-            data_inclusao_final: Data de inclusão final
-            data_alteracao_inicial: Data de alteração inicial
-            data_alteracao_final: Data de alteração final
-            id_tipo_contato: ID do tipo de contato
-            id_vendedor: ID do vendedor
-            uf: UF
-            telefone: Telefone
-            ids_contatos: IDs dos contatos
-            numero_documento: N° do documento
-            tipo_pessoa: Tipo de pessoa
+            pagina: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limite: Quantidade de registros por página (Bling: ``limite``, integer, opcional)
+            pesquisa: Termo de pesquisa (Bling: ``pesquisa``, string, opcional)
+            criterio: Critério de listagem: 1=Todos, 2=Ativos, 3=Inativos, 4=Excluídos (Bling: ``criterio``, integer, opcional)
+            data_inclusao_inicial: Data de inclusão inicial (Bling: ``dataInclusaoInicial``, string, opcional)
+            data_inclusao_final: Data de inclusão final (Bling: ``dataInclusaoFinal``, string, opcional)
+            data_alteracao_inicial: Data de alteração inicial (Bling: ``dataAlteracaoInicial``, string, opcional)
+            data_alteracao_final: Data de alteração final (Bling: ``dataAlteracaoFinal``, string, opcional)
+            id_tipo_contato: ID do tipo de contato (Bling: ``idTipoContato``, integer, opcional)
+            id_vendedor: ID do vendedor (Bling: ``idVendedor``, integer, opcional)
+            uf: Sigla da UF (Bling: ``uf``, string, opcional)
+            telefone: Telefone do contato (Bling: ``telefone``, string, opcional)
+            ids_contatos: IDs dos contatos (Bling: ``idsContatos[]``, array, opcional)
+            numero_documento: N° do documento (Bling: ``numeroDocumento``, string, opcional)
+            tipo_pessoa: Tipo de pessoa: 1=Pessoa Física, 2=Pessoa Jurídica, 3=Outros (Bling: ``tipoPessoa``, integer, opcional)
 
-        Yields:
-            Iterator de JsonObject — cada iteração retorna a resposta de uma página
+        Returns:
+            Iterator sobre os itens da resposta.
         """
         params: QueryParams = _contact_list_params(
             pagina=pagina,
@@ -428,24 +428,24 @@ class ContactsResource(BaseResource):
         o Bling retornar registros no envelope ``data``.
 
         Args:
-            page: N° da página inicial
-            limit: Registros por página
-            search: Termo de pesquisa
-            criterion: Critério
-            created_start: Data de inclusão inicial
-            created_end: Data de inclusão final
-            updated_start: Data de alteração inicial
-            updated_end: Data de alteração final
-            contact_type_id: ID do tipo de contato
-            seller_id: ID do vendedor
-            uf: UF
-            phone: Telefone
-            contact_ids: IDs dos contatos
-            tax_id: N° do documento
-            person_kind: Tipo de pessoa
+            page: N° da página da listagem (Bling: ``pagina``, integer, opcional)
+            limit: Quantidade de registros por página (Bling: ``limite``, integer, opcional)
+            search: Termo de pesquisa (Bling: ``pesquisa``, string, opcional)
+            criterion: Critério de listagem (Bling: ``criterio``, integer, opcional)
+            created_start: Data de inclusão inicial (Bling: ``dataInclusaoInicial``, string, opcional)
+            created_end: Data de inclusão final (Bling: ``dataInclusaoFinal``, string, opcional)
+            updated_start: Data de alteração inicial (Bling: ``dataAlteracaoInicial``, string, opcional)
+            updated_end: Data de alteração final (Bling: ``dataAlteracaoFinal``, string, opcional)
+            contact_type_id: ID do tipo de contato (Bling: ``idTipoContato``, integer, opcional)
+            seller_id: ID do vendedor (Bling: ``idVendedor``, integer, opcional)
+            uf: Sigla da UF (Bling: ``uf``, string, opcional)
+            phone: Telefone do contato (Bling: ``telefone``, string, opcional)
+            contact_ids: IDs dos contatos (Bling: ``idsContatos[]``, array, opcional)
+            tax_id: N° do documento (Bling: ``numeroDocumento``, string, opcional)
+            person_kind: Tipo de pessoa (Bling: ``tipoPessoa``, integer, opcional)
 
-        Yields:
-            Iterator de JsonObject — cada iteração retorna a resposta de uma página
+        Returns:
+            Iterator sobre os itens da resposta.
         """
         return self.iterar(
             pagina=page,
