@@ -1,6 +1,7 @@
 """Exemplo de código para autenticação com o Bling de forma interativa.
 
-Usa o pacote bling_jwt_auth.
+Usa o pacote bling_jwt_auth e valida o ``state`` OAuth com os helpers de
+``bling_erp_api.auth`` (``parse_oauth_callback`` + ``verify_oauth_state``).
 
 Documentação: https://github.com/tempont/bling-jwt-auth-python
 Variáveis (obrigatórias):
@@ -18,6 +19,8 @@ import sys
 
 from bling_jwt_auth import BlingAuthSettings, OAuthClient, TokenManager, create_token_store
 from pydantic import ValidationError
+
+from bling_erp_api.auth import parse_oauth_callback, verify_oauth_state
 
 _FIELD_TO_ENV = {
     "client_id": "BLING_CLIENT_ID",
@@ -63,13 +66,21 @@ store = create_token_store(settings)
 with OAuthClient(settings) as oauth:
     manager = TokenManager(oauth, store, settings)
 
-    # 4. Build authorization URL for the browser
-    auth_url = oauth.build_authorization_url(state=os.urandom(16).hex())
+    # 4. Build authorization URL for the browser with a CSRF state value.
+    state = os.urandom(16).hex()
+    auth_url = oauth.build_authorization_url(state=state)
     print(f"Open in browser: {auth_url}")
-    # User opens URL, approves access, Bling redirects to BLING_REDIRECT_URI?code=...
+    # User opens URL, approves access, Bling redirects to
+    # BLING_REDIRECT_URI?code=...&state=...
 
-    # 5. Exchange the callback code for tokens (saves to store automatically)
-    code = input("Paste authorization code: ").strip()
+    # 5. Parse the callback (full URL or query string), verify the state
+    #    against this session and exchange the code for tokens
+    #    (saves to store automatically).
+    raw_callback = input(
+        "Paste callback URL or query string (code=...&state=... even from error page): "
+    ).strip()
+    code, received_state = parse_oauth_callback(raw_callback)
+    verify_oauth_state(received_state, state)
     manager.save_from_code(code)
 
     # 6. Now ready — every subsequent call auto-refreshes
