@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import shutil
+import subprocess
 from pathlib import Path
 from pprint import pformat
 from typing import TYPE_CHECKING, NotRequired, TypedDict, cast
@@ -813,6 +815,19 @@ def main() -> None:
             all_contracts[class_name] = contracts
 
     _write_docstring_module(all_contracts)
+    _run_ruff_format()
+
+
+def _run_ruff_format() -> None:
+    """Normalize generated contract modules with ruff format (mirrors generate_models.py)."""
+    executable = shutil.which("ruff")
+    if executable is None:
+        msg = "ruff was not found. Run `uv sync --all-groups` first."
+        raise RuntimeError(msg)
+    subprocess.run(  # noqa: S603
+        [executable, "format", str(CONTRACTS_DIR)],
+        check=True,
+    )
 
 
 def _resource_contracts(
@@ -1036,7 +1051,10 @@ def _write_resource_docs(
     for operation_name, contract in _operation_mapping(contracts).items():
         lines.extend(_operation_docs(operation_name, contract))
 
-    (DOCS_DIR / f"{resource_slug}.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    # Match pre-commit normalization (trailing-whitespace + end-of-file-fixer):
+    # no trailing spaces on any line and exactly one newline at end of file.
+    content = "\n".join(line.rstrip() for line in lines).rstrip("\n") + "\n"
+    (DOCS_DIR / f"{resource_slug}.md").write_text(content, encoding="utf-8")
 
 
 def _operation_docs(operation_name: str, contract: Mapping[str, object]) -> list[str]:

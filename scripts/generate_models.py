@@ -860,7 +860,14 @@ def _write_resource_reexports(
         path.unlink()
 
     (RESOURCE_REEXPORT_DIR / "__init__.py").write_text(
-        '"""Resource-scoped generated model reexports."""\n',
+        '"""Resource-scoped generated model reexports.\n'
+        "\n"
+        "TODO: Consolidate duplicate model tree.\n"
+        "The ``resources/`` subdirectory mirrors the parent ``models/generated/`` with\n"
+        "identical reexport modules. This is a codegen duplication — investigate whether\n"
+        "imports from ``models/generated/resources/`` can be retired in favor of\n"
+        "``models/generated/<resource>.py``.\n"
+        '"""\n',
         encoding="utf-8",
     )
 
