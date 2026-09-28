@@ -1,0 +1,50 @@
+{
+  "data": {
+    "id": 123456789,
+    "nome": "Caneta Esferográfica Azul 1.0mm",
+    "codigo": "CAN-1001",
+    "preco": 2.5,
+    "tipo": "P",
+    "situacao": "A",
+    "formato": "S",
+    "descricaoCurta": "Caneta esferográfica azul, ponta 1.0mm",
+    "unidade": "Un",
+    "pesoLiquido": 0.01,
+    "pesoBruto": 0.02,
+    "imagemURL": "https://cdn.exemplo.com.br/imagens/can-1001.jpg",
+    "midia": {
+      "video": {
+        "url": "https://www.youtube.com/watch?v=exemplo123"
+      },
+      "imagens": {
+        "imagensURL": [
+          {
+            "link": "https://cdn.exemplo.com.br/imagens/can-1001.jpg"
+          }
+        ],
+        "externas": [
+          {
+            "link": "https://i.ibb.co/exemplo123/caneta-azul.jpg"
+          }
+        ],
+        "internas": [
+          {
+            "link": "https://cdn.exemplo.com.br/bling/imagens/123456789-a.jpg"
+          },
+          {
+            "link": "https://cdn.exemplo.com.br/bling/imagens/123456789-b.jpg",
+            "linkMiniatura": "https://cdn.exemplo.com.br/bling/imagens/miniatura/123456789-b.jpg",
+            "validade": "2027-12-31 00:00:00",
+            "ordem": 2,
+            "anexo": {
+              "id": 111222333
+            },
+            "anexoVinculo": {
+              "id": 444555666
+            }
+          }
+        ]
+      }
+    }
+  }
+}

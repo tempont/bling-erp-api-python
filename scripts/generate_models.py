@@ -138,6 +138,13 @@ FIELD_ANNOTATION_OVERRIDES = {
     ("OrdensProducaoPostRequest", "id"): "int | None",
     # Bug 5: ContatosPostRequest.id should be optional on POST
     ("ContatosPostRequest", "id"): "int | None",
+    # Bug 6: GET /produtos/{idProduto} frequently omits every field but
+    # ``link`` in midia.imagens.internas[] entries
+    ("ProdutosImagemInternaDTO", "link_miniatura"): "str | None",
+    ("ProdutosImagemInternaDTO", "validade"): "str | None",
+    ("ProdutosImagemInternaDTO", "ordem"): "int | None",
+    ("ProdutosImagemInternaDTO", "anexo"): "ProdutosAnexoDTO | None",
+    ("ProdutosImagemInternaDTO", "anexo_vinculo"): "ProdutosAnexoVinculoDTO | None",
 }
 FIELD_NONE_DEFAULT_OVERRIDES = {
     ("SituacoesAcaoDTO", "descricao"),
@@ -146,6 +153,13 @@ FIELD_NONE_DEFAULT_OVERRIDES = {
     ("OrdensProducaoPostRequest", "situacao"),
     # Bug 5: ContatosPostRequest.id should be optional on POST
     ("ContatosPostRequest", "id"),
+    # Bug 6: GET /produtos/{idProduto} frequently omits every field but
+    # ``link`` in midia.imagens.internas[] entries
+    ("ProdutosImagemInternaDTO", "link_miniatura"),
+    ("ProdutosImagemInternaDTO", "validade"),
+    ("ProdutosImagemInternaDTO", "ordem"),
+    ("ProdutosImagemInternaDTO", "anexo"),
+    ("ProdutosImagemInternaDTO", "anexo_vinculo"),
 }
 
 # Type that replaces bare ``date`` in all generated annotations.

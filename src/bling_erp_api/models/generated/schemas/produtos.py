@@ -288,24 +288,24 @@ class ProdutosImagemInternaDTO(BlingModel):
 
     Fields:
         link: Bling ``link``; type ``str``; obrigatório.
-        link_miniatura: Bling ``linkMiniatura``; type ``str``; obrigatório.
-        validade: Bling ``validade``; type ``str``; obrigatório.
-        ordem: Bling ``ordem``; type ``int``; obrigatório.
-        anexo: Bling ``anexo``; type ``ProdutosAnexoDTO``; obrigatório.
-        anexo_vinculo: Bling ``anexoVinculo``; type ``ProdutosAnexoVinculoDTO``; obrigatório."""
+        link_miniatura: Bling ``linkMiniatura``; type ``str | None``; opcional.
+        validade: Bling ``validade``; type ``str | None``; opcional.
+        ordem: Bling ``ordem``; type ``int | None``; opcional.
+        anexo: Bling ``anexo``; type ``ProdutosAnexoDTO | None``; opcional.
+        anexo_vinculo: Bling ``anexoVinculo``; type ``ProdutosAnexoVinculoDTO | None``; opcional."""
 
     link: str = Field(..., examples=["https://www.bling.com.br/imagens/miniatura.jpg"])
-    link_miniatura: str = Field(
-        ...,
+    link_miniatura: str | None = Field(
+        default=None,
         validation_alias=AliasChoices("link_miniatura", "linkMiniatura"),
         examples=["https://www.bling.com.br/imagens/miniatura.jpg"],
         serialization_alias="linkMiniatura",
     )
-    validade: str = Field(..., examples=["2020-01-01 00:00:00"])
-    ordem: int = Field(..., examples=[1])
-    anexo: ProdutosAnexoDTO
-    anexo_vinculo: ProdutosAnexoVinculoDTO = Field(
-        ...,
+    validade: str | None = Field(default=None, examples=["2020-01-01 00:00:00"])
+    ordem: int | None = Field(default=None, examples=[1])
+    anexo: ProdutosAnexoDTO | None = None
+    anexo_vinculo: ProdutosAnexoVinculoDTO | None = Field(
+        default=None,
         validation_alias=AliasChoices("anexo_vinculo", "anexoVinculo"),
         serialization_alias="anexoVinculo",
     )
