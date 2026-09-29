@@ -187,8 +187,8 @@ DATE_IMPORT = "from bling_erp_api.models.fields import BlingDate"
 # any of these are present; schema-documentation-only kwargs (``examples``,
 # ``description``, …) do not justify changing today's emitted output. The raw
 # ``alias`` form emitted by datamodel-codegen is normalized into the
-# ``validation_alias``/``serialization_alias`` pair by ``_normalize_raw_alias``
-# after the clone.
+# ``validation_alias``/``serialization_alias`` pair by
+# ``_rewrite_raw_alias_keyword`` after the clone.
 WIRE_FORMAT_FIELD_KEYWORDS = frozenset({"alias", "validation_alias", "serialization_alias"})
 
 # Map of model name → inner data type for wrapper generation.
@@ -672,15 +672,19 @@ def _insert_field_none_default(
     # Try to find the original declaration from parent classes
     parent_decl = _find_parent_field_decl(node, field_name, class_nodes)
 
-    if parent_decl is not None:
+    annotation: ast.expr
+    if parent_decl is None:
+        annotation = ast.Name(id="Any", ctx=ast.Load())
+    elif _annotation_is_optional(parent_decl.annotation):
+        # Already ``X | None``: reuse as-is instead of spelling ``X | None | None``.
+        annotation = parent_decl.annotation
+    else:
         # Build ``OriginalType | None``
-        annotation: ast.expr = ast.BinOp(
+        annotation = ast.BinOp(
             left=parent_decl.annotation,
             op=ast.BitOr(),
             right=ast.Constant(value=None),
         )
-    else:
-        annotation = ast.Name(id="Any", ctx=ast.Load())
 
     new_field = ast.AnnAssign(
         target=ast.Name(id=field_name, ctx=ast.Store()),
@@ -689,6 +693,16 @@ def _insert_field_none_default(
         simple=1,
     )
     node.body.append(new_field)
+
+
+def _annotation_is_optional(annotation: ast.expr) -> bool:
+    """Return whether ``annotation`` already ends in a ``| None`` union member."""
+    return (
+        isinstance(annotation, ast.BinOp)
+        and isinstance(annotation.op, ast.BitOr)
+        and isinstance(annotation.right, ast.Constant)
+        and annotation.right.value is None
+    )
 
 
 def _field_exists_in_parents(
@@ -724,8 +738,9 @@ def _find_field_decl(
 ) -> ast.AnnAssign | None:
     """Walk the class hierarchy to find the full declaration node for a field.
 
-    Supersedes the annotation-only lookup: callers can read ``decl.annotation``
-    for the type or the whole node for value/metadata preservation.
+    Depth-first through the base classes, returning the first matching
+    ``AnnAssign``: callers can read ``decl.annotation`` for the type or the
+    whole node for value/metadata preservation.
     """
     node = class_nodes.get(class_name)
     if node is None:
@@ -782,36 +797,43 @@ def _inherited_field_value(parent_decl: ast.AnnAssign | None, field_name: str) -
     ):
         return ast.Constant(value=None)
     cloned = _field_value_default_none(copy.deepcopy(value))
-    _normalize_raw_alias(cloned, field_name)
+    if isinstance(cloned, ast.Call):
+        _rewrite_raw_alias_keyword(cloned, field_name)
     return cloned
 
 
-def _normalize_raw_alias(value: ast.expr, field_name: str) -> None:
-    """Rewrite a raw ``alias="<BlingName>"`` keyword in a cloned Field call.
+def _rewrite_raw_alias_keyword(call: ast.Call, field_name: str) -> bool:
+    """Rewrite a raw ``alias="<BlingName>"`` keyword into the repo-standard pair.
 
-    Mirrors ``_rewrite_field_aliases``, which normalizes raw declarations
-    before ``_apply_field_overrides`` runs — inserted redeclarations never
-    pass through it, so the clone is normalized here instead. An alias equal
-    to the field name is left as-is, matching the rewrite pass; parents
-    already carrying ``validation_alias`` / ``serialization_alias`` are
-    untouched.
+    Shared by ``_rewrite_field_aliases`` (the per-class rewrite pass) and the
+    inherited-field clone path, so both normalize identically. An alias equal
+    to the field name is left as-is. A call already carrying
+    ``validation_alias`` is treated as already normalized: a stray raw
+    ``alias`` keyword is dropped instead of rewritten, so a duplicate
+    ``validation_alias`` kwarg (a SyntaxError when unparsed) can never be
+    emitted; ``serialization_alias`` is likewise only appended when absent.
+    Returns whether the rewrite happened.
     """
-    if not isinstance(value, ast.Call):
-        return
     alias_keyword = next(
         (
             keyword
-            for keyword in value.keywords
+            for keyword in call.keywords
             if keyword.arg == "alias" and _string_value(keyword.value)
         ),
         None,
     )
     if alias_keyword is None:
-        return
+        return False
+
+    if any(keyword.arg == "validation_alias" for keyword in call.keywords):
+        # Already-normalized call: drop the stray raw alias instead of
+        # appending a second ``validation_alias``.
+        call.keywords.remove(alias_keyword)
+        return False
 
     alias = _string_value(alias_keyword.value)
     if alias is None or alias == field_name:
-        return
+        return False
 
     alias_keyword.arg = "validation_alias"
     alias_keyword.value = ast.Call(
@@ -822,7 +844,11 @@ def _normalize_raw_alias(value: ast.expr, field_name: str) -> None:
         ],
         keywords=[],
     )
-    value.keywords.append(ast.keyword(arg="serialization_alias", value=ast.Constant(value=alias)))
+    if not any(keyword.arg == "serialization_alias" for keyword in call.keywords):
+        call.keywords.append(
+            ast.keyword(arg="serialization_alias", value=ast.Constant(value=alias))
+        )
+    return True
 
 
 def _set_field_default_none(stmt: ast.AnnAssign) -> None:
@@ -862,34 +888,7 @@ def _rewrite_field_aliases(node: ast.ClassDef) -> None:
         if not isinstance(stmt.value, ast.Call) or _name_from_expr(stmt.value.func) != "Field":
             continue
 
-        field_name = stmt.target.id
-        alias_keyword = next(
-            (
-                keyword
-                for keyword in stmt.value.keywords
-                if keyword.arg == "alias" and _string_value(keyword.value)
-            ),
-            None,
-        )
-        if alias_keyword is None:
-            continue
-
-        alias = _string_value(alias_keyword.value)
-        if alias is None or alias == field_name:
-            continue
-
-        alias_keyword.arg = "validation_alias"
-        alias_keyword.value = ast.Call(
-            func=ast.Name(id="AliasChoices", ctx=ast.Load()),
-            args=[
-                ast.Constant(value=field_name),
-                ast.Constant(value=alias),
-            ],
-            keywords=[],
-        )
-        stmt.value.keywords.append(
-            ast.keyword(arg="serialization_alias", value=ast.Constant(value=alias))
-        )
+        _rewrite_raw_alias_keyword(stmt.value, stmt.target.id)
 
 
 def _model_docstring(name: str, class_nodes: Mapping[str, ast.ClassDef]) -> str:

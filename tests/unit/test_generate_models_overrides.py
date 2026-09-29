@@ -93,6 +93,20 @@ class ChildDTO(ParentDTO):
 """
 
 
+_PARENT_DUAL_ALIAS_FIELD_SOURCE = """\
+class ParentDTO(BlingModel):
+    x: str = Field(
+        default="...",
+        alias="xStr",
+        validation_alias=AliasChoices("x", "xStr"),
+    )
+
+
+class ChildDTO(ParentDTO):
+    pass
+"""
+
+
 def _parent_child_classes() -> tuple[ast.ClassDef, ast.ClassDef]:
     """Build a parent class carrying ``Field`` metadata and a child body without ``x``."""
     classes = {
@@ -270,6 +284,35 @@ def test_apply_inserts_default_only_key_with_parent_metadata(
     assert ("ChildDTO", "x") in module._APPLIED_FIELD_OVERRIDES  # noqa: SLF001
 
 
+def test_apply_inserts_default_only_key_reusing_optional_parent_annotation(
+    override_guard: ModuleType,
+) -> None:
+    """A default-only key reuses an already-optional parent annotation verbatim.
+
+    The parent ``str | None`` annotation is inserted as-is instead of building
+    the degenerate ``str | None | None`` union.
+    """
+    module = override_guard
+    module.FIELD_NONE_DEFAULT_OVERRIDES.add(("ChildDTO", "x"))
+    parent = ast.parse("class ParentDTO(BlingModel):\n    x: str | None\n").body[0]
+    child = ast.parse("class ChildDTO(ParentDTO):\n    pass\n").body[0]
+    assert isinstance(parent, ast.ClassDef)
+    assert isinstance(child, ast.ClassDef)
+
+    module._apply_field_overrides(  # noqa: SLF001
+        "ChildDTO",
+        child,
+        class_nodes={"ParentDTO": parent},
+    )
+
+    fields = _child_x_fields(child)
+    assert len(fields) == 1
+    assert ast.unparse(fields[0].annotation) == "str | None"
+    assert isinstance(fields[0].value, ast.Constant)
+    assert fields[0].value.value is None
+    assert ("ChildDTO", "x") in module._APPLIED_FIELD_OVERRIDES  # noqa: SLF001
+
+
 def test_apply_inserts_field_exactly_once_for_both_tables_key(
     override_guard: ModuleType,
 ) -> None:
@@ -338,6 +381,39 @@ def test_apply_normalizes_raw_parent_alias_in_inserted_field(
     emitted = ast.unparse(fields[0])
     assert "validation_alias=AliasChoices('x', 'xStr')" in emitted
     assert "serialization_alias='xStr'" in emitted
+
+
+def test_apply_drops_raw_alias_when_parent_already_normalized(
+    override_guard: ModuleType,
+) -> None:
+    """A parent carrying raw ``alias`` + ``validation_alias`` emits no duplicates.
+
+    Datamodel-codegen never emits this shape; it is pinned defensively because
+    rewriting the stray raw ``alias`` would append a second ``validation_alias``
+    kwarg (a SyntaxError when unparsed). The clone is treated as already
+    normalized: the raw ``alias`` is dropped and everything else is kept.
+    """
+    module = override_guard
+    module.FIELD_ANNOTATION_OVERRIDES[("ChildDTO", "x")] = "str | None"
+    classes = _classes_from_source(_PARENT_DUAL_ALIAS_FIELD_SOURCE)
+
+    module._apply_field_overrides(  # noqa: SLF001
+        "ChildDTO",
+        classes["ChildDTO"],
+        class_nodes={"ParentDTO": classes["ParentDTO"]},
+    )
+
+    fields = _child_x_fields(classes["ChildDTO"])
+    assert len(fields) == 1
+    value = fields[0].value
+    assert isinstance(value, ast.Call)
+    assert _call_name(value.func) == "Field"
+    keyword_args = [keyword.arg for keyword in value.keywords]
+    assert keyword_args.count("validation_alias") == 1
+    assert "alias" not in keyword_args
+    assert set(keyword_args) == {"default", "validation_alias"}
+    # The emitted call must re-parse: repeated keywords are a SyntaxError.
+    ast.parse(ast.unparse(fields[0]))
 
 
 def test_apply_falls_back_to_bare_none_for_alias_less_parent_field(
