@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import ast
+import copy
 import json
 import re
 import shutil
@@ -181,6 +182,12 @@ _APPLIED_FIELD_OVERRIDES: set[tuple[str, str]] = set()
 # Type that replaces bare ``date`` in all generated annotations.
 DATE_TYPE_REWRITE = "BlingDate"
 DATE_IMPORT = "from bling_erp_api.models.fields import BlingDate"
+
+# ``Field(...)`` keywords that affect the wire format. Inserted redeclarations
+# of parent-inherited fields only clone the parent's ``Field(...)`` call when
+# any of these are present; schema-documentation-only kwargs (``examples``,
+# ``description``, …) do not justify changing today's emitted output.
+WIRE_FORMAT_FIELD_KEYWORDS = frozenset({"validation_alias", "serialization_alias"})
 
 # Map of model name → inner data type for wrapper generation.
 # Models listed here will have their body replaced with:
@@ -590,17 +597,27 @@ def _apply_field_overrides(
     # does not exist in this class's body, so we re-insert a declaration. If
     # the field is absent from every parent as well, the override key is dead:
     # no phantom field is emitted and the key is not recorded, so ``main``
-    # fails listing ``Class.field``.
+    # fails listing ``Class.field``. A key present in both tables inserts the
+    # field only once (``inserted_fields``), coalescing both fixes into the
+    # single redeclaration.
+    inserted_fields: set[str] = set()
     for (override_name, field_name), annotation in FIELD_ANNOTATION_OVERRIDES.items():
         if override_name != name or field_name in applied_annotation_fields:
             continue
         if not _field_exists_in_parents(node, field_name, class_nodes):
             continue
-        _insert_field_override_with_annotation(node, field_name, annotation)
+        _insert_field_override_with_annotation(
+            node, field_name, annotation, class_nodes=class_nodes
+        )
+        inserted_fields.add(field_name)
         _APPLIED_FIELD_OVERRIDES.add((name, field_name))
 
     for override_name, field_name in FIELD_NONE_DEFAULT_OVERRIDES:
-        if override_name != name or field_name in applied_default_fields:
+        if (
+            override_name != name
+            or field_name in applied_default_fields
+            or field_name in inserted_fields
+        ):
             continue
         if not _field_exists_in_parents(node, field_name, class_nodes):
             continue
@@ -617,6 +634,7 @@ def _insert_field_override_with_annotation(
     node: ast.ClassDef,
     field_name: str,
     annotation: str,
+    class_nodes: Mapping[str, ast.ClassDef] | None = None,
 ) -> None:
     """Insert a new field declaration into the class body.
 
@@ -628,7 +646,7 @@ def _insert_field_override_with_annotation(
     new_field = ast.AnnAssign(
         target=ast.Name(id=field_name, ctx=ast.Store()),
         annotation=ast.parse(annotation, mode="eval").body,
-        value=ast.Constant(value=None),
+        value=_inherited_field_value(_find_parent_field_decl(node, field_name, class_nodes)),
         simple=1,
     )
     node.body.append(new_field)
@@ -641,26 +659,20 @@ def _insert_field_none_default(
 ) -> None:
     """Insert a field with ``= None`` default for a parent-inherited field.
 
-    Looks up the original type from the parent class hierarchy so the
-    generated type is correct (e.g. ``OrdensProducaoSituacaoDTO | None``).
-    Falls back to ``Any`` if the type cannot be resolved.
+    Looks up the original declaration from the parent class hierarchy so the
+    generated type is correct (e.g. ``OrdensProducaoSituacaoDTO | None``) and
+    the parent ``Field(...)`` metadata (aliases, examples) is preserved on the
+    redeclaration. Falls back to ``Any`` if the type cannot be resolved.
     """
     _remove_pass_if_empty(node)
 
-    # Try to find the original annotation from parent classes
-    orig_annotation: ast.expr | None = None
-    if class_nodes is not None:
-        for base in node.bases:
-            base_name = _name_from_expr(base)
-            if base_name and base_name in class_nodes:
-                orig_annotation = _find_field_annotation(field_name, base_name, class_nodes)
-                if orig_annotation is not None:
-                    break
+    # Try to find the original declaration from parent classes
+    parent_decl = _find_parent_field_decl(node, field_name, class_nodes)
 
-    if orig_annotation is not None:
+    if parent_decl is not None:
         # Build ``OriginalType | None``
-        annotation = ast.BinOp(
-            left=orig_annotation,
+        annotation: ast.expr = ast.BinOp(
+            left=parent_decl.annotation,
             op=ast.BitOr(),
             right=ast.Constant(value=None),
         )
@@ -670,7 +682,7 @@ def _insert_field_none_default(
     new_field = ast.AnnAssign(
         target=ast.Name(id=field_name, ctx=ast.Store()),
         annotation=annotation,
-        value=ast.Constant(value=None),
+        value=_inherited_field_value(parent_decl),
         simple=1,
     )
     node.body.append(new_field)
@@ -682,21 +694,36 @@ def _field_exists_in_parents(
     class_nodes: Mapping[str, ast.ClassDef] | None,
 ) -> bool:
     """Return whether ``field_name`` is declared anywhere in the class's parent chain."""
+    return _find_parent_field_decl(node, field_name, class_nodes) is not None
+
+
+def _find_parent_field_decl(
+    node: ast.ClassDef,
+    field_name: str,
+    class_nodes: Mapping[str, ast.ClassDef] | None,
+) -> ast.AnnAssign | None:
+    """Find the full declaration of ``field_name`` in the class's parent chain."""
     if class_nodes is None:
-        return False
-    return any(
-        base_name is not None
-        and _find_field_annotation(field_name, base_name, class_nodes) is not None
-        for base_name in (_name_from_expr(base) for base in node.bases)
-    )
+        return None
+    for base in node.bases:
+        base_name = _name_from_expr(base)
+        if base_name:
+            decl = _find_field_decl(field_name, base_name, class_nodes)
+            if decl is not None:
+                return decl
+    return None
 
 
-def _find_field_annotation(
+def _find_field_decl(
     field_name: str,
     class_name: str,
     class_nodes: Mapping[str, ast.ClassDef],
-) -> ast.expr | None:
-    """Walk the class hierarchy to find the annotation expression for a field."""
+) -> ast.AnnAssign | None:
+    """Walk the class hierarchy to find the full declaration node for a field.
+
+    Supersedes the annotation-only lookup: callers can read ``decl.annotation``
+    for the type or the whole node for value/metadata preservation.
+    """
     node = class_nodes.get(class_name)
     if node is None:
         return None
@@ -706,11 +733,11 @@ def _find_field_annotation(
             and isinstance(stmt.target, ast.Name)
             and stmt.target.id == field_name
         ):
-            return stmt.annotation
+            return stmt
     for base in node.bases:
         base_name = _name_from_expr(base)
         if base_name:
-            result = _find_field_annotation(field_name, base_name, class_nodes)
+            result = _find_field_decl(field_name, base_name, class_nodes)
             if result is not None:
                 return result
     return None
@@ -728,23 +755,54 @@ def _rewrite_date_types(node: ast.ClassDef) -> None:
             stmt.id = "BlingDate"
 
 
+def _inherited_field_value(parent_decl: ast.AnnAssign | None) -> ast.expr:
+    """Build the value for an inserted parent-inherited field redeclaration.
+
+    Pydantic v2 replaces the parent field configuration on redeclaration, so
+    when the parent's ``Field(...)`` call carries wire-format metadata
+    (``validation_alias`` / ``serialization_alias``) it is deep-copied to keep
+    that metadata (and every other keyword, e.g. ``examples``) with its
+    default normalized to ``None``. Falls back to a bare ``None`` constant
+    when the parent declaration has no value or no alias metadata — keeping
+    the emitted output for alias-less parents byte-identical.
+    """
+    if parent_decl is None or parent_decl.value is None:
+        return ast.Constant(value=None)
+    value = parent_decl.value
+    if not (isinstance(value, ast.Call) and _name_from_expr(value.func) == "Field") or not any(
+        keyword.arg in WIRE_FORMAT_FIELD_KEYWORDS for keyword in value.keywords
+    ):
+        return ast.Constant(value=None)
+    return _field_value_default_none(copy.deepcopy(value))
+
+
 def _set_field_default_none(stmt: ast.AnnAssign) -> None:
+    """Set the field's default value to ``None`` in place."""
+    stmt.value = _field_value_default_none(stmt.value)
+
+
+def _field_value_default_none(value: ast.expr | None) -> ast.expr:
+    """Return ``value`` with its ``Field(...)`` default normalized to ``None``.
+
+    Strips a positional ``...`` default, sets or inserts ``default=None``, and
+    preserves every other keyword. Non-``Field`` values collapse to ``None``.
+    """
     default = ast.Constant(value=None)
-    if isinstance(stmt.value, ast.Call) and _name_from_expr(stmt.value.func) == "Field":
-        stmt.value.args = [
+    if isinstance(value, ast.Call) and _name_from_expr(value.func) == "Field":
+        value.args = [
             arg
-            for arg in stmt.value.args
+            for arg in value.args
             if not (isinstance(arg, ast.Constant) and arg.value is Ellipsis)
         ]
-        for keyword in stmt.value.keywords:
+        for keyword in value.keywords:
             if keyword.arg == "default":
                 keyword.value = default
                 break
         else:
-            stmt.value.keywords.insert(0, ast.keyword(arg="default", value=default))
-        return
+            value.keywords.insert(0, ast.keyword(arg="default", value=default))
+        return value
 
-    stmt.value = default
+    return default
 
 
 def _rewrite_field_aliases(node: ast.ClassDef) -> None:

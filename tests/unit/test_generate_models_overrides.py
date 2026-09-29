@@ -62,6 +62,65 @@ def _applied_for_current_overrides(module: ModuleType) -> set[tuple[str, str]]:
     return set(annotations) | set(defaults)
 
 
+def _call_name(func: ast.expr) -> str:
+    """Return the bare name of a ``Name`` function expression."""
+    assert isinstance(func, ast.Name)
+    return func.id
+
+
+_PARENT_WITH_FIELD_SOURCE = """\
+class ParentDTO(BlingModel):
+    x: str = Field(
+        default="...",
+        validation_alias=AliasChoices("x", "xStr"),
+        serialization_alias="xStr",
+    )
+
+
+class ChildDTO(ParentDTO):
+    pass
+"""
+
+
+def _parent_child_classes() -> tuple[ast.ClassDef, ast.ClassDef]:
+    """Build a parent class carrying ``Field`` metadata and a child body without ``x``."""
+    classes = {
+        stmt.name: stmt
+        for stmt in ast.parse(_PARENT_WITH_FIELD_SOURCE).body
+        if isinstance(stmt, ast.ClassDef)
+    }
+    return classes["ParentDTO"], classes["ChildDTO"]
+
+
+def _child_x_fields(node: ast.ClassDef) -> list[ast.AnnAssign]:
+    """Return the ``AnnAssign`` statements for field ``x`` in the class body."""
+    return [
+        stmt
+        for stmt in node.body
+        if isinstance(stmt, ast.AnnAssign)
+        and isinstance(stmt.target, ast.Name)
+        and stmt.target.id == "x"
+    ]
+
+
+def _assert_x_field_metadata(inserted: ast.AnnAssign) -> None:
+    """Assert the inserted field redeclares ``x`` keeping the parent metadata."""
+    value = inserted.value
+    assert isinstance(value, ast.Call)
+    assert _call_name(value.func) == "Field"
+    keywords = {keyword.arg: keyword.value for keyword in value.keywords}
+    default = keywords["default"]
+    assert isinstance(default, ast.Constant)
+    assert default.value is None
+    alias_call = keywords["validation_alias"]
+    assert isinstance(alias_call, ast.Call)
+    assert _call_name(alias_call.func) == "AliasChoices"
+    assert [arg.value for arg in alias_call.args if isinstance(arg, ast.Constant)] == ["x", "xStr"]
+    serialization_alias = keywords["serialization_alias"]
+    assert isinstance(serialization_alias, ast.Constant)
+    assert serialization_alias.value == "xStr"
+
+
 def test_check_passes_when_all_override_keys_applied(override_guard: ModuleType) -> None:
     """Every key applied means the guard returns without exiting."""
     module = override_guard
@@ -134,3 +193,98 @@ def test_apply_records_body_match_and_skips_field_absent_from_parents(
         if isinstance(stmt, ast.AnnAssign) and isinstance(stmt.target, ast.Name)
     ]
     assert field_names == ["campo_vivo"]
+
+
+def test_apply_inserts_once_with_parent_metadata_for_both_tables_key(
+    override_guard: ModuleType,
+) -> None:
+    """A both-tables key inserts one field keeping the parent Field metadata."""
+    module = override_guard
+    module.FIELD_ANNOTATION_OVERRIDES[("ChildDTO", "x")] = "str | None"
+    module.FIELD_NONE_DEFAULT_OVERRIDES.add(("ChildDTO", "x"))
+    parent, child = _parent_child_classes()
+
+    module._apply_field_overrides(  # noqa: SLF001
+        "ChildDTO",
+        child,
+        class_nodes={"ParentDTO": parent},
+    )
+
+    fields = _child_x_fields(child)
+    assert len(fields) == 1
+    assert ast.unparse(fields[0].annotation) == "str | None"
+    _assert_x_field_metadata(fields[0])
+    assert ("ChildDTO", "x") in module._APPLIED_FIELD_OVERRIDES  # noqa: SLF001
+
+
+def test_apply_inserts_annotation_only_key_with_parent_metadata(
+    override_guard: ModuleType,
+) -> None:
+    """An annotation-only key inserts the field with the override annotation."""
+    module = override_guard
+    module.FIELD_ANNOTATION_OVERRIDES[("ChildDTO", "x")] = "int | None"
+    parent, child = _parent_child_classes()
+
+    module._apply_field_overrides(  # noqa: SLF001
+        "ChildDTO",
+        child,
+        class_nodes={"ParentDTO": parent},
+    )
+
+    fields = _child_x_fields(child)
+    assert len(fields) == 1
+    assert ast.unparse(fields[0].annotation) == "int | None"
+    _assert_x_field_metadata(fields[0])
+    assert ("ChildDTO", "x") in module._APPLIED_FIELD_OVERRIDES  # noqa: SLF001
+
+
+def test_apply_inserts_default_only_key_with_parent_metadata(
+    override_guard: ModuleType,
+) -> None:
+    """A default-only key inserts the field annotated as the parent type ``| None``."""
+    module = override_guard
+    module.FIELD_NONE_DEFAULT_OVERRIDES.add(("ChildDTO", "x"))
+    parent, child = _parent_child_classes()
+
+    module._apply_field_overrides(  # noqa: SLF001
+        "ChildDTO",
+        child,
+        class_nodes={"ParentDTO": parent},
+    )
+
+    fields = _child_x_fields(child)
+    assert len(fields) == 1
+    assert ast.unparse(fields[0].annotation) == "str | None"
+    _assert_x_field_metadata(fields[0])
+    assert ("ChildDTO", "x") in module._APPLIED_FIELD_OVERRIDES  # noqa: SLF001
+
+
+def test_apply_inserts_field_exactly_once_for_both_tables_key(
+    override_guard: ModuleType,
+) -> None:
+    """A both-tables key inserts the field exactly once (dedup regression pin)."""
+    module = override_guard
+    module.FIELD_ANNOTATION_OVERRIDES[("ChildDTO", "x")] = "str | None"
+    module.FIELD_NONE_DEFAULT_OVERRIDES.add(("ChildDTO", "x"))
+    parent = ast.parse("class ParentDTO(BlingModel):\n    x: str\n").body[0]
+    child = ast.parse("class ChildDTO(ParentDTO):\n    pass\n").body[0]
+    assert isinstance(parent, ast.ClassDef)
+    assert isinstance(child, ast.ClassDef)
+
+    module._apply_field_overrides(  # noqa: SLF001
+        "ChildDTO",
+        child,
+        class_nodes={"ParentDTO": parent},
+    )
+
+    field_names = [
+        stmt.target.id
+        for stmt in child.body
+        if isinstance(stmt, ast.AnnAssign) and isinstance(stmt.target, ast.Name)
+    ]
+    assert field_names == ["x"]
+    inserted = _child_x_fields(child)[0]
+    assert ast.unparse(inserted.annotation) == "str | None"
+    assert isinstance(inserted.value, ast.Constant)
+    assert inserted.value.value is None
+    assert ("ChildDTO", "x") in module._APPLIED_FIELD_OVERRIDES  # noqa: SLF001
