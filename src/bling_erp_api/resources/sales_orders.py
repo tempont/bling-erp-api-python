@@ -449,17 +449,17 @@ class SalesOrdersResource(BaseResource):
         return self.remover(order_id)
 
     def remover_varios(self, ids_pedidos_vendas: Sequence[int]) -> JsonObject:
-        """Remove vários pedidos de venda.
+        """Remove pedidos de vendas.
 
         Endpoint: DELETE /pedidos/vendas
 
-        Remove vários pedidos de venda pelos IDs.
+        Remove pedidos de vendas pelos IDs.
 
         Args:
-            ids_pedidos_vendas: IDs dos pedidos de venda (Bling: ``idsPedidosVendas[]``, array, obrigatório)
+            ids_pedidos_vendas: IDs dos pedidos de vendas (Bling: ``idsPedidosVendas[]``, array, obrigatório)
 
         Returns:
-            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
+            Bling API response. Response schemas: 200: PedidosVendasDeleteResponse200; 204: NoContent
         """
         return self._delete(
             "/pedidos/vendas", params={"idsPedidosVendas[]": list(ids_pedidos_vendas)}
@@ -468,17 +468,17 @@ class SalesOrdersResource(BaseResource):
     def delete_many(self, order_ids: Sequence[int]) -> JsonObject:
         """Compatibility alias for ``remover_varios()``.
 
-        Remove vários pedidos de venda.
+        Remove pedidos de vendas.
 
         Endpoint: DELETE /pedidos/vendas
 
-        Remove vários pedidos de venda pelos IDs.
+        Remove pedidos de vendas pelos IDs.
 
         Args:
-            order_ids: IDs dos pedidos de venda (Bling: ``idsPedidosVendas[]``, array, obrigatório)
+            order_ids: IDs dos pedidos de vendas (Bling: ``idsPedidosVendas[]``, array, obrigatório)
 
         Returns:
-            Bling API response. Response schemas: 400: ErrorResponse; 404: ErrorResponse
+            Bling API response. Response schemas: 200: PedidosVendasDeleteResponse200; 204: NoContent
         """
         return self.remover_varios(order_ids)
 
