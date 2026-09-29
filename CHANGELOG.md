@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Codegen drift gate: CI job, pre-commit hook and `make codegen-check` fail when generated artifacts are out of sync with the generators, including untracked generated files
+- Model generation now fails when a field override in `scripts/generate_models.py` matches no generated schema, preventing silent loss of runtime fixes after spec refreshes
+
+### Changed
+
+- Model and contract generators now format their own outputs with ruff
+- Auth example reports missing credentials clearly and verifies the OAuth `state` parameter
+- Auth example moved from `examples/.auth/authenticate.py` to `examples/auth/authenticate.py` (the old path is gitignored, which hid the tracked file from `git status`)
+
+### Fixed
+
+- `ProdutosImagemInternaDTO`: `link_miniatura`, `validade`, `ordem`, `anexo` and `anexo_vinculo` are now optional, matching real `GET /produtos/{idProduto}` payloads whose internal images carry only `link` (`link` remains required)
+- `VendasItemDTO.id` and `VendasParcelaDTO.id` are now optional, matching sales-order responses whose itens/parcelas omit `id` (`sales_orders.py` docstrings synced with the generated response metadata)
+
 ## [0.2.0] - 2026-06-26
 
 ### Breaking Changes
