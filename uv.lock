@@ -114,16 +114,6 @@ dependencies = [
     { name = "python-dotenv" },
 ]
 
-[package.optional-dependencies]
-codegen = [
-    { name = "datamodel-code-generator" },
-]
-docs = [
-    { name = "mkdocs" },
-    { name = "mkdocs-material" },
-    { name = "mkdocstrings", extra = ["python"] },
-]
-
 [package.dev-dependencies]
 codegen = [
     { name = "datamodel-code-generator" },
@@ -145,16 +135,11 @@ docs = [
 [package.metadata]
 requires-dist = [
     { name = "bling-jwt-auth", specifier = ">=0.4.0,<1.0.0" },
-    { name = "datamodel-code-generator", marker = "extra == 'codegen'", specifier = ">=0.36.0" },
     { name = "httpx", specifier = ">=0.28.1,<1.0.0" },
-    { name = "mkdocs", marker = "extra == 'docs'", specifier = ">=1.6.1" },
-    { name = "mkdocs-material", marker = "extra == 'docs'", specifier = ">=9.6.23" },
-    { name = "mkdocstrings", extras = ["python"], marker = "extra == 'docs'", specifier = ">=0.26.0" },
     { name = "pydantic", specifier = ">=2.13.4,<3.0.0" },
     { name = "pydantic-settings", specifier = ">=2.14.1,<3.0.0" },
     { name = "python-dotenv", specifier = ">=1.2.2,<2.0.0" },
 ]
-provides-extras = ["codegen", "docs"]
 
 [package.metadata.requires-dev]
 codegen = [{ name = "datamodel-code-generator", specifier = ">=0.36.0" }]
