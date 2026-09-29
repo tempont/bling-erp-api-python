@@ -185,8 +185,11 @@ DATE_IMPORT = "from bling_erp_api.models.fields import BlingDate"
 # ``Field(...)`` keywords that affect the wire format. Inserted redeclarations
 # of parent-inherited fields only clone the parent's ``Field(...)`` call when
 # any of these are present; schema-documentation-only kwargs (``examples``,
-# ``description``, …) do not justify changing today's emitted output.
-WIRE_FORMAT_FIELD_KEYWORDS = frozenset({"validation_alias", "serialization_alias"})
+# ``description``, …) do not justify changing today's emitted output. The raw
+# ``alias`` form emitted by datamodel-codegen is normalized into the
+# ``validation_alias``/``serialization_alias`` pair by ``_normalize_raw_alias``
+# after the clone.
+WIRE_FORMAT_FIELD_KEYWORDS = frozenset({"alias", "validation_alias", "serialization_alias"})
 
 # Map of model name → inner data type for wrapper generation.
 # Models listed here will have their body replaced with:
@@ -644,7 +647,9 @@ def _insert_field_override_with_annotation(
     new_field = ast.AnnAssign(
         target=ast.Name(id=field_name, ctx=ast.Store()),
         annotation=ast.parse(annotation, mode="eval").body,
-        value=_inherited_field_value(_find_parent_field_decl(node, field_name, class_nodes)),
+        value=_inherited_field_value(
+            _find_parent_field_decl(node, field_name, class_nodes), field_name
+        ),
         simple=1,
     )
     node.body.append(new_field)
@@ -680,7 +685,7 @@ def _insert_field_none_default(
     new_field = ast.AnnAssign(
         target=ast.Name(id=field_name, ctx=ast.Store()),
         annotation=annotation,
-        value=_inherited_field_value(parent_decl),
+        value=_inherited_field_value(parent_decl, field_name),
         simple=1,
     )
     node.body.append(new_field)
@@ -753,16 +758,21 @@ def _rewrite_date_types(node: ast.ClassDef) -> None:
             stmt.id = "BlingDate"
 
 
-def _inherited_field_value(parent_decl: ast.AnnAssign | None) -> ast.expr:
+def _inherited_field_value(parent_decl: ast.AnnAssign | None, field_name: str) -> ast.expr:
     """Build the value for an inserted parent-inherited field redeclaration.
 
     Pydantic v2 replaces the parent field configuration on redeclaration, so
-    when the parent's ``Field(...)`` call carries wire-format metadata
-    (``validation_alias`` / ``serialization_alias``) it is deep-copied to keep
-    that metadata (and every other keyword, e.g. ``examples``) with its
-    default normalized to ``None``. Falls back to a bare ``None`` constant
-    when the parent declaration has no value or no alias metadata — keeping
-    the emitted output for alias-less parents byte-identical.
+    when the parent's ``Field(...)`` call carries wire-format metadata it is
+    deep-copied to keep that metadata (and every other keyword, e.g.
+    ``examples``) with its default normalized to ``None``. Raw datamodel-codegen
+    output spells the alias as ``alias="<BlingName>"``; the clone is normalized
+    into the repo-standard ``validation_alias=AliasChoices(...)`` /
+    ``serialization_alias`` pair so ``to_json_object()`` (``by_alias=True``)
+    serializes the correct Bling key. Parents already carrying the normalized
+    keywords (synthetic shapes) keep the existing clone behavior. Falls back
+    to a bare ``None`` constant when the parent declaration has no value or no
+    alias metadata — keeping the emitted output for alias-less parents
+    byte-identical.
     """
     if parent_decl is None or parent_decl.value is None:
         return ast.Constant(value=None)
@@ -771,7 +781,48 @@ def _inherited_field_value(parent_decl: ast.AnnAssign | None) -> ast.expr:
         keyword.arg in WIRE_FORMAT_FIELD_KEYWORDS for keyword in value.keywords
     ):
         return ast.Constant(value=None)
-    return _field_value_default_none(copy.deepcopy(value))
+    cloned = _field_value_default_none(copy.deepcopy(value))
+    _normalize_raw_alias(cloned, field_name)
+    return cloned
+
+
+def _normalize_raw_alias(value: ast.expr, field_name: str) -> None:
+    """Rewrite a raw ``alias="<BlingName>"`` keyword in a cloned Field call.
+
+    Mirrors ``_rewrite_field_aliases``, which normalizes raw declarations
+    before ``_apply_field_overrides`` runs — inserted redeclarations never
+    pass through it, so the clone is normalized here instead. An alias equal
+    to the field name is left as-is, matching the rewrite pass; parents
+    already carrying ``validation_alias`` / ``serialization_alias`` are
+    untouched.
+    """
+    if not isinstance(value, ast.Call):
+        return
+    alias_keyword = next(
+        (
+            keyword
+            for keyword in value.keywords
+            if keyword.arg == "alias" and _string_value(keyword.value)
+        ),
+        None,
+    )
+    if alias_keyword is None:
+        return
+
+    alias = _string_value(alias_keyword.value)
+    if alias is None or alias == field_name:
+        return
+
+    alias_keyword.arg = "validation_alias"
+    alias_keyword.value = ast.Call(
+        func=ast.Name(id="AliasChoices", ctx=ast.Load()),
+        args=[
+            ast.Constant(value=field_name),
+            ast.Constant(value=alias),
+        ],
+        keywords=[],
+    )
+    value.keywords.append(ast.keyword(arg="serialization_alias", value=ast.Constant(value=alias)))
 
 
 def _set_field_default_none(stmt: ast.AnnAssign) -> None:

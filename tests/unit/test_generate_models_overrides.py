@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import importlib.util
+import re
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -75,6 +76,16 @@ class ParentDTO(BlingModel):
         validation_alias=AliasChoices("x", "xStr"),
         serialization_alias="xStr",
     )
+
+
+class ChildDTO(ParentDTO):
+    pass
+"""
+
+
+_PARENT_RAW_ALIAS_FIELD_SOURCE = """\
+class ParentDTO(BlingModel):
+    x: str = Field(default="...", alias="xStr")
 
 
 class ChildDTO(ParentDTO):
@@ -288,3 +299,103 @@ def test_apply_inserts_field_exactly_once_for_both_tables_key(
     assert isinstance(inserted.value, ast.Constant)
     assert inserted.value.value is None
     assert ("ChildDTO", "x") in module._APPLIED_FIELD_OVERRIDES  # noqa: SLF001
+
+
+def _classes_from_source(source: str) -> dict[str, ast.ClassDef]:
+    """Parse class definitions from ``source`` keyed by class name."""
+    return {stmt.name: stmt for stmt in ast.parse(source).body if isinstance(stmt, ast.ClassDef)}
+
+
+def test_apply_normalizes_raw_parent_alias_in_inserted_field(
+    override_guard: ModuleType,
+) -> None:
+    """A raw ``alias=`` parent (the real datamodel-codegen shape) emits the normalized pair.
+
+    Raw output carries plain ``alias="xStr"``; the inserted redeclaration must
+    spell ``validation_alias=AliasChoices(...)`` + ``serialization_alias`` so
+    ``to_json_object()`` (``by_alias=True``) serializes the Bling key.
+    """
+    module = override_guard
+    module.FIELD_ANNOTATION_OVERRIDES[("ChildDTO", "x")] = "str | None"
+    classes = _classes_from_source(_PARENT_RAW_ALIAS_FIELD_SOURCE)
+
+    module._apply_field_overrides(  # noqa: SLF001
+        "ChildDTO",
+        classes["ChildDTO"],
+        class_nodes={"ParentDTO": classes["ParentDTO"]},
+    )
+
+    fields = _child_x_fields(classes["ChildDTO"])
+    assert len(fields) == 1
+    _assert_x_field_metadata(fields[0])
+    value = fields[0].value
+    assert isinstance(value, ast.Call)
+    assert {keyword.arg for keyword in value.keywords} == {
+        "default",
+        "validation_alias",
+        "serialization_alias",
+    }
+    emitted = ast.unparse(fields[0])
+    assert "validation_alias=AliasChoices('x', 'xStr')" in emitted
+    assert "serialization_alias='xStr'" in emitted
+
+
+def test_apply_falls_back_to_bare_none_for_alias_less_parent_field(
+    override_guard: ModuleType,
+) -> None:
+    """A parent Field call without alias keywords still inserts a bare ``None``.
+
+    Schema-documentation-only kwargs (``examples``, ``description``, …) do not
+    justify cloning the parent call; this pins the byte-identical fallback.
+    """
+    module = override_guard
+    module.FIELD_ANNOTATION_OVERRIDES[("ChildDTO", "x")] = "str | None"
+    classes = _classes_from_source(
+        """\
+class ParentDTO(BlingModel):
+    x: str = Field(default="...", examples=["demo"])
+
+
+class ChildDTO(ParentDTO):
+    pass
+"""
+    )
+
+    module._apply_field_overrides(  # noqa: SLF001
+        "ChildDTO",
+        classes["ChildDTO"],
+        class_nodes={"ParentDTO": classes["ParentDTO"]},
+    )
+
+    fields = _child_x_fields(classes["ChildDTO"])
+    assert len(fields) == 1
+    assert isinstance(fields[0].value, ast.Constant)
+    assert fields[0].value.value is None
+
+
+def test_schema_module_content_imports_alias_choices_for_inserted_field(
+    override_guard: ModuleType,
+) -> None:
+    """End-to-end: the rendered module carries the ``AliasChoices`` import.
+
+    Renders parent + child through ``_schema_module_content`` so the inserted
+    field flows through the full pipeline; the normalized form must survive
+    into the emitted module next to the hardcoded pydantic import line.
+    """
+    module = override_guard
+    module.FIELD_ANNOTATION_OVERRIDES[("ChildDTO", "x")] = "str | None"
+    class_nodes = _classes_from_source(_PARENT_RAW_ALIAS_FIELD_SOURCE)
+
+    content = module._schema_module_content(  # noqa: SLF001
+        "exemplo",
+        ["ParentDTO", "ChildDTO"],
+        class_nodes,
+        {"ParentDTO": "exemplo", "ChildDTO": "exemplo"},
+    )
+
+    assert "from pydantic import AliasChoices, AwareDatetime, Field, RootModel" in content
+    assert "validation_alias=AliasChoices('x', 'xStr')" in content
+    assert "serialization_alias='xStr'" in content
+    # ``alias='xStr'`` is a substring of ``serialization_alias='xStr'``; the
+    # lookbehind only matches a bare raw ``alias`` keyword surviving the run.
+    assert re.search(r"(?<![\w])alias='xStr'", content) is None

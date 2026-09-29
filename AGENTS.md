@@ -118,7 +118,7 @@ make check
 5. Guard: generation fails (non-zero exit) listing dead `ClassName.field_name` keys when an override matches no generated schema or field.
 6. After spec refreshes, update the override tables first; stale keys make generation fail and tests fail until updated.
 7. Discipline: with live keys, regenerated output must stay byte-identical (`git diff --exit-code`); `make codegen-check` (CI + pre-commit) enforces sync of generated artifacts.
-8. Insertion behavior: overrides for parent-inherited fields re-insert the declaration, cloning the parent `Field(...)` call's wire-format keywords (`validation_alias`/`serialization_alias`) with `default=None` normalized.
+8. Insertion behavior: overrides for parent-inherited fields re-insert the declaration, cloning the parent `Field(...)` call with `default=None` normalized. A raw `alias="<BlingName>"` keyword (the datamodel-codegen form) is rewritten into the repo-standard `validation_alias=AliasChoices("<snake_field>", "<BlingName>")` + `serialization_alias="<BlingName>"` pair; parents already carrying the normalized keywords keep the existing clone behavior, and alias-less parents fall back to a bare `= None` redeclaration.
 
 ### Docstring Guidelines
 
