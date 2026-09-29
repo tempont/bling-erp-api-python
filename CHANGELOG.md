@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Removed the duplicate `models.generated.resources` re-export tree; import from `bling_erp_api.models.generated` instead
 - Model and contract generators now format their own outputs with ruff
 - Auth example reports missing credentials clearly and verifies the OAuth `state` parameter
 - Auth example moved from `examples/.auth/authenticate.py` to `examples/auth/authenticate.py` (the old path is gitignored, which hid the tracked file from `git status`)

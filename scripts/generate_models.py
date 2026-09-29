@@ -26,7 +26,6 @@ if TYPE_CHECKING:
 
 SPEC_PATH = Path("specs/bling-openapi-reference.json")
 GENERATED_DIR = Path("src/bling_erp_api/models/generated")
-RESOURCE_REEXPORT_DIR = GENERATED_DIR / "resources"
 SCHEMAS_PACKAGE_DIR = GENERATED_DIR / "schemas"
 RAW_SCHEMAS_MODULE = GENERATED_DIR / "_schemas_raw.py"
 LEGACY_SCHEMAS_MODULE = GENERATED_DIR / "schemas.py"
@@ -266,7 +265,6 @@ def _check_field_overrides_applied() -> None:
 
 def _prepare_generated_dirs() -> None:
     GENERATED_DIR.mkdir(parents=True, exist_ok=True)
-    RESOURCE_REEXPORT_DIR.mkdir(parents=True, exist_ok=True)
     OPERATION_MODELS_MODULE.parent.mkdir(parents=True, exist_ok=True)
     LEGACY_SCHEMAS_MODULE.unlink(missing_ok=True)
 
@@ -987,21 +985,6 @@ def _write_resource_reexports(
         path = GENERATED_DIR / f"{module}.py"
         path.unlink()
 
-    for path in RESOURCE_REEXPORT_DIR.glob("*.py"):
-        path.unlink()
-
-    (RESOURCE_REEXPORT_DIR / "__init__.py").write_text(
-        '"""Resource-scoped generated model reexports.\n'
-        "\n"
-        "TODO: Consolidate duplicate model tree.\n"
-        "The ``resources/`` subdirectory mirrors the parent ``models/generated/`` with\n"
-        "identical reexport modules. This is a codegen duplication — investigate whether\n"
-        "imports from ``models/generated/resources/`` can be retired in favor of\n"
-        "``models/generated/<resource>.py``.\n"
-        '"""\n',
-        encoding="utf-8",
-    )
-
     for module, contracts in sorted(all_contracts.items()):
         names = sorted(_resource_model_names(module, contracts, class_names))
         # Include response data wrapper models that belong to this module
@@ -1012,7 +995,6 @@ def _write_resource_reexports(
         names.sort()
         content = _reexport_module_content(module, names, class_modules)
         (GENERATED_DIR / f"{module}.py").write_text(content, encoding="utf-8")
-        (RESOURCE_REEXPORT_DIR / f"{module}.py").write_text(content, encoding="utf-8")
 
 
 def _resource_model_names(
