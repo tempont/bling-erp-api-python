@@ -156,6 +156,31 @@ class StaticPayloadTransport(RecordingTransport):
         return self.payload
 
 
+class QueuedPayloadTransport(RecordingTransport):
+    """Transport test double that pops queued payloads per request."""
+
+    def __init__(self, payloads: list[JsonObject]) -> None:
+        """Create a recorder with a queue of response payloads."""
+        super().__init__()
+        self.payloads = list(payloads)
+
+    def request(
+        self,
+        method: str,
+        path: str,
+        *,
+        params: QueryParams | None = None,
+        json: JsonPayload | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> JsonObject:
+        """Record a request and return the next queued payload."""
+        self.calls.append((method, path, params, json))
+        self.header_calls.append(headers)
+        if self.payloads:
+            return self.payloads.pop(0)
+        return {"data": []}
+
+
 class TestPathValidation:
     """Tests for URL path traversal validation in BaseResource."""
 
@@ -489,6 +514,126 @@ def test_sales_orders_posting_operations_map_to_bling_endpoints() -> None:
     resource.estornar_contas(123)
     resource.gerar_nota_fiscal(123)
     resource.gerar_nota_fiscal_consumidor(123)
+
+    assert transport.calls == [
+        ("POST", "/pedidos/vendas/123/lancar-estoque", None, None),
+        ("POST", "/pedidos/vendas/123/lancar-estoque/456", None, None),
+        ("POST", "/pedidos/vendas/123/estornar-estoque", None, None),
+        ("POST", "/pedidos/vendas/123/lancar-contas", None, None),
+        ("POST", "/pedidos/vendas/123/estornar-contas", None, None),
+        ("POST", "/pedidos/vendas/123/gerar-nfe", None, None),
+        ("POST", "/pedidos/vendas/123/gerar-nfce", None, None),
+    ]
+
+
+def test_sales_orders_obter_maps_to_bling_endpoint() -> None:
+    """Sales order retrieval should map to the GET by ID endpoint."""
+    transport = RecordingTransport()
+    resource = SalesOrdersResource(transport)
+
+    resource.obter(123)
+
+    assert transport.calls == [("GET", "/pedidos/vendas/123", None, None)]
+
+
+def test_sales_orders_english_get_alias_still_maps_to_bling_endpoint() -> None:
+    """English alias should keep compatibility while Portuguese is canonical."""
+    transport = RecordingTransport()
+    resource = SalesOrdersResource(transport)
+
+    resource.get(order_id=123)
+
+    assert transport.calls == [("GET", "/pedidos/vendas/123", None, None)]
+
+
+def test_sales_orders_iterar_yields_pages_until_empty() -> None:
+    """Sales order iteration should fetch pages until the Bling envelope empties."""
+    transport = QueuedPayloadTransport(
+        [
+            {
+                "data": [
+                    {
+                        "id": 123,
+                        "numero": 1001,
+                        "data": "2024-01-10",
+                        "dataSaida": "2024-01-10",
+                        "dataPrevista": "2024-01-12",
+                        "contato": {"id": 456, "nome": "Ana"},
+                    }
+                ]
+            },
+            {"data": []},
+        ]
+    )
+    resource = SalesOrdersResource(transport)
+
+    first_record = next(resource.iterar(pagina=2, limite=50, id_contato=456))
+
+    assert first_record == {
+        "id": 123,
+        "numero": 1001,
+        "numero_loja": None,
+        "data": "2024-01-10",
+        "data_saida": "2024-01-10",
+        "data_prevista": "2024-01-12",
+        "total_produtos": None,
+        "total": None,
+        "contato": {
+            "id": 456,
+            "nome": "Ana",
+            "tipo_pessoa": None,
+            "numero_documento": None,
+        },
+        "situacao": None,
+        "loja": None,
+    }
+    assert transport.calls == [
+        ("GET", "/pedidos/vendas", {"pagina": 2, "limite": 50, "idContato": 456}, None),
+    ]
+
+
+def test_sales_orders_english_iterate_alias_still_paginates() -> None:
+    """English alias should keep compatibility while Portuguese is canonical."""
+    transport = QueuedPayloadTransport([{"data": []}])
+    resource = SalesOrdersResource(transport)
+
+    assert list(resource.iterate(page=2, limit=50, contact_id=456)) == []
+
+    assert transport.calls == [
+        ("GET", "/pedidos/vendas", {"pagina": 2, "limite": 50, "idContato": 456}, None)
+    ]
+
+
+def test_sales_orders_english_write_aliases_map_to_canonical_operations() -> None:
+    """English write aliases should delegate to their canonical Portuguese methods."""
+    transport = RecordingTransport()
+    resource = SalesOrdersResource(transport)
+
+    resource.update(123, {"numeroLoja": "WEB-123"})  # type: ignore[reportArgumentType]
+    resource.delete(123)
+    resource.delete_many([123, 456])
+    resource.update_status(123, 9)
+
+    assert transport.calls == [
+        ("PUT", "/pedidos/vendas/123", None, {"numeroLoja": "WEB-123"}),
+        ("DELETE", "/pedidos/vendas/123", None, None),
+        ("DELETE", "/pedidos/vendas", {"idsPedidosVendas[]": [123, 456]}, None),
+        ("PATCH", "/pedidos/vendas/123/situacoes/9", None, None),
+    ]
+
+
+def test_sales_orders_english_posting_aliases_map_to_canonical_operations() -> None:
+    """English post-action aliases should delegate to their canonical methods."""
+    transport = RecordingTransport()
+    resource = SalesOrdersResource(transport)
+
+    resource.post_stock(123)
+    resource.post_stock(123, deposit_id=456)
+    resource.reverse_stock(123)
+    resource.post_accounts(123)
+    resource.reverse_accounts(123)
+    resource.generate_invoice(123)
+    resource.generate_consumer_invoice(123)
 
     assert transport.calls == [
         ("POST", "/pedidos/vendas/123/lancar-estoque", None, None),

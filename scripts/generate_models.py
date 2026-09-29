@@ -145,6 +145,11 @@ FIELD_ANNOTATION_OVERRIDES = {
     ("ProdutosImagemInternaDTO", "ordem"): "int | None",
     ("ProdutosImagemInternaDTO", "anexo"): "ProdutosAnexoDTO | None",
     ("ProdutosImagemInternaDTO", "anexo_vinculo"): "ProdutosAnexoVinculoDTO | None",
+    # Bug 7: VendasItemDTO.id / VendasParcelaDTO.id should be optional — the
+    # spec itself notes "Ignorado no método POST", and GET detail responses
+    # may omit these ids entirely
+    ("VendasItemDTO", "id"): "int | None",
+    ("VendasParcelaDTO", "id"): "int | None",
 }
 FIELD_NONE_DEFAULT_OVERRIDES = {
     ("SituacoesAcaoDTO", "descricao"),
@@ -160,6 +165,11 @@ FIELD_NONE_DEFAULT_OVERRIDES = {
     ("ProdutosImagemInternaDTO", "ordem"),
     ("ProdutosImagemInternaDTO", "anexo"),
     ("ProdutosImagemInternaDTO", "anexo_vinculo"),
+    # Bug 7: VendasItemDTO.id / VendasParcelaDTO.id should be optional — the
+    # spec itself notes "Ignorado no método POST", and GET detail responses
+    # may omit these ids entirely
+    ("VendasItemDTO", "id"),
+    ("VendasParcelaDTO", "id"),
 }
 
 # Type that replaces bare ``date`` in all generated annotations.
