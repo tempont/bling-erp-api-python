@@ -109,6 +109,17 @@ make check
 8. Raw `JsonObject` bodies are acceptable only for endpoints not yet modeled or deliberately flexible payloads; when using raw dicts, the caller is responsible for Bling wire-format keys.
 9. Examples should prefer normal model constructors over `model_construct()` so type checking and validation catch field-name drift.
 
+### Model field overrides
+
+1. `scripts/generate_models.py` owns two override tables keyed `(ClassName, field_name)`: `FIELD_ANNOTATION_OVERRIDES` (dict) rewrites the generated annotation to `X | None`, and `FIELD_NONE_DEFAULT_OVERRIDES` (set) forces default `None`.
+2. Rationale: the vendored OpenAPI spec (`specs/bling-openapi-reference.json`) declares fields required that real Bling payloads omit (precedents: product internal images carrying only `link`; sales-order itens/parcelas without `id`).
+3. Overrides are the sanctioned way to encode that divergence — never hand-edit files under `src/bling_erp_api/models/generated/`.
+4. Shared-DTO tradeoff (accepted): the same generated DTOs back POST/PUT request payloads, so relaxing a response field also relaxes client-side write validation; errors for those fields surface as Bling API 400s instead of local pydantic validation errors.
+5. Guard: generation fails (non-zero exit) listing dead `ClassName.field_name` keys when an override matches no generated schema or field.
+6. After spec refreshes, update the override tables first; stale keys make generation fail and tests fail until updated.
+7. Discipline: with live keys, regenerated output must stay byte-identical (`git diff --exit-code`); `make codegen-check` (CI + pre-commit) enforces sync of generated artifacts.
+8. Insertion behavior: overrides for parent-inherited fields re-insert the declaration, cloning the parent `Field(...)` call's wire-format keywords (`validation_alias`/`serialization_alias`) with `default=None` normalized.
+
 ### Docstring Guidelines
 
 Every resource method MUST include a Google-style docstring with the following structure:
