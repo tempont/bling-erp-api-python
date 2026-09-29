@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Codegen drift gate: CI job, pre-commit hook and `make codegen-check` fail when generated artifacts are out of sync with the generators, including untracked generated files
-- Model generation now fails when a field override in `scripts/generate_models.py` matches no generated schema, preventing silent loss of runtime fixes after spec refreshes
+- Model generation now fails when a field override in `scripts/generate_models.py` matches no generated schema or field, preventing silent loss of runtime fixes after spec refreshes
 
 ### Changed
 

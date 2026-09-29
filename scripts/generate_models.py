@@ -174,7 +174,8 @@ FIELD_NONE_DEFAULT_OVERRIDES = {
 
 # Overrides matched while generating the current run's classes, as
 # ``(class_name, field_name)``. Used by ``main`` to fail when an override
-# matches no generated schema class (e.g. renamed/removed in the spec).
+# matches no generated schema class or field (e.g. renamed/removed in the
+# spec).
 _APPLIED_FIELD_OVERRIDES: set[tuple[str, str]] = set()
 
 # Type that replaces bare ``date`` in all generated annotations.
@@ -233,7 +234,7 @@ def main() -> None:
 
 
 def _check_field_overrides_applied() -> None:
-    """Fail the generation when a field override matches no generated class."""
+    """Fail the generation when a field override matches no generated class or field."""
     dead_keys = (
         set(FIELD_ANNOTATION_OVERRIDES) | set(FIELD_NONE_DEFAULT_OVERRIDES)
     ) - _APPLIED_FIELD_OVERRIDES
@@ -244,11 +245,14 @@ def _check_field_overrides_applied() -> None:
         f"  - {class_name}.{field_name}\n" for class_name, field_name in sorted(dead_keys)
     )
     message = (
-        "Field overrides matched no generated schema class:\n"
+        "Field overrides matched no generated schema class or field:\n"
         f"{dead_list}"
         "The spec likely renamed or removed these schemas; update "
         "FIELD_ANNOTATION_OVERRIDES / FIELD_NONE_DEFAULT_OVERRIDES in "
-        "scripts/generate_models.py."
+        "scripts/generate_models.py.\n"
+        "A failed run may leave `src/bling_erp_api/models/generated/_schemas_raw.py` "
+        "(and unformatted regenerated files) behind; they are replaced by the next "
+        "successful run."
     )
     raise SystemExit(message)
 
@@ -583,19 +587,30 @@ def _apply_field_overrides(
             applied_default_fields.add(stmt.target.id)
 
     # Handle overrides for fields inherited from parent classes — the field
-    # does not exist in this class's body, so we must insert a new declaration.
+    # does not exist in this class's body, so we re-insert a declaration. If
+    # the field is absent from every parent as well, the override key is dead:
+    # no phantom field is emitted and the key is not recorded, so ``main``
+    # fails listing ``Class.field``.
     for (override_name, field_name), annotation in FIELD_ANNOTATION_OVERRIDES.items():
-        if override_name == name and field_name not in applied_annotation_fields:
-            _insert_field_override_with_annotation(node, field_name, annotation)
+        if override_name != name or field_name in applied_annotation_fields:
+            continue
+        if not _field_exists_in_parents(node, field_name, class_nodes):
+            continue
+        _insert_field_override_with_annotation(node, field_name, annotation)
+        _APPLIED_FIELD_OVERRIDES.add((name, field_name))
 
     for override_name, field_name in FIELD_NONE_DEFAULT_OVERRIDES:
-        if override_name == name and field_name not in applied_default_fields:
-            _insert_field_none_default(node, field_name, class_nodes)
+        if override_name != name or field_name in applied_default_fields:
+            continue
+        if not _field_exists_in_parents(node, field_name, class_nodes):
+            continue
+        _insert_field_none_default(node, field_name, class_nodes)
+        _APPLIED_FIELD_OVERRIDES.add((name, field_name))
 
-    # Record every override key whose class was generated (applied in-body or
-    # via insertion above), so ``main`` can detect dead override keys.
-    _APPLIED_FIELD_OVERRIDES.update(key for key in FIELD_ANNOTATION_OVERRIDES if key[0] == name)
-    _APPLIED_FIELD_OVERRIDES.update(key for key in FIELD_NONE_DEFAULT_OVERRIDES if key[0] == name)
+    # Record overrides applied directly in the class body, so ``main`` can
+    # detect dead override keys (class never rendered, or field gone).
+    _APPLIED_FIELD_OVERRIDES.update((name, field) for field in applied_annotation_fields)
+    _APPLIED_FIELD_OVERRIDES.update((name, field) for field in applied_default_fields)
 
 
 def _insert_field_override_with_annotation(
@@ -659,6 +674,21 @@ def _insert_field_none_default(
         simple=1,
     )
     node.body.append(new_field)
+
+
+def _field_exists_in_parents(
+    node: ast.ClassDef,
+    field_name: str,
+    class_nodes: Mapping[str, ast.ClassDef] | None,
+) -> bool:
+    """Return whether ``field_name`` is declared anywhere in the class's parent chain."""
+    if class_nodes is None:
+        return False
+    return any(
+        base_name is not None
+        and _find_field_annotation(field_name, base_name, class_nodes) is not None
+        for base_name in (_name_from_expr(base) for base in node.bases)
+    )
 
 
 def _find_field_annotation(
