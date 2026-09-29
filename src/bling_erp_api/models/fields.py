@@ -34,12 +34,13 @@ def _parse_bling_date(value: object) -> date | None:
     raise ValueError(msg)
 
 
+def _serialize_bling_date(value: date | None) -> str | None:
+    """Serialize a ``BlingDate`` as an ISO date string, preserving ``None``."""
+    return value.isoformat() if value is not None else None
+
+
 BlingDate = Annotated[
     date,
     PlainValidator(_parse_bling_date),
-    PlainSerializer(
-        lambda v: v.isoformat() if v is not None else None,
-        return_type=str | None,
-        when_used="json",
-    ),
+    PlainSerializer(_serialize_bling_date, return_type=str | None, when_used="json"),
 ]
