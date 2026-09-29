@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-29
+
+### Breaking Changes
+
+- Removed `bling_erp_api.models.generated.resources.*`. Import generated resource models from `bling_erp_api.models.generated.<resource>` instead (for example, `bling_erp_api.models.generated.sales_orders`); stable public model aliases remain in `bling_erp_api.models.aliases`.
+- Removed the `docs` and `codegen` PyPI extras. `pip install bling-erp-api[docs]` and `pip install bling-erp-api[codegen]` no longer install those tools. In a source checkout, use `uv sync --group docs`, `uv sync --group codegen`, or `uv sync --all-groups`.
+
 ### Added
 
 - Codegen drift gate: CI job, pre-commit hook and `make codegen-check` fail when generated artifacts are out of sync with the generators, including untracked generated files
@@ -14,11 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Removed the duplicate `models.generated.resources` re-export tree; import from `bling_erp_api.models.generated` instead
 - Model and contract generators now format their own outputs with ruff
 - Auth example reports missing credentials clearly and verifies the OAuth `state` parameter
 - Auth example moved from `examples/.auth/authenticate.py` to `examples/auth/authenticate.py` (the old path is gitignored, which hid the tracked file from `git status`)
-- Removed the duplicate `docs` and `codegen` extras from `[project.optional-dependencies]` (present in 0.2.0): `pip install bling-erp-api[docs]` or `[codegen]` no longer installs anything; `[dependency-groups]` is now their single home — install the dev/codegen tooling with `uv sync --all-groups`
 
 ### Fixed
 
