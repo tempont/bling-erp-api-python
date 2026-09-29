@@ -473,7 +473,7 @@ class VendasItemDTO(BlingModel):
     quando ele aparecer como request body ou response schema nos métodos do SDK.
 
     Fields:
-        id: Bling ``id``; type ``int``; obrigatório. Ignorado no método POST.
+        id: Bling ``id``; type ``int | None``; opcional. Ignorado no método POST.
         codigo: Bling ``codigo``; type ``str | None``; opcional.
         unidade: Bling ``unidade``; type ``str | None``; opcional.
         quantidade: Bling ``quantidade``; type ``float``; obrigatório.
@@ -486,7 +486,7 @@ class VendasItemDTO(BlingModel):
         comissao: Bling ``comissao``; type ``VendasItemComissaoDTO | None``; opcional.
         natureza_operacao: Bling ``naturezaOperacao``; type ``VendasItemNaturezaOperacaoDTO | None``; opcional."""
 
-    id: int = Field(..., examples=[12345678])
+    id: int | None = Field(default=None, examples=[12345678])
     codigo: str | None = Field(default=None, examples=["BLG-5"])
     unidade: str | None = Field(default=None, examples=["UN"])
     quantidade: float = Field(..., examples=[1])
@@ -521,14 +521,14 @@ class VendasParcelaDTO(BlingModel):
     quando ele aparecer como request body ou response schema nos métodos do SDK.
 
     Fields:
-        id: Bling ``id``; type ``int``; obrigatório. Ignorado no método POST.
+        id: Bling ``id``; type ``int | None``; opcional. Ignorado no método POST.
         data_vencimento: Bling ``dataVencimento``; type ``BlingDate``; obrigatório.
         valor: Bling ``valor``; type ``float``; obrigatório.
         observacoes: Bling ``observacoes``; type ``str | None``; opcional.
         caut: Bling ``caut``; type ``str | None``; opcional. cAut (ou NSU): código de autorização da operação financeira
         forma_pagamento: Bling ``formaPagamento``; type ``VendasParcelaFormaPagamentoDTO``; obrigatório."""
 
-    id: int = Field(..., examples=[12345678])
+    id: int | None = Field(default=None, examples=[12345678])
     data_vencimento: BlingDate = Field(
         ...,
         validation_alias=AliasChoices("data_vencimento", "dataVencimento"),

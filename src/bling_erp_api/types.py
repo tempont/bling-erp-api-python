@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 
-type JsonValue = None | bool | int | float | str | list["JsonValue"] | dict[str, "JsonValue"]
+type JsonValue = bool | int | float | str | list["JsonValue"] | dict[str, "JsonValue"] | None
 type JsonObject = dict[str, JsonValue]
 type JsonPayload = JsonObject | Sequence[Mapping[str, JsonValue]]
 type QueryParamPrimitive = str | int | float | bool

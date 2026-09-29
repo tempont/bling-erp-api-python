@@ -1,4 +1,4 @@
-"""Generated model reexports for invoices. Do not edit manually."""
+"""Generated model reexports for nfce. Do not edit manually."""
 
 from __future__ import annotations
 

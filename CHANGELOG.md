@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-29
+
+### Breaking Changes
+
+- Removed `bling_erp_api.models.generated.resources.*`. Import generated resource models from `bling_erp_api.models.generated.<resource>` instead (for example, `bling_erp_api.models.generated.sales_orders`); stable public model aliases remain in `bling_erp_api.models.aliases`.
+- Removed the `docs` and `codegen` PyPI extras. `pip install bling-erp-api[docs]` and `pip install bling-erp-api[codegen]` no longer install those tools. In a source checkout, use `uv sync --group docs`, `uv sync --group codegen`, or `uv sync --all-groups`.
+
+### Added
+
+- Codegen drift gate: CI job, pre-commit hook and `make codegen-check` fail when generated artifacts are out of sync with the generators, including untracked generated files
+- Model generation now fails when a field override in `scripts/generate_models.py` matches no generated schema or field, preventing silent loss of runtime fixes after spec refreshes
+
+### Changed
+
+- Model and contract generators now format their own outputs with ruff
+- Auth example reports missing credentials clearly and verifies the OAuth `state` parameter
+- Auth example moved from `examples/.auth/authenticate.py` to `examples/auth/authenticate.py` (the old path is gitignored, which hid the tracked file from `git status`)
+
+### Fixed
+
+- `ProdutosImagemInternaDTO`: `link_miniatura`, `validade`, `ordem`, `anexo` and `anexo_vinculo` are now optional, matching real `GET /produtos/{idProduto}` payloads whose internal images carry only `link` (`link` remains required)
+- `VendasItemDTO.id` and `VendasParcelaDTO.id` are now optional, matching sales-order responses whose itens/parcelas omit `id` (`sales_orders.py` docstrings synced with the generated response metadata)
+- `BlingDate` fields no longer emit pydantic `PydanticSerializationUnexpectedValue` warnings on JSON serialization; wire output (ISO 8601 strings) is unchanged
+
 ## [0.2.0] - 2026-06-26
 
 ### Breaking Changes

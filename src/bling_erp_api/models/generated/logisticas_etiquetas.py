@@ -1,4 +1,4 @@
-"""Generated model reexports for logisticas. Do not edit manually."""
+"""Generated model reexports for logisticas_etiquetas. Do not edit manually."""
 
 from __future__ import annotations
 

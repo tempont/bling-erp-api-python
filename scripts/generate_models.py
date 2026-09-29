@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import ast
+import copy
 import json
 import re
 import shutil
@@ -25,7 +26,6 @@ if TYPE_CHECKING:
 
 SPEC_PATH = Path("specs/bling-openapi-reference.json")
 GENERATED_DIR = Path("src/bling_erp_api/models/generated")
-RESOURCE_REEXPORT_DIR = GENERATED_DIR / "resources"
 SCHEMAS_PACKAGE_DIR = GENERATED_DIR / "schemas"
 RAW_SCHEMAS_MODULE = GENERATED_DIR / "_schemas_raw.py"
 LEGACY_SCHEMAS_MODULE = GENERATED_DIR / "schemas.py"
@@ -138,6 +138,18 @@ FIELD_ANNOTATION_OVERRIDES = {
     ("OrdensProducaoPostRequest", "id"): "int | None",
     # Bug 5: ContatosPostRequest.id should be optional on POST
     ("ContatosPostRequest", "id"): "int | None",
+    # Bug 6: GET /produtos/{idProduto} frequently omits every field but
+    # ``link`` in midia.imagens.internas[] entries
+    ("ProdutosImagemInternaDTO", "link_miniatura"): "str | None",
+    ("ProdutosImagemInternaDTO", "validade"): "str | None",
+    ("ProdutosImagemInternaDTO", "ordem"): "int | None",
+    ("ProdutosImagemInternaDTO", "anexo"): "ProdutosAnexoDTO | None",
+    ("ProdutosImagemInternaDTO", "anexo_vinculo"): "ProdutosAnexoVinculoDTO | None",
+    # Bug 7: VendasItemDTO.id / VendasParcelaDTO.id should be optional — the
+    # spec itself notes "Ignorado no método POST", and GET detail responses
+    # may omit these ids entirely
+    ("VendasItemDTO", "id"): "int | None",
+    ("VendasParcelaDTO", "id"): "int | None",
 }
 FIELD_NONE_DEFAULT_OVERRIDES = {
     ("SituacoesAcaoDTO", "descricao"),
@@ -146,11 +158,38 @@ FIELD_NONE_DEFAULT_OVERRIDES = {
     ("OrdensProducaoPostRequest", "situacao"),
     # Bug 5: ContatosPostRequest.id should be optional on POST
     ("ContatosPostRequest", "id"),
+    # Bug 6: GET /produtos/{idProduto} frequently omits every field but
+    # ``link`` in midia.imagens.internas[] entries
+    ("ProdutosImagemInternaDTO", "link_miniatura"),
+    ("ProdutosImagemInternaDTO", "validade"),
+    ("ProdutosImagemInternaDTO", "ordem"),
+    ("ProdutosImagemInternaDTO", "anexo"),
+    ("ProdutosImagemInternaDTO", "anexo_vinculo"),
+    # Bug 7: VendasItemDTO.id / VendasParcelaDTO.id should be optional — the
+    # spec itself notes "Ignorado no método POST", and GET detail responses
+    # may omit these ids entirely
+    ("VendasItemDTO", "id"),
+    ("VendasParcelaDTO", "id"),
 }
+
+# Overrides matched while generating the current run's classes, as
+# ``(class_name, field_name)``. Used by ``main`` to fail when an override
+# matches no generated schema class or field (e.g. renamed/removed in the
+# spec).
+_APPLIED_FIELD_OVERRIDES: set[tuple[str, str]] = set()
 
 # Type that replaces bare ``date`` in all generated annotations.
 DATE_TYPE_REWRITE = "BlingDate"
 DATE_IMPORT = "from bling_erp_api.models.fields import BlingDate"
+
+# ``Field(...)`` keywords that affect the wire format. Inserted redeclarations
+# of parent-inherited fields only clone the parent's ``Field(...)`` call when
+# any of these are present; schema-documentation-only kwargs (``examples``,
+# ``description``, …) do not justify changing today's emitted output. The raw
+# ``alias`` form emitted by datamodel-codegen is normalized into the
+# ``validation_alias``/``serialization_alias`` pair by
+# ``_rewrite_raw_alias_keyword`` after the clone.
+WIRE_FORMAT_FIELD_KEYWORDS = frozenset({"alias", "validation_alias", "serialization_alias"})
 
 # Map of model name → inner data type for wrapper generation.
 # Models listed here will have their body replaced with:
@@ -188,12 +227,14 @@ def main() -> None:
     # Inject response data wrapper models (new classes or body overwrites).
     # Must happen BEFORE _schema_class_modules so module assignment is correct.
     _inject_response_model_data_wrappers(class_order, class_nodes)
+    _APPLIED_FIELD_OVERRIDES.clear()
 
     class_names = set(class_order)
     all_contracts = _contracts_by_module(payload)
     class_modules = _schema_class_modules(class_order, all_contracts)
 
     _write_schema_package(class_order, class_nodes, class_modules)
+    _check_field_overrides_applied()
     _write_resource_reexports(all_contracts, class_names, class_modules)
     _write_generated_init(class_order)
     _write_operation_models(all_contracts, class_names, class_modules)
@@ -201,9 +242,32 @@ def main() -> None:
     _run_ruff_fix()
 
 
+def _check_field_overrides_applied() -> None:
+    """Fail the generation when a field override matches no generated class or field."""
+    dead_keys = (
+        set(FIELD_ANNOTATION_OVERRIDES) | set(FIELD_NONE_DEFAULT_OVERRIDES)
+    ) - _APPLIED_FIELD_OVERRIDES
+    if not dead_keys:
+        return
+
+    dead_list = "".join(
+        f"  - {class_name}.{field_name}\n" for class_name, field_name in sorted(dead_keys)
+    )
+    message = (
+        "Field overrides matched no generated schema class or field:\n"
+        f"{dead_list}"
+        "The spec likely renamed or removed these schemas; update "
+        "FIELD_ANNOTATION_OVERRIDES / FIELD_NONE_DEFAULT_OVERRIDES in "
+        "scripts/generate_models.py.\n"
+        "A failed run may leave `src/bling_erp_api/models/generated/_schemas_raw.py` "
+        "(and unformatted regenerated files) behind; they are replaced by the next "
+        "successful run."
+    )
+    raise SystemExit(message)
+
+
 def _prepare_generated_dirs() -> None:
     GENERATED_DIR.mkdir(parents=True, exist_ok=True)
-    RESOURCE_REEXPORT_DIR.mkdir(parents=True, exist_ok=True)
     OPERATION_MODELS_MODULE.parent.mkdir(parents=True, exist_ok=True)
     LEGACY_SCHEMAS_MODULE.unlink(missing_ok=True)
 
@@ -531,20 +595,47 @@ def _apply_field_overrides(
             applied_default_fields.add(stmt.target.id)
 
     # Handle overrides for fields inherited from parent classes — the field
-    # does not exist in this class's body, so we must insert a new declaration.
+    # does not exist in this class's body, so we re-insert a declaration. If
+    # the field is absent from every parent as well, the override key is dead:
+    # no phantom field is emitted and the key is not recorded, so ``main``
+    # fails listing ``Class.field``. A key present in both tables inserts the
+    # field only once (``inserted_fields``), coalescing both fixes into the
+    # single redeclaration.
+    inserted_fields: set[str] = set()
     for (override_name, field_name), annotation in FIELD_ANNOTATION_OVERRIDES.items():
-        if override_name == name and field_name not in applied_annotation_fields:
-            _insert_field_override_with_annotation(node, field_name, annotation)
+        if override_name != name or field_name in applied_annotation_fields:
+            continue
+        if not _field_exists_in_parents(node, field_name, class_nodes):
+            continue
+        _insert_field_override_with_annotation(
+            node, field_name, annotation, class_nodes=class_nodes
+        )
+        inserted_fields.add(field_name)
+        _APPLIED_FIELD_OVERRIDES.add((name, field_name))
 
     for override_name, field_name in FIELD_NONE_DEFAULT_OVERRIDES:
-        if override_name == name and field_name not in applied_default_fields:
-            _insert_field_none_default(node, field_name, class_nodes)
+        if (
+            override_name != name
+            or field_name in applied_default_fields
+            or field_name in inserted_fields
+        ):
+            continue
+        if not _field_exists_in_parents(node, field_name, class_nodes):
+            continue
+        _insert_field_none_default(node, field_name, class_nodes)
+        _APPLIED_FIELD_OVERRIDES.add((name, field_name))
+
+    # Record overrides applied directly in the class body, so ``main`` can
+    # detect dead override keys (class never rendered, or field gone).
+    _APPLIED_FIELD_OVERRIDES.update((name, field) for field in applied_annotation_fields)
+    _APPLIED_FIELD_OVERRIDES.update((name, field) for field in applied_default_fields)
 
 
 def _insert_field_override_with_annotation(
     node: ast.ClassDef,
     field_name: str,
     annotation: str,
+    class_nodes: Mapping[str, ast.ClassDef] | None = None,
 ) -> None:
     """Insert a new field declaration into the class body.
 
@@ -556,7 +647,9 @@ def _insert_field_override_with_annotation(
     new_field = ast.AnnAssign(
         target=ast.Name(id=field_name, ctx=ast.Store()),
         annotation=ast.parse(annotation, mode="eval").body,
-        value=ast.Constant(value=None),
+        value=_inherited_field_value(
+            _find_parent_field_decl(node, field_name, class_nodes), field_name
+        ),
         simple=1,
     )
     node.body.append(new_field)
@@ -569,47 +662,86 @@ def _insert_field_none_default(
 ) -> None:
     """Insert a field with ``= None`` default for a parent-inherited field.
 
-    Looks up the original type from the parent class hierarchy so the
-    generated type is correct (e.g. ``OrdensProducaoSituacaoDTO | None``).
-    Falls back to ``Any`` if the type cannot be resolved.
+    Looks up the original declaration from the parent class hierarchy so the
+    generated type is correct (e.g. ``OrdensProducaoSituacaoDTO | None``) and
+    the parent ``Field(...)`` metadata (aliases, examples) is preserved on the
+    redeclaration. Falls back to ``Any`` if the type cannot be resolved.
     """
     _remove_pass_if_empty(node)
 
-    # Try to find the original annotation from parent classes
-    orig_annotation: ast.expr | None = None
-    if class_nodes is not None:
-        for base in node.bases:
-            base_name = _name_from_expr(base)
-            if base_name and base_name in class_nodes:
-                orig_annotation = _find_field_annotation(field_name, base_name, class_nodes)
-                if orig_annotation is not None:
-                    break
+    # Try to find the original declaration from parent classes
+    parent_decl = _find_parent_field_decl(node, field_name, class_nodes)
 
-    if orig_annotation is not None:
+    annotation: ast.expr
+    if parent_decl is None:
+        annotation = ast.Name(id="Any", ctx=ast.Load())
+    elif _annotation_is_optional(parent_decl.annotation):
+        # Already ``X | None``: reuse as-is instead of spelling ``X | None | None``.
+        annotation = parent_decl.annotation
+    else:
         # Build ``OriginalType | None``
         annotation = ast.BinOp(
-            left=orig_annotation,
+            left=parent_decl.annotation,
             op=ast.BitOr(),
             right=ast.Constant(value=None),
         )
-    else:
-        annotation = ast.Name(id="Any", ctx=ast.Load())
 
     new_field = ast.AnnAssign(
         target=ast.Name(id=field_name, ctx=ast.Store()),
         annotation=annotation,
-        value=ast.Constant(value=None),
+        value=_inherited_field_value(parent_decl, field_name),
         simple=1,
     )
     node.body.append(new_field)
 
 
-def _find_field_annotation(
+def _annotation_is_optional(annotation: ast.expr) -> bool:
+    """Return whether ``annotation`` already ends in a ``| None`` union member."""
+    return (
+        isinstance(annotation, ast.BinOp)
+        and isinstance(annotation.op, ast.BitOr)
+        and isinstance(annotation.right, ast.Constant)
+        and annotation.right.value is None
+    )
+
+
+def _field_exists_in_parents(
+    node: ast.ClassDef,
+    field_name: str,
+    class_nodes: Mapping[str, ast.ClassDef] | None,
+) -> bool:
+    """Return whether ``field_name`` is declared anywhere in the class's parent chain."""
+    return _find_parent_field_decl(node, field_name, class_nodes) is not None
+
+
+def _find_parent_field_decl(
+    node: ast.ClassDef,
+    field_name: str,
+    class_nodes: Mapping[str, ast.ClassDef] | None,
+) -> ast.AnnAssign | None:
+    """Find the full declaration of ``field_name`` in the class's parent chain."""
+    if class_nodes is None:
+        return None
+    for base in node.bases:
+        base_name = _name_from_expr(base)
+        if base_name:
+            decl = _find_field_decl(field_name, base_name, class_nodes)
+            if decl is not None:
+                return decl
+    return None
+
+
+def _find_field_decl(
     field_name: str,
     class_name: str,
     class_nodes: Mapping[str, ast.ClassDef],
-) -> ast.expr | None:
-    """Walk the class hierarchy to find the annotation expression for a field."""
+) -> ast.AnnAssign | None:
+    """Walk the class hierarchy to find the full declaration node for a field.
+
+    Depth-first through the base classes, returning the first matching
+    ``AnnAssign``: callers can read ``decl.annotation`` for the type or the
+    whole node for value/metadata preservation.
+    """
     node = class_nodes.get(class_name)
     if node is None:
         return None
@@ -619,11 +751,11 @@ def _find_field_annotation(
             and isinstance(stmt.target, ast.Name)
             and stmt.target.id == field_name
         ):
-            return stmt.annotation
+            return stmt
     for base in node.bases:
         base_name = _name_from_expr(base)
         if base_name:
-            result = _find_field_annotation(field_name, base_name, class_nodes)
+            result = _find_field_decl(field_name, base_name, class_nodes)
             if result is not None:
                 return result
     return None
@@ -641,23 +773,111 @@ def _rewrite_date_types(node: ast.ClassDef) -> None:
             stmt.id = "BlingDate"
 
 
+def _inherited_field_value(parent_decl: ast.AnnAssign | None, field_name: str) -> ast.expr:
+    """Build the value for an inserted parent-inherited field redeclaration.
+
+    Pydantic v2 replaces the parent field configuration on redeclaration, so
+    when the parent's ``Field(...)`` call carries wire-format metadata it is
+    deep-copied to keep that metadata (and every other keyword, e.g.
+    ``examples``) with its default normalized to ``None``. Raw datamodel-codegen
+    output spells the alias as ``alias="<BlingName>"``; the clone is normalized
+    into the repo-standard ``validation_alias=AliasChoices(...)`` /
+    ``serialization_alias`` pair so ``to_json_object()`` (``by_alias=True``)
+    serializes the correct Bling key. Parents already carrying the normalized
+    keywords (synthetic shapes) keep the existing clone behavior. Falls back
+    to a bare ``None`` constant when the parent declaration has no value or no
+    alias metadata — keeping the emitted output for alias-less parents
+    byte-identical.
+    """
+    if parent_decl is None or parent_decl.value is None:
+        return ast.Constant(value=None)
+    value = parent_decl.value
+    if not (isinstance(value, ast.Call) and _name_from_expr(value.func) == "Field") or not any(
+        keyword.arg in WIRE_FORMAT_FIELD_KEYWORDS for keyword in value.keywords
+    ):
+        return ast.Constant(value=None)
+    cloned = _field_value_default_none(copy.deepcopy(value))
+    if isinstance(cloned, ast.Call):
+        _rewrite_raw_alias_keyword(cloned, field_name)
+    return cloned
+
+
+def _rewrite_raw_alias_keyword(call: ast.Call, field_name: str) -> bool:
+    """Rewrite a raw ``alias="<BlingName>"`` keyword into the repo-standard pair.
+
+    Shared by ``_rewrite_field_aliases`` (the per-class rewrite pass) and the
+    inherited-field clone path, so both normalize identically. An alias equal
+    to the field name is left as-is. A call already carrying
+    ``validation_alias`` is treated as already normalized: a stray raw
+    ``alias`` keyword is dropped instead of rewritten, so a duplicate
+    ``validation_alias`` kwarg (a SyntaxError when unparsed) can never be
+    emitted; ``serialization_alias`` is likewise only appended when absent.
+    Returns whether the rewrite happened.
+    """
+    alias_keyword = next(
+        (
+            keyword
+            for keyword in call.keywords
+            if keyword.arg == "alias" and _string_value(keyword.value)
+        ),
+        None,
+    )
+    if alias_keyword is None:
+        return False
+
+    if any(keyword.arg == "validation_alias" for keyword in call.keywords):
+        # Already-normalized call: drop the stray raw alias instead of
+        # appending a second ``validation_alias``.
+        call.keywords.remove(alias_keyword)
+        return False
+
+    alias = _string_value(alias_keyword.value)
+    if alias is None or alias == field_name:
+        return False
+
+    alias_keyword.arg = "validation_alias"
+    alias_keyword.value = ast.Call(
+        func=ast.Name(id="AliasChoices", ctx=ast.Load()),
+        args=[
+            ast.Constant(value=field_name),
+            ast.Constant(value=alias),
+        ],
+        keywords=[],
+    )
+    if not any(keyword.arg == "serialization_alias" for keyword in call.keywords):
+        call.keywords.append(
+            ast.keyword(arg="serialization_alias", value=ast.Constant(value=alias))
+        )
+    return True
+
+
 def _set_field_default_none(stmt: ast.AnnAssign) -> None:
+    """Set the field's default value to ``None`` in place."""
+    stmt.value = _field_value_default_none(stmt.value)
+
+
+def _field_value_default_none(value: ast.expr | None) -> ast.expr:
+    """Return ``value`` with its ``Field(...)`` default normalized to ``None``.
+
+    Strips a positional ``...`` default, sets or inserts ``default=None``, and
+    preserves every other keyword. Non-``Field`` values collapse to ``None``.
+    """
     default = ast.Constant(value=None)
-    if isinstance(stmt.value, ast.Call) and _name_from_expr(stmt.value.func) == "Field":
-        stmt.value.args = [
+    if isinstance(value, ast.Call) and _name_from_expr(value.func) == "Field":
+        value.args = [
             arg
-            for arg in stmt.value.args
+            for arg in value.args
             if not (isinstance(arg, ast.Constant) and arg.value is Ellipsis)
         ]
-        for keyword in stmt.value.keywords:
+        for keyword in value.keywords:
             if keyword.arg == "default":
                 keyword.value = default
                 break
         else:
-            stmt.value.keywords.insert(0, ast.keyword(arg="default", value=default))
-        return
+            value.keywords.insert(0, ast.keyword(arg="default", value=default))
+        return value
 
-    stmt.value = default
+    return default
 
 
 def _rewrite_field_aliases(node: ast.ClassDef) -> None:
@@ -668,34 +888,7 @@ def _rewrite_field_aliases(node: ast.ClassDef) -> None:
         if not isinstance(stmt.value, ast.Call) or _name_from_expr(stmt.value.func) != "Field":
             continue
 
-        field_name = stmt.target.id
-        alias_keyword = next(
-            (
-                keyword
-                for keyword in stmt.value.keywords
-                if keyword.arg == "alias" and _string_value(keyword.value)
-            ),
-            None,
-        )
-        if alias_keyword is None:
-            continue
-
-        alias = _string_value(alias_keyword.value)
-        if alias is None or alias == field_name:
-            continue
-
-        alias_keyword.arg = "validation_alias"
-        alias_keyword.value = ast.Call(
-            func=ast.Name(id="AliasChoices", ctx=ast.Load()),
-            args=[
-                ast.Constant(value=field_name),
-                ast.Constant(value=alias),
-            ],
-            keywords=[],
-        )
-        stmt.value.keywords.append(
-            ast.keyword(arg="serialization_alias", value=ast.Constant(value=alias))
-        )
+        _rewrite_raw_alias_keyword(stmt.value, stmt.target.id)
 
 
 def _model_docstring(name: str, class_nodes: Mapping[str, ast.ClassDef]) -> str:
@@ -842,14 +1035,6 @@ def _write_resource_reexports(
         path = GENERATED_DIR / f"{module}.py"
         path.unlink()
 
-    for path in RESOURCE_REEXPORT_DIR.glob("*.py"):
-        path.unlink()
-
-    (RESOURCE_REEXPORT_DIR / "__init__.py").write_text(
-        '"""Resource-scoped generated model reexports."""\n',
-        encoding="utf-8",
-    )
-
     for module, contracts in sorted(all_contracts.items()):
         names = sorted(_resource_model_names(module, contracts, class_names))
         # Include response data wrapper models that belong to this module
@@ -860,7 +1045,6 @@ def _write_resource_reexports(
         names.sort()
         content = _reexport_module_content(module, names, class_modules)
         (GENERATED_DIR / f"{module}.py").write_text(content, encoding="utf-8")
-        (RESOURCE_REEXPORT_DIR / f"{module}.py").write_text(content, encoding="utf-8")
 
 
 def _resource_model_names(

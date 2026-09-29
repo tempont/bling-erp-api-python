@@ -25,3 +25,9 @@ repos:
         pass_filenames: false
         always_run: true
         require_serial: true
+      - id: codegen-drift
+        name: codegen-drift
+        entry: make codegen-check
+        language: system
+        pass_filenames: false
+        files: ^specs/|^scripts/generate_|^src/bling_erp_api/(models|contracts)/generated/|^docs/resources/
