@@ -140,6 +140,7 @@ convention = "google"
 ################# Test #################
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+filterwarnings = ["error"]
 
 ################# basedpyright #################
 [tool.basedpyright]

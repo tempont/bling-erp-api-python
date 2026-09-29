@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import date
 from typing import Annotated
 
+from pydantic.functional_serializers import PlainSerializer
 from pydantic.functional_validators import PlainValidator
 
 
@@ -33,4 +34,12 @@ def _parse_bling_date(value: object) -> date | None:
     raise ValueError(msg)
 
 
-BlingDate = Annotated[date, PlainValidator(_parse_bling_date)]
+BlingDate = Annotated[
+    date,
+    PlainValidator(_parse_bling_date),
+    PlainSerializer(
+        lambda v: v.isoformat() if v is not None else None,
+        return_type=str | None,
+        when_used="json",
+    ),
+]

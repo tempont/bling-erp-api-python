@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import warnings
 from datetime import date
 
 import pytest
@@ -95,6 +96,22 @@ class TestBlingDateSerialization:
         dumped = model.model_dump(mode="json")
         assert dumped["value"] == "2020-01-01"
 
+    def test_json_dump_does_not_warn(self) -> None:
+        """JSON serialization should be warning-free thanks to the explicit serializer."""
+        model = ModelWithOptionalDate(value=date(2020, 1, 1))
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            dumped = model.model_dump(mode="json")
+        assert dumped["value"] == "2020-01-01"
+
+    def test_none_serializes_as_none(self) -> None:
+        """None should serialize as null in JSON mode without warnings."""
+        model = ModelWithOptionalDate(value=None)
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            dumped = model.model_dump(mode="json")
+        assert dumped["value"] is None
+
     def test_none_excluded_when_exclude_none(self) -> None:
         """None should be excluded from JSON output with exclude_none=True."""
         model = ModelWithOptionalDate(value=None)
@@ -106,3 +123,15 @@ class TestBlingDateSerialization:
         model = ModelWithOptionalDate(value=None)
         dumped = model.model_dump(mode="json")
         assert dumped["value"] is None
+
+    def test_sentinel_stored_as_none_after_validation(self) -> None:
+        """Validation behavior is unchanged: sentinel input is still stored as None."""
+        model = ModelWithOptionalDate(value="0000-00-00")  # type: ignore[reportArgumentType]
+        assert model.value is None
+
+    def test_python_mode_dump_returns_date(self) -> None:
+        """Python-mode dump should still yield ``datetime.date`` instances."""
+        model = ModelWithOptionalDate(value=date(2020, 1, 1))
+        dumped = model.model_dump()
+        assert dumped["value"] is model.value
+        assert type(dumped["value"]) is date

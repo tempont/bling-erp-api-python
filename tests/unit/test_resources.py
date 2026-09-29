@@ -1694,10 +1694,10 @@ class TestCaixasBancosResourceMapping:
         transport = RecordingTransport()
         resource = CaixasBancosResource(transport)
         dados = CaixasBancosSalvarLancamentoDTO.model_construct(
-            data="2025-02-01",
+            data=date(2025, 2, 1),
             valor=350.00,
             deb_cred="C",
-            competencia="2025-02-01",
+            competencia=date(2025, 2, 1),
             observacoes="Teste",
         )
         resource.criar(dados)
@@ -1711,10 +1711,10 @@ class TestCaixasBancosResourceMapping:
         transport = RecordingTransport()
         resource = CaixasBancosResource(transport)
         dados = CaixasBancosSalvarLancamentoDTO.model_construct(
-            data="2025-02-01",
+            data=date(2025, 2, 1),
             valor=500.00,
             deb_cred="D",
-            competencia="2025-02-01",
+            competencia=date(2025, 2, 1),
             observacoes="Atualizado",
         )
         resource.alterar(123456, dados)
@@ -1748,10 +1748,10 @@ class TestCaixasBancosResourceMapping:
         resource = CaixasBancosResource(transport)
         resource.create(
             CaixasBancosSalvarLancamentoDTO.model_construct(
-                data="2025-02-01",
+                data=date(2025, 2, 1),
                 valor=100.00,
                 deb_cred="C",
-                competencia="2025-02-01",
+                competencia=date(2025, 2, 1),
                 observacoes="Test",
             )
         )
@@ -1773,10 +1773,10 @@ class TestCaixasBancosResourceMapping:
         resource.update(
             123456,
             CaixasBancosSalvarLancamentoDTO.model_construct(
-                data="2025-02-01",
+                data=date(2025, 2, 1),
                 valor=500.00,
                 deb_cred="D",
-                competencia="2025-02-01",
+                competencia=date(2025, 2, 1),
                 observacoes="Upd",
             ),
         )

@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `ProdutosImagemInternaDTO`: `link_miniatura`, `validade`, `ordem`, `anexo` and `anexo_vinculo` are now optional, matching real `GET /produtos/{idProduto}` payloads whose internal images carry only `link` (`link` remains required)
 - `VendasItemDTO.id` and `VendasParcelaDTO.id` are now optional, matching sales-order responses whose itens/parcelas omit `id` (`sales_orders.py` docstrings synced with the generated response metadata)
+- `BlingDate` fields no longer emit pydantic `PydanticSerializationUnexpectedValue` warnings on JSON serialization; wire output (ISO `8601` strings) is unchanged
 
 ## [0.2.0] - 2026-06-26
 
