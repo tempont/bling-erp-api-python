@@ -172,6 +172,11 @@ FIELD_NONE_DEFAULT_OVERRIDES = {
     ("VendasParcelaDTO", "id"),
 }
 
+# Overrides matched while generating the current run's classes, as
+# ``(class_name, field_name)``. Used by ``main`` to fail when an override
+# matches no generated schema class (e.g. renamed/removed in the spec).
+_APPLIED_FIELD_OVERRIDES: set[tuple[str, str]] = set()
+
 # Type that replaces bare ``date`` in all generated annotations.
 DATE_TYPE_REWRITE = "BlingDate"
 DATE_IMPORT = "from bling_erp_api.models.fields import BlingDate"
@@ -212,17 +217,40 @@ def main() -> None:
     # Inject response data wrapper models (new classes or body overwrites).
     # Must happen BEFORE _schema_class_modules so module assignment is correct.
     _inject_response_model_data_wrappers(class_order, class_nodes)
+    _APPLIED_FIELD_OVERRIDES.clear()
 
     class_names = set(class_order)
     all_contracts = _contracts_by_module(payload)
     class_modules = _schema_class_modules(class_order, all_contracts)
 
     _write_schema_package(class_order, class_nodes, class_modules)
+    _check_field_overrides_applied()
     _write_resource_reexports(all_contracts, class_names, class_modules)
     _write_generated_init(class_order)
     _write_operation_models(all_contracts, class_names, class_modules)
     RAW_SCHEMAS_MODULE.unlink(missing_ok=True)
     _run_ruff_fix()
+
+
+def _check_field_overrides_applied() -> None:
+    """Fail the generation when a field override matches no generated class."""
+    dead_keys = (
+        set(FIELD_ANNOTATION_OVERRIDES) | set(FIELD_NONE_DEFAULT_OVERRIDES)
+    ) - _APPLIED_FIELD_OVERRIDES
+    if not dead_keys:
+        return
+
+    dead_list = "".join(
+        f"  - {class_name}.{field_name}\n" for class_name, field_name in sorted(dead_keys)
+    )
+    message = (
+        "Field overrides matched no generated schema class:\n"
+        f"{dead_list}"
+        "The spec likely renamed or removed these schemas; update "
+        "FIELD_ANNOTATION_OVERRIDES / FIELD_NONE_DEFAULT_OVERRIDES in "
+        "scripts/generate_models.py."
+    )
+    raise SystemExit(message)
 
 
 def _prepare_generated_dirs() -> None:
@@ -563,6 +591,11 @@ def _apply_field_overrides(
     for override_name, field_name in FIELD_NONE_DEFAULT_OVERRIDES:
         if override_name == name and field_name not in applied_default_fields:
             _insert_field_none_default(node, field_name, class_nodes)
+
+    # Record every override key whose class was generated (applied in-body or
+    # via insertion above), so ``main`` can detect dead override keys.
+    _APPLIED_FIELD_OVERRIDES.update(key for key in FIELD_ANNOTATION_OVERRIDES if key[0] == name)
+    _APPLIED_FIELD_OVERRIDES.update(key for key in FIELD_NONE_DEFAULT_OVERRIDES if key[0] == name)
 
 
 def _insert_field_override_with_annotation(
