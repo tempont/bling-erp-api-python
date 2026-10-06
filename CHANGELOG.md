@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-10-06
+
 ### Fixed
 
 - NF-e and NFC-e read responses no longer require `contato.tipoPessoa` and `contato.contribuinte`: the official OpenAPI marks both fields `writeOnly`, so they are required only in requests. Generated response-only DTOs retain typed values when present and represent missing fields as `None`, omitted by `to_json_object()`. Detail reads, lists and pagination accept these responses; POST/PUT requirements, existing public methods, aliases and all unrelated endpoint contracts are preserved. The returned contact uses `NotasFiscaisContatoResponseDTO` instead of the shared request DTO.
