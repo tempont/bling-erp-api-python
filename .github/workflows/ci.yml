@@ -15,6 +15,8 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.12", "3.13"]
+    env:
+      UV_PYTHON: ${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v4
       - name: Install uv
@@ -26,17 +28,19 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-groups --python ${{ matrix.python-version }}
       - name: Ruff check
-        run: uv run ruff check .
+        run: uv run --all-groups ruff check .
       - name: Ruff format check
-        run: uv run ruff format --check .
+        run: uv run --all-groups ruff format --check .
       - name: Basedpyright
-        run: uv run basedpyright
+        run: uv run --all-groups basedpyright
       - name: Pytest
-        run: uv run python -m pytest
+        run: uv run --all-groups python -m pytest
 
   codegen-drift:
     name: Codegen Drift Check
     runs-on: ubuntu-latest
+    env:
+      UV_PYTHON: "3.12"
     steps:
       - uses: actions/checkout@v4
       - name: Install uv

@@ -568,7 +568,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "path": "/nfce",
         "pattern": r"^/nfce/?$",
         "response_model": "bling_erp_api.models.generated.schemas.notas_fiscais_consumidor.NfceGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NotasFiscaisDadosBaseDTO",
+        "response_item_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NotasFiscaisDadosBaseResponseDTO",
     },
     {
         "resource_class": "NfeResource",
@@ -667,7 +667,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "path": "/nfe",
         "pattern": r"^/nfe/?$",
         "response_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NfeGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NotasFiscaisDadosBaseDTO",
+        "response_item_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NotasFiscaisDadosBaseResponseDTO",
     },
     {
         "resource_class": "NfeResource",
@@ -1675,7 +1675,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "path": "/nfce",
         "pattern": r"^/nfce/?$",
         "response_model": "bling_erp_api.models.generated.schemas.notas_fiscais_consumidor.NfceGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NotasFiscaisDadosBaseDTO",
+        "response_item_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NotasFiscaisDadosBaseResponseDTO",
     },
     {
         "resource_class": "NfceResource",
@@ -1774,7 +1774,7 @@ OPERATION_MODELS: list[dict[str, object]] = [
         "path": "/nfe",
         "pattern": r"^/nfe/?$",
         "response_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NfeGetResponse200",
-        "response_item_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NotasFiscaisDadosBaseDTO",
+        "response_item_model": "bling_erp_api.models.generated.schemas.notas_fiscais.NotasFiscaisDadosBaseResponseDTO",
     },
     {
         "resource_class": "NfceResource",

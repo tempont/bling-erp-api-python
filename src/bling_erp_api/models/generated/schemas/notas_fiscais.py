@@ -523,6 +523,106 @@ class NotaFiscalResponsePOST(BlingModel):
     contato: Contato1
 
 
+class NotasFiscaisContatoResponseDTO(BlingModel):
+    """OpenAPI schema ``NotasFiscaisContatoResponseDTO``.
+
+    Modelo Pydantic gerado a partir do contrato OpenAPI do Bling. Use este schema
+    quando ele aparecer como request body ou response schema nos métodos do SDK.
+
+    Fields:
+        id: Bling ``id``; type ``int | None``; opcional.
+        nome: Bling ``nome``; type ``str``; obrigatório.
+        tipo_pessoa: Bling ``tipoPessoa``; type ``str | None``; opcional. `F` Física <br> `J` Jurídica <br> `E` Estrangeira.
+        numero_documento: Bling ``numeroDocumento``; type ``str``; obrigatório. CNPJ ou CPF.
+        ie: Bling ``ie``; type ``str | None``; opcional.
+        rg: Bling ``rg``; type ``str | None``; opcional.
+        contribuinte: Bling ``contribuinte``; type ``int | None``; opcional. `1` Contribuinte do ICMS <br> `2` Contribuinte isento de ICMS <br> `9` Não contribuinte.
+        telefone: Bling ``telefone``; type ``str | None``; opcional.
+        email: Bling ``email``; type ``str | None``; opcional.
+        endereco: Bling ``endereco``; type ``NotasFiscaisContatoEnderecoDTO | None``; opcional."""
+
+    id: int | None = Field(default=None, examples=[12345678])
+    nome: str = Field(..., examples=["Contato do Bling"])
+    tipo_pessoa: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("tipo_pessoa", "tipoPessoa"),
+        examples=["J"],
+        serialization_alias="tipoPessoa",
+    )
+    numero_documento: str = Field(
+        ...,
+        validation_alias=AliasChoices("numero_documento", "numeroDocumento"),
+        examples=["30188025000121"],
+        serialization_alias="numeroDocumento",
+    )
+    ie: str | None = Field(default=None, examples=["7364873393"])
+    rg: str | None = Field(default=None, examples=["451838701"])
+    contribuinte: int | None = Field(default=None, examples=[1])
+    telefone: str | None = Field(default=None, examples=["54 3771-7278"])
+    email: str | None = Field(default=None, examples=["pedrosilva@bling.com.br"])
+    endereco: NotasFiscaisContatoEnderecoDTO | None = None
+
+
+class NotasFiscaisDadosBaseResponseDTO(BlingModel):
+    """OpenAPI schema ``NotasFiscaisDadosBaseResponseDTO``.
+
+    Modelo Pydantic gerado a partir do contrato OpenAPI do Bling. Use este schema
+    quando ele aparecer como request body ou response schema nos métodos do SDK.
+
+    Fields:
+        id: Bling ``id``; type ``int | None``; opcional.
+        tipo: Bling ``tipo``; type ``int``; obrigatório. `0` Entrada <br> `1` Saída
+        situacao: Bling ``situacao``; type ``int | None``; opcional. `1` Pendente<br>`2` Cancelada<br>`3` Aguardando recibo<br>`4` Rejeitada<br>`5` Autorizada<br>`6` Emitida DANFE<br>`7` Registrada<br>`8` Aguardando protocolo<br>`9` Denegada<br>`10...
+        numero: Bling ``numero``; type ``str``; obrigatório.
+        data_emissao: Bling ``dataEmissao``; type ``str | None``; opcional. Data e hora da emissão.
+        data_operacao: Bling ``dataOperacao``; type ``str``; obrigatório. Data de saída/entrada de acordo com o tipo da nota.
+        chave_acesso: Bling ``chaveAcesso``; type ``str | None``; opcional.
+        contato: Bling ``contato``; type ``NotasFiscaisContatoResponseDTO``; obrigatório.
+        natureza_operacao: Bling ``naturezaOperacao``; type ``NotasFiscaisNaturezaOperacaoDTO``; obrigatório.
+        loja: Bling ``loja``; type ``NotasFiscaisLojaDTO | None``; opcional."""
+
+    id: int | None = Field(default=None, examples=[12345678])
+    tipo: int = Field(..., examples=[1])
+    situacao: int | None = Field(default=None, examples=[1])
+    numero: str = Field(..., examples=["6541"])
+    data_emissao: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("data_emissao", "dataEmissao"),
+        examples=["2023-01-12 09:52:12"],
+        serialization_alias="dataEmissao",
+    )
+    data_operacao: str = Field(
+        ...,
+        validation_alias=AliasChoices("data_operacao", "dataOperacao"),
+        examples=["2023-01-12 09:52:12"],
+        serialization_alias="dataOperacao",
+    )
+    chave_acesso: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("chave_acesso", "chaveAcesso"),
+        serialization_alias="chaveAcesso",
+    )
+    contato: NotasFiscaisContatoResponseDTO
+    natureza_operacao: NotasFiscaisNaturezaOperacaoDTO = Field(
+        ...,
+        validation_alias=AliasChoices("natureza_operacao", "naturezaOperacao"),
+        serialization_alias="naturezaOperacao",
+    )
+    loja: NotasFiscaisLojaDTO | None = None
+
+
+class NfeGetResponse200(BlingModel):
+    """OpenAPI schema ``NfeGetResponse200``.
+
+    Modelo Pydantic gerado a partir do contrato OpenAPI do Bling. Use este schema
+    quando ele aparecer como request body ou response schema nos métodos do SDK.
+
+    Fields:
+        data: Bling ``data``; type ``list[NotasFiscaisDadosBaseResponseDTO] | None``; opcional."""
+
+    data: list[NotasFiscaisDadosBaseResponseDTO] | None = None
+
+
 class NfePostResponse201(BlingModel):
     """OpenAPI schema ``NfePostResponse201``.
 
@@ -733,18 +833,6 @@ class NotasFiscaisTransportePostDTO(BlingModel):
     volume: NotasFiscaisTransporteDadosVolumeDTO | None = None
     volumes: list[NotasFiscaisTransporteVolumePostDTO] | None = None
     etiqueta: NotasFiscaisTransporteEtiquetaDTO | None = None
-
-
-class NfeGetResponse200(BlingModel):
-    """OpenAPI schema ``NfeGetResponse200``.
-
-    Modelo Pydantic gerado a partir do contrato OpenAPI do Bling. Use este schema
-    quando ele aparecer como request body ou response schema nos métodos do SDK.
-
-    Fields:
-        data: Bling ``data``; type ``list[NotasFiscaisDadosBaseDTO] | None``; opcional."""
-
-    data: list[NotasFiscaisDadosBaseDTO] | None = None
 
 
 class NfeIdNotaFiscalPutResponse200(BlingModel):
@@ -1002,7 +1090,9 @@ __all__ = [
     "NotaFiscalResponsePOST",
     "NotasFiscaisContatoDTO",
     "NotasFiscaisContatoEnderecoDTO",
+    "NotasFiscaisContatoResponseDTO",
     "NotasFiscaisDadosBaseDTO",
+    "NotasFiscaisDadosBaseResponseDTO",
     "NotasFiscaisDadosGetDTO",
     "NotasFiscaisDadosPostDTO",
     "NotasFiscaisDocumentoDTO",

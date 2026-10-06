@@ -37,7 +37,11 @@ from .contratos import ContratosDadosBaseDTO, ContratosDadosDTO
 from .estoques import EstoquesSaldosBaseDTO, EstoquesSaldosDTO
 from .formas_pagamentos import FormasPagamentosDadosBaseDTO, FormasPagamentosDadosDTO
 from .homologacao import HomologacaoDadosBaseDTO, HomologacaoDadosDTO
-from .notas_fiscais import NotaFiscalResponsePOST, NotasFiscaisDadosBaseDTO, NotasFiscaisDadosGetDTO
+from .notas_fiscais import (
+    NotaFiscalResponsePOST,
+    NotasFiscaisDadosBaseResponseDTO,
+    NotasFiscaisDadosGetDTO,
+)
 from .notas_servicos import (
     NotasServicosContatoBaseDTO,
     NotasServicosContatoDTO,
@@ -1544,13 +1548,13 @@ class Error(BlingModel):
     fields: list[ErrorField] | None = None
 
 
-class Data14(NotasFiscaisDadosBaseDTO, NotasFiscaisDadosGetDTO):
+class Data14(NotasFiscaisDadosBaseResponseDTO, NotasFiscaisDadosGetDTO):
     """OpenAPI schema ``Data14``.
 
     Modelo Pydantic gerado a partir do contrato OpenAPI do Bling. Use este schema
     quando ele aparecer como request body ou response schema nos métodos do SDK.
 
-    Herda campos de: NotasFiscaisDadosBaseDTO, NotasFiscaisDadosGetDTO.
+    Herda campos de: NotasFiscaisDadosBaseResponseDTO, NotasFiscaisDadosGetDTO.
 
     Fields:
         id: Bling ``id``; type ``int | None``; opcional.
@@ -1560,7 +1564,7 @@ class Data14(NotasFiscaisDadosBaseDTO, NotasFiscaisDadosGetDTO):
         data_emissao: Bling ``dataEmissao``; type ``str | None``; opcional. Data e hora da emissão.
         data_operacao: Bling ``dataOperacao``; type ``str``; obrigatório. Data de saída/entrada de acordo com o tipo da nota.
         chave_acesso: Bling ``chaveAcesso``; type ``str | None``; opcional.
-        contato: Bling ``contato``; type ``NotasFiscaisContatoDTO``; obrigatório.
+        contato: Bling ``contato``; type ``NotasFiscaisContatoResponseDTO``; obrigatório.
         natureza_operacao: Bling ``naturezaOperacao``; type ``NotasFiscaisNaturezaOperacaoDTO``; obrigatório.
         loja: Bling ``loja``; type ``NotasFiscaisLojaDTO | None``; opcional.
         serie: Bling ``serie``; type ``int | None``; opcional.

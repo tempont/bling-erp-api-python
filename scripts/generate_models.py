@@ -10,6 +10,7 @@ import json
 import re
 import shutil
 import subprocess
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
@@ -219,9 +220,15 @@ class FieldDoc:
 def main() -> None:
     """Generate canonical schemas, resource reexports, and operation model metadata."""
     payload = cast("dict[str, object]", json.loads(SPEC_PATH.read_text(encoding="utf-8")))
+    generation_payload = _response_generation_spec(payload)
     _prepare_generated_dirs()
 
-    _run_datamodel_codegen()
+    # Required writeOnly properties apply to requests only (OpenAPI 3.0).
+    # Keep the vendored spec intact and project response-only schemas locally.
+    with tempfile.TemporaryDirectory() as directory:
+        input_path = Path(directory) / "openapi.json"
+        input_path.write_text(json.dumps(generation_payload), encoding="utf-8")
+        _run_datamodel_codegen(input_path)
     class_order, class_nodes = _schema_class_nodes()
 
     # Inject response data wrapper models (new classes or body overwrites).
@@ -230,7 +237,7 @@ def main() -> None:
     _APPLIED_FIELD_OVERRIDES.clear()
 
     class_names = set(class_order)
-    all_contracts = _contracts_by_module(payload)
+    all_contracts = _contracts_by_module(generation_payload)
     class_modules = _schema_class_modules(class_order, all_contracts)
 
     _write_schema_package(class_order, class_nodes, class_modules)
@@ -276,11 +283,149 @@ def _prepare_generated_dirs() -> None:
     SCHEMAS_PACKAGE_DIR.mkdir(parents=True)
 
 
-def _run_datamodel_codegen() -> None:
+def _response_generation_spec(payload: Mapping[str, object]) -> dict[str, object]:
+    """Separate required writeOnly fields from response validation.
+
+    Clone only affected component schemas and their referencing ancestors.
+    Requests and the public shared DTOs retain the original requirements.
+    Response variants keep the fields typed for compatibility when present,
+    but do not require them or supply wire values when they are absent.
+    """
+    result = copy.deepcopy(dict(payload))
+    components = cast("dict[str, object]", result["components"])
+    schemas = cast("dict[str, dict[str, object]]", components["schemas"])
+    affected = {name for name, schema in schemas.items() if _has_required_write_only_fields(schema)}
+    while True:
+        ancestors = {
+            name for name, schema in schemas.items() if _schema_ref_names(schema) & affected
+        }
+        if ancestors <= affected:
+            break
+        affected.update(ancestors)
+
+    replacements = {name: f"{name.removesuffix('DTO')}ResponseDTO" for name in sorted(affected)}
+    for name, replacement in replacements.items():
+        if replacement in schemas:
+            msg = f"Response schema projection collides with {replacement}"
+            raise ValueError(msg)
+        schemas[replacement] = _project_response_schema(schemas[name], replacements)
+
+    paths = cast("dict[str, dict[str, object]]", result["paths"])
+    for path in paths.values():
+        _project_path_responses(path, replacements)
+    responses = cast("dict[str, dict[str, object]]", components.get("responses", {}))
+    for name, response in responses.items():
+        responses[name] = _project_response_object(response, replacements)
+    callbacks = cast("dict[str, dict[str, object]]", components.get("callbacks", {}))
+    for callback in callbacks.values():
+        _project_callback_responses(callback, replacements)
+    return result
+
+
+def _required_write_only_fields(schema: Mapping[str, object]) -> set[str]:
+    properties = cast("dict[str, dict[str, object]]", schema.get("properties", {}))
+    required = cast("list[str]", schema.get("required", []))
+    return {name for name in required if properties.get(name, {}).get("writeOnly") is True}
+
+
+def _nested_schemas(schema: Mapping[str, object]) -> Iterable[dict[str, object]]:
+    """Yield inline subschemas without traversing examples or other arbitrary data."""
+    properties = cast("dict[str, dict[str, object]]", schema.get("properties", {}))
+    yield from properties.values()
+    for key in ("items", "additionalProperties", "not"):
+        value = schema.get(key)
+        if isinstance(value, dict):
+            yield cast("dict[str, object]", value)
+    for key in ("allOf", "anyOf", "oneOf"):
+        yield from cast("list[dict[str, object]]", schema.get(key, []))
+
+
+def _has_required_write_only_fields(schema: Mapping[str, object]) -> bool:
+    return bool(_required_write_only_fields(schema)) or any(
+        _has_required_write_only_fields(child) for child in _nested_schemas(schema)
+    )
+
+
+def _project_response_schema(
+    schema: Mapping[str, object], replacements: Mapping[str, str]
+) -> dict[str, object]:
+    result = copy.deepcopy(dict(schema))
+    _rewrite_response_schema(result, replacements)
+    return result
+
+
+def _rewrite_response_schema(schema: dict[str, object], replacements: Mapping[str, str]) -> None:
+    omitted = _required_write_only_fields(schema)
+    if omitted:
+        required = cast("list[str]", schema["required"])
+        schema["required"] = [field for field in required if field not in omitted]
+    reference = schema.get("$ref")
+    if isinstance(reference, str) and reference.startswith("#/components/schemas/"):
+        name = reference.rsplit("/", 1)[1]
+        if name in replacements:
+            schema["$ref"] = f"#/components/schemas/{replacements[name]}"
+    for child in _nested_schemas(schema):
+        _rewrite_response_schema(child, replacements)
+
+
+def _project_response_object(
+    response: Mapping[str, object], replacements: Mapping[str, str]
+) -> dict[str, object]:
+    result = copy.deepcopy(dict(response))
+    content = cast("dict[str, dict[str, object]]", result.get("content", {}))
+    for media_type in content.values():
+        schema = media_type.get("schema")
+        if isinstance(schema, dict):
+            media_type["schema"] = _project_response_schema(
+                cast("dict[str, object]", schema), replacements
+            )
+    headers = cast("dict[str, dict[str, object]]", result.get("headers", {}))
+    for header in headers.values():
+        schema = header.get("schema")
+        if isinstance(schema, dict):
+            header["schema"] = _project_response_schema(
+                cast("dict[str, object]", schema), replacements
+            )
+    return result
+
+
+def _project_path_responses(path: dict[str, object], replacements: Mapping[str, str]) -> None:
+    for method in ("get", "put", "post", "delete", "options", "head", "patch", "trace"):
+        value = path.get(method)
+        if not isinstance(value, dict):
+            continue
+        operation = cast("dict[str, object]", value)
+        responses = cast("dict[str, dict[str, object]]", operation.get("responses", {}))
+        for status, response in responses.items():
+            responses[status] = _project_response_object(response, replacements)
+        callbacks = cast("dict[str, dict[str, object]]", operation.get("callbacks", {}))
+        for callback in callbacks.values():
+            _project_callback_responses(callback, replacements)
+
+
+def _project_callback_responses(
+    callback: dict[str, object], replacements: Mapping[str, str]
+) -> None:
+    for expression, value in callback.items():
+        if expression != "$ref" and isinstance(value, dict):
+            _project_path_responses(cast("dict[str, object]", value), replacements)
+
+
+def _schema_ref_names(schema: Mapping[str, object]) -> set[str]:
+    reference = schema.get("$ref")
+    names = set[str]()
+    if isinstance(reference, str) and reference.startswith("#/components/schemas/"):
+        names.add(reference.rsplit("/", 1)[1])
+    for child in _nested_schemas(schema):
+        names.update(_schema_ref_names(child))
+    return names
+
+
+def _run_datamodel_codegen(input_path: Path) -> None:
     command = [
         _datamodel_codegen_bin(),
         "--input",
-        str(SPEC_PATH),
+        str(input_path),
         "--input-file-type",
         "openapi",
         "--openapi-scopes",
