@@ -66,16 +66,21 @@ Generated files live in:
 Run the test suite:
 
 ```bash
-uv run python -m pytest
+uv run --all-groups python -m pytest
 ```
 
 Or with coverage:
 
 ```bash
-uv run python -m pytest --cov=bling_erp_api
+uv run --all-groups python -m pytest --cov=bling_erp_api
 ```
 
 **Important**: Tests must not make real API calls unless explicitly gated behind environment variables. Use `pytest-httpx` for HTTP mocking.
+
+The test suite invokes the real model generator, so the `codegen` dependency
+group must remain installed. `make check` includes all groups automatically.
+To reproduce each CI interpreter locally, use `UV_PYTHON=3.12 make check` or
+`UV_PYTHON=3.13 make check`; this overrides the repository's `.python-version`.
 
 ## Adding a New Endpoint
 

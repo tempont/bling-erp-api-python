@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- CI quality and codegen jobs now keep their configured Python version instead of recreating the environment with the repository's default interpreter. Quality commands and Makefile gates explicitly retain all dependency groups, so tests that invoke the real model generator can find `datamodel-codegen`.
 - NF-e and NFC-e read responses no longer require `contato.tipoPessoa` and `contato.contribuinte`: the official OpenAPI marks both fields `writeOnly`, so they are required only in requests. Generated response-only DTOs retain typed values when present and represent missing fields as `None`, omitted by `to_json_object()`. Detail reads, lists and pagination accept these responses; POST/PUT requirements, existing public methods, aliases and all unrelated endpoint contracts are preserved. The returned contact uses `NotasFiscaisContatoResponseDTO` instead of the shared request DTO.
 - Model generation now projects required `writeOnly` fields and referencing component schemas only for responses, including operation metadata for pagination, without modifying the vendored OpenAPI or weakening request models. Inline compositions, array items, nested properties, reusable response components and inline/reusable callbacks are covered; request body components remain unchanged.
 

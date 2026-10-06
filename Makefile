@@ -1,6 +1,7 @@
 .PHONY: check build codegen codegen-check deploy sync
 
 UV := uv
+UV_RUN := $(UV) run --all-groups
 GENERATED_DIRS := src/bling_erp_api/models/generated src/bling_erp_api/contracts/generated docs/resources
 UNTRACKED_GENERATED := git ls-files --others --exclude-standard -- $(GENERATED_DIRS)
 
@@ -8,14 +9,14 @@ sync:
 	$(UV) sync --all-groups
 
 check: sync
-	$(UV) run ruff check .
-	$(UV) run ruff format --check .
-	$(UV) run basedpyright
-	$(UV) run python -m pytest
+	$(UV_RUN) ruff check .
+	$(UV_RUN) ruff format --check .
+	$(UV_RUN) basedpyright
+	$(UV_RUN) python -m pytest
 
 codegen:
-	$(UV) run --group codegen python scripts/generate_models.py
-	$(UV) run python scripts/generate_openapi_contracts.py
+	$(UV_RUN) python scripts/generate_models.py
+	$(UV_RUN) python scripts/generate_openapi_contracts.py
 
 codegen-check:
 	@if $(UNTRACKED_GENERATED) | grep -q .; then \
