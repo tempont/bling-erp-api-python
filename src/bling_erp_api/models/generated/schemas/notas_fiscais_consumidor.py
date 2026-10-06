@@ -15,7 +15,19 @@ from .notas_fiscais import NotasFiscaisDadosBaseDTO, NotasFiscaisDadosPostDTO
 
 if TYPE_CHECKING:
     from .common import Data13, Data14, Data16
-    from .notas_fiscais import NotasFiscaisDadosBaseDTO
+    from .notas_fiscais import NotasFiscaisDadosBaseResponseDTO
+
+
+class NfceGetResponse200(BlingModel):
+    """OpenAPI schema ``NfceGetResponse200``.
+
+    Modelo Pydantic gerado a partir do contrato OpenAPI do Bling. Use este schema
+    quando ele aparecer como request body ou response schema nos métodos do SDK.
+
+    Fields:
+        data: Bling ``data``; type ``list[NotasFiscaisDadosBaseResponseDTO] | None``; opcional."""
+
+    data: list[NotasFiscaisDadosBaseResponseDTO] | None = None
 
 
 class NfcePostResponse201(BlingModel):
@@ -52,18 +64,6 @@ class NfceIdNotaFiscalConsumidorEnviarPostResponse200(BlingModel):
         data: Bling ``data``; type ``Data16 | None``; opcional."""
 
     data: Data16 | None = None
-
-
-class NfceGetResponse200(BlingModel):
-    """OpenAPI schema ``NfceGetResponse200``.
-
-    Modelo Pydantic gerado a partir do contrato OpenAPI do Bling. Use este schema
-    quando ele aparecer como request body ou response schema nos métodos do SDK.
-
-    Fields:
-        data: Bling ``data``; type ``list[NotasFiscaisDadosBaseDTO] | None``; opcional."""
-
-    data: list[NotasFiscaisDadosBaseDTO] | None = None
 
 
 class NfcePostRequest(NotasFiscaisDadosBaseDTO, NotasFiscaisDadosPostDTO):

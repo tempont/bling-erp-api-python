@@ -86,6 +86,7 @@ from bling_erp_api.models.generated.invoices import (
     NfePostResponse201,
     NotaFiscalResponsePOST,
     NotasFiscaisDadosBaseDTO,
+    NotasFiscaisDadosBaseResponseDTO,
 )
 
 # NFSe
@@ -149,6 +150,9 @@ from bling_erp_api.models.generated.sales_orders import (
     VendasDadosDTO,
     VendasResponsePOSTPUT,
 )
+
+# Invoice response models
+from bling_erp_api.models.generated.schemas.notas_fiscais import NotasFiscaisContatoResponseDTO
 
 # Situations
 from bling_erp_api.models.generated.situacoes import (
@@ -241,7 +245,9 @@ __all__ = [
     "NfsePostRequest",
     "NfsePostResponse201",
     "NotaFiscalResponsePOST",
+    "NotasFiscaisContatoResponseDTO",
     "NotasFiscaisDadosBaseDTO",
+    "NotasFiscaisDadosBaseResponseDTO",
     "NotasServicosDadosBaseDTO",
     "NotasServicosDadosDTO",
     "NotasServicosResponsePOSTPUT",

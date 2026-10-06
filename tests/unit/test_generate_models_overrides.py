@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import importlib.util
+import json
 import re
 import sys
 from pathlib import Path
@@ -475,3 +476,78 @@ def test_schema_module_content_imports_alias_choices_for_inserted_field(
     # ``alias='xStr'`` is a substring of ``serialization_alias='xStr'``; the
     # lookbehind only matches a bare raw ``alias`` keyword surviving the run.
     assert re.search(r"(?<![\w])alias='xStr'", content) is None
+
+
+def test_response_projection_preserves_original_schemas_and_all_requests(
+    override_guard: ModuleType,
+) -> None:
+    """The vendored contract changes only for NF-e/NFC-e response references."""
+    original = json.loads((_scripts_dir.parent / "specs/bling-openapi-reference.json").read_text())
+    before = json.dumps(original, sort_keys=True)
+    projected = override_guard._response_generation_spec(original)  # noqa: SLF001
+    assert json.dumps(original, sort_keys=True) == before
+    original_schemas = original["components"]["schemas"]
+    projected_schemas = projected["components"]["schemas"]
+    assert all(projected_schemas[name] == schema for name, schema in original_schemas.items())
+    assert set(projected_schemas) - set(original_schemas) == {
+        "NotasFiscaisContatoResponseDTO",
+        "NotasFiscaisDadosBaseResponseDTO",
+    }
+    contact = projected_schemas["NotasFiscaisContatoResponseDTO"]
+    assert contact["required"] == ["nome", "numeroDocumento"]
+    assert contact["properties"] == original_schemas["NotasFiscaisContatoDTO"]["properties"]
+    for path, operations in original["paths"].items():
+        for method, operation in operations.items():
+            projected_operation = projected["paths"][path][method]
+            assert projected_operation.get("requestBody") == operation.get("requestBody")
+            if not path.startswith(("/nfe", "/nfce")):
+                assert projected_operation == operation
+
+
+def test_response_projection_traverses_composed_schemas(override_guard: ModuleType) -> None:
+    """Required writeOnly fields stay optional only through response schema references."""
+    contact = {
+        "type": "object",
+        "required": ["name", "secret"],
+        "properties": {
+            "name": {"type": "string"},
+            "secret": {"type": "string", "writeOnly": True},
+        },
+    }
+    base = {"properties": {"contact": {"$ref": "#/components/schemas/ContactDTO"}}}
+    detail = {"allOf": [{"$ref": "#/components/schemas/BaseDTO"}]}
+    wrapper = {"items": {"$ref": "#/components/schemas/DetailDTO"}}
+    payload = {
+        "components": {"schemas": {"ContactDTO": contact, "BaseDTO": base, "DetailDTO": detail}},
+        "paths": {"/test": {"post": {"requestBody": wrapper, "responses": {"200": wrapper}}}},
+    }
+    result = override_guard._response_generation_spec(payload)  # noqa: SLF001
+    schemas = result["components"]["schemas"]
+    assert schemas["ContactDTO"]["required"] == ["name", "secret"]
+    assert schemas["ContactResponseDTO"]["required"] == ["name"]
+    assert (
+        schemas["DetailResponseDTO"]["allOf"][0]["$ref"] == "#/components/schemas/BaseResponseDTO"
+    )
+    operation = result["paths"]["/test"]["post"]
+    assert operation["requestBody"]["items"]["$ref"] == "#/components/schemas/DetailDTO"
+    assert (
+        operation["responses"]["200"]["items"]["$ref"] == "#/components/schemas/DetailResponseDTO"
+    )
+
+
+def test_response_projection_rejects_schema_name_collisions(override_guard: ModuleType) -> None:
+    """A spec refresh cannot silently overwrite a new official response component."""
+    payload = {
+        "components": {
+            "schemas": {
+                "ContactDTO": {
+                    "required": ["secret"],
+                    "properties": {"secret": {"type": "string", "writeOnly": True}},
+                },
+                "ContactResponseDTO": {},
+            },
+        },
+        "paths": {},
+    }
+    with pytest.raises(ValueError, match="collides with ContactResponseDTO"):
+        override_guard._response_generation_spec(payload)  # noqa: SLF001

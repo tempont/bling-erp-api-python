@@ -1,0 +1,68 @@
+{
+  "data": {
+    "id": 12345,
+    "tipo": 1,
+    "situacao": 3,
+    "numero": "000001234",
+    "serie": 1,
+    "dataEmissao": "2024-01-15 10:30:00",
+    "dataOperacao": "2024-01-15",
+    "chaveAcesso": "35240112345678901234567890123456789012345678",
+    "contato": {
+      "id": 100,
+      "nome": "CLIENTE SINTETICO",
+      "numeroDocumento": "00000000000000"
+    },
+    "naturezaOperacao": {
+      "id": 1
+    },
+    "loja": {
+      "id": 1
+    },
+    "valorNota": 1500.5,
+    "valorFrete": 50.0,
+    "finalidade": 1,
+    "xml": "<nfeProc>...</nfeProc>",
+    "linkDanfe": "https://example.test/danfe/12345",
+    "linkPDF": "https://example.test/pdf/12345",
+    "optanteSimplesNacional": true,
+    "vendedor": {
+      "id": 10
+    },
+    "itens": [
+      {
+        "codigo": "PROD-001",
+        "descricao": "Produto Exemplo",
+        "unidade": "UN",
+        "quantidade": 10.0,
+        "valor": 100.0,
+        "valorTotal": 1000.0,
+        "tipo": "P",
+        "classificacaoFiscal": "8471.30.12",
+        "origem": 0
+      }
+    ],
+    "parcelas": [
+      {
+        "data": "2024-02-15",
+        "valor": 1500.5,
+        "formaPagamento": {
+          "id": 1
+        }
+      }
+    ],
+    "transporte": {
+      "fretePorConta": 0,
+      "transportador": {
+        "nome": "TRANSPORTADORA SINTETICA",
+        "numeroDocumento": "00000000000000"
+      },
+      "volumes": [
+        {
+          "id": 501,
+          "codigoRastreamento": "TESTE000001BR"
+        }
+      ]
+    }
+  }
+}
