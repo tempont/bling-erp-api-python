@@ -7,10 +7,12 @@ import importlib.util
 import json
 import re
 import sys
+from copy import deepcopy
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
+from pydantic import ValidationError
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -516,7 +518,11 @@ def test_response_projection_traverses_composed_schemas(override_guard: ModuleTy
     }
     base = {"properties": {"contact": {"$ref": "#/components/schemas/ContactDTO"}}}
     detail = {"allOf": [{"$ref": "#/components/schemas/BaseDTO"}]}
-    wrapper = {"items": {"$ref": "#/components/schemas/DetailDTO"}}
+    wrapper = {
+        "content": {
+            "application/json": {"schema": {"items": {"$ref": "#/components/schemas/DetailDTO"}}}
+        }
+    }
     payload = {
         "components": {"schemas": {"ContactDTO": contact, "BaseDTO": base, "DetailDTO": detail}},
         "paths": {"/test": {"post": {"requestBody": wrapper, "responses": {"200": wrapper}}}},
@@ -529,9 +535,13 @@ def test_response_projection_traverses_composed_schemas(override_guard: ModuleTy
         schemas["DetailResponseDTO"]["allOf"][0]["$ref"] == "#/components/schemas/BaseResponseDTO"
     )
     operation = result["paths"]["/test"]["post"]
-    assert operation["requestBody"]["items"]["$ref"] == "#/components/schemas/DetailDTO"
     assert (
-        operation["responses"]["200"]["items"]["$ref"] == "#/components/schemas/DetailResponseDTO"
+        operation["requestBody"]["content"]["application/json"]["schema"]["items"]["$ref"]
+        == "#/components/schemas/DetailDTO"
+    )
+    assert (
+        operation["responses"]["200"]["content"]["application/json"]["schema"]["items"]["$ref"]
+        == "#/components/schemas/DetailResponseDTO"
     )
 
 
@@ -551,3 +561,171 @@ def test_response_projection_rejects_schema_name_collisions(override_guard: Modu
     }
     with pytest.raises(ValueError, match="collides with ContactResponseDTO"):
         override_guard._response_generation_spec(payload)  # noqa: SLF001
+
+
+def _write_only_schema() -> dict[str, object]:
+    return {
+        "type": "object",
+        "required": ["name", "secret"],
+        "properties": {
+            "name": {"type": "string"},
+            "secret": {"type": "string", "writeOnly": True},
+        },
+    }
+
+
+@pytest.mark.parametrize(
+    "branch", ["allOf", "anyOf", "oneOf", "items", "properties", "additionalProperties"]
+)
+def test_response_projection_relaxes_nested_inline_schema(
+    override_guard: ModuleType, branch: str
+) -> None:
+    """Inline children relax their own requirements without relaxing their parent."""
+    child = _write_only_schema()
+    schema: dict[str, object]
+    if branch in {"allOf", "anyOf", "oneOf"}:
+        schema = {branch: [child]}
+    elif branch == "properties":
+        schema = {"type": "object", "required": ["secret"], "properties": {"secret": child}}
+    else:
+        schema = {branch: child}
+    literal = {
+        "$ref": "#/components/schemas/NestedDTO",
+        "required": ["secret"],
+        "properties": {"secret": {"writeOnly": True}},
+    }
+    schema["example"] = literal
+    payload = {"components": {"schemas": {"NestedDTO": schema}}, "paths": {}}
+    before = deepcopy(payload)
+    projected = override_guard._response_generation_spec(payload)  # noqa: SLF001
+    response = projected["components"]["schemas"]["NestedResponseDTO"]
+    if branch in {"allOf", "anyOf", "oneOf"}:
+        projected_child = response[branch][0]
+    elif branch == "properties":
+        projected_child = response[branch]["secret"]
+        assert response["required"] == ["secret"]
+    else:
+        projected_child = response[branch]
+    assert projected_child["required"] == ["name"]
+    assert projected_child["properties"] == child["properties"]
+    assert response["example"] == literal
+    assert payload == before
+    assert projected["components"]["schemas"]["NestedDTO"] == schema
+
+
+def test_response_projection_visits_reusable_responses_and_callbacks(
+    override_guard: ModuleType,
+) -> None:
+    """Reusable and callback responses change while every request body stays intact."""
+    reference = {"$ref": "#/components/schemas/ContactDTO"}
+    body = {"content": {"application/json": {"schema": reference}}}
+    reusable_response = {"$ref": "#/components/responses/Contact"}
+    callback_operation = {
+        "post": {
+            "requestBody": body,
+            "responses": {"200": body, "201": reusable_response},
+        },
+    }
+    callback = {"{$request.body#/callbackUrl}": callback_operation}
+    payload = {
+        "components": {
+            "schemas": {"ContactDTO": _write_only_schema()},
+            "requestBodies": {"Contact": body},
+            "responses": {"Contact": body, "Alias": reusable_response},
+            "callbacks": {"Contact": callback},
+        },
+        "paths": {
+            "/test": {
+                "parameters": list[object](),
+                "post": {
+                    "requestBody": {"$ref": "#/components/requestBodies/Contact"},
+                    "responses": {"200": reusable_response},
+                    "callbacks": {
+                        "inline": callback,
+                        "reusable": {"$ref": "#/components/callbacks/Contact"},
+                    },
+                },
+            },
+        },
+    }
+    before = deepcopy(payload)
+    projected = override_guard._response_generation_spec(payload)  # noqa: SLF001
+    components = projected["components"]
+    assert components["requestBodies"] == payload["components"]["requestBodies"]
+    assert components["responses"]["Contact"]["content"]["application/json"]["schema"] == {
+        "$ref": "#/components/schemas/ContactResponseDTO",
+    }
+    assert components["responses"]["Alias"] == reusable_response
+    operation = projected["paths"]["/test"]["post"]
+    assert operation["requestBody"] == {"$ref": "#/components/requestBodies/Contact"}
+    assert operation["responses"]["200"] == reusable_response
+    assert operation["callbacks"]["reusable"] == {"$ref": "#/components/callbacks/Contact"}
+    for projected_callback in (
+        components["callbacks"]["Contact"],
+        operation["callbacks"]["inline"],
+    ):
+        callback_post = projected_callback["{$request.body#/callbackUrl}"]["post"]
+        assert callback_post["requestBody"] == body
+        assert callback_post["responses"]["200"]["content"]["application/json"]["schema"] == {
+            "$ref": "#/components/schemas/ContactResponseDTO",
+        }
+        assert callback_post["responses"]["201"] == reusable_response
+    assert payload == before
+
+
+def test_response_projection_relaxes_inline_response_without_component(
+    override_guard: ModuleType,
+) -> None:
+    """Inline response schemas also respect writeOnly without a component reference."""
+    body = {"content": {"application/json": {"schema": {"allOf": [_write_only_schema()]}}}}
+    payload = {
+        "components": {"schemas": dict[str, object]()},
+        "paths": {"/test": {"post": {"requestBody": body, "responses": {"200": body}}}},
+    }
+    result = override_guard._response_generation_spec(payload)  # noqa: SLF001
+    operation = result["paths"]["/test"]["post"]
+    assert operation["requestBody"] == body
+    response_schema = operation["responses"]["200"]["content"]["application/json"]["schema"]
+    assert response_schema["allOf"][0]["required"] == ["name"]
+
+
+@pytest.mark.parametrize("array", [False, True])
+def test_projected_inline_schema_generates_valid_pydantic_response(
+    override_guard: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, *, array: bool
+) -> None:
+    """The real generator accepts absent writeOnly data and keeps requests strict."""
+    child = _write_only_schema()
+    schema = {"type": "array", "items": child} if array else {"allOf": [child]}
+    body = {
+        "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ContactDTO"}}}
+    }
+    payload = {
+        "openapi": "3.0.3",
+        "info": {"title": "Synthetic", "version": "1"},
+        "components": {"schemas": {"ContactDTO": schema}, "responses": {"Contact": body}},
+        "paths": {
+            "/test": {
+                "get": {"responses": {"200": {"$ref": "#/components/responses/Contact"}}},
+                "post": {"requestBody": body, "responses": {"204": {"description": "Empty"}}},
+            },
+        },
+    }
+    projected = override_guard._response_generation_spec(payload)  # noqa: SLF001
+    input_path = tmp_path / "openapi.json"
+    output_path = tmp_path / "models.py"
+    input_path.write_text(json.dumps(projected), encoding="utf-8")
+    monkeypatch.setattr(override_guard, "RAW_SCHEMAS_MODULE", output_path)
+    override_guard._run_datamodel_codegen(input_path)  # noqa: SLF001
+    spec = importlib.util.spec_from_file_location("synthetic_invoice_models", output_path)
+    assert spec is not None
+    assert spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    monkeypatch.setitem(sys.modules, spec.name, module)
+    spec.loader.exec_module(module)
+    data = [{"name": "SYNTHETIC"}] if array else {"name": "SYNTHETIC"}
+    module.ContactResponseDTO.model_validate(data)
+    with pytest.raises(ValidationError):
+        module.ContactDTO.model_validate(data)
+    invalid = [{"secret": "value"}] if array else {"secret": "value"}
+    with pytest.raises(ValidationError):
+        module.ContactResponseDTO.model_validate(invalid)

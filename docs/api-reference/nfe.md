@@ -21,6 +21,11 @@ do schema versionado identificou somente esses dois campos; os demais campos
 `writeOnly` já eram opcionais nas respostas. Contratos de outros recursos e
 todos os request bodies são preservados por testes de regressão.
 
+A projeção também percorre schemas inline aninhados (composições, itens de
+arrays e propriedades), componentes reutilizáveis de resposta e respostas de
+callbacks. As exigências são removidas somente no objeto que declara o campo;
+os objetos pais, exemplos e componentes `requestBodies` permanecem intactos.
+
 ::: bling_erp_api.resources.nfe.NfeResource
     options:
       members:
