@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Tracking timestamps in logistics objects and shipment objects now accept offset-free Bling values through the generated `BlingDatetime` type. Naive timestamps use `America/Sao_Paulo` (including historical daylight saving time); explicit offsets are preserved, and JSON serialization emits an ISO timestamp with its offset. The generator and shared model namespace use the same type, with portable timezone data supplied by `tzdata`.
+
 ## [0.3.1] - 2026-10-06
 
 ### Fixed

@@ -117,8 +117,8 @@ SCHEMA_FAMILY_PREFIXES = (
 )
 BUILTIN_TYPE_NAMES = {
     "Any",
-    "AwareDatetime",
     "BlingDate",
+    "BlingDatetime",
     "BlingModel",
     "Field",
     "None",
@@ -181,7 +181,7 @@ _APPLIED_FIELD_OVERRIDES: set[tuple[str, str]] = set()
 
 # Type that replaces bare ``date`` in all generated annotations.
 DATE_TYPE_REWRITE = "BlingDate"
-DATE_IMPORT = "from bling_erp_api.models.fields import BlingDate"
+DATE_IMPORT = "from bling_erp_api.models.fields import BlingDate, BlingDatetime"
 
 # ``Field(...)`` keywords that affect the wire format. Inserted redeclarations
 # of parent-inherited fields only clone the parent's ``Field(...)`` call when
@@ -604,10 +604,10 @@ def _schema_module_content(
         "",
         "from __future__ import annotations",
         "",
-        "from bling_erp_api.models.fields import BlingDate",
+        DATE_IMPORT,
         "from typing import TYPE_CHECKING, Any",
         "",
-        "from pydantic import AliasChoices, AwareDatetime, Field, RootModel",
+        "from pydantic import AliasChoices, Field, RootModel",
         "",
         "from bling_erp_api.models.base import BlingModel",
     ]
@@ -653,10 +653,8 @@ def _schema_init_content(
         "",
         "from __future__ import annotations",
         "",
-        "from bling_erp_api.models.fields import BlingDate",
+        DATE_IMPORT,
         "from typing import Any",
-        "",
-        "from pydantic import AwareDatetime",
         "",
     ]
     for module, names in sorted(by_module.items()):
@@ -671,7 +669,7 @@ def _schema_init_content(
             exports + "]",
             "",
             "_MODEL_NAMESPACE = {name: globals()[name] for name in __all__}",
-            "_MODEL_NAMESPACE.update({'Any': Any, 'AwareDatetime': AwareDatetime, 'BlingDate': BlingDate})",
+            "_MODEL_NAMESPACE.update({'Any': Any, 'BlingDate': BlingDate, 'BlingDatetime': BlingDatetime})",
             "for _model in _MODEL_NAMESPACE.values():",
             "    if isinstance(_model, type) and hasattr(_model, 'model_rebuild'):",
             "        _model.model_rebuild(_types_namespace=_MODEL_NAMESPACE)",
@@ -912,10 +910,11 @@ def _remove_pass_if_empty(node: ast.ClassDef) -> None:
 
 
 def _rewrite_date_types(node: ast.ClassDef) -> None:
-    """Replace ``date`` with ``BlingDate`` in all field annotations."""
+    """Use Bling date and datetime parsing in generated field annotations."""
+    replacements = {"date": "BlingDate", "AwareDatetime": "BlingDatetime"}
     for stmt in ast.walk(node):
-        if isinstance(stmt, ast.Name) and stmt.id == "date":
-            stmt.id = "BlingDate"
+        if isinstance(stmt, ast.Name) and stmt.id in replacements:
+            stmt.id = replacements[stmt.id]
 
 
 def _inherited_field_value(parent_decl: ast.AnnAssign | None, field_name: str) -> ast.expr:

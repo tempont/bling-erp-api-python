@@ -1,0 +1,24 @@
+{
+  "data": {
+    "pedidoVenda": {"id": 101},
+    "notaFiscal": {"id": 201},
+    "servico": {"id": 301},
+    "rastreamento": {
+      "codigo": "SYNTHETIC123",
+      "descricao": "Em andamento",
+      "situacao": 1,
+      "origem": "São Paulo, SP",
+      "destino": "Curitiba, PR",
+      "ultimaAlteracao": "2026-10-07 11:24:02",
+      "url": "https://example.com/tracking"
+    },
+    "dimensao": {"altura": 10, "largura": 10, "comprimento": 10, "diametro": 0, "peso": 1},
+    "embalagem": {"id": 401},
+    "dataSaida": "2026-10-07",
+    "prazoEntregaPrevisto": 5,
+    "fretePrevisto": 10,
+    "valorDeclarado": 50,
+    "avisoRecebimento": false,
+    "maoPropria": false
+  }
+}

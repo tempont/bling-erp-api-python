@@ -472,7 +472,7 @@ def test_schema_module_content_imports_alias_choices_for_inserted_field(
         {"ParentDTO": "exemplo", "ChildDTO": "exemplo"},
     )
 
-    assert "from pydantic import AliasChoices, AwareDatetime, Field, RootModel" in content
+    assert "from pydantic import AliasChoices, Field, RootModel" in content
     assert "validation_alias=AliasChoices('x', 'xStr')" in content
     assert "serialization_alias='xStr'" in content
     # ``alias='xStr'`` is a substring of ``serialization_alias='xStr'``; the

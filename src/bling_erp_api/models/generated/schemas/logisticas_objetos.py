@@ -4,10 +4,10 @@
 
 from __future__ import annotations
 
-from bling_erp_api.models.fields import BlingDate
+from bling_erp_api.models.fields import BlingDate, BlingDatetime
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AliasChoices, AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
@@ -92,7 +92,7 @@ class LogisticasObjetosRastreamentoDTO(BlingModel):
         situacao: Bling ``situacao``; type ``int``; obrigatório. `0` Postado <br> `1` Em andamento <br> `2` Não entregue <br> `3` Entregue <br> `4` Aguardando retirada <br> `5` Etiqueta comprada <br> `6` Vinculado <br> `7` Atrasado <br> `8` Não...
         origem: Bling ``origem``; type ``str``; obrigatório. Cidade e estado de origem
         destino: Bling ``destino``; type ``str``; obrigatório. Cidade e estado de destino
-        ultima_alteracao: Bling ``ultimaAlteracao``; type ``AwareDatetime``; obrigatório. Data e hora em que ocorreu a atualização de rastreio.
+        ultima_alteracao: Bling ``ultimaAlteracao``; type ``BlingDatetime``; obrigatório. Data e hora em que ocorreu a atualização de rastreio.
         url: Bling ``url``; type ``str``; obrigatório. URL de rastreamento"""
 
     codigo: str = Field(..., examples=["EC272330554BR"])
@@ -100,7 +100,7 @@ class LogisticasObjetosRastreamentoDTO(BlingModel):
     situacao: int = Field(..., examples=["8"])
     origem: str = Field(..., examples=["São Paulo, SP"])
     destino: str = Field(..., examples=["São Paulo, SP"])
-    ultima_alteracao: AwareDatetime = Field(
+    ultima_alteracao: BlingDatetime = Field(
         ...,
         validation_alias=AliasChoices("ultima_alteracao", "ultimaAlteracao"),
         examples=["2020-11-11 16:40:33"],
