@@ -124,6 +124,13 @@ Na serialização JSON, o resultado inclui o offset:
 `"2026-10-07T11:24:02-03:00"`. A dependência `tzdata` fornece essas regras
 também em sistemas sem uma base de fusos instalada.
 
+Sentinelas de data ausente (`"0000-00-00 00:00:00"`, `"0000-00-00"`,
+`"0001-01-01"`, `"0001-01-01 00:00:00"`), strings vazias e `null` são
+representadas por `None`. `model_dump(mode="json")` preserva `null`;
+`to_json_object()` omite esses valores. Outras datas malformadas continuam
+causando erro de validação, e a chave `ultimaAlteracao` continua obrigatória
+no objeto de rastreamento.
+
 ### Paginação
 
 Endpoints de listagem aceitam `page` e `limit`:

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Tracking timestamps in logistics objects and shipment objects now accept offset-free Bling values through the generated `BlingDatetime` type. Naive timestamps use `America/Sao_Paulo` (including historical daylight saving time); explicit offsets are preserved, and JSON serialization emits an ISO timestamp with its offset. The generator and shared model namespace use the same type, with portable timezone data supplied by `tzdata`.
+- Tracking dates now normalize MySQL zero-date sentinels, empty strings and null to `None`, matching absent-date handling in `BlingDate`. This fixes a second failure confirmed in read-only live logistics objects. Other malformed dates still raise validation errors; the tracking timestamp key remains required, and unrelated DTO requirements are unchanged.
 
 ## [0.3.1] - 2026-10-06
 

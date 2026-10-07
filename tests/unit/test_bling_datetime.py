@@ -53,17 +53,18 @@ def test_bling_datetime_assigns_local_timezone_and_preserves_offsets(
     value: str | datetime, offset: int
 ) -> None:
     """Offset-free dates use Sao Paulo rules; explicit offsets are preserved."""
-    parsed = TypeAdapter[datetime](BlingDatetime).validate_python(value)
+    parsed = TypeAdapter[datetime | None](BlingDatetime).validate_python(value)
+    assert parsed is not None
     assert parsed.utcoffset() == timedelta(hours=offset)
     if isinstance(value, datetime) and value.tzinfo is not None:
         assert parsed is value
 
 
-@pytest.mark.parametrize("value", ["not-a-date", "2026-02-30 12:00:00", "", None])
+@pytest.mark.parametrize("value", ["not-a-date", "2026-02-30 12:00:00", "2026-00-07 12:00:00"])
 def test_bling_datetime_rejects_invalid_timestamps(value: object) -> None:
     """Do not turn malformed timestamps into silently accepted data."""
     with pytest.raises(ValidationError):
-        TypeAdapter[datetime](BlingDatetime).validate_python(value)
+        TypeAdapter[datetime | None](BlingDatetime).validate_python(value)
 
 
 @pytest.mark.parametrize("model_type", TRACKING_MODELS)
@@ -77,6 +78,7 @@ def test_tracking_models_accept_wire_and_python_field_names(
     python_payload["ultima_alteracao"] = python_payload.pop("ultimaAlteracao")
     python_model = model_type.model_validate(python_payload)
     assert python_model == wire
+    assert wire.ultima_alteracao is not None
     assert wire.ultima_alteracao.utcoffset() == timedelta(hours=-3)
     assert "ultima_alteracao" in inspect.signature(model_type).parameters
     assert "ultimaAlteracao" not in inspect.signature(model_type).parameters
@@ -103,6 +105,7 @@ def test_logistics_object_resource_parses_naive_datetime(
     assert isinstance(response, LogisticasObjetosIdObjetoGetResponse200)
     assert response.data is not None
     assert response.data.rastreamento is not None
+    assert response.data.rastreamento.ultima_alteracao is not None
     assert response.data.rastreamento.ultima_alteracao.isoformat() == "2026-10-07T11:24:02-03:00"
     request = httpx_mock.get_request()
     assert request is not None
@@ -132,4 +135,51 @@ def test_logistics_shipment_resource_parses_nested_naive_datetime(httpx_mock: HT
         response = client.logisticas_remessas.obter(id_remessa=501)
     assert isinstance(response, LogisticasRemessasIdRemessaGetResponse200)
     assert response.data is not None
+    assert response.data.objetos[0].rastreamento.ultima_alteracao is not None
     assert response.data.objetos[0].rastreamento.ultima_alteracao.utcoffset() == timedelta(hours=-3)
+
+
+@pytest.mark.parametrize("model_type", TRACKING_MODELS)
+@pytest.mark.parametrize(
+    "value",
+    [None, "", "  ", "0000-00-00", "0000-00-00 00:00:00", "0001-01-01", "0001-01-01 00:00:00"],
+)
+def test_tracking_models_accept_absent_timestamp_sentinels(
+    model_type: type[LogisticasObjetosRastreamentoDTO | LogisticasRemessasRastreamentoDTO],
+    value: str | None,
+) -> None:
+    """Absent tracking dates retain other fields and serialize without warnings."""
+    payload = cast("JsonObject", cast("JsonObject", _object_payload()["data"])["rastreamento"])
+    payload["ultimaAlteracao"] = value
+    model = model_type.model_validate(payload)
+    assert model.ultima_alteracao is None
+    assert model.codigo == "SYNTHETIC123"
+    assert model.situacao == 1
+    assert model.model_dump(mode="json", by_alias=True)["ultimaAlteracao"] is None
+    assert "ultimaAlteracao" not in to_json_object(model)
+    payload.pop("ultimaAlteracao")
+    with pytest.raises(ValidationError):
+        model_type.model_validate(payload)
+
+
+def test_logistics_object_resource_accepts_zero_timestamp(httpx_mock: HTTPXMock) -> None:
+    """The zero datetime observed in live objects no longer aborts resource reads."""
+    payload = _object_payload()
+    data = cast("JsonObject", payload["data"])
+    tracking = cast("JsonObject", data["rastreamento"])
+    tracking["ultimaAlteracao"] = "0000-00-00 00:00:00"
+    httpx_mock.add_response(json=payload)
+    with BlingClient(auth=httpx.Auth()) as client:
+        response = client.logisticas_objetos.obter(id_objeto=701)
+    assert response.data is not None
+    assert response.data.rastreamento is not None
+    assert response.data.rastreamento.ultima_alteracao is None
+    assert response.data.nota_fiscal.id == 201
+    assert to_json_object(response.data)["rastreamento"] == {
+        "codigo": "SYNTHETIC123",
+        "descricao": "Em andamento",
+        "situacao": 1,
+        "origem": "São Paulo, SP",
+        "destino": "Curitiba, PR",
+        "url": "https://example.com/tracking",
+    }
