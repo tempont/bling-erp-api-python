@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, datetime
 from typing import Annotated
+from zoneinfo import ZoneInfo
 
+from pydantic import AfterValidator, BeforeValidator
 from pydantic.functional_serializers import PlainSerializer
 from pydantic.functional_validators import PlainValidator
 
@@ -43,4 +45,38 @@ BlingDate = Annotated[
     date,
     PlainValidator(_parse_bling_date),
     PlainSerializer(_serialize_bling_date, return_type=str | None, when_used="json"),
+]
+
+
+def _normalize_bling_datetime(value: object) -> object:
+    """Map Bling's absent timestamp sentinels to None before datetime parsing."""
+    if isinstance(value, str):
+        stripped = value.strip()
+        if not stripped or stripped in {
+            "0000-00-00",
+            "0000-00-00 00:00:00",
+            "0001-01-01",
+            "0001-01-01 00:00:00",
+        }:
+            return None
+        return stripped
+    return value
+
+
+def _localize_bling_datetime(value: datetime | None) -> datetime | None:
+    """Interpret offset-free Bling timestamps in America/Sao_Paulo.
+
+    Preserve explicit offsets and use the IANA timezone rules for naive values,
+    including historical daylight saving time. Invalid timestamps still fail
+    Pydantic's normal datetime validation before this validator is called.
+    """
+    if value is not None and (value.tzinfo is None or value.utcoffset() is None):
+        return value.replace(tzinfo=ZoneInfo("America/Sao_Paulo"))
+    return value
+
+
+BlingDatetime = Annotated[
+    datetime | None,
+    BeforeValidator(_normalize_bling_datetime),
+    AfterValidator(_localize_bling_datetime),
 ]

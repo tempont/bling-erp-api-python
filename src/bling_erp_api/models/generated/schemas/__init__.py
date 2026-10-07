@@ -4,10 +4,8 @@
 
 from __future__ import annotations
 
-from bling_erp_api.models.fields import BlingDate
+from bling_erp_api.models.fields import BlingDate, BlingDatetime
 from typing import Any
-
-from pydantic import AwareDatetime
 
 from .anuncios import (
     AnunciosAtributoDTO,
@@ -1484,7 +1482,7 @@ __all__ = [
 ]
 
 _MODEL_NAMESPACE = {name: globals()[name] for name in __all__}
-_MODEL_NAMESPACE.update({"Any": Any, "AwareDatetime": AwareDatetime, "BlingDate": BlingDate})
+_MODEL_NAMESPACE.update({"Any": Any, "BlingDate": BlingDate, "BlingDatetime": BlingDatetime})
 for _model in _MODEL_NAMESPACE.values():
     if isinstance(_model, type) and hasattr(_model, "model_rebuild"):
         _model.model_rebuild(_types_namespace=_MODEL_NAMESPACE)

@@ -4,10 +4,10 @@
 
 from __future__ import annotations
 
-from bling_erp_api.models.fields import BlingDate
+from bling_erp_api.models.fields import BlingDate, BlingDatetime
 from typing import TYPE_CHECKING, Any
 
-from pydantic import AliasChoices, AwareDatetime, Field, RootModel
+from pydantic import AliasChoices, Field, RootModel
 
 from bling_erp_api.models.base import BlingModel
 
