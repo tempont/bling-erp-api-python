@@ -14,6 +14,7 @@ from pydantic import TypeAdapter, ValidationError
 
 from bling_erp_api import BlingClient
 from bling_erp_api.models.fields import BlingDatetime
+from bling_erp_api.models.generated import schemas
 from bling_erp_api.models.generated.schemas.logisticas_objetos import (
     LogisticasObjetosIdObjetoGetResponse200,
     LogisticasObjetosRastreamentoDTO,
@@ -27,14 +28,43 @@ from bling_erp_api.utils.serialization import to_json_object
 if TYPE_CHECKING:
     from pytest_httpx import HTTPXMock
 
+    from bling_erp_api.models.base import BlingModel
     from bling_erp_api.types import JsonObject
 
 FIXTURE = Path(__file__).parents[1] / "fixtures/responses/logisticas_objetos_get.json"
+SPEC = Path(__file__).parents[2] / "specs/bling-openapi-reference.json"
 TRACKING_MODELS = (LogisticasObjetosRastreamentoDTO, LogisticasRemessasRastreamentoDTO)
 
 
 def _object_payload() -> JsonObject:
     return cast("JsonObject", json.loads(FIXTURE.read_text(encoding="utf-8")))
+
+
+def test_generated_datetime_fields_accept_openapi_examples() -> None:
+    """Every component date-time example must pass its generated field validator."""
+    spec = cast("JsonObject", json.loads(SPEC.read_text(encoding="utf-8")))
+    components = cast("JsonObject", spec["components"])
+    definitions = cast("JsonObject", components["schemas"])
+    checked = 0
+    for schema_name, definition in definitions.items():
+        properties = cast("JsonObject", cast("JsonObject", definition).get("properties", {}))
+        for wire_name, property_definition in properties.items():
+            prop = cast("JsonObject", property_definition)
+            if prop.get("format") != "date-time" or "example" not in prop:
+                continue
+            model_type = cast("type[BlingModel]", getattr(schemas, schema_name))
+            field = next(
+                field
+                for name, field in model_type.model_fields.items()
+                if (field.serialization_alias or name) == wire_name
+            )
+            parsed = TypeAdapter[datetime | None](field.rebuild_annotation()).validate_python(
+                prop["example"],
+            )
+            assert parsed is not None
+            assert parsed.utcoffset() is not None
+            checked += 1
+    assert checked >= 2
 
 
 @pytest.mark.parametrize(
