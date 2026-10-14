@@ -24,6 +24,7 @@ dependencies = [
     "pydantic>=2.13.4,<3.0.0",
     "pydantic-settings>=2.14.1,<3.0.0",
     "python-dotenv>=1.2.2,<2.0.0",
+    "tzdata>=2025.2",
 ]
 
 [project.urls]
